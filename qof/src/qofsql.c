@@ -404,16 +404,16 @@ handle_single_condition (QofSqlQuery *query, sql_condition * cond)
 		 */
 		KvpValue *kval = NULL;
 		int len = strlen (str);
-		if (len == strspn (str, "0123456789"))
-		{
-			kval = kvp_value_new_gint64 (atoll(str));
-		}
-		else
 		if ((32 == len) && (32 == strspn (str, "0123456789abcdef")))
 		{
 			GUID guid;
 			string_to_guid (str, &guid);
 			kval = kvp_value_new_guid (&guid);
+		}
+		else
+		if (len == strspn (str, "0123456789"))
+		{
+			kval = kvp_value_new_gint64 (atoll(str));
 		}
 		else
 		if ((p=strchr (str, '.')) && 
