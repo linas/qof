@@ -744,7 +744,7 @@ GList * qof_query_run (QofQuery *q)
         }
       }
 
-      /* and then iterate over all the objects */
+      /* And then iterate over all the objects */
       qof_object_foreach (q->search_for, book, (QofEntityForeachCB) check_item_cb, &qcb);
     }
 
