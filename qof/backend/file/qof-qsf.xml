@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- date now uses XML xsd:dateTime date and time
+$ CCYY-MM-DDThh:mm:ss[Z|(+|-)hh:mm This is iso-8601 with : in the final timezone -->
+<!-- event_exception_date shown as example only -->
+<!-- repeat_on_day only used for repeatMonthlyByDay -->
+<!-- would be omitted for other repeats, shown here as example -->
+<!--  event_week_starts_day en_gb Sunday = 0, Friday = 5 -->
+<!-- category is not specifically 'addr_' - it is common to most Palm objects -->
+<qof-qsf
+xmlns="urn:qof-qsf-container">
+<book count="1">
+	<book-guid>c0dd5ca1b11338f3ceae57f6e0106d75</book-guid>
+	<object type="qof-expenses" count="1">
+		<string type="qof-expenses">Pilot-link QOF expenses</string>
+		<string type="expense_type">Entertainment</string>
+		<string type="expense_payment_method">CreditCard</string>
+		<string type="expense_currency_code">GBP</string>
+		<string type="expense_vendor">Venue Name</string>
+		<string type="expense_city">City</string>
+		<string type="expense_attendees">Names</string>
+		<string type="expense_note">Any string content</string>
+		<guid type="guid">c9c3c49db198b3b87e8d513e618f9078</guid>
+		<numeric type="expense_amount">2432/100</numeric>
+		<date type="expense_date">2004-11-02T14:55:00Z</date>
+	</object>
+	<object type="qof-datebook" count="1">
+		<string type="qof-datebook">Pilot-link QOF datebook</string>
+		<string type="event_repeat">Daily</string>
+		<string type="event_description">Any string content</string>
+		<string type="event_note">Longer string content</string>
+		<string type="category">Business</string>
+		<guid type="guid">9c87a50597267f4325f8e3277072dec3</guid>
+		<boolean type="event_is_timed">true</boolean>
+		<boolean type="event_repeats_forever">false</boolean>
+		<date type="event_begin_time">2004-11-02T09:00:00Z</date>
+		<date type="event_end_time">2004-11-02T18:30:00Z</date>
+		<date type="event_exception_date">2004-11-03T18:30:00Z</date>
+		<date type="event_repeat_end_date">2004-11-06T18:30:00Z</date>
+		<gint64 type="event_omit_repeat_every">2</gint64>
+		<gint64 type="event_repeat_on_day">0</gint64>
+		<gint64 type="event_week_starts_day">1</gint64>
+		<gint64 type="event_count_exceptions">0</gint64>
+	</object>
+	<object type="qof-address" count="1">
+		<string type="qof-address">Pilot-link QOF address</string>
+		<string type="addr_first_name">Fred</string>
+		<string type="addr_last_name">Bloggs</string>
+		<string type="addr_phone_one">+44(1392) 000000</string>
+		<string type="addr_phone_two">+44(1392) 000000</string>
+		<string type="addr_phone_three">foo@bar</string>
+		<string type="addr_phone_four">bar@foo</string>
+		<string type="addr_phone_five">+44(1392) 000000</string>
+		<string type="addr_address">first line</string>
+		<string type="addr_city">City</string>
+		<string type="addr_state">County</string>
+		<string type="addr_zip">PostCode</string>
+		<string type="addr_country">Country</string>
+		<string type="addr_title">Mr.</string>
+		<string type="addr_custom_one">Anniversary on 1/1/87</string>
+		<string type="addr_custom_two">Spouse: frederina</string>
+		<string type="addr_custom_three">Hours: 9-6,Mon-Fri</string>
+		<string type="addr_custom_four">Rate:</string>
+		<string type="addr_note">any string content</string>
+		<string type="category">Business</string>
+		<guid type="guid">62ed0f2d63d0958f00f426708b1bda16</guid>
+	</object>
+</book>
+</qof-qsf>
