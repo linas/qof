@@ -958,7 +958,7 @@ QofQuery * qof_query_invert (QofQuery *q)
     retval->max_results = q->max_results;
     break;
 
-    /* this is demorgan expansion for a single AND expression. */
+    /* This is the DeMorgan expansion for a single AND expression. */
     /* !(abc) = !a + !b + !c */
   case 1:
     retval = qof_query_create();
@@ -975,7 +975,7 @@ QofQuery * qof_query_invert (QofQuery *q)
       new_oterm = g_list_append(NULL, qt);
 
       /* g_list_append() can take forever, so let's do this for speed
-       * in "large" queries
+       * in "large" queries.
        */
       retval->terms = g_list_reverse(retval->terms);
       retval->terms = g_list_prepend(retval->terms, new_oterm);
@@ -983,7 +983,7 @@ QofQuery * qof_query_invert (QofQuery *q)
     }
     break;
 
-    /* if there are multiple OR-terms, we just recurse by 
+    /* If there are multiple OR-terms, we just recurse by 
      * breaking it down to !(a + b + c) = 
      * !a * !(b + c) = !a * !b * !c.  */
   default:
@@ -1000,7 +1000,7 @@ QofQuery * qof_query_invert (QofQuery *q)
     retval = qof_query_merge(iright, ileft, QOF_QUERY_AND);
     retval->books          = g_list_copy (q->books);
     retval->max_results    = q->max_results;
-    retval->search_for           = q->search_for;
+    retval->search_for     = q->search_for;
     retval->changed        = 1;
 
     qof_query_destroy(iright);
@@ -1036,6 +1036,20 @@ qof_query_merge(QofQuery *q1, QofQuery *q2, QofQueryOp op)
                           NULL);
 
   search_for = (q1->search_for ? q1->search_for : q2->search_for);
+
+  /* Avoid merge surprises if op==QOF_QUERY_AND but q1 is empty.
+   * The goal of this tweak is to all the user to start with
+   * an empty q1 and then append to it recursively
+   * (and q1 (and q2 (and q3 (and q4 ....))))
+   * without bombing out because the append started with an 
+   * empty list.
+   * We do essentially the same check in qof_query_add_term()
+   * so that the first term added to an empty query doesn't screw up.
+   */
+  if ((QOF_QUERY_AND == op) && (0 == qof_query_has_terms (q1)))
+  {
+    op = QOF_QUERY_OR;
+  }
 
   switch(op) 
   {
