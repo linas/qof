@@ -8,9 +8,6 @@
 #include "gncObject.h"
 #include "QueryObject.h"
 
-/* XXX */
-#define QUERYCORE_INT32 "gint32"
-
 /* ===================================================== */
 
 /* Define my object */
@@ -45,6 +42,12 @@ my_obj_get_b (MyObj *m)
 	return m->b;
 }
 
+const char *
+my_obj_get_memo (MyObj *m)
+{
+	return m->memo;
+}
+
 /* Loop over every instance of MyObj, and apply the callback to it */
 void
 my_obj_foreach (GNCBook *book, foreachObjectCB cb, gpointer ud)
@@ -62,14 +65,14 @@ my_obj_foreach (GNCBook *book, foreachObjectCB cb, gpointer ud)
  * some 'reasonable' order.  If you don't want to sort,
  * just have this function always return 0.
  */ 
-my_obj_order (MyObj **a, MyObj **b)
+my_obj_order (MyObj *a, MyObj *b)
 {
-   if ( (*a) && !(*b) ) return -1;
-   if ( !(*a) && (*b) ) return +1;
-   if ( !(*a) && !(*b) ) return 0;
+   if ( (a) && !(b) ) return -1;
+   if ( !(a) && (b) ) return +1;
+   if ( !(a) && !(b) ) return 0;
 
-	if ((*a)->a > (*b)->a) return +1;
-	if ((*a)->a == (*b)->a) return 0;
+	if ((a)->a > (b)->a) return +1;
+	if ((a)->a == (b)->a) return 0;
 	return -1;
 }
 
@@ -91,13 +94,15 @@ static GncObject_t myobj_object_def =
    printable:         NULL,
 };
 
-#define MYOBJ_A "MyObjA"
-#define MYOBJ_B "MyObjB"
+#define MYOBJ_A    "MyObj_a"
+#define MYOBJ_B    "MyObj_b"
+#define MYOBJ_MEMO "MyObj_memo"
 gboolean myObjRegister (void)
 {
    static QueryObjectDef params[] = {
 	  { MYOBJ_A,  QUERYCORE_INT32, (QueryAccess)my_obj_get_a },
 	  { MYOBJ_B,  QUERYCORE_INT32, (QueryAccess)my_obj_get_b },
+	  { MYOBJ_MEMO,  QUERYCORE_STRING, (QueryAccess)my_obj_get_memo },
      { NULL },
    };
 
@@ -170,31 +175,32 @@ my_app_run_query (GNCBook *book)
 	/* Set the book to be searched */
 	gncQuerySetBook(q, book);
 
-	/* Describe the query to be performed */
-	
-	pred_data = gncQueryStringPredicate (COMPARE_EQUAL, 
-						 "M M M My Sharona",  /* string to match */
-						 STRING_MATCH_CASEINSENSITIVE,  /* case matching */
-						 FALSE /* use_regexp */);
-	
-	param_list = NULL;
+	/* Describe the query to be performed.
+	 * We want to find all objects whose "memo" field matches
+    * a particular string, or all objects whose "b" field is 42.
+    */
+
+	param_list = gncQueryBuildParamList (MYOBJ_MEMO, /* field to match */
+                   NULL); 
+	pred_data = gncQueryStringPredicate (
+                   COMPARE_EQUAL,                   /* comparison to make */
+						 "M M M My Sharona",              /* string to match */
+						 STRING_MATCH_CASEINSENSITIVE,    /* case matching */
+						 FALSE);                          /* use_regexp */
 	gncQueryAddTerm (q, param_list, pred_data, 
-						 QUERY_AND /* How to combine terms */);
+						 QUERY_FIRST_TERM);               /* How to combine terms */
 	
-#if 0
-
-	pred_data = gncQueryNumericPredicate (how, sign, amount);
+	param_list = gncQueryBuildParamList (MYOBJ_B,    /* field to match */
+                   NULL); 
+	pred_data = gncQueryInt32Predicate (
+                   COMPARE_EQUAL,                   /* comparison to make */
+						 42);                             /* value to match */
 	
-
-    xaccQueryAddValueMatch (q, n, NUMERIC_MATCH_ANY,
-	                                COMPARE_EQUAL, QUERY_AND);
-		                                                                                 
-#endif
-
-printf ("before  runquery\n");
+	gncQueryAddTerm (q, param_list, pred_data, 
+						 QUERY_OR);                       /* How to combine terms */
+	
 	/* Run the query */
 	results = gncQueryRun (q);
-printf ("after  runquery\n");
 
 	/* Print out the results */
 	for (n=results; n; n=n->next)
