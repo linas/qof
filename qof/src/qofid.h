@@ -73,8 +73,10 @@ typedef const char * QofIdType;
 typedef const char * QofIdTypeConst;
 
 #define QOF_ID_NONE           NULL
-#define QOF_ID_BOOK           "Book"
 #define QOF_ID_NULL           "null"
+
+#define QOF_ID_BOOK           "Book"
+#define QOF_ID_FREQSPEC       "FreqSpec"
 #define QOF_ID_SESSION        "Session"
 
 /* simple,cheesy cast but holds water for now */
