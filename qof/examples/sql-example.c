@@ -128,8 +128,7 @@ my_app_run_query (QofBook *book)
 	printf ("\n");
    
    /* The query isn't needed any more; discard it */
-   qof_query_destroy (q);
-
+   qof_sql_query_destroy (q);
 }
 
 /* ===================================================== */
