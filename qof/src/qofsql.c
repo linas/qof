@@ -130,7 +130,36 @@ qof_sql_query_run (QofSqlQuery *query, const char *str)
 			
 			/* field to match, assumed, for now to be on the left */
 			/* XXX fix the left-right thing */
-			param_list = qof_query_build_param_list (cond->d.pair.left, NULL);
+			if (NULL == cond->d.pair.left)
+			{
+				printf ("duude missing left paramter\n");
+				return NULL;
+			}
+			sql_field_item * sparam = cond->d.pair.left->item;
+			if (SQL_name != sparam->type)
+			{
+				printf ("Error: we support only paramter names\n");
+				return NULL;
+			}
+			char * qparam_name = sparam->d.name->data;
+
+			/* value to match, assumed, for now, to be on the right. */
+			/* XXX fix the left-right thing */
+			if (NULL == cond->d.pair.right)
+			{
+				printf ("duude missing left paramter\n");
+				return NULL;
+			}
+			sql_field_item * svalue = cond->d.pair.right->item;
+			if (SQL_name != svalue->type)
+			{
+				printf ("Error: we support only simple values\n");
+				return NULL;
+			}
+			char * qvalue_name = svalue->d.name->data;
+
+			/* Now start building the QOF paramter */
+			param_list = qof_query_build_param_list (qparam_name, NULL);
 
 			/* get the where-term comparison operator */
 			QofQueryCompare qop;
@@ -149,7 +178,7 @@ qof_sql_query_run (QofSqlQuery *query, const char *str)
 			 * from the object parameters. */
 			char *table_name;
 			char *param_name;
-			get_table_and_param (cond->d.pair.left, &table_name, &param_name);
+			get_table_and_param (qparam_name, &table_name, &param_name);
 			if (NULL == table_name)
 			{
 				printf ("error: unsupported, naed a table name for now \n");
@@ -162,28 +191,18 @@ qof_sql_query_run (QofSqlQuery *query, const char *str)
 			QofType param_type = qof_class_get_parameter_type (table_name,
 			                  param_name);
 
-			switch (param_type)
+			if (!strcmp (param_type, QOF_TYPE_STRING))
 			{
-				case QOF_TYPE_STRING:
-					pred_data = 
-					    qof_query_string_predicate (qop, /* comparison to make */
-					    cond->d.pair.right,   /* string to match */
-	          	    QOF_STRING_MATCH_CASEINSENSITIVE,  /* case matching */
-	         	    FALSE);                            /* use_regexp */
-					break;
-				case QOF_TYPE_DATE:
-				case QOF_TYPE_NUMERIC:
-				case QOF_TYPE_DEBCRED:
-				case QOF_TYPE_GUID:
-				case QOF_TYPE_INT32:
-				case QOF_TYPE_INT64:
-				case QOF_TYPE_DOUBLE:
-				case QOF_TYPE_BOOLEAN:
-				case QOF_TYPE_KVP:
-				case QOF_TYPE_CHAR:
-					printf ("Error: predicate type unsupported for now \n");
-					return NULL;
-					break;
+				pred_data = 
+				    qof_query_string_predicate (qop, /* comparison to make */
+				    qvalue_name,                     /* string to match */
+	             QOF_STRING_MATCH_CASEINSENSITIVE,  /* case matching */
+	        	    FALSE);                            /* use_regexp */
+			}
+			else
+			{
+				printf ("Error: predicate type unsupported for now \n");
+				return NULL;
 			}
 			qof_query_add_term (query->qof_query, 
 			                param_list, pred_data, QOF_QUERY_FIRST_TERM);

@@ -19,7 +19,8 @@ libqof_la_SOURCES =  \
    qofbook.c         \
    qofobject.c       \
    qofquerycore.c    \
-   qofsession.c
+   qofsession.c      \
+   qofsql.c
 
 qofincludedir = ${pkgincludedir}
 qofinclude_HEADERS = \
@@ -38,7 +39,8 @@ qofinclude_HEADERS = \
    qofbook.h         \
    qofobject.h       \
    qofquerycore.h    \
-   qofsession.h
+   qofsession.h      \
+	qofsql.h
 
 
 noinst_HEADERS =      \
@@ -63,6 +65,7 @@ AM_CFLAGS = -g    \
    @GLIB_CFLAGS@
 
 INCLUDES =                     \
+   -I../lib                    \
    -I$(includedir)             \
    -DPREFIX=\""$(prefix)"\"    \
    -DDATADIR=\""$(datadir)"\" 
