@@ -10,21 +10,43 @@
 <img src="qof-logo.jpg" width="100" height="150" border="5" align=left>
 </a>
 <b><i>Summary:</b></i>
-This page is a casual discussion of one style of desktop application 
-development and what sort of technologies are needed to sustain and 
-grow that style.  In particular, multi-user, data-intensive desktop
-applications are considered. These applications have (or should have) 
-database interfaces, so tha the user and query, report on and manipulate 
-large quantities of data.  Since they manipulate large collections
-of data, they inherenly are, or desire to be, multi-user applications.
-For most developers, the technology of choice, today, for creating 
-large, multi-user, data driven applications is the web and its specturm
-of supporting technologies: Java, .net, application servers.  However,
-this screed runs entirely counter to that trend: it is focused on 
-<i>Desktop</i> apps, apps that use traditional GUI elements for the
-user interface.   Unfortunately, the popularity of the Web seems to
-have caused traditional desktop, client-server technology to atrophy.
-This essay discusses what can be done to counter that trend.
+Desktop application development is not, and desktop application 
+development for multi-user, client-server apps is so hard that 
+almost no one attempts these.  In fact, this is the primary 
+reason for the explosion of web applications:  If you need
+to develop a multi-user, SQL-backed application, you can develop
+it orders of magnitude more quickly by using Apache and PHP 
+(or Java) than you can by using Gnome or KDE.  This is great
+for the web, but terrible for anyone wanting to develop 
+distributed, multi-user desktop applications.  There are many 
+reasons why this is so, and there are many ways in which one
+can attempt to change this situation.  One can boil the ocean
+with this type of discussion; I won't attempt to do that here.
+Instead, lets try to justify an approach like QOF in a broader
+Free Software framework
+<p>
+A number of applications become much more interesting to thier
+users when they have access to large quantities of data,
+or are hooked into databases on the net in some way, or are
+multi-usr or collaborative in some way.  In fact, any large-data
+application is going to be multi-user, since having that much
+data is valuable, and leads to a tremendous pressure to share.
+There's a huge number of apps that fit this profile:
+everything from shopping catalogues, where the store 'shares'
+the product data with the customer, to Bugzilla, where the
+bug status is 'shared' between developers and users, to 
+p2p networks for sharing mp3's.
+<p>
+What does one need to build that kind of application?
+Well, one needs at a minimum a query mechanism, so that the 
+user can query, sort, report on and manipulate the data.  
+Even good single-user apps need this ability: personal photo
+and music organizers will have this kind of interface, as
+well as address-books, and etc.
+
+Next one needs .... ahhhh ..........
+
+
 <p>
 Note that much of this discussion is from the vantage point of Free
 Software development, and explicitly ignores commercial/proprietary 
@@ -32,7 +54,7 @@ technologies.  It is also somewhat focused on
 <a href="http://qof.sourceforge.net">QOF</a> and the specific
 case study of two applications that benefit from QOF: 
 <a href="http://www.gnucash.org">GnuCash</a> and
-<a href="http://gttr.sourceforge.net</a>GnoTime</a>. 
+<a href="http://gttr.sourceforge.net">GnoTime</a>. 
 
 <p>
 <h3>Application Architecture</h3>
@@ -78,13 +100,13 @@ Unfortunately, the automatition of this process is easier said than
 done.  At first, it seems that all one needs is to specify a mapping 
 or 'dictionary' from an SQL table field to an object setter/getter.
 In practice, its more subtle than that.   None-the-less, one of the
-gaols of QOF is to provide a fairly generic dictionary or mapping
+goals of QOF is to provide a fairly generic dictionary or mapping
 mechanism.  To the best of my knowledge, as of today, in the 
-Free Software/Open Source world, there are no generic tools for
-mapping databases to objects, and back.  (It may be that 
-<a href="http://bond.treshna.com">bond-db</a> has taken some steps
-in that direction.)  At least one goal is to have QOF provide this
-kind of function.
+Free Software/Open Source world, there is only one system that maps
+databases to objects, and back: 
+<a href="http://dwi.sourceforge.net">DWI/DUI</a>.  However, that
+system is still rather primitive.  At least one goal is to have 
+QOF integrate with and expanmd on that function.
 
 
 <p>
@@ -93,43 +115,44 @@ The QOF project, and the above comments, make some core assumptions
 that are questionable, and need to be addressed. These are discussed 
 below.
 <p>
-Why C (or C++)? Why not a better language?
-The C/C++ language has many ther problems, the most serious of which 
-is the lack of garbage collection and of any sort of persistance.
-<p>
-In particular, C/C++ lack "object introspection", the ability to 
-have a subroutine, when given an object of unknown type, to find
-out about the object that it's dealing with.
-<p>
-Why not in another language, one that can do introspection, and has
-object factories in it? e.g. Java, python, C#?  The short answer:
-because the mapping between the dynamic (cached) object, and the 
-thing that needs to be persisitent, is not one-to-one.  Thus, 
-introspection is not enough: one really does need to specify how to 
-map object fields to database fields; the mapping is not natively 
-or inherently 1-to-1.  Thus, the object introspection available in
-these othe languages doesn't solve all problems.  One still needs
-to explicitly specify the mapping, while still making it easy on the
-programmer.
-<p>
-Why not go directly from GUI to SQL, and back?  This is the traditional
-'data-driven' programming style.  It has short-comings, the most notable
-of which is the inability (or difficulty of) implenmenting application
-behaviour.  One can all too easily get sucked into writing SQL triggers
-and stored proceedures. That's bad.
-<p>
-Note, however, that much of what a typical GUI application does can,
-in fact, be specified by a declarative language; an algorithmic,
-proceedural language, such as C, really is not required for the 
-vast majority of the application guts.
-<p>
-Why not use GLib GObjects?  I dunno.
-<p>
-Why not UML?  What's UML got to do with it?
-<p>
-Hacking a front/backend onto SQLite, the why's and whynots.
+<ul>
+<li> <p><b>Why C (or C++)? Why not a better language?</b>
+     The C/C++ language has many ther problems, the most serious of which 
+     is the lack of garbage collection and of any sort of persistance.
+     In particular, C/C++ lack "object introspection", the ability to 
+     have a subroutine, when given an object of unknown type, to find
+     out about the object that it's dealing with.
+     Why not in another language, one that can do introspection, and has
+     object factories in it? e.g. Java, python, C#?  The short answer:
+     because the mapping between the dynamic (cached) object, and the 
+     thing that needs to be persisitent, is not one-to-one.  Thus, 
+     introspection is not enough: one really does need to specify how to 
+     map object fields to database fields; the mapping is not natively 
+     or inherently 1-to-1.  Thus, the object introspection available in
+     these othe languages doesn't solve all problems.  One still needs
+     to explicitly specify the mapping, while still making it easy on the
+     programmer.
+     </p>
+     <br>
+<li> <p>Why not go directly from GUI to SQL, and back?  This is the traditional
+     'data-driven' programming style.  It has short-comings, the most notable
+     of which is the inability (or difficulty of) implenmenting application
+     behaviour.  One can all too easily get sucked into writing SQL triggers
+     and stored proceedures. That's bad.
+     Note, however, that much of what a typical GUI application does can,
+     in fact, be specified by a declarative language; an algorithmic,
+     proceedural language, such as C, really is not required for the 
+     vast majority of the application guts.
+     </p>
+     <br>
+<li><p>Why not use GLib GObjects?  I dunno.
+    </p>
+<li><p>Why not UML?  What's UML got to do with it?
+    </p>
+     <br>
+</ul>
 
-
+... Unfinished ... Draft ... 
 
 
 
