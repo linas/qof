@@ -1,0 +1,6 @@
+
+
+June 27 2003 : rename many files and functions to use qof prefix, and 
+     to use a gnome style naming convention.
+
+June 16 2003 : Initial split-off from gnucash
