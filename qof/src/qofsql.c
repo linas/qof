@@ -27,6 +27,8 @@
 
 */
 
+#include <stdlib.h>   /* for working atoll */
+
 #include <glib.h>
 #include <libsql/sql_parser.h>
 #include <qof/kvp_frame.h>
