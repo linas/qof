@@ -36,6 +36,7 @@ struct _QofSqlQuery
 {
 	sql_statement *parse_result;
 	QofQuery *qof_query;
+	QofBook *book;
 	char * single_global_tablename;
 };
 
@@ -48,6 +49,7 @@ qof_sql_query_new(void)
 	
 	sqn->qof_query = NULL;
 	sqn->parse_result = NULL;
+	sqn->book = NULL;
 	sqn->single_global_tablename = NULL;
 
 	return sqn;
@@ -70,7 +72,7 @@ void
 qof_sql_query_set_book (QofSqlQuery *q, QofBook *book)
 {
 	if (!q) return;
-	qof_query_set_book (q->qof_query, book);
+	q->book = book;
 }
 
 /* ========================================================== */
@@ -196,9 +198,19 @@ table_name, param_name, param_type);
 		}
 		pred_data = 
 		    qof_query_string_predicate (qop, /* comparison to make */
-		    qvalue_name,                     /* string to match */
-            QOF_STRING_MATCH_CASEINSENSITIVE,  /* case matching */
-       	    FALSE);                            /* use_regexp */
+		          qvalue_name,                 /* string to match */
+                QOF_STRING_MATCH_CASEINSENSITIVE,  /* case matching */
+       	       FALSE);                            /* use_regexp */
+	}
+	else if (!strcmp (param_type, QOF_TYPE_INT32))
+	{
+		gint32 ival = atoi (qvalue_name);
+		pred_data = qof_query_int32_predicate (qop, ival);
+	}
+	else if (!strcmp (param_type, QOF_TYPE_INT64))
+	{
+		gint64 ival = atoll (qvalue_name);
+		pred_data = qof_query_int64_predicate (qop, ival);
 	}
 	else
 	{
@@ -220,21 +232,36 @@ handle_where (QofSqlQuery *query, sql_where *swear)
 	{
 		case SQL_pair:
 		{
-			printf ("duuude unhandled sql pair\n");
-			// QofQuery * qof_query_merge(QofQuery *q1, QofQuery *q2, QofQueryOp op)
-			return NULL;
-			break;
+			QofQuery *qleft = handle_where (query, swear->d.pair.left);
+			QofQuery *qright = handle_where (query, swear->d.pair.right);
+			if (NULL == qleft) return qright;
+			if (NULL == qright) return qleft;
+			QofQueryOp qop;
+			switch (swear->d.pair.op)
+			{
+				case SQL_and: qop = QOF_QUERY_AND; break;
+				case SQL_or: qop = QOF_QUERY_OR; break;
+				/* XXX should add support for nand, nor, xor */
+				default: 
+					qof_query_destroy (qleft);
+					qof_query_destroy (qright);
+					return NULL;
+			}
+			QofQuery * qq = qof_query_merge (qleft, qright, qop);
+			qof_query_destroy (qleft);
+			qof_query_destroy (qright);
+			return qq;
 		}
 		case SQL_negated:
-			// qof_query_invert ... 
-			printf ("duuude unhandled sql negated\n");
-			return NULL;
-			break;
+		{
+			QofQuery *qq = handle_where (query, swear->d.negated);
+			QofQuery *qneg = qof_query_invert (qq);
+			qof_query_destroy (qq);
+			return qneg;
+		}
+
 		case SQL_single:
 		{
-			GSList *param_list;
-			QofQueryPredData *pred_data = NULL;
-			
 			sql_condition * cond = swear->d.single;
 			return handle_single_condition (cond, query->single_global_tablename);
 		}
@@ -294,6 +321,7 @@ qof_sql_query_run (QofSqlQuery *query, const char *str)
 	 * XXX all this needs fixing.
 	 */
 	qof_query_search_for (query->qof_query, query->single_global_tablename);
+	qof_query_set_book (query->qof_query, query->book);
 
 qof_query_print (query->qof_query);
 	GList *results = qof_query_run (query->qof_query);
