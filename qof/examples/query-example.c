@@ -16,8 +16,8 @@
 
 #include <glib.h>
 
-#include "gncObject.h"
-#include "QueryObject.h"
+#include "qofobject.h"
+#include "qofqueryobject.h"
 
 /* ===================================================== */
 
@@ -32,7 +32,7 @@ typedef struct myobj_s
 GSList *all_my_objs = NULL;
 
 MyObj *
-my_obj_new (GNCBook *book)
+my_obj_new (QofBook *book)
 {
    MyObj *m = g_new0 (MyObj,1);
 
@@ -65,7 +65,7 @@ my_obj_get_memo (MyObj *m)
 /* Loop over every instance of MyObj, and apply the callback to it.
  * This routine must be defined for queries to be possible. */
 void
-my_obj_foreach (GNCBook *book, foreachObjectCB cb, gpointer ud)
+my_obj_foreach (QofBook *book, QofEntityForeachCB cb, gpointer ud)
 {
    GSList *n;
    
@@ -96,9 +96,9 @@ my_obj_order (MyObj *a, MyObj *b)
 
 #define MYOBJ_ID  "MyObj"
 
-static GncObject_t myobj_object_def = 
+static QofObject myobj_object_def = 
 {
-   interface_version: GNC_OBJECT_VERSION,
+   interface_version: QOF_OBJECT_VERSION,
    name:              MYOBJ_ID,
    type_label:        "My Blinking Object",
    book_begin:        NULL,
@@ -116,43 +116,43 @@ static GncObject_t myobj_object_def =
 gboolean myObjRegister (void)
 {
    /* Associate an ASCII name to each getter, as well as the return type */
-   static QueryObjectDef params[] = {
-     { MYOBJ_A,     QUERYCORE_INT32, (QueryAccess)my_obj_get_a },
-     { MYOBJ_B,     QUERYCORE_INT32, (QueryAccess)my_obj_get_b },
-     { MYOBJ_MEMO,  QUERYCORE_STRING, (QueryAccess)my_obj_get_memo },
+   static QofQueryObject params[] = {
+     { MYOBJ_A,     QOF_QUERYCORE_INT32, (QofAccessFunc)my_obj_get_a },
+     { MYOBJ_B,     QOF_QUERYCORE_INT32, (QofAccessFunc)my_obj_get_b },
+     { MYOBJ_MEMO,  QOF_QUERYCORE_STRING, (QofAccessFunc)my_obj_get_memo },
      { NULL },
    };
 
-   gncQueryObjectRegister (MYOBJ_ID, (QuerySort)my_obj_order, params);
-   return gncObjectRegister (&myobj_object_def);
+   qof_query_object_register (MYOBJ_ID, (QofSortFunc)my_obj_order, params);
+   return qof_object_register (&myobj_object_def);
 }
 
 /* ===================================================== */
 
-GNCBook *
+QofBook *
 my_app_init (void)
 {
-   GNCBook *book;
+   QofBook *book;
    
    /* Perform the application object registeration */
    myObjRegister ();
 
    /* Create a new top-level object container */
-   book =  gnc_book_new();
+   book =  qof_book_new();
 
    return book;
 }
 
 void
-my_app_shutdown (GNCBook *book)
+my_app_shutdown (QofBook *book)
 {
    /* Terminate our storage. This prevents the system from
     * being used any further. */
-   gnc_book_destroy (book);
+   qof_book_destroy (book);
 }
 
 void
-my_app_create_data (GNCBook *book)
+my_app_create_data (QofBook *book)
 {
    MyObj *m;
 
@@ -181,50 +181,60 @@ my_app_create_data (GNCBook *book)
  */
 
 void
-my_app_run_query (GNCBook *book)
+my_app_run_query (QofBook *book)
 {
-   QueryPredData_t pred_data;
+   QofQueryPredData *pred_data;
    GSList *param_list;
-   QueryNew *q;
+   QofQuery *q;
    GList *results, *n;
 
    /* Create a new query */
-   q =  gncQueryCreate ();
+   q =  qof_query_create ();
 
    /* Set the object type to be searched for */
-   gncQuerySearchFor (q, MYOBJ_ID);
+   qof_query_search_for (q, MYOBJ_ID);
    
    /* Set the book to be searched */
-   gncQuerySetBook(q, book);
+   qof_query_set_book(q, book);
 
    /* Describe the query to be performed.
     * We want to find all objects whose "memo" field matches
     * a particular string, or all objects whose "b" field is 42.
     */
 
-   param_list = gncQueryBuildParamList (MYOBJ_MEMO, /* field to match */
+   param_list = qof_query_build_param_list (MYOBJ_MEMO, /* field to match */
                    NULL); 
-   pred_data = gncQueryStringPredicate (
-                   COMPARE_EQUAL,                   /* comparison to make */
-                   "M M M My Sharona",              /* string to match */
-                   STRING_MATCH_CASEINSENSITIVE,    /* case matching */
-                   FALSE);                          /* use_regexp */
-   gncQueryAddTerm (q, param_list, pred_data, 
-                   QUERY_FIRST_TERM);               /* How to combine terms */
+   pred_data = qof_query_string_predicate (
+                   QOF_COMPARE_EQUAL,                 /* comparison to make */
+                   "M M M My Sharona",                /* string to match */
+                   QOF_STRING_MATCH_CASEINSENSITIVE,  /* case matching */
+                   FALSE);                            /* use_regexp */
+   qof_query_add_term (q, param_list, pred_data, 
+                   QOF_QUERY_FIRST_TERM);             /* How to combine terms */
    
-   param_list = gncQueryBuildParamList (MYOBJ_B,    /* field to match */
+   param_list = qof_query_build_param_list (MYOBJ_B,  /* field to match */
                    NULL); 
-   pred_data = gncQueryInt32Predicate (
-                   COMPARE_EQUAL,                   /* comparison to make */
-                   42);                             /* value to match */
+   pred_data = qof_query_int32_predicate (
+                   QOF_COMPARE_EQUAL,                 /* comparison to make */
+                   42);                               /* value to match */
    
-   gncQueryAddTerm (q, param_list, pred_data, 
-                   QUERY_OR);                       /* How to combine terms */
+   qof_query_add_term (q, param_list, pred_data, 
+                   QOF_QUERY_OR);                     /* How to combine terms */
    
    /* Run the query */
-   results = gncQueryRun (q);
+   results = qof_query_run (q);
 
    /* Print out the results */
+	printf ("\n");
+   printf ("My Object collection contains the following objects:\n");
+   for (n=all_my_objs; n; n=n->next)
+   {
+      MyObj *m = n->data;
+      printf ("    a=%d b=%d memo=\"%s\"\n", 
+          m->a, m->b, m->memo);
+   }
+	printf ("\n");
+
    printf ("Query returned %d results:\n", g_list_length(results));
    for (n=results; n; n=n->next)
    {
@@ -234,7 +244,7 @@ my_app_run_query (GNCBook *book)
    }
    
    /* The query isn't needed any more; discard it */
-   gncQueryDestroy (q);
+   qof_query_destroy (q);
 
 }
 
@@ -243,14 +253,14 @@ my_app_run_query (GNCBook *book)
 int
 main (int argc, char *argv[]) 
 {
-   GNCBook *book;
+   QofBook *book;
    
    /* Initialize the QOF framework */
    gnc_engine_get_string_cache();
-   xaccGUIDInit ();
-   gncObjectInitialize ();
-   gncQueryNewInit ();
-   gnc_book_register ();
+   guid_init();
+   qof_object_initialize ();
+   qof_query_init ();
+   qof_book_register ();
               
    /* Do application-specific things */
    book = my_app_init();
@@ -259,10 +269,10 @@ main (int argc, char *argv[])
    my_app_shutdown (book);
 
    /* Perform a clean shutdown */
-   gncQueryNewShutdown ();
+   qof_query_shutdown ();
+   qof_object_shutdown ();
+   guid_shutdown ();
    gnc_engine_string_cache_destroy ();
-   gncObjectShutdown ();
-   xaccGUIDShutdown ();
 }
 
 /* =================== END OF FILE ===================== */
