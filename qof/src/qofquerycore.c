@@ -219,7 +219,7 @@ string_predicate_equal (QofQueryPredData *p1, QofQueryPredData *p2)
 
 QofQueryPredData *
 qof_query_string_predicate (QofQueryCompare how,
-                            char *str, QofStringMatch options,
+                            const char *str, QofStringMatch options,
                             gboolean is_regex)
 {
   query_string_t pdata;
