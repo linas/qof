@@ -13,8 +13,9 @@ QOF, the Query Object Framework, provides a set of C Language utilities
 for performing generic structured complex queries on a set of data
 held by a set of C/C++ objects.  This framework is unique in that 
 it does NOT require SQL or any database at all to perform the query.
-Thus, it allows programmers to add query-like support to their 
-applications without having to hook into SQL.  Typically, if you
+Thus, it allows programmers to add query support to their 
+applications without having to hook into an SQL Database.  
+Typically, if you
 have an app, and you want to add the ability to show a set of reports,
 you will need the ability to perform queries in order to get the data
 you need to show a report.  Of course, you can always write a 
@@ -23,8 +24,24 @@ this kind of a programming style is not extensible: just wait till
 you get a user who wants a slightly different report.  The idea behind
 QOF is to provide a generic framework so that any query can be 
 executed, including queries designed by the end-user.  Normally,
-this is possible only if you use SQL; QOF provides another, more 
-natural interface.
+this is possible only if you use a database that supports SQL,
+and then only if you deeply embed the database into your application.
+QOF provides simpler, more natural way to work with objects.
+<p>
+Several usage examples are provided with the source code.  Most
+notable are:
+<ul>
+<li>An <a href="my-obj-example.c.html">example of using QOF
+    to perform a query over some user-defined objects</a>.
+    This example shows how to define an object in QOF,
+    and then perform a half-dozen different SQL queries on it.
+<li>An <a href="gobj-example.c.html">example of using QOF to 
+    query a set of GLib GObjects</a>.  This particular example
+    creates three GtkButton widgets, sets thier labels to different
+    values, and then uses the statement 
+    <b><tt>"SELECT * FROM GtkButton WHERE (label = 'asdfasdf');"</tt></b>
+</ul>
+
 <p>
 QOF is an offshoot from the <a href="http://www.gnucash.org/">GnuCash
 Project</a>, where this framework is a deep, central component.  
@@ -34,7 +51,7 @@ its worth.  However, this SourceForge project is listed as "alpha"
 because much work remains to be done, including the expanded support
 for SQL backends, scheme wrappers, and many other features.  
 Currently, the QOF code is kept manually in sync with the GnuCash
-code; how it will be handled in the future is uncertain.
+code; at some future date, the QOF core will be removed from GnuCash.
 </p>
 <p>
 Besides the query framework, QOF also provides a number of other 
@@ -162,7 +179,7 @@ Furthermore, the subroutine naming convention is a complete mess; its
 a mish-mash of several different old and new GnuCash naming conventions.
 <p>
 The only other project currently using QOF is 
-<a href="http://gnotime.sourceforge.net">GnoTime</a>.
+<a href="http://gttr.sourceforge.net">GnoTime</a>.
 <p>
 You can download code and find out more about the project at the
 <a href="http://sourceforge.net/projects/qof/">QOF SourceForge Project

@@ -20,6 +20,17 @@ is our hope that the system is sufficiently loose that it
 doesn't impose any undesired, forced structure on your 
 particular programming style.  We are trying to provide 
 mechanism, not policy.  Note that this example is in C not C++.
+<p>
+QOF has only one dependency, and that is 
+<a href="http://developer.gnome.org/doc/API/glib/">GLib</a>.
+GLib is a collection of basic algorithms and structures 
+for C programmers, such as linked lists, hash tables, 
+and more.  Glib is a fairly small, fast and simple system, 
+and should not present difficulties to the experienced
+programmer.  In the example below, the list of results
+from the query are returned as a linked list of GLib 
+objects.  Please note that this example neither uses
+nor requires GObjects in any way.  
 
 <pre>
 
