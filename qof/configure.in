@@ -150,6 +150,7 @@ AC_SUBST(LDFLAGS)
 
 AC_OUTPUT([
 Makefile
+doc/Makefile
 examples/Makefile
 examples/gobject/Makefile
 lib/Makefile
@@ -174,7 +175,7 @@ dnl <= Prefixes =>
 echo "prefix : $prefix"
 # echo "sysconf dir : "`eval echo $sysconfdir`
 # echo "bin dir : "`eval echo $bindir`
-# echo "data dir : "`eval echo $pkgdatadir`
+echo "data dir : "`eval echo $datadir`
 echo "include dir : "`eval echo $includedir`
 echo "lib dir : "`eval echo $libdir`
 echo ""
