@@ -291,8 +291,7 @@ qof_query_pred_data_to_xml (QofQueryPredData *pd)
 	if (!safe_strcmp (pd->type_name, QOF_TYPE_CHAR))
 	{
 		xmlNodePtr topnode = xmlNewNode (NULL, "qofquery:pred-char");
-		PUT_HOW ("qofquery:compare", pd->how, LT, LTE, EQUAL, GT, GTE, NEQ);
-
+		/* There is no PUT_HOW for char-match */
 		query_char_t pdata = (query_char_t) pd;
 		
 		PUT_CHAR_MATCH("qofquery:char-match", pdata->options,
@@ -482,7 +481,7 @@ int main (int argc, char * argv[])
 		{ "aint64", QOF_TYPE_INT64, NULL, NULL},
 		{ "astr",   QOF_TYPE_STRING, NULL, NULL},
 		{ NULL },
-   };
+	};
 
 	qof_class_register ("GncABC", NULL, params);
 	sq = qof_sql_query_new();
@@ -496,8 +495,8 @@ int main (int argc, char * argv[])
 
 	qof_query_print (q);
 
-   xmlDocPtr doc = doc = xmlNewDoc("1.0");
-   xmlNodePtr topnode = qof_query_to_xml (q);
+	xmlDocPtr doc = doc = xmlNewDoc("1.0");
+	xmlNodePtr topnode = qof_query_to_xml (q);
 	xmlDocSetRootElement(doc,topnode);
 
 	xmlChar *xbuf;
@@ -514,10 +513,10 @@ printf ("duude\n");
 	xmlOutputBufferPtr xbuf = xmlOutputBufferCreateFile (stdout, NULL);
 printf ("duude\n");
 
-   xbuf = xmlOutputBufferCreateFd (1, NULL);
+	xbuf = xmlOutputBufferCreateFd (1, NULL);
 printf ("duude\n");
 	xmlNodeDumpOutput (xbuf, NULL, topnode, 99, 99, "iso-8859-1");
-   // xmlElemDump (stdout, NULL, topnode);
+	// xmlElemDump (stdout, NULL, topnode);
 #endif
 
 	return 0;
