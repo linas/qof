@@ -18,7 +18,7 @@
 \********************************************************************/
 /** @addtogroup Date
     @{ */
-/** @file date.h 
+/** @file gnc-date.h 
     @brief Date handling routines  
     *
     Utility functions to handle the date (adjusting, get 
@@ -34,28 +34,46 @@
     @author Copyright (C) 1998,1999,2000 Linas Vepstas <linas@linas.org>
 */
 
-#ifndef XACC_DATE_H
-#define XACC_DATE_H
+#ifndef GNC_DATE_H
+#define GNC_DATE_H
 
 #include <glib.h>
 #include <time.h>
 
+		/* Deprecated, backwards-compat defines; remove after gnome2 port */
+		#define getDateFormatString gnc_date_format_get_string
+		#define getDateTextFormatString gnc_date_format_get_format
+		#define getDateFormat gnc_date_format_get
+		#define setDateFormat gnc_date_format_set
+		#define DateFormat GNCDateFormat
+		#define printDateSecs gnc_print_date_secs_buff
+		#define printDate gnc_print_date_buff
+		#define printGDate gnc_print_gdate
+		#define xaccPrintDateSecs gnc_print_date_secs
+		#define scanDate gnc_scan_date
+
+		#define DATE_FORMAT_US GNC_DATE_FORMAT_US
+  		#define DATE_FORMAT_UK GNC_DATE_FORMAT_UK
+  		#define DATE_FORMAT_CE GNC_DATE_FORMAT_CE
+  		#define DATE_FORMAT_ISO GNC_DATE_FORMAT_ISO
+  		#define DATE_FORMAT_LOCALE GNC_DATE_FORMAT_LOCALE
+  		#define DATE_FORMAT_CUSTOM GNC_DATE_FORMAT_CUSTOM
 
 /** Constants *******************************************************/
 
 /** Enum for determining a date format */
 typedef enum
 {
-  DATE_FORMAT_US,       /**< United states: mm/dd/yyyy */
-  DATE_FORMAT_UK,       /**< Britain: dd/mm/yyyy */
-  DATE_FORMAT_CE,       /**< Continental Europe: dd.mm.yyyy */
-  DATE_FORMAT_ISO,      /**< ISO: yyyy-mm-dd */
-  DATE_FORMAT_LOCALE,   /**< Take from locale information */
-  DATE_FORMAT_CUSTOM    /**< Used by the check printing code */
-} DateFormat;
+  GNC_DATE_FORMAT_US,       /**< United states: mm/dd/yyyy */
+  GNC_DATE_FORMAT_UK,       /**< Britain: dd/mm/yyyy */
+  GNC_DATE_FORMAT_CE,       /**< Continental Europe: dd.mm.yyyy */
+  GNC_DATE_FORMAT_ISO,      /**< ISO: yyyy-mm-dd */
+  GNC_DATE_FORMAT_LOCALE,   /**< Take from locale information */
+  GNC_DATE_FORMAT_CUSTOM    /**< Used by the check printing code */
+} GNCDateFormat;
 
-#define DATE_FORMAT_FIRST DATE_FORMAT_US
-#define DATE_FORMAT_LAST  DATE_FORMAT_LOCALE
+#define DATE_FORMAT_FIRST GNC_DATE_FORMAT_US
+#define DATE_FORMAT_LAST  GNC_DATE_FORMAT_LOCALE
 
 /** The maximum length of a string created by the date printers */
 #define MAX_DATE_LENGTH 11
@@ -73,9 +91,9 @@ typedef enum {
 
 
 /* The string->value versions return 0 on success and 1 on failure */
-const char* gnc_date_dateformat_to_string(DateFormat format);
+const char* gnc_date_dateformat_to_string(GNCDateFormat format);
 gboolean gnc_date_string_to_dateformat(const char* format_string,
-				       DateFormat *format);
+				       GNCDateFormat *format);
 
 
 const char* gnc_date_monthformat_to_string(GNCDateMonthFormat format);
@@ -202,16 +220,16 @@ long int gnc_timezone (struct tm *tm);
 
 
 /* ------------------------------------------------------------------------ */
-/** @name DateFormat functions */
+/** @name GNCDateFormat functions */
 /*@{*/
 /** DOCUMENT ME! */
-DateFormat getDateFormat(void);
+GNCDateFormat gnc_date_format_get(void);
 /** DOCUMENT ME! */
-void setDateFormat(DateFormat df);
+void gnc_date_format_set(GNCDateFormat df);
 /** DOCUMENT ME! */
-const gchar *getDateFormatString(DateFormat df);
+const gchar *gnc_date_format_get_string(GNCDateFormat df);
 /** DOCUMENT ME! */
-const gchar *getDateTextFormatString(DateFormat df);
+const gchar *gnc_date_format_get_format(GNCDateFormat df);
 /*@}*/
 
 /** dateSeparator
@@ -234,7 +252,7 @@ char dateSeparator(void);
  * itself, instead of depending on the routines here.
  */
 /*@{*/
-/** printDate
+/** gnc_print_date_buff
  *    Convert a date as day / month / year integers into a localized string
  *    representation
  *
@@ -248,35 +266,35 @@ char dateSeparator(void);
  *
  * Globals: global dateFormat value
  **/
-void printDate (char * buff, int day, int month, int year);
+void gnc_print_date_buff (char * buff, int day, int month, int year);
 
-/** convenience: calls through to printDate(). **/
-void printDateSecs (char * buff, time_t secs);
+/** convenience: calls through to gnc_print_date_buff(). **/
+void gnc_print_date_secs_buff (char * buff, time_t secs);
 
-/** Convenience; calls through to printDate(). **/
-void printGDate( char *buf, GDate *gd );
+/** Convenience; calls through to gnc_print_date_buff(). **/
+void gnc_print_gdate( char *buf, GDate *gd );
 
-/** Convenience; calls through to printDate(). 
+/** Convenience; calls through to gnc_print_date_buff(). 
  *  Return: string, which should be freed when no longer needed.
  * **/
-char * xaccPrintDateSecs (time_t secs);
-
-/** Convenience; calls through to printDate(). 
- *  Return: static global string.
- *  \warning This routine is not thread-safe, because it uses a single
- *      global buffer to store the return value.  Use printDateSecs()
- *      or xaccPrintDateSecs instead.
- * **/
-const char * gnc_print_date(Timespec ts);
+char * gnc_print_date_secs (time_t secs);
 
 /** The xaccDateUtilGetStamp() routine will take the given time in
  *  seconds and return a buffer containing a textual for the date.
  *  @param thyme The time in seconds to convert.
  *  @return A pointer to the generated string.
  *  @note The caller owns this buffer and must free it when done. */
-char *xaccDateUtilGetStamp (time_t thyme);
+char * xaccDateUtilGetStamp (time_t thyme);
 
-/** scanDate
+/** Convenience; calls through to gnc_print_date_buff(). 
+ *  Return: static global string.
+ *  \warning This routine is not thread-safe, because it uses a single
+ *      global buffer to store the return value.  Use gnc_print_date_secs_buff()
+ *      or gnc_print_date_secs instead.
+ * **/
+const char * gnc_print_date(Timespec ts);
+
+/** gnc_scan_date
  *    Convert a string into  day / month / year integers according to
  *    the current dateFormat value.
  *
@@ -289,7 +307,7 @@ char *xaccDateUtilGetStamp (time_t thyme);
  *
  * Globals: global dateFormat value
  */
-void scanDate (const char *buff, int *day, int *month, int *year);
+void gnc_scan_date (const char *buff, int *day, int *month, int *year);
 
 
 /** @name Date Start/End Adjustment routines
@@ -393,8 +411,9 @@ time_t gnc_timet_get_today_end(void);
  *  seconds in textual format.
  *  @return A pointer to the generated string.
  *  @note The caller owns this buffer and must free it when done. */
-char *xaccDateUtilGetStampNow (void);
+char * xaccDateUtilGetStampNow (void);
+
 /*@}*/
 
-#endif /* XACC_DATE_H */
+#endif /* GNC_DATE_H */
 /** @} */

@@ -62,8 +62,8 @@
 #endif
 
 /* This is now user configured through the gnome options system() */
-static DateFormat dateFormat = DATE_FORMAT_LOCALE;
-static DateFormat prevDateFormat = DATE_FORMAT_LOCALE;
+static GNCDateFormat dateFormat = GNC_DATE_FORMAT_LOCALE;
+static GNCDateFormat prevGNCDateFormat = GNC_DATE_FORMAT_LOCALE;
 
 /* This static indicates the debugging module that this .o belongs to. */
 static short module = MOD_ENGINE;
@@ -72,20 +72,20 @@ static short module = MOD_ENGINE;
 \********************************************************************/
 
 const char*
-gnc_date_dateformat_to_string(DateFormat format)
+gnc_date_dateformat_to_string(GNCDateFormat format)
 {
   switch (format) {
-  case DATE_FORMAT_US:
+  case GNC_DATE_FORMAT_US:
     return "us";
-  case DATE_FORMAT_UK:
+  case GNC_DATE_FORMAT_UK:
     return "uk";
-  case DATE_FORMAT_CE:
+  case GNC_DATE_FORMAT_CE:
     return "ce";
-  case DATE_FORMAT_ISO:
+  case GNC_DATE_FORMAT_ISO:
     return "iso";
-  case DATE_FORMAT_LOCALE:
+  case GNC_DATE_FORMAT_LOCALE:
     return "locale";
-  case DATE_FORMAT_CUSTOM:
+  case GNC_DATE_FORMAT_CUSTOM:
     return "custom";
   default:
     return NULL;    
@@ -93,23 +93,23 @@ gnc_date_dateformat_to_string(DateFormat format)
 }
 
 gboolean
-gnc_date_string_to_dateformat(const char* fmt_str, DateFormat *format)
+gnc_date_string_to_dateformat(const char* fmt_str, GNCDateFormat *format)
 {
   if (!fmt_str)
     return TRUE;
 
   if (!strcmp(fmt_str, "us"))
-    *format = DATE_FORMAT_US;
+    *format = GNC_DATE_FORMAT_US;
   else if (!strcmp(fmt_str, "uk"))
-    *format = DATE_FORMAT_UK;
+    *format = GNC_DATE_FORMAT_UK;
   else if (!strcmp(fmt_str, "ce"))
-    *format = DATE_FORMAT_CE;
+    *format = GNC_DATE_FORMAT_CE;
   else if (!strcmp(fmt_str, "iso"))
-    *format = DATE_FORMAT_ISO;
+    *format = GNC_DATE_FORMAT_ISO;
   else if (!strcmp(fmt_str, "locale"))
-    *format = DATE_FORMAT_LOCALE;
+    *format = GNC_DATE_FORMAT_LOCALE;
   else if (!strcmp(fmt_str, "custom"))
-    *format = DATE_FORMAT_CUSTOM;
+    *format = GNC_DATE_FORMAT_CUSTOM;
   else
     return TRUE;
 
@@ -324,31 +324,31 @@ void date_add_months (struct tm *tm, int months, gboolean track_last_day)
 }
 
 /**
- * getDateFormat
+ * gnc_date_format_get
  * Args: nothing
- * returns: DateFormat: enumeration indicating preferred format
+ * returns: GNCDateFormat: enumeration indicating preferred format
  *
  * Globals: dateFormat
  **/
-DateFormat getDateFormat (void)
+GNCDateFormat gnc_date_format_get (void)
 {
   return dateFormat;
 }
 
 /**
- * setDateFormat
+ * gnc_date_format_set
  * set date format to one of US, UK, CE, OR ISO
  * checks to make sure it's a legal value
- * Args: DateFormat: enumeration indicating preferred format
+ * Args: GNCDateFormat: enumeration indicating preferred format
  * returns: nothing
  *
  * Globals: dateFormat
  **/
-void setDateFormat(DateFormat df)
+void gnc_date_format_set(GNCDateFormat df)
 {
   if(df >= DATE_FORMAT_FIRST && df <= DATE_FORMAT_LAST)
   {
-    prevDateFormat = dateFormat;
+    prevGNCDateFormat = dateFormat;
     dateFormat = df;
   }
   else
@@ -360,54 +360,54 @@ void setDateFormat(DateFormat df)
 }
 
 /**
- * getDateFormatString
+ * gnc_date_format_get_string
  * get the date format string for the current format
  * returns: string
  *
  * Globals: dateFormat
  **/
-const gchar *getDateFormatString(DateFormat df)
+const gchar *gnc_date_format_get_string(GNCDateFormat df)
 {
   switch(df) {
-   case DATE_FORMAT_US:
+   case GNC_DATE_FORMAT_US:
     return "%m/%d/%y";
-   case DATE_FORMAT_UK:
+   case GNC_DATE_FORMAT_UK:
     return "%d/%m/%y";
-   case DATE_FORMAT_CE:
+   case GNC_DATE_FORMAT_CE:
     return "%d.%m.%y";
-   case DATE_FORMAT_ISO:
+   case GNC_DATE_FORMAT_ISO:
     return "%y-%m-%d";
-   case DATE_FORMAT_LOCALE:
+   case GNC_DATE_FORMAT_LOCALE:
    default:
     return GNC_D_FMT;
   };
 }
 
 /**
- * getDateTextFormatString
+ * gnc_date_format_get_format
  * get the date format string for the current format
  * returns: string
  *
  * Globals: dateFormat
  **/
-const gchar *getDateTextFormatString(DateFormat df)
+const gchar *gnc_date_format_get_format(GNCDateFormat df)
 {
   switch(df) {
-   case DATE_FORMAT_US:
+   case GNC_DATE_FORMAT_US:
     return "%b %d, %y";
-   case DATE_FORMAT_UK:
-   case DATE_FORMAT_CE:
+   case GNC_DATE_FORMAT_UK:
+   case GNC_DATE_FORMAT_CE:
     return "%d %b, %y";
-   case DATE_FORMAT_ISO:
+   case GNC_DATE_FORMAT_ISO:
     return "%y-%b-%d";
-   case DATE_FORMAT_LOCALE:
+   case GNC_DATE_FORMAT_LOCALE:
    default:
     return GNC_D_FMT;
   };
 }
 
 /**
- * printDate
+ * gnc_print_date_buff
  *    Convert a date as day / month / year integers into a localized string
  *    representation
  *
@@ -422,7 +422,7 @@ const gchar *getDateTextFormatString(DateFormat df)
  * Globals: global dateFormat value
  */
 void 
-printDate (char * buff, int day, int month, int year)
+gnc_print_date_buff (char * buff, int day, int month, int year)
 {
   if (!buff) return;
 
@@ -436,16 +436,16 @@ printDate (char * buff, int day, int month, int year)
    */
   switch(dateFormat)
   {
-    case DATE_FORMAT_UK:
+    case GNC_DATE_FORMAT_UK:
       sprintf (buff, "%2d/%2d/%-4d", day, month, year);
       break;
-    case DATE_FORMAT_CE:
+    case GNC_DATE_FORMAT_CE:
       sprintf (buff, "%2d.%2d.%-4d", day, month, year);
       break;
-    case DATE_FORMAT_ISO:
+    case GNC_DATE_FORMAT_ISO:
       sprintf (buff, "%04d-%02d-%02d", year, month, day);
       break;
-    case DATE_FORMAT_LOCALE:
+    case GNC_DATE_FORMAT_LOCALE:
       {
         struct tm tm_str;
 
@@ -459,7 +459,7 @@ printDate (char * buff, int day, int month, int year)
       }
       break;
 
-    case DATE_FORMAT_US:
+    case GNC_DATE_FORMAT_US:
     default:
       sprintf (buff, "%2d/%2d/%-4d", month, day, year);
       break;
@@ -467,7 +467,7 @@ printDate (char * buff, int day, int month, int year)
 }
 
 void 
-printDateSecs (char * buff, time_t t)
+gnc_print_date_secs_buff (char * buff, time_t t)
 {
   struct tm *theTime;
 
@@ -475,25 +475,25 @@ printDateSecs (char * buff, time_t t)
 
   theTime = localtime (&t);
 
-  printDate (buff, theTime->tm_mday, 
+  gnc_print_date_buff (buff, theTime->tm_mday, 
                    theTime->tm_mon + 1,
                    theTime->tm_year + 1900);
 }
 
 void
-printGDate( char *buf, GDate *gd )
+gnc_print_gdate( char *buf, GDate *gd )
 {
-  printDate( buf,
+  gnc_print_date_buff( buf,
              g_date_day(gd),
              g_date_month(gd),
              g_date_year(gd) );
 }
 
 char * 
-xaccPrintDateSecs (time_t t)
+gnc_print_date_secs (time_t t)
 {
    char buff[100];
-   printDateSecs (buff, t);
+   gnc_print_date_secs_buff (buff, t);
    return g_strdup (buff);
 }
 
@@ -505,13 +505,13 @@ gnc_print_date (Timespec ts)
 
   t = ts.tv_sec + (ts.tv_nsec / 1000000000.0);
 
-  printDateSecs (buff, t);
+  gnc_print_date_secs_buff (buff, t);
 
   return buff;
 }
 
 /**
- * scanDate
+ * gnc_scan_date
  *    Convert a string into  day / month / year integers according to
  *    the current dateFormat value.
  *
@@ -531,8 +531,8 @@ gnc_print_date (Timespec ts)
  * Globals: global dateFormat value
  */
 static gboolean
-scanDateInternal (const char *buff, int *day, int *month, int *year,
-		  DateFormat which_format)
+gnc_scan_dateInternal (const char *buff, int *day, int *month, int *year,
+		  GNCDateFormat which_format)
 {
    char *dupe, *tmp, *first_field, *second_field, *third_field;
    int iday, imonth, iyear;
@@ -571,7 +571,7 @@ scanDateInternal (const char *buff, int *day, int *month, int *year,
    /* get numeric values */
    switch (which_format)
    {
-     case DATE_FORMAT_LOCALE:
+     case GNC_DATE_FORMAT_LOCALE:
        if (buff[0] != '\0')
        {
          struct tm thetime;
@@ -605,8 +605,8 @@ scanDateInternal (const char *buff, int *day, int *month, int *year,
 	 }
        }
        break;
-     case DATE_FORMAT_UK:
-     case DATE_FORMAT_CE:
+     case GNC_DATE_FORMAT_UK:
+     case GNC_DATE_FORMAT_CE:
        if (third_field) {
 	 iday = atoi(first_field);
          imonth = atoi(second_field);
@@ -618,7 +618,7 @@ scanDateInternal (const char *buff, int *day, int *month, int *year,
          iday = atoi(first_field);
        }
        break;
-     case DATE_FORMAT_ISO:
+     case GNC_DATE_FORMAT_ISO:
        if (third_field) {
 	 iyear = atoi(first_field);
          imonth = atoi(second_field);
@@ -630,7 +630,7 @@ scanDateInternal (const char *buff, int *day, int *month, int *year,
          iday = atoi(first_field);
        }
        break;
-    case DATE_FORMAT_US:
+    case GNC_DATE_FORMAT_US:
     default:
        if (third_field) {
          imonth = atoi(first_field);
@@ -659,9 +659,9 @@ scanDateInternal (const char *buff, int *day, int *month, int *year,
       * swaps month and day field, if the day is 12 or less.  This is
       * deemed acceptable given the obscurity of this bug.
       */
-     if (which_format == prevDateFormat)
+     if (which_format == prevGNCDateFormat)
        return(FALSE);
-     if (scanDateInternal(buff, day, month, year, prevDateFormat))
+     if (gnc_scan_dateInternal(buff, day, month, year, prevGNCDateFormat))
        return(TRUE);
    }
 
@@ -677,9 +677,9 @@ scanDateInternal (const char *buff, int *day, int *month, int *year,
 }
 
 void
-scanDate (const char *buff, int *day, int *month, int *year)
+gnc_scan_date (const char *buff, int *day, int *month, int *year)
 {
-  scanDateInternal(buff, day, month, year, dateFormat);
+  gnc_scan_dateInternal(buff, day, month, year, dateFormat);
 }
 
 /**
@@ -692,21 +692,21 @@ scanDate (const char *buff, int *day, int *month, int *year)
  *
  * Globals: global dateFormat value
  */
-char dateSeparator ()
+char dateSeparator (void)
 {
   static char locale_separator = '\0';
 
   switch (dateFormat)
   {
-    case DATE_FORMAT_CE:
+    case GNC_DATE_FORMAT_CE:
       return '.';
-    case DATE_FORMAT_ISO:
+    case GNC_DATE_FORMAT_ISO:
       return '-';
-    case DATE_FORMAT_US:
-    case DATE_FORMAT_UK:
+    case GNC_DATE_FORMAT_US:
+    case GNC_DATE_FORMAT_UK:
     default:
       return '/';
-    case DATE_FORMAT_LOCALE:
+    case GNC_DATE_FORMAT_LOCALE:
       if (locale_separator != '\0')
         return locale_separator;
       else
@@ -727,6 +727,44 @@ char dateSeparator ()
   }
 
   return '\0';
+}
+
+/********************************************************************\
+\********************************************************************/
+                                                                                
+/** The xaccDateUtilGetStamp() routine will take the given time in
+ *  seconds and return a buffer containing a textual for the date.
+ *  @param thyme The time in seconds to convert.
+ *  @return A pointer to the generated string.
+ *  @note The caller owns this buffer and must free it when done. */
+static char *
+xaccDateUtilGetStamp (time_t thyme)
+{
+   struct tm *stm;
+                                                                                
+   stm = localtime (&thyme);
+                                                                                
+   return g_strdup_printf("%04d%02d%02d%02d%02d%02d",
+      (stm->tm_year + 1900),
+      (stm->tm_mon +1),
+      stm->tm_mday,
+      stm->tm_hour,
+      stm->tm_min,
+      stm->tm_sec
+   );
+}
+                                                                                
+                                                                                
+/** The xaccDateUtilGetStampNow() routine returns the current time in
+ *  seconds in textual format.
+ *  @return A pointer to the generated string.
+ *  @note The caller owns this buffer and must free it when done. */
+static char *
+xaccDateUtilGetStampNow (void)
+{
+   time_t now;
+   time (&now);
+   return xaccDateUtilGetStamp (now);
 }
 
 /********************************************************************\
@@ -1055,25 +1093,6 @@ gnc_timet_get_day_end (time_t time_val)
   return mktime(&tm);
 }
 
-/* The xaccDateUtilGetStamp() routine will take the given time in
- * seconds and return a buffer containing a textual for the date. */
-char *
-xaccDateUtilGetStamp (time_t thyme)
-{
-   struct tm *stm;
-
-   stm = localtime (&thyme);
-
-   return g_strdup_printf("%04d%02d%02d%02d%02d%02d",
-      (stm->tm_year + 1900),
-      (stm->tm_mon +1),
-      stm->tm_mday,
-      stm->tm_hour,
-      stm->tm_min,
-      stm->tm_sec
-   );
-}
-
 /* ======================================================== */
 
 void
@@ -1105,17 +1124,6 @@ gnc_timet_get_today_end (void)
   gnc_tm_get_day_end(&tm, time(NULL));
   return mktime(&tm);
 }
-
-/* The xaccDateUtilGetStampNow() routine returns the current time in
- * seconds in textual format. */
-char *
-xaccDateUtilGetStampNow (void)
-{
-   time_t now;
-   time (&now);
-   return xaccDateUtilGetStamp (now);
-}
-
 
 /********************** END OF FILE *********************************\
 \********************************************************************/
