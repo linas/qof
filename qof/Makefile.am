@@ -1,5 +1,5 @@
 
-SUBDIRS = src examples
+SUBDIRS = lib src examples
 
 EXTRA_DIST =                   \
 	.cvsignore                  \

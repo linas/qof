@@ -70,6 +70,8 @@ AC_SUBST(LDFLAGS)
 AC_OUTPUT([
 Makefile
 examples/Makefile
+lib/Makefile
+lib/libsql/Makefile
 src/Makefile
 ])
 
