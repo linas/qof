@@ -1,0 +1,98 @@
+AC_INIT(src)
+AM_INIT_AUTOMAKE(qof, 0.1.0)
+
+AC_PROG_INTLTOOL
+
+AC_PROG_LIBTOOL
+
+AM_CONFIG_HEADER(config.h)
+
+AM_MAINTAINER_MODE
+
+AC_ISC_POSIX
+AC_PROG_CXX
+AC_PROG_CC
+AC_PROG_CPP
+AC_STDC_HEADERS
+AC_PROG_YACC
+AC_PROG_INSTALL
+AC_PROG_LN_S
+AC_PROG_MAKE_SET
+
+AC_PATH_XTRA
+
+dnl *****************************************
+dnl pkg-config check time
+dnl *****************************************
+
+AM_PATH_GLIB
+
+dnl **************************************************************
+dnl Checks for typedefs, structures, and compiler characteristics.
+dnl **************************************************************
+
+AC_C_CONST
+AC_C_INLINE
+AC_TYPE_OFF_T
+AC_TYPE_PID_T
+AC_TYPE_SIZE_T
+AC_STRUCT_ST_RDEV
+AC_HEADER_TIME
+AC_STRUCT_TM
+AC_TYPE_UID_T
+
+dnl *****************************
+dnl Checks for library functions.
+dnl *****************************
+
+AC_FUNC_STRFTIME
+AC_CHECK_FUNCS(getcwd gettimeofday getwd stpcpy strdup strtoul)
+AC_REPLACE_FUNCS(strptime localtime_r)
+
+
+dnl *******************************
+dnl Internationalization
+dnl ******************************* 
+
+ALL_LINGUAS=" "
+GETTEXT_PACKAGE=qof-0.1
+AC_SUBST(GETTEXT_PACKAGE)
+AM_GLIB_GNU_GETTEXT
+
+
+AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$GETTEXT_PACKAGE",
+		[Define the gettext package.])
+
+AC_SUBST(CFLAGS)
+AC_SUBST(CPPFLAGS)
+AC_SUBST(LDFLAGS)
+
+AC_OUTPUT([
+Makefile
+po/Makefile.in
+src/Makefile
+])
+
+dnl <= Configuration summary =>
+
+echo ""
+echo "qof configuration summary:"
+echo "=================================="
+echo ""
+
+dnl <= CFLAGS and LDFLAGS =>
+echo "CFLAGS : $CFLAGS"
+echo "LDFLAGS : $LDFLAGS"
+echo ""
+
+dnl <= Prefixes =>
+echo "prefix : $prefix"
+# echo "sysconf dir : "`eval echo $sysconfdir`
+echo "bin dir : "`eval echo $bindir`
+# echo "sbin dir : "`eval echo $sbindir`
+echo "data dir : "`eval echo $datadir`
+echo ""
+
+
+echo ""
+dnl <= End of configuration summary =>
