@@ -50,11 +50,13 @@
 
 #include <glib.h>
 
+#include "gnc-engine-util.h"
 #include "gnc-event.h"
 #include "gnc-trace.h"
 #include "qofbackend-p.h"
 #include "qofbook.h"
 #include "qofbook-p.h"
+#include "qofobject.h"
 #include "qofsession.h"
 #include "qofsession-p.h"
 
@@ -335,6 +337,7 @@ qof_entity_foreach_copy(gpointer data, gpointer user_data)
 	context = (QofEntityCopyData*) user_data;
 	importEnt = context->from;
 	targetEnt = context->to;
+	registered_type = FALSE;
 	cm_param = (QofParam*) data;
 	if(safe_strcmp(cm_param->param_type, QOF_TYPE_STRING) == 0)  { 
 		cm_string = g_strdup(cm_param->param_getfcn(importEnt, cm_param));
@@ -428,9 +431,9 @@ qof_entity_guid_match(QofSession *new_session, QofEntity *original)
 	QofCollection *coll;
 	
 	copy = NULL;
-	g_return_if_fail(original != NULL);
+	g_return_val_if_fail(original != NULL, FALSE);
 	targetBook = qof_session_get_book(new_session);
-	g_return_if_fail(targetBook != NULL);
+	g_return_val_if_fail(targetBook != NULL, FALSE);
 	g = qof_entity_get_guid(original);
 	type = g_strdup(original->e_type);
 	coll = qof_book_get_collection(targetBook, type);
@@ -550,7 +553,6 @@ gboolean qof_entity_copy_list(QofSession *new_session, GList *entity_list)
 
 gboolean qof_entity_copy_coll(QofSession *new_session, QofCollection *entity_coll)
 {
-	QofEntity *original;
 	QofEntityCopyData qecd;
 
 	qecd.param_list = NULL;
