@@ -21,12 +21,15 @@
 /** @addtogroup Object
     @{ */
 /** @addtogroup Backend
-    The 'backend' is a pseudo-object providing an interface between the
+    The QOF Backend is a pseudo-object providing an interface between the
     engine and a persistant data store (e.g. a server, a database, or
-    a file).  There are no backend functions that are 'public' to
+    a file).   Backends are not meant to be used directly by an
+    application; instead the Session should be used to make a 
+    connection with some particular backend.
+    There are no backend functions that are 'public' to
     users of the engine.  The backend can, however, report errors to
     the GUI & other front-end users.  This file defines these errors.
-
+   
     Backends are used to save and restore Entities in a Book.
     @{ */
 /** @file qofbackend.h
