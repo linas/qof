@@ -207,13 +207,21 @@ qof_map_add_version_cmp (QofMap *qm, const char *fieldname, const char * propert
 
 /* ============================================================== */
 
+static void 
+resolve_to_book (DuiField *fld, gpointer ud)
+{
+	QofMap *qm = ud;
+	dui_field_resolve_qof (fld, qm->book);
+}
+
 void
 qof_map_set_book (QofMap *qm, QofBook *book)
 {
 	qm->book = book;
 
-	/* Each qof field needs to know the book as well. */
-	dui_resolver_resolve_qof (qm->resolver, book);
+	/* Each qof field needs to know about the book as well. */
+	dui_resolver_add_resolver (qm->resolver, resolve_to_book, qm);
+	dui_resolver_resolve (qm->resolver);
 }
 
 void
@@ -368,12 +376,17 @@ qof_map_write_to_db (QofMap *qm, QofInstance *inst)
 	GUID *guid = &QOF_ENTITY(inst)->guid;
 
 	dui_connection_lock(qm->db_conn, qm->table_name);
+
 	/* Use a temp book when loading from the database */
-	dui_resolver_resolve_qof (qm->resolver, qm->tmp_book);
+	QofBook *move_aside = qm->book;
+	qm->book = qm->tmp_book;
+	dui_resolver_resolve (qm->resolver);
+
 	qof_map_copy_from_db (qm, guid);
 
-	/* restore the 'real' book */
-	dui_resolver_resolve_qof (qm->resolver, qm->book);
+	/* Restore the 'real' book */
+	qm->book = move_aside;
+	dui_resolver_resolve (qm->resolver);
 
 	/* See if we got something back from the DB */
 	QofCollection *col;
