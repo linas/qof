@@ -42,8 +42,27 @@ syncing the addressbook on my cell phone with the address book
 on my home computer with the address book on my work computer(s).
 Never mind sharing parts of my address book with friends.
 <p>
-One traditional solution to the sharing problem has been the
-idea of a shared or even global filesystem.  This was the
+What does one need to build that kind of application?
+Well, one needs at a minimum a query mechanism, so that the 
+user can query, sort, report on and manipulate the data.  
+Even good single-user apps need this ability: personal photo
+and music organizers will have this kind of interface, as
+well as address-books, <i>etc</i>.  Blogging tools could benefit 
+from a generalized query mechanism.  P2P already has query
+built-in, although its of a rather poor sort.  Indeed, these 
+types of find &mp; query considerations are driving the 
+<a href="http://www.gnome.org/~seth/storage/">Gnome Storage</a> 
+project (with whom we'd like to collaborate).  They also
+show up as ideas in Microsoft's next-generation Longhorn
+operating system (patent encumbered; however, this project,
+QOF, and the <a href="http://dwi.sourceforge.net">DWI project</a>
+are prior art.)
+
+<p>
+<!-- ====================================================== -->
+<h3>Sharing Technologies</h3>
+One traditional solution to the sharing problem has been <b>the
+idea of a shared or even global filesystem</b>.  This was the
 original vision behind NFS and Microsoft Windows Workgroups
 (SMB/Samba file shares).  Global filesystem attempts include
 AFS (the Andrew File System, from the early 90's), DFS 
@@ -62,37 +81,67 @@ The two apps that are updating the same file at the same
 time don't know about each other, and there is no native 
 or built-in default that would let them find out.
 <p>
+<b>The latest file-sharing technology is 'P2P'</b>, the 
+peer-to-peer networks.  Unfortunately, MP3 trading
+has given them a bad name.  The other problem is that 
+P2P doesn't really provide security (would you use
+P2P to share your financial information with your bank?
+How about medical records? Didn't think so).  P2P 
+networks are also terrible at sharing 'objects' in 
+the sense of OOP objects, they're useless for that.
+They have no built-in versioning for the files they 
+do share: you can't do SCCS/CVS/Subversion/BitKeeper 
+on top of P2P, even though that would be useful.  
+Curiously, though, P2P networks do have the one true
+important feature that makes them popular: <b>P2P query</b>.
+You can issue a query to find the one thing that 
+you really wanted, and it will run that query in
+a distributed, decentralized way, across a panalopy
+of servers.  How else can you find that rare MP3 that
+you wanted?   Unfortunately, <b>none of the P2P query
+protocols are as rich or as powerful as SQL</b>.
+<p>
 Most true multi-user apps are (and have been, from the 
 start, for decades) based on database technology if not 
-SQL proper.  This is because SQL can scale to extremely
+SQL proper.  This is because <b>SQL can scale to extremely
 large datasets without loosing the ability for a user to
-focus in on one or two records.  SQL came with a kind-of
+focus in on one or two records</b>.  SQL came with a kind-of
 browser: the SQL command line.  Though pale in comparision
 to the web browser, it did allow you to look where you
-wanted, to find the needle in the haysack.   Thus it is
-natural to think of SQL when thinking of future multi-user
-applications.
+wanted, to find the needle in the haysack.  SQL is scalable,
+and it can be browsed: these are the same strengths that
+made the web possible.
+<p>
+Thus it is natural to <b>think of querying and databases 
+when thinking of the future of multi-user applications</b>.  
+What hasn't yet been done or fully 
+explored is the possibility of a global database: a database 
+that is accessibly from everywhere in the world (much as http 
+is), but is decentralized, searchable and managed by the users 
+who use it, much as P2P is.
+There are many people, ideas and technology trends that are
+pushing towards a global database, but it hasn't happened
+yet.  The 'convergence between computers, phones and TV's
+is pushing in this direction, but the games only begun.
+<p>
+SQL, however, has its drawbacks.  Most programmers don't 
+know SQL, and a large portion of them blanch and run in the
+opposite direction when they hear those three letters. 
+Actually,  writing applications that mix SQL into the program
+logic is not that hard ... at first.  In fact, its quite easy.
+The problem arises when one has to port to a different database,
+and one discovers that SQL is not terribly well standardized.
+The next problem comes when one wants to add or change tables.
+Programmers typically discover that the SQL code they are 
+maintaining is not modular, and sometimes very poorly structured.
+Object origneted programming and SQL weren't really made for 
+each other, although object oriented databases do help.
 <p>
 
 
-SQL, however,
-has its drawbacks.  
+corba why not .... 
 
 
-
-<p>
-What does one need to build that kind of application?
-Well, one needs at a minimum a query mechanism, so that the 
-user can query, sort, report on and manipulate the data.  
-Even good single-user apps need this ability: personal photo
-and music organizers will have this kind of interface, as
-well as address-books, <i>etc</i>.  Blogging tools could benefit 
-from a generalized query mechanism.  Indeed, these types of
-considerations are driving the 
-<a href="http://www.gnome.org/~seth/storage/">Gnome Storage</a> 
-project (with whom we'd like to collaborate).
-
-Next one needs .... ahhhh ..........
 
 
 <p>
