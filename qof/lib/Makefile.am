@@ -1,5 +1,5 @@
 
-SUBDIRS =  dwi libsql
+SUBDIRS =  libsql
  
 EXTRA_DIST =                   \
         README
