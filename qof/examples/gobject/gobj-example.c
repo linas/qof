@@ -1,4 +1,21 @@
 
+/** @file gobj-example.c
+ *  @breif Example usage of QOF to query a set of GObjects.
+ *  @author Copyright (c) 2004 Linas Vepstas <linas@linas.org>
+ *
+ * This example program shows how to use QOF to query over a set
+ * of GObjects.  In this example, the query is performed over
+ * three GtkButtons, each having a different label.  The result
+ * of the search is the one GtkButton with the desired label.
+ *
+ * The use of GtkButton in this example is artificial.  GLib
+ * GObjects do not have to be GUI objects, and can be created 
+ * for any use desired.  I didn't want to turn this into an 
+ * example of how to create a GObject, and so used a pre-existing
+ * GObject, the GtkButton.
+ */
+
+
 #include <qof/qof.h>
 #include <gtk/gtk.h>
 
