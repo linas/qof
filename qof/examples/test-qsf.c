@@ -82,7 +82,6 @@ myobj* obj_create(QofBook*);
 
 @{ */
 void obj_setName(myobj*,	char*);
-void obj_setGUID(myobj*,	const GUID*);
 void obj_setAmount(myobj*,  gnc_numeric);
 void obj_setDate(myobj*,	Timespec h);
 void obj_setDiscount(myobj*, double);
@@ -94,7 +93,6 @@ void obj_setMinor(myobj*,   gint64);
 
 @{ */
 char*		obj_getName(myobj*);
-const GUID*	obj_getGUID(myobj*);
 gnc_numeric obj_getAmount(myobj*);
 Timespec   	obj_getDate(myobj*);
 double		obj_getDiscount(myobj*);
@@ -112,7 +110,6 @@ obj_create(QofBook *book)
 	g_return_val_if_fail(book, NULL);
 	g = g_new(myobj, 1);
 	qof_instance_init (&g->inst, TEST_MODULE_NAME, book);
-	obj_setGUID(g,qof_instance_get_guid(&g->inst));
 	g->date.tv_nsec = 0;
 	g->date.tv_sec = 0;
 	g->discount = 0;
@@ -195,20 +192,6 @@ obj_getDate(myobj *g)
 }
 
 void
-obj_setGUID(myobj* g, const GUID* h)
-{
-	if(!g) return;
-	g->obj_guid = h;
-}
-
-const GUID* 
-obj_getGUID(myobj *g)
-{
-	if(!g) return NULL;
-	return g->obj_guid;
-}
-
-void 
 obj_setName(myobj* g, char* h)
 {
 	if(!g || !h) return;
@@ -257,7 +240,6 @@ gboolean myobjRegister (void)
   static QofParam params[] = {
 	{ OBJ_NAME,		QOF_TYPE_STRING,	(QofAccessFunc)obj_getName,		(QofSetterFunc)obj_setName		},
 	{ OBJ_AMOUNT,   QOF_TYPE_NUMERIC,   (QofAccessFunc)obj_getAmount,   (QofSetterFunc)obj_setAmount	},
-	{ OBJ_GUID,		QOF_TYPE_GUID,		(QofAccessFunc)obj_getGUID,		(QofSetterFunc)obj_setGUID		},
 	{ OBJ_DATE,		QOF_TYPE_DATE,		(QofAccessFunc)obj_getDate,		(QofSetterFunc)obj_setDate		},
 	{ OBJ_DISCOUNT, QOF_TYPE_DOUBLE,	(QofAccessFunc)obj_getDiscount, (QofSetterFunc)obj_setDiscount  },
 	{ OBJ_ACTIVE,   QOF_TYPE_BOOLEAN,   (QofAccessFunc)obj_getActive,   (QofSetterFunc)obj_setActive	},
@@ -299,10 +281,6 @@ int main (int argc, char **argv)
 	myobjRegister();
  	tester = qof_book_new();
 
-	printf("\n\n\tNote: If you haven't installed DWI,\n\tignore any CRITICAL warning ");
-	printf("about Error: load_backend_library():\n\t");
-	printf("Can't load libqof_backend_dwi.so backend.\n");
-
 	/* Prepare an empty QSF backend - note lack of qof_session_load call. */
 	testing = qof_session_new();
 	path_buffer = g_strdup_printf("file:%s/%s", "/tmp", "qsf-test.xml");
@@ -324,7 +302,6 @@ int main (int argc, char **argv)
 
 	new_obj = g_new(myobj, 1);
 	qof_instance_init (&new_obj->inst, TEST_MODULE_NAME, tester);
-	obj_setGUID(new_obj,qof_instance_get_guid(&new_obj->inst));
 	obj_setName(new_obj, import_init);
 	obj_setAmount(new_obj, obj_amount);
 	obj_setActive(new_obj, active);
