@@ -1472,7 +1472,7 @@ qof_query_printSearchFor (QofQuery * query, GList * output)
 
   searchFor = qof_query_get_search_for (query);
   gs = g_string_new ("Query Object Type: ");
-  g_string_append (gs, searchFor);
+  g_string_append (gs, (NULL == searchFor)? "(null)" : searchFor);
   output = g_list_append (output, gs);
 
   return output;
@@ -1572,7 +1572,8 @@ qof_query_printAndTerms (GList * terms, GList * output)
     path = qof_query_term_get_param_path (qt);
     invert = qof_query_term_is_inverted (qt);
 
-    if (invert) output = g_list_append (output, g_string_new("INVERT SENSE "));
+    if (invert) output = g_list_append (output, 
+                                     g_string_new("    INVERT SENSE "));
     output = g_list_append (output, qof_query_printParamPath (path));
     output = g_list_append (output, qof_query_printPredData (pd));
     output = g_list_append (output, g_string_new("\n"));
