@@ -13,9 +13,9 @@ libqof_la_SOURCES =  \
    kvp_frame.c       \
    md5.c             \
    qofbackend.c      \
+   qofclass.c        \
    qofid.c           \
    qofquery.c        \
-   qofqueryobject.c  \
    qofbook.c         \
    qofobject.c       \
    qofquerycore.c    \
@@ -32,9 +32,9 @@ qofinclude_HEADERS = \
    kvp_frame.h       \
    qof.h             \
    qofbackend.h      \
+   qofclass.h        \
    qofid.h           \
    qofquery.h        \
-   qofqueryobject.h  \
    qofbook.h         \
    qofobject.h       \
    qofquerycore.h    \
@@ -45,9 +45,9 @@ noinst_HEADERS =      \
    gnc-event-p.h      \
    md5.h              \
    qofbackend-p.h     \
+   qofclass-p.h       \
    qofid-p.h          \
    qofquery-p.h       \
-   qofqueryobject-p.h \
    qofbook-p.h        \
    qofobject-p.h      \
    qofquerycore-p.h   \

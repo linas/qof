@@ -46,9 +46,9 @@
 #include "qofbackend-p.h"
 #include "qofbook.h"
 #include "qofbook-p.h"
+#include "qofclass.h"
 #include "qofid-p.h"
 #include "qofobject-p.h"
-#include "qofqueryobject.h"
 
 static short module = MOD_ENGINE;
 
@@ -285,13 +285,13 @@ qof_book_get_counter (QofBook *book, const char *counter_name)
 /* QofObject function implementation and registration */
 gboolean qof_book_register (void)
 {
-  static QofQueryObject params[] = {
-    { QOF_BOOK_KVP, QOF_QUERYCORE_KVP, (QofAccessFunc)qof_book_get_slots },
-    { QOF_QUERY_PARAM_GUID, QOF_QUERYCORE_GUID, (QofAccessFunc)qof_book_get_guid },
+  static QofParam params[] = {
+    { QOF_BOOK_KVP, QOF_TYPE_KVP, (QofAccessFunc)qof_book_get_slots, NULL },
+    { QOF_QUERY_PARAM_GUID, QOF_TYPE_GUID, (QofAccessFunc)qof_book_get_guid, NULL },
     { NULL },
   };
 
-  qof_query_object_register (QOF_ID_BOOK, NULL, params);
+  qof_class_register (QOF_ID_BOOK, NULL, params);
 
   return TRUE;
 }
