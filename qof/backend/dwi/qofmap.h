@@ -38,7 +38,7 @@
 #include <qof/qofbook.h>
 #include <qof/qofinstance.h>
 #include <qof/guid.h>
-#include "database.h"
+#include <dwi/database.h>
 
 typedef struct QofMap_s QofMap;
 

@@ -8,7 +8,8 @@ LIBS = -ldwi
 
 libqof_backend_dwi_la_SOURCES = \
 	dwi-backend.c                \
-	qofmap.c
+ 	qofmap.c 
+
 
 qof_backend_dwiincludedir = ${pkgincludedir}
 qof_backend_dwiinclude_HEADERS = \

@@ -30,14 +30,14 @@
 #include <qof/qofinstance-p.h>
 #include "qofmap.h"
 
-#include "database.h"
-#include "duifield-qof.h"
-#include "duifield-sql.h"
-#include "duifieldmap.h"
-#include "duiresolver.h"
-#include "duitxnquery.h"
-#include "duitxnreport.h"
-#include "perr.h"
+#include <dwi/database.h>
+#include <dwi/duifield-qof.h>
+#include <dwi/duifield-sql.h>
+#include <dwi/duifieldmap.h>
+#include <dwi/duiresolver.h>
+#include <dwi/duitxnquery.h>
+#include <dwi/duitxnreport.h>
+#include <dwi/perr.h>
 
 /* ============================================================== */
 
