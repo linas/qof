@@ -81,8 +81,6 @@ my_obj_order (MyObj *a, MyObj *b)
 /* ===================================================== */
 /* Provide infrastructure to register my object with QOF */
 
-#define MYOBJ_ID  "MyObj"
-
 static QofObject myobj_object_def = 
 {
    interface_version: QOF_OBJECT_VERSION,
@@ -96,10 +94,6 @@ static QofObject myobj_object_def =
    printable:         NULL,
 };
 
-/* Some arbitrary names for data getters that the query will employ */
-#define MYOBJ_A    "MyObj_a"
-#define MYOBJ_B    "MyObj_b"
-#define MYOBJ_MEMO "MyObj_memo"
 gboolean myObjRegister (void)
 {
    /* Associate an ASCII name to each getter, as well as the return type */

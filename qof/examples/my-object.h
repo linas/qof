@@ -22,6 +22,15 @@ typedef struct myobj_s
    char *memo;     /* Some string value */
 } MyObj;
 
+/* String identifying the 'type' or 'class' of this object */
+#define MYOBJ_ID  "MyObj"
+
+/* Some arbitrary names for data that can be queried on this object. */
+#define MYOBJ_A    "MyObj_a"
+#define MYOBJ_B    "MyObj_b"
+#define MYOBJ_MEMO "MyObj_memo"
+
+
 MyObj * my_obj_new (QofBook *book);
 
 /* Generic object getters */
