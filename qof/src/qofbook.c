@@ -326,7 +326,7 @@ gboolean qof_book_register (void)
 {
   static QofParam params[] = {
     { QOF_BOOK_KVP, QOF_TYPE_KVP, (QofAccessFunc)qof_book_get_slots, NULL },
-    { QOF_QUERY_PARAM_GUID, QOF_TYPE_GUID, (QofAccessFunc)qof_entity_get_guid, NULL },
+    { QOF_PARAM_GUID, QOF_TYPE_GUID, (QofAccessFunc)qof_entity_get_guid, NULL },
     { NULL },
   };
 
