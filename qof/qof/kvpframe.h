@@ -25,7 +25,7 @@
  * possible types enumerated in the KvpValueType enum, and includes, 
  * among other things, ints, doubles, strings, guid's, lists, time
  * and numeric values.  KvpValues may also be other frames, so
- * KVP is inherently heirarchical.
+ * KVP is inherently hierarchical.
  * 
  * Values are stored in a 'slot' associated with a key.
  * Pointers passed as arguments into set_slot and get_slot are the
@@ -351,14 +351,14 @@ KvpFrame    * kvp_frame_get_frame_path (KvpFrame *frame, const char *,...);
 
 /** This routine returns the last frame of the path.
  *  If the frame path doesn't exist, it is created.  
- *  Note that this is *VERY DIFFERENT FROM* like kvp_frame_get_frame()
+ *  Note that this is *VERY DIFFERENT FROM* kvp_frame_get_frame()
  */
 KvpFrame    * kvp_frame_get_frame_gslist (KvpFrame *frame,
                                            GSList *key_path);
 
 /** This routine returns the last frame of the path.
  *  If the frame path doesn't exist, it is created.  
- *  Note that this is *VERY DIFFERENT FROM* like kvp_frame_get_frame()
+ *  Note that this is *VERY DIFFERENT FROM* kvp_frame_get_frame()
  *
  * The kvp_frame_get_frame_slash() routine takes a single string
  *    where the keys are separated by slashes; thus, for example:

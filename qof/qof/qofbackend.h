@@ -92,6 +92,11 @@ typedef enum {
   contains invalid data in a field that is meant to hold a signed long integer or signed long long
   integer.
   */
+  ERR_QSF_OPEN_NOT_MERGE,	/** QSF files cannot be opened alone. The data must be merged.
+
+  This error is more of a warning that can be ignored by any routine
+  that uses qof_book_merge on the new session.
+  */
   /* fileio errors */
   ERR_FILEIO_FILE_BAD_READ = 1000,  /**< read failed or file prematurely truncated */
   ERR_FILEIO_FILE_EMPTY,     /**< file exists, is readable, but is empty */

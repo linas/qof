@@ -1,5 +1,5 @@
 /********************************************************************\
- * qofclass.h -- API for registering paramters on objects           *
+ * qofclass.h -- API for registering parameters on objects          *
  *                                                                  *
  * This program is free software; you can redistribute it and/or    *
  * modify it under the terms of the GNU General Public License as   *
@@ -212,6 +212,13 @@ typedef void (*QofParamForeachCB) (QofParam *, gpointer user_data);
 void qof_class_param_foreach (QofIdTypeConst obj_name,
                               QofParamForeachCB, gpointer user_data);
 
+/** \brief List of the parameters that could be references.
+
+Simple check to return a GList of all parameters
+of this object type that are not known QOF data types.
+Used for partial QofBook support, see ::QofEntityReference
+*/
+GList* qof_class_get_referenceList(QofIdTypeConst type);
 
 #endif /* QOF_CLASS_H */
 /* @} */

@@ -1,4 +1,21 @@
-
+2005-03-21 Neil Williams <linux@codehelp.co.uk>
+	* backend/file/qsf-backend.c:
+	* backend/file/qsf-xml.c:
+	* backend/file/qsf-xml.h:
+	Reference support for partial QofBooks
+	* doc/doxygen.cfg.in: Doxygen search engine.
+	* qof/kvp_frame.h: typos.
+	* qof/qof_book_merge.c: Reference handling
+	and fixing QOF_TYPE_CHAR routines.
+	* qof/qofbackend.h: Adding error code for QSF.
+	* qof/qofbook.h: documentation tweaks.
+	* qof/qofclass.c: Reference handling support.
+	* qof/qofclass.h: Typos and reference handling.
+	* qof/qofid.c: Typo.
+	* qof/qofsession.c: Reference support changing
+	from hashtable to list.
+	* qof/qofsession.h: Reference support.
+	
 2004-05-01 Linas Vepstas <linas@linas.org>
 	* Add query to XML serialization
 	* Add doxygen automatic document generation

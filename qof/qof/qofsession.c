@@ -54,11 +54,11 @@
 #include "gnc-engine-util.h"
 #include "gnc-event.h"
 #include "gnc-trace.h"
+#include "qofsession.h"
 #include "qofbackend-p.h"
 #include "qofbook.h"
 #include "qofbook-p.h"
 #include "qofobject.h"
-#include "qofsession.h"
 #include "qofsession-p.h"
 
 /* Some gnucash-specific code */
@@ -66,8 +66,8 @@
 #include "gnc-module.h"
 #endif /* GNUCASH */
 
-static GHookList * session_closed_hooks = NULL;
 static QofSession * current_session = NULL;
+static GHookList * session_closed_hooks = NULL;
 static short module = MOD_BACKEND;
 static GSList *provider_list = NULL;
 
@@ -318,11 +318,39 @@ qof_session_get_url (QofSession *session)
 typedef struct qof_entity_copy_data {
 	QofEntity *from;
 	QofEntity *to;
-	GHashTable *referenceTable;	
+	GList  *referenceList;
 	GSList *param_list;
 	QofSession *new_session;
 	gboolean error;
 }QofEntityCopyData;
+
+static gboolean
+qsf_check_error(QofEntityCopyData *qecd)
+{
+	if(qecd->error == TRUE) {
+		qof_entity_release(qecd->to);
+		g_free(qecd->to);
+		return TRUE;
+	}
+	return FALSE;
+}
+
+void
+qof_session_update_reference_list(QofSession *session, QofEntityReference *reference)
+{
+	QofBook  *book;
+	GList    *book_ref_list;
+	gboolean partial;
+
+	book = qof_session_get_book(session);
+	book_ref_list = (GList*)qof_book_get_data(book, ENTITYREFERENCE);
+	book_ref_list = g_list_append(book_ref_list, reference);
+	qof_book_set_data(book, ENTITYREFERENCE, book_ref_list);
+	partial = (gboolean)qof_book_get_data(book, PARTIAL_QOFBOOK);
+	if(!partial) {
+		qof_book_set_data(book, PARTIAL_QOFBOOK, (gboolean*)TRUE);
+	}
+}
 
 static void
 qof_entity_param_cb(QofParam *param, gpointer data)
@@ -333,9 +361,35 @@ qof_entity_param_cb(QofParam *param, gpointer data)
 	qecd = (QofEntityCopyData*)data;
 	g_return_if_fail(qecd != NULL);
 	if((param->param_getfcn != NULL)&&(param->param_setfcn != NULL)) {
-			qecd->param_list = g_slist_append(qecd->param_list, param);
+			qecd->param_list = g_slist_prepend(qecd->param_list, param);
 	}
 	if(g_slist_length(qecd->param_list) == 0) { qecd->error = TRUE; }
+}
+
+QofEntityReference*
+qof_entity_get_reference_from(QofEntity *ent, const QofParam *param)
+{
+	QofEntityReference *reference;
+	QofEntity    *ref_ent;
+	const GUID   *cm_guid;
+	char         cm_sa[GUID_ENCODING_LENGTH + 1];
+	gchar        *cm_string;
+
+	ref_ent = param->param_getfcn(ent, param);
+	if(ref_ent != NULL) {
+		reference = g_new0(QofEntityReference, 1);
+		reference->type = g_strdup(ent->e_type);
+		reference->ref_guid = g_new(GUID, 1);
+		reference->ent_guid = &ent->guid;
+		reference->param = param;
+		cm_guid = qof_entity_get_guid(ref_ent);
+		guid_to_string_buff(cm_guid, cm_sa);
+		cm_string = g_strdup(cm_sa);
+		if(TRUE == string_to_guid(cm_string, reference->ref_guid)) {
+			return reference;
+		}
+	}
+	return NULL;
 }
 
 static void
@@ -349,9 +403,7 @@ qof_entity_foreach_copy(gpointer data, gpointer user_data)
 	QofParam 		*cm_param;
 	gchar 			*cm_string, *cm_char;
 	const GUID 		*cm_guid;
-	GUID            *cm_src_guid;
 	KvpFrame 		*cm_kvp;
-	char 		    cm_sa[GUID_ENCODING_LENGTH + 1];
 	/* function pointers and variables for parameter getters that don't use pointers normally */
 	gnc_numeric 	cm_numeric, (*numeric_getter)	(QofEntity*, QofParam*);
 	double 			cm_double, 	(*double_getter)	(QofEntity*, QofParam*);
@@ -371,18 +423,23 @@ qof_entity_foreach_copy(gpointer data, gpointer user_data)
 	void	(*char_setter)		(QofEntity*, char*);
 	void	(*kvp_frame_setter)	(QofEntity*, KvpFrame*);
 	
-	g_return_if_fail(data != NULL);
 	g_return_if_fail(user_data != NULL);
 	context = (QofEntityCopyData*) user_data;
+	/* in case of any error, let the process know. */
+	if(context->error == TRUE) { return; }
+	context->error = TRUE;
 	importEnt = context->from;
 	targetEnt = context->to;
 	registered_type = FALSE;
 	cm_param = (QofParam*) data;
+	g_return_if_fail(cm_param != NULL);
+	ENTER (" cm_param->param_type=%s\tname=%s", cm_param->param_type, cm_param->param_name);
 	if(safe_strcmp(cm_param->param_type, QOF_TYPE_STRING) == 0)  { 
 		cm_string = g_strdup(cm_param->param_getfcn(importEnt, cm_param));
 		string_setter = (void(*)(QofEntity*, const char*))cm_param->param_setfcn;
 		if(string_setter != NULL) {	string_setter(targetEnt, cm_string); }
 		registered_type = TRUE;
+		context->error = FALSE;
 	}
 	if(safe_strcmp(cm_param->param_type, QOF_TYPE_DATE) == 0) { 
 		date_getter = (Timespec (*)(QofEntity*, QofParam*))cm_param->param_getfcn;
@@ -390,6 +447,7 @@ qof_entity_foreach_copy(gpointer data, gpointer user_data)
 		date_setter = (void(*)(QofEntity*, Timespec))cm_param->param_setfcn;
 		if(date_setter != NULL) { date_setter(targetEnt, cm_date); }
 		registered_type = TRUE;
+		context->error = FALSE;
 	}
 	if((safe_strcmp(cm_param->param_type, QOF_TYPE_NUMERIC) == 0)  ||
 	(safe_strcmp(cm_param->param_type, QOF_TYPE_DEBCRED) == 0)) { 
@@ -398,12 +456,14 @@ qof_entity_foreach_copy(gpointer data, gpointer user_data)
 		numeric_setter = (void(*)(QofEntity*, gnc_numeric))cm_param->param_setfcn;
 		if(numeric_setter != NULL) { numeric_setter(targetEnt, cm_numeric); }
 		registered_type = TRUE;
+		context->error = FALSE;
 	}
 	if(safe_strcmp(cm_param->param_type, QOF_TYPE_GUID) == 0) { 
 		cm_guid = cm_param->param_getfcn(importEnt, cm_param);
 		guid_setter = (void(*)(QofEntity*, const GUID*))cm_param->param_setfcn;
 		if(guid_setter != NULL) { guid_setter(targetEnt, cm_guid); }
 		registered_type = TRUE;
+		context->error = FALSE;
 	}
 	if(safe_strcmp(cm_param->param_type, QOF_TYPE_INT32) == 0) { 
 		int32_getter = (gint32 (*)(QofEntity*, QofParam*)) cm_param->param_getfcn;
@@ -411,6 +471,7 @@ qof_entity_foreach_copy(gpointer data, gpointer user_data)
 		i32_setter = (void(*)(QofEntity*, gint32))cm_param->param_setfcn;
 		if(i32_setter != NULL) { i32_setter(targetEnt, cm_i32); }
 		registered_type = TRUE;
+		context->error = FALSE;
 	}
 	if(safe_strcmp(cm_param->param_type, QOF_TYPE_INT64) == 0) { 
 		int64_getter = (gint64 (*)(QofEntity*, QofParam*)) cm_param->param_getfcn;
@@ -418,6 +479,7 @@ qof_entity_foreach_copy(gpointer data, gpointer user_data)
 		i64_setter = (void(*)(QofEntity*, gint64))cm_param->param_setfcn;
 		if(i64_setter != NULL) { i64_setter(targetEnt, cm_i64); }
 		registered_type = TRUE;
+		context->error = FALSE;
 	}
 	if(safe_strcmp(cm_param->param_type, QOF_TYPE_DOUBLE) == 0) { 
 		double_getter = (double (*)(QofEntity*, QofParam*)) cm_param->param_getfcn;
@@ -425,6 +487,7 @@ qof_entity_foreach_copy(gpointer data, gpointer user_data)
 		double_setter = (void(*)(QofEntity*, double))cm_param->param_setfcn;
 		if(double_setter != NULL) { double_setter(targetEnt, cm_double); }
 		registered_type = TRUE;
+		context->error = FALSE;
 	}
 	if(safe_strcmp(cm_param->param_type, QOF_TYPE_BOOLEAN) == 0){ 
 		boolean_getter = (gboolean (*)(QofEntity*, QofParam*)) cm_param->param_getfcn;
@@ -432,31 +495,30 @@ qof_entity_foreach_copy(gpointer data, gpointer user_data)
 		boolean_setter = (void(*)(QofEntity*, gboolean))cm_param->param_setfcn;
 		if(boolean_setter != NULL) { boolean_setter(targetEnt, cm_boolean); }
 		registered_type = TRUE;
+		context->error = FALSE;
 	}
 	if(safe_strcmp(cm_param->param_type, QOF_TYPE_KVP) == 0) { 
 		cm_kvp = kvp_frame_copy(cm_param->param_getfcn(importEnt,cm_param));
 		kvp_frame_setter = (void(*)(QofEntity*, KvpFrame*))cm_param->param_setfcn;
 		if(kvp_frame_setter != NULL) { kvp_frame_setter(targetEnt, cm_kvp); }
 		registered_type = TRUE;
+		context->error = FALSE;
 	}
 	if(safe_strcmp(cm_param->param_type, QOF_TYPE_CHAR) == 0) { 
 		cm_char = cm_param->param_getfcn(importEnt,cm_param);
 		char_setter = (void(*)(QofEntity*, char*))cm_param->param_setfcn;
 		if(char_setter != NULL) { char_setter(targetEnt, cm_char); }
 		registered_type = TRUE;
+		context->error = FALSE;
 	}
 	if(registered_type == FALSE) {
+		PINFO (" cm_param type=%s", cm_param->param_type);
 		referenceEnt = cm_param->param_getfcn(importEnt, cm_param);
-		reference = g_new(QofEntityReference, 1);
-		reference->type = g_strdup(referenceEnt->e_type);
-		reference->guid = g_new(GUID, 1);
-		cm_guid = qof_entity_get_guid(referenceEnt);
-		guid_to_string_buff(cm_guid, cm_sa);
-		cm_string = g_strdup(cm_sa);
-		if(TRUE == string_to_guid(cm_string, reference->guid)) {
-			cm_src_guid = &importEnt->guid;
-			g_hash_table_insert(context->referenceTable, cm_src_guid, reference);
+		reference = qof_entity_get_reference_from(importEnt, cm_param);
+		if(reference) {
+			qof_session_update_reference_list(context->new_session, reference);
 		}
+		context->error = FALSE;
 	}
 }
 
@@ -500,10 +562,11 @@ qof_entity_list_foreach(gpointer data, gpointer user_data)
 	qecd->to = &inst->entity;
 	g = qof_entity_get_guid(original);
 	qof_entity_set_guid(qecd->to, g);
+	if(qecd->param_list != NULL) { g_slist_free(qecd->param_list); }
 	qof_class_param_foreach(original->e_type, qof_entity_param_cb, qecd);
+	if(qsf_check_error(qecd)) { return; }
 	g_slist_foreach(qecd->param_list, qof_entity_foreach_copy, qecd);
-	qof_book_set_data(book, ENTITYREFERENCE, qecd->referenceTable);
-	qof_book_set_data(book, PARTIAL_QOFBOOK, (gboolean*)TRUE);
+	qsf_check_error(qecd);
 }
 
 static void
@@ -516,6 +579,7 @@ qof_entity_coll_foreach(QofEntity *original, gpointer user_data)
 	QofEntity *copy;
 	
 	g_return_if_fail(user_data != NULL);
+	copy = NULL;
 	qecd = (QofEntityCopyData*)user_data;
 	targetBook = qof_session_get_book(qecd->new_session);
 	g = qof_entity_get_guid(original);
@@ -540,10 +604,8 @@ qof_entity_coll_copy(QofEntity *original, gpointer user_data)
 	qecd->from = original;
 	g = qof_entity_get_guid(original);
 	qof_entity_set_guid(qecd->to, g);
-	qof_class_param_foreach(original->e_type, qof_entity_param_cb, qecd);
 	g_slist_foreach(qecd->param_list, qof_entity_foreach_copy, qecd);
-	qof_book_set_data(book, ENTITYREFERENCE, qecd->referenceTable);
-	qof_book_set_data(book, PARTIAL_QOFBOOK, (gboolean*)TRUE);
+	qsf_check_error(qecd);
 }
 
 gboolean qof_entity_copy_to_session(QofSession* new_session, QofEntity* original)
@@ -554,20 +616,22 @@ gboolean qof_entity_copy_to_session(QofSession* new_session, QofEntity* original
 	const GUID *g;
 
 	if(qof_entity_guid_match(new_session, original)) return FALSE;
+	gnc_engine_suspend_events();
 	qecd.param_list = NULL;
-	qecd.referenceTable = g_hash_table_new(NULL, NULL);
+	book = qof_session_get_book(new_session);
 	qecd.new_session = new_session;
 	qecd.error = FALSE;
-	book = qof_session_get_book(new_session);
 	inst = (QofInstance*)qof_object_new_instance(original->e_type, book);
 	qecd.to = &inst->entity;
 	qecd.from = original;
 	g = qof_entity_get_guid(original);
 	qof_entity_set_guid(qecd.to, g);
 	qof_class_param_foreach(original->e_type, qof_entity_param_cb, &qecd);
+	if(qsf_check_error(&qecd)) { return FALSE; }
 	g_slist_foreach(qecd.param_list, qof_entity_foreach_copy, &qecd);
-	qof_book_set_data(book, ENTITYREFERENCE, qecd.referenceTable);
-	qof_book_set_data(book, PARTIAL_QOFBOOK, (gboolean*)TRUE);
+	if(qsf_check_error(&qecd)) { return FALSE; }
+	g_slist_free(qecd.param_list);
+	gnc_engine_resume_events();
 	return TRUE;
 }
 
@@ -577,19 +641,20 @@ gboolean qof_entity_copy_list(QofSession *new_session, GList *entity_list)
 	QofEntity *original;
 	QofEntityCopyData qecd;
 
+	gnc_engine_suspend_events();
 	qecd.param_list = NULL;
 	qecd.new_session = new_session;
-	qecd.referenceTable = g_hash_table_new(NULL, NULL);
 	qecd.error = FALSE;
 	for(e=entity_list; e; e=e->next)
 	{
 		original = (QofEntity*) e->data;
-		/* The GList can contain mixed entity types, it may 
-		appear slow, but we do need to check the type every time
-		because we can't re-use the QofCollection or QofIdType.	*/
+		/* The GList can contain mixed entity types, it may */
+		/* appear slow, but we do need to check the type every time */
+		/* because we can't re-use the QofCollection or QofIdType. */
 		if(qof_entity_guid_match(new_session, original)) return FALSE;
 	}
 	g_list_foreach(entity_list, qof_entity_list_foreach, &qecd);
+	gnc_engine_resume_events();
 	return TRUE;
 }
 
@@ -597,13 +662,16 @@ gboolean qof_entity_copy_coll(QofSession *new_session, QofCollection *entity_col
 {
 	QofEntityCopyData qecd;
 
+	gnc_engine_suspend_events();
 	qecd.param_list = NULL;
 	qecd.new_session = new_session;
-	qecd.referenceTable = g_hash_table_new(NULL, NULL);
 	qecd.error = FALSE;
 	qof_collection_foreach(entity_coll, qof_entity_coll_foreach, &qecd);
 	if(qecd.error == TRUE) return FALSE;
+	qof_class_param_foreach(qof_collection_get_type(entity_coll), qof_entity_param_cb, &qecd);
 	qof_collection_foreach(entity_coll, qof_entity_coll_copy, &qecd);
+	if(qecd.param_list != NULL) { g_slist_free(qecd.param_list); }
+	gnc_engine_resume_events();
 	return TRUE;
 }
 
@@ -658,12 +726,13 @@ qof_session_load_backend(QofSession * session, char * backend_name)
 	QofBook   *book;
 	GNCModule  mod;
 	GSList    *p;
-	char       *mod_name, *access_method;
+	char       *mod_name, *access_method, *msg;
 	QofBackend *(* be_new_func)(void);
 	QofBackendProvider *prov;
 
 	mod	= 0;
 	mod_name = g_strdup_printf("gnucash/backend/%s", backend_name);
+	msg = g_strdup_printf(" ");
 	/* FIXME : reinstate better error messages with gnc_module errors */
 	ENTER (" ");
 	/* FIXME: this needs to be smarter with version numbers. */
@@ -714,12 +783,9 @@ qof_session_load_backend(QofSession * session, char * backend_name)
 			return;
 		}
 	}
-	qof_session_push_error (session, ERR_BACKEND_NO_HANDLER, NULL);
-/*    qof_session_int_backend_load_error(session,
-                                       " failed to load '%s' backend", 
-                                       backend_name);*/
+	msg = g_strdup_printf("failed to load '%s' backend", backend_name);
+	qof_session_push_error (session, ERR_BACKEND_NO_HANDLER, msg);
   }
-
   g_free(mod_name);
   LEAVE (" ");
 }
@@ -733,6 +799,7 @@ qof_session_load_backend(QofSession * session, char * access_method)
 	GList *node;
 	QofBackendProvider *prov;
 	QofBook *book;
+	char *msg;
 	
 	ENTER (" ");
 	/* If the provider list is null, try to register the 'well-known'
@@ -766,7 +833,8 @@ qof_session_load_backend(QofSession * session, char * access_method)
 		}
 		p = p->next;
 	}
-	qof_session_push_error (session, ERR_BACKEND_NO_HANDLER, NULL);
+	msg = g_strdup_printf("failed to load '%s' using access_method", access_method);
+	qof_session_push_error (session, ERR_BACKEND_NO_HANDLER, msg);
 	LEAVE (" ");
 }
 #endif /* GNUCASH */
@@ -803,8 +871,9 @@ qof_session_begin (QofSession *session, const char * book_id,
                    gboolean ignore_lock, gboolean create_if_nonexistent)
 {
   char *p, *access_method, *msg;
-  if (!session) return;
   int err;
+
+  if (!session) return;
 
   ENTER (" sess=%p ignore_lock=%d, book-id=%s", 
          session, ignore_lock,
@@ -878,7 +947,7 @@ qof_session_begin (QofSession *session, const char * book_id,
           g_free(session->book_id);
           session->book_id = NULL;
           qof_session_push_error (session, err, msg);
-          LEAVE("backend error %d", err);
+          LEAVE(" backend error %d %s", err, msg);
           return;
       }
       if (msg != NULL) 
@@ -1016,7 +1085,7 @@ qof_session_save (QofSession *session,
 	GSList *p;
 	QofBook *book, *abook;
 	int err;
-	char *msg;
+	char *msg, *book_id;
 	
 	if (!session) return;
 	ENTER ("sess=%p book_id=%s", 
@@ -1024,23 +1093,29 @@ qof_session_save (QofSession *session,
 	/* Partial book handling. */
 	book = qof_session_get_book(session);
 	partial = (gboolean)qof_book_get_data(book, PARTIAL_QOFBOOK);
-	change_backend = TRUE;
+	change_backend = FALSE;
+	msg = g_strdup_printf(" ");
+	book_id = g_strdup(session->book_id);
 	if(partial == TRUE)
 	{
 		if(session->backend->provider) {
 			prov = session->backend->provider;
 			if(TRUE == prov->partial_book_supported)
 			{
+				/* if current backend supports partial, leave alone. */
 				change_backend = FALSE;
 			}
+			else { change_backend = TRUE; }
 		}
+		/* If provider is undefined, assume partial not supported. */
+		else { change_backend = TRUE; }
 	}
 	if(change_backend == TRUE)
 	{
 		qof_session_destroy_backend(session);
 		if (NULL == provider_list)
 		{
-			load_backend_library ("libqsf-backend-file.so", "qsf_provider_init" );
+			load_backend_library ("libqof-backend-qsf.so", "qsf_provider_init" );
 		}
 		p = g_slist_copy(provider_list);
 		while(p != NULL)
@@ -1048,7 +1123,7 @@ qof_session_save (QofSession *session,
 			prov = p->data;
 			if(TRUE == prov->partial_book_supported)
 			{
-			/** \todo check the access_method too, not in scope here. */
+			/** \todo check the access_method too, not in scope here, yet. */
 			/*	if((TRUE == prov->partial_book_supported) && 
 			(0 == strcasecmp (access_method, prov->access_method)))
 			{*/
@@ -1059,8 +1134,10 @@ qof_session_save (QofSession *session,
 				if (session->backend->session_begin)
 				{
 					/* Call begin - what values to use for booleans? */
+					g_free(session->book_id);
+					session->book_id = NULL;
 					(session->backend->session_begin)(session->backend, session,
-						session->book_id, TRUE, FALSE);
+						book_id, TRUE, FALSE);
 					PINFO("Done running session_begin on changed backend");
 					err = qof_backend_get_error(session->backend);
 					msg = qof_backend_get_message(session->backend);
@@ -1092,7 +1169,8 @@ qof_session_save (QofSession *session,
 		}
 		if(!session->backend) 
 		{
-			qof_session_push_error(session, ERR_BACKEND_NO_HANDLER, NULL);
+			msg = g_strdup_printf("failed to load backend");
+			qof_session_push_error(session, ERR_BACKEND_NO_HANDLER, msg);
 			return;
 		}
 	}
@@ -1122,13 +1200,15 @@ qof_session_save (QofSession *session,
 		}
 		/* If we got to here, then the backend saved everything 
 		* just fine, and we are done. So return. */
+		/* Return the book_id to previous value. */
 		qof_session_clear_error (session);
 		LEAVE("Success");
 		return;
 	}
 	else
 	{
-		qof_session_push_error(session, ERR_BACKEND_NO_HANDLER, NULL);
+		msg = g_strdup_printf("failed to load backend");
+		qof_session_push_error(session, ERR_BACKEND_NO_HANDLER, msg);
 	}
 	LEAVE("error -- No backend!");
 }
