@@ -7,8 +7,8 @@ includedir=${prefix}/include
 Name: QOF
 Description: QOF Query Object Framework Library.
 Requires: glib-2.0 
-Version: 0.5.1
+Version: 0.5.2
 # The libqof.a isn't supposed to have aversion number 
-# Libs: -L${libdir} -lqof-0.5.1 -lqofsql-0.5.1
+# Libs: -L${libdir} -lqof-0.5.2 -lqofsql-0.5.2
 Libs: -L${libdir} -lqof -lqofsql
 Cflags: -I${includedir} 
