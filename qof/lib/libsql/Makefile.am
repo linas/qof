@@ -1,21 +1,8 @@
 ## Process this file with automake to produce Makefile.in
 
-INCLUDES = \
-	-I$(top_srcdir) \
-	-I$(top_builddir) \
-	$(LIBGDA_CFLAGS)
+lib_LTLIBRARIES = libqofsql.la
 
-parser.c: parser.y
-	$(YACC) -v -d -o parser.c -p sql parser.y
-
-lexer.c: lexer.l parser.c
-	$(LEX) -olexer.c -Psql lexer.l
-
-noinst_PROGRAMS = sql_parse_test
-
-lib_LTLIBRARIES = libgdasql.la
-
-libgdasql_la_SOURCES = \
+libqofsql_la_SOURCES = \
 	parser.c \
 	parser.h \
 	lexer.c \
@@ -26,15 +13,35 @@ libgdasql_la_SOURCES = \
 	sql_display.c \
 	sql_tree.c \
 	sql_tree.h
-libgdasqlincdir = $(includedir)/libgda/sql
-libgdasqlinc_HEADERS = sql_parser.h
-libgdasql_la_LDFLAGS = $(LIBGDA_LIBS)
+
+qofsqlincludedir = ${pkgincludedir}
+qofsqlinclude_HEADERS = sql_parser.h
+
+noinst_PROGRAMS = sql_parse_test
+
+EXTRA_DIST =       \
+	.cvsignore      \
+	README          \
+	lexer.l         \
+	parser.y  
+
+AM_CFLAGS = -g     \
+	@CFLAGS@        \
+	@GLIB_CFLAGS@
+
+INCLUDES = \
+	-I$(inclduedir) 
+
+parser.c: parser.y
+	$(YACC) -v -d -o parser.c -p sql parser.y
+
+lexer.c: lexer.l parser.c
+	$(LEX) -olexer.c -Psql lexer.l
 
 sql_parse_test_SOURCES=sql_parse_test.c
-sql_parse_test_LDFLAGS = $(LIBGDA_LIBS)
+# sql_parse_test_LDFLAGS = $(LIBGDA_LIBS)
 sql_parse_test_DEPENDENCIES =
-sql_parse_test_LDADD = $(top_builddir)/libsql/libgdasql.la
+sql_parse_test_LDADD = ./libqofsql.la @GLIB_LIBS@
 
 tests: sql_parse_test
 
-EXTRA_DIST=parser.y lexer.l
