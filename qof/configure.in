@@ -1,3 +1,4 @@
+dnl ***************************************************
 dnl
 dnl configure.in for the QOF package
 dnl
@@ -5,7 +6,7 @@ dnl Linas Vepstas April 2004
 dnl ***************************************************
 
 AC_INIT(src)
-AM_INIT_AUTOMAKE(qof,0.4.1)
+AM_INIT_AUTOMAKE(qof,0.4.2)
 
 LIBQOF_LIBRARY_VERSION=1:0:0
 LIBQOFSQL_LIBRARY_VERSION=1:0:0
@@ -36,10 +37,24 @@ dnl *****************************************
 dnl pkg-config check time
 dnl *****************************************
 
+dnl LIBGNOMEVFS_REQUIRED=2.0.0
+LIBXML2_REQUIRED=2.0.0
+
 AM_PATH_GLIB_2_0("2.0.0", , ,gobject)
 
 dnl **************************************************************
-dnl stuff needed to build the example progs only ... 
+dnl libxml2
+dnl The libxml2 library is required only if the serializer/xml
+dnl backend is used. Should probably dynamic-load this thing?
+dnl **************************************************************
+
+PKG_CHECK_MODULES(LIBXML2, libxml-2.0 >= $LIBXML2_REQUIRED)
+AC_SUBST(LIBXML2_CFLAGS)
+AC_SUBST(LIBXML2_LIBS)
+
+dnl **************************************************************
+dnl Stuff needed to build the example progs only ... 
+dnl XXX should fix this so that not required if not building examples.
 dnl **************************************************************
 
 GTK_CFLAGS=`$PKG_CONFIG --cflags gtk+-2.0`

@@ -31,6 +31,7 @@ AM_CFLAGS = \
 LDADD = \
   ${top_builddir}/src/libqof.la \
   ${top_builddir}/lib/libsql/libqofsql.la \
+  ${LIBXML2_LIBS} \
   ${GLIB_LIBS} \
   -lltdl -lm
 

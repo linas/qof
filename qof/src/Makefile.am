@@ -29,6 +29,7 @@ libqof_la_SOURCES =  \
    qofbook.c         \
    qofobject.c       \
    qofquerycore.c    \
+   qofquery-serialize.c    \
    qofsession.c      \
    qofsql.c
 
@@ -57,6 +58,7 @@ qofinclude_HEADERS = \
    qofbook.h         \
    qofobject.h       \
    qofquerycore.h    \
+   qofquery-serialize.h    \
    qofsession.h      \
    qofsql.h
 
@@ -80,7 +82,8 @@ EXTRA_DIST =          \
 
 AM_CFLAGS = -g        \
    @CFLAGS@           \
-   @GLIB_CFLAGS@
+	${LIBXML2_CFLAGS}  \
+   ${GLIB_CFLAGS}
 
 INCLUDES =                     \
    -I../lib                    \

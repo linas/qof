@@ -17,6 +17,7 @@ LDADD = \
   ${top_builddir}/src/libqof.la \
   ${top_builddir}/lib/libsql/libqofsql.la \
   ${GTK_LIBS} \
+  ${LIBXML2_LIBS} \
   ${GLIB_LIBS} \
   -lltdl -lm
 
