@@ -42,7 +42,7 @@ dnl pkg-config check time
 dnl *****************************************
 
 dnl LIBGNOMEVFS_REQUIRED=2.0.0
-LIBXML2_REQUIRED=2.5.2
+LIBXML2_REQUIRED=2.5.10
 
 AM_PATH_GLIB_2_0("2.0.0", , ,gobject)
 
@@ -50,14 +50,14 @@ dnl **************************************************************
 dnl libxml2
 dnl The libxml2 library is required only if the serializer/xml
 dnl backend is used. Should probably dynamic-load this thing?
-dnl libxml2 v2.5.2 is required for QSF (backend/file)
+dnl libxml2 v2.5.10 is required for QSF (backend/file)
 dnl **************************************************************
 
 PKG_CHECK_MODULES(LIBXML2, libxml-2.0 >= $LIBXML2_REQUIRED)
 LIBXML_VERSION=`xml2-config --version`
 AC_SUBST(LIBXML2_CFLAGS)
 AC_SUBST(LIBXML2_LIBS)
-dnl QSF_SCHEMA_DIR='$datadir/qsf'
+dnl QSF_SCHEMA_DIR='$datadir/qof/qsf'
 dnl AC_SUBST(QSF_SCHEMA_DIR)
 
 dnl **************************************************************
@@ -183,8 +183,16 @@ AC_SUBST(CFLAGS)
 AC_SUBST(CPPFLAGS)
 AC_SUBST(LDFLAGS)
 
-QSF_SCHEMA_DIR=`eval echo $datadir`"/qsf"
+QSF_SCHEMA_DIR=`eval echo $datadir`"/xml/qsf"
 AC_SUBST(QSF_SCHEMA_DIR)
+
+QOF_CFLAGS="-I$includedir"
+QOF_LIBS="-lqof"
+QOF_LIBDEPS="$LDFLAGS"
+QOF_VERSION="$VERSION"
+
+AC_CONFIG_LIBCONFIG_IN([qof], [bin])
+AC_CONFIG_LIBCONFIG_IN_PKGCONFIG
 
 AC_OUTPUT([
 Makefile
@@ -199,7 +207,10 @@ lib/Makefile
 lib/libsql/Makefile
 qof/Makefile
 qof-0.pc
+qof-config
 ])
+
+ln -sf ${srcdir} qof/qof
 
 dnl <= Configuration summary =>
 
