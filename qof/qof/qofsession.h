@@ -245,7 +245,14 @@ between sessions - see the \ref QSF (QSF) documentation
 (::qsf_write_file) for more information.
 
 The recommended backend for the new session is QSF or a future
-SQL backend.
+SQL backend. Using any of these entity copy functions sets a 
+flag in the backend that this is now a partial QofBook - see 
+below. When you save a session containing a partial QofBook,
+the session will check that the backend is able to handle the
+partial book. If not, the backend will be replaced by one that
+can handle partial books, preferably one using the same
+::access_method. Currently, this means that a book 
+using the GnuCash XML v2 file backend will be switched to QSF.
 
 Copied entities are identical to the source entity, all parameters
 defined with ::QofAccessFunc and ::QofSetterFunc in QOF are copied
@@ -261,19 +268,9 @@ To merge a whole QofBook or where there is any possibility
 of collisions or requirement for user intervention,
 see \ref BookMerge
 
-Part of the handling for partial books requires a storage mechanism for
-references to entities that are not within reach of the partial book.
-This requires a hash table in the book data to contain the reference 
-QofIdType and GUID so that when the book is written out, the
-reference can be included. See ::qof_book_get_data. 
-When the file is imported back in, the hash table needs to be rebuilt.
-The QSF backend rebuilds the references by linking to real entities. Other
-backends can process the hash table in similar ways.
+@{
 
-The hashtable key is the GUID of the known entity and the value is a 
-QofEntityReference to the referenced entity. 
-
- @{ */
+*/
 
 /** Used as the key value for the QofBook data hash.
 
@@ -283,19 +280,6 @@ that contains the QofIdType and GUID of the referenced entity
 of the original QofBook.
 */
 #define ENTITYREFERENCE "QofEntityReference"
-
-/** Partial QofBook support.
-
-This data is built into a hash table for use by any session that
-deals with partial QofBooks. It is used by the entity copy
-functions and by the QSF backend. The hashtable key is
-the GUID of the known entity and the value is a 
-QofEntityReference to the referenced entity. 
-*/
-typedef struct qof_entity_reference {
-	QofIdType type;
-	GUID      *guid;
-}QofEntityReference;
 
 /** \brief Copy a single QofEntity to another session
  
@@ -349,6 +333,53 @@ gboolean qof_entity_copy_coll(QofSession *new_session, QofCollection *entity_col
 /** @} 
 */
 
+/** @name Using a partial QofBook.
+
+Part of the handling for partial books requires a storage mechanism for
+references to entities that are not within reach of the partial book.
+This requires a hash table in the book data to contain the reference 
+QofIdType and GUID so that when the book is written out, the
+reference can be included. See ::qof_book_get_data. 
+When the file is imported back in, the hash table needs to be rebuilt.
+The QSF backend rebuilds the references by linking to real entities. Other
+backends can process the hash table in similar ways.
+
+The hashtable key is the GUID of the known entity and the value is a 
+QofEntityReference to the referenced entity - a struct that contains the
+GUID and the QofIdType of the referenced entity.
+
+Partial books need to be differentiated in the backend, the 
+flag in the book data is used by qof_session_save to prevent a partial
+book being saved using a backend that requires a full book.
+
+ @{ */
+
+
+/** \brief External references in a partial QofBook.
+
+This data is built into a hash table for use by any session that
+deals with partial QofBooks. It is used by the entity copy
+functions and by the QSF backend. The hashtable key is
+the GUID of the known entity and the value is a 
+QofEntityReference to the referenced entity. 
+*/
+typedef struct qof_entity_reference {
+	QofIdType type;
+	GUID      *guid;
+}QofEntityReference;
+
+/** \brief Flag indicating a partial QofBook.
+
+When set in the book data with a gboolean value of TRUE,
+the flag denotes that only a backend that supports partial
+books can be used to save this session.
+*/
+
+#define PARTIAL_QOFBOOK "PartialQofBook"
+
+/** @}
+*/
+
 /** \brief Allow session data to be printed to stdout
 
 book_id can't be NULL and we do need to have an access_method,
@@ -367,7 +398,8 @@ backends may return a ::QofBackendError.
 #define QOF_STDOUT "file:"
 
 /** @name Event Handling
- @{ */
+
+  @{ */
 /** The qof_session_events_pending() method will return TRUE if the backend
  *    has pending events which must be processed to bring the engine
  *    up to date with the backend.
@@ -394,7 +426,21 @@ gboolean qof_session_export (QofSession *tmp_session,
 			     QofSession *real_session,
 			     QofPercentageFunc percentage_func);
 
-#endif /* GNUCASH_MJOR_VERSION */
+#endif /* GNUCASH_MAJOR_VERSION */
+
+/** Register a function to be called just before a session is closed.
+ *
+ *  @param fn The function to be called.  The function definition must
+ *  be func(gpointer session, gpointer user_data);
+ *
+ *  @param data The data to be passed to the function. */
+void qof_session_add_close_hook (GFunc fn, gpointer data);
+
+/** Call all registered session close hooks, informing them that the
+ *  specified session is about to be closed.
+ *
+ *  @param session A pointer to the session being closed. */
+void qof_session_call_close_hooks (QofSession *session);
 
 #endif /* QOF_SESSION_H */
 /** @} */

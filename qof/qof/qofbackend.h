@@ -65,10 +65,11 @@ typedef enum {
   ERR_BACKEND_MOD_DESTROY,  /**< commit of object update failed because 
                                another user has deleted the object */
   ERR_BACKEND_MISC,         /**< undetermined error */
-  
+
   /* QSF add-ons */
   ERR_QSF_INVALID_OBJ, 		/**< The QSF object failed to validate against the QSF object schema */
   ERR_QSF_INVALID_MAP, 		/**< The QSF map failed to validate against the QSF map schema */
+  ERR_QSF_BAD_OBJ_GUID,		/**< The QSF object contains one or more invalid GUIDs. */
   ERR_QSF_BAD_QOF_VERSION,	/**< QSF map or object doesn't match the current QOF_OBJECT_VERSION. */
   ERR_QSF_BAD_MAP,			/**< The selected map validates but is unusable.
   
