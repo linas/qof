@@ -115,10 +115,10 @@ AC_SUBST(DWI_LIBS)
 if test x$DWI_LIBS = x; then
    AC_MSG_WARN([****** DWI libs not found; build without DWI.])
 else
-   AC_DEFINE(HAVE_DWI,,We Have Found DWI)
+   HAVE_DWI="use_dwi"
 fi
 
-AM_CONDITIONAL(BUILD_DWI, [test x$HAVE_DWI = x])
+AM_CONDITIONAL(BUILD_DWI, [test "$HAVE_DWI" = use_dwi])
 
 # check for doxygen, mostly stolen from http://log4cpp.sourceforge.net/
 # ----------------------------------------------------------------------------
@@ -175,7 +175,6 @@ examples/Makefile
 examples/backend/Makefile
 examples/gobject/Makefile
 lib/Makefile
-lib/dwi/Makefile
 lib/libsql/Makefile
 qof/Makefile
 qof-0.pc

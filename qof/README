@@ -3,7 +3,7 @@
                 ----------------------------
                         April 2004
 
-Breif Description:
+Brief Description:
 ------------------
 QOF - Query Object Framework is a library for adding a query engine 
 to C applications.  An SQL database is not needed; any collection
@@ -31,7 +31,7 @@ QOF also includes other utilities from GnuCash:
  o Miscellaneous date & time utilities.
  o Program tracing infrastructure; handing for tracing/debugging
    complex applications.
-
+ o QofBook merge support with collision handling.
 
 The system consists of 15 KLOC of C code that has been ported to many
 Unixes, including Mac OS X.  Although this code is in production use

@@ -1,6 +1,7 @@
+August 2004 : add support for merging QofBook structures with
+     collision handling.
 
-
-April 2004 : make teh documentation look much nicer by using doxygen
+April 2004 : make the documentation look much nicer by using doxygen
      markup correctly.
 
 June 27 2003 : rename many files and functions to use qof prefix, and 
