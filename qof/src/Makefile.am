@@ -29,6 +29,7 @@ libqof_la_SOURCES =  \
    qofbook.c         \
    qofobject.c       \
    qofquerycore.c    \
+   qofquery-deserial.c     \
    qofquery-serialize.c    \
    qofsession.c      \
    qofsql.c
@@ -58,6 +59,7 @@ qofinclude_HEADERS = \
    qofbook.h         \
    qofobject.h       \
    qofquerycore.h    \
+   qofquery-deserial.h     \
    qofquery-serialize.h    \
    qofsession.h      \
    qofsql.h
