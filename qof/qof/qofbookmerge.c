@@ -22,6 +22,7 @@
  ********************************************************************/
 
 #include "qof_book_merge.h"
+#include "qofid-p.h"
 static short module = MOD_IMPORT; 
 
 /* all qof_book_merge data is held in mergeData. */
@@ -277,25 +278,21 @@ qof_book_mergeUpdateRule(gboolean match)
 int 
 qof_book_mergeCompare( void ) 
 {
-	gchar 		*stringImport, *stringTarget, 
-				*charImport, *charTarget;
-	const GUID 	*guidImport, *guidTarget;
-	QofInstance *inst;
-	gpointer 	unknown_obj;
-	QofParam 	*qtparam;
-	KvpFrame 	*kvpImport, *kvpTarget;
-	QofIdType 	mergeParamName;
-	QofType 	mergeType;
-	GSList 		*paramList;
-	QofEntity 	*mergeEnt, *targetEnt, *referenceEnt;
-	Timespec 	tsImport, tsTarget, 			(*date_getter)		(QofEntity*, QofParam*);
-	gnc_numeric numericImport, numericTarget, 	(*numeric_getter)	(QofEntity*, QofParam*);
-	double 		doubleImport, doubleTarget, 	(*double_getter)	(QofEntity*, QofParam*);
-	gboolean 	absolute, mergeError, 
-				knowntype, mergeMatch, 
-				booleanImport, booleanTarget,	(*boolean_getter)	(QofEntity*, QofParam*);
-	gint32 		i32Import, i32Target, 			(*int32_getter)		(QofEntity*, QofParam*);
-	gint64 		i64Import, i64Target, 			(*int64_getter)		(QofEntity*, QofParam*);
+	gchar 			*stringImport, *stringTarget, *charImport, *charTarget;
+	QofEntity	 	*mergeEnt, *targetEnt, *referenceEnt;
+	const GUID 		*guidImport, *guidTarget;
+	QofParam 		*qtparam;
+	KvpFrame 		*kvpImport, *kvpTarget;
+	QofIdType 		mergeParamName;
+	QofType 		mergeType;
+	GSList 			*paramList;
+	gboolean	 	absolute, mergeError, knowntype, mergeMatch, booleanImport, booleanTarget,
+													(*boolean_getter)	(QofEntity*, QofParam*);
+	Timespec 		tsImport, tsTarget, 			(*date_getter)		(QofEntity*, QofParam*);
+	gnc_numeric 	numericImport, numericTarget, 	(*numeric_getter)	(QofEntity*, QofParam*);
+	double 			doubleImport, doubleTarget, 	(*double_getter)	(QofEntity*, QofParam*);
+	gint32 			i32Import, i32Target, 			(*int32_getter)		(QofEntity*, QofParam*);
+	gint64 			i64Import, i64Target, 			(*int64_getter)		(QofEntity*, QofParam*);
 
 	g_return_val_if_fail((mergeData != NULL)||(currentRule != NULL), -1);
 	absolute = currentRule->mergeAbsolute;
@@ -400,26 +397,26 @@ qof_book_mergeCompare( void )
 			qof_book_mergeUpdateRule(mergeMatch); 
 			knowntype= TRUE;
 		}
-		/* no need to verify the book */
 		if(safe_strcmp(mergeType, QOF_ID_BOOK) == 0) { knowntype= TRUE;	}
-		/* deal with non-QOF type parameters : */
-		/* references to other registered QOF objects */
-		/* these references are NOT compared again here. */
+		/* deal with custom type parameters : */
+		/* using references to other registered QOF objects */
+		/* these references are NOT compared again here, just stored for the commit. */
 		if(knowntype == FALSE) {
-			if(qof_class_is_registered(currentRule->mergeLabel)) {
-				/* this may be a parent or child */
-				referenceEnt = g_new(QofEntity,1);
-				unknown_obj = qtparam->param_getfcn(targetEnt, qtparam);
-				inst = ((QofInstance*)(unknown_obj));
-				/* referenceEnt takes the target book instance as a reference. */
-				referenceEnt = &inst->entity;
-				/* add to the rule so that the reference can be picked up in commit */
+			referenceEnt = g_new(QofEntity,1);
+			referenceEnt = qtparam->param_getfcn(targetEnt, qtparam);
+			if(referenceEnt != NULL) {
+				if(referenceEnt->e_type != NULL) {
+					if(safe_strcmp(referenceEnt->e_type, mergeType) != 0) {
+						referenceEnt->e_type = NULL;
+						g_free(referenceEnt);
+					}
+				}
+			}
+			/* add to the rule so that the reference can be picked up in commit */
+			if(referenceEnt) {
 				currentRule->linkedEntList = g_slist_prepend(currentRule->linkedEntList, referenceEnt);
-				/* it becomes a known type because it is registered */
-				knowntype = TRUE;
 			}
 		}
-	g_return_val_if_fail(knowntype == TRUE, -1);
 	paramList = g_slist_next(paramList);
 	}
 	g_free(kvpImport);
@@ -620,10 +617,11 @@ void qof_book_mergeCommitRuleLoop(qof_book_mergeRule *rule, guint remainder)
 { 
 	QofInstance 	*inst;
 	gboolean		registered_type;
-	QofCollection *col;
+	QofEntity 		*referenceEnt;
+	GSList 			*linkage;
 	/* cm_ prefix used for variables that hold the data to commit */
 	QofParam 		*cm_param;
-	char 			*cm_string, *cm_char;
+	gchar 			*cm_string, *cm_char;
 	const GUID 		*cm_guid;
 	KvpFrame 		*cm_kvp;
 	/* function pointers and variables for parameter getters that don't use pointers normally */
@@ -649,19 +647,21 @@ void qof_book_mergeCommitRuleLoop(qof_book_mergeRule *rule, guint remainder)
 	g_return_if_fail(rule != NULL);
 	g_return_if_fail((rule->mergeResult != MERGE_NEW)||(rule->mergeResult != MERGE_UPDATE));
 
-	/* create a new object for MERGE_NEW */ 
+	/* create a new object for MERGE_NEW */
+	/* The new object takes the GUID from the import to retain an absolute match */
 	if(rule->mergeResult == MERGE_NEW) {
 		inst = (QofInstance*)qof_object_new_instance(rule->importEnt->e_type, mergeData->targetBook);
 		g_return_if_fail(inst != NULL);
 		rule->targetEnt = &inst->entity;
+		qof_entity_set_guid(rule->targetEnt, qof_entity_get_guid(rule->importEnt));
 	}
 	/* currentRule->targetEnt is now set,
 		1. by an absolute GUID match or
 		2. by best_matchEnt and difference or
 		3. by MERGE_NEW.
 	*/
-	registered_type = FALSE;
 	while(rule->mergeParam != NULL) {
+		registered_type = FALSE;
 		g_return_if_fail(rule->mergeParam->data);		
 		cm_param = rule->mergeParam->data;
 		rule->mergeType = cm_param->param_type;
@@ -732,30 +732,15 @@ void qof_book_mergeCommitRuleLoop(qof_book_mergeRule *rule, guint remainder)
 			if(char_setter != NULL) { char_setter(rule->targetEnt, cm_char); }
 			registered_type = TRUE;
 		}
-		if((registered_type == FALSE)&&(qof_class_is_registered(rule->mergeLabel))) {
-			registered_type = TRUE;
-			if(rule->mergeResult == MERGE_NEW) {
-				/* need to lookup referenceEnt in the target book to
-				ensure it has the right QofCollection */
-				GSList *linkage = g_slist_copy(rule->linkedEntList);
-				while(linkage != NULL) {
-					/* referenceEnt already refers to the target book */
-					QofEntity *referenceEnt = linkage->data;
-					/* there may be more than one linked QofEntity for this rule
-						so check that the types match. */
-					if(safe_strcmp(referenceEnt->e_type, rule->mergeType) == 0) {
-						cm_guid = qof_entity_get_guid(referenceEnt);
-						/* This may prove unnecessary */
-    					col = qof_book_get_collection (mergeData->targetBook, rule->mergeType);
-					    referenceEnt = qof_collection_lookup_entity (col, cm_guid);
-						/* referenceEnt is now in use here. It is not too early */
-						/* because the reference does not need to be queried
-							until after Commit. */
-						reference_setter = (void(*)(QofEntity*, QofEntity*))cm_param->param_setfcn;
-						if(reference_setter != NULL) { reference_setter(rule->targetEnt, referenceEnt); }
-					}
-					linkage = g_slist_next(linkage);
+		if(registered_type == FALSE) {
+			linkage = g_slist_copy(rule->linkedEntList);
+			while(linkage != NULL) {
+				referenceEnt = linkage->data;
+				if(safe_strcmp(referenceEnt->e_type, rule->mergeType) == 0) {
+					reference_setter = (void(*)(QofEntity*, QofEntity*))cm_param->param_setfcn;
+					if(reference_setter != NULL) { reference_setter(rule->targetEnt, referenceEnt); }
 				}
+				linkage = g_slist_next(linkage);
 			}
 		}
 		rule->mergeParam = g_slist_next(rule->mergeParam);

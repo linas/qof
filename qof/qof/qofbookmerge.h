@@ -72,6 +72,7 @@ any error values to the calling process.
 
 
 #include <glib.h>
+#include "qof/gnc-engine-util.h"
 #include "qofbook.h"
 #include "qofclass.h"
 #include "qofobject.h"
