@@ -109,7 +109,7 @@ const char * qof_util_whitespace_filter (const char * val);
 
 /** Return integer 1 if the string starts with 't' or 'T' or 
  *  contains the word 'true' or 'TRUE'; if string is a number, 
- *  return that number. */
+ *  return that number. (Leading whitespace is ignored). */
 int qof_util_bool_to_int (const char * val);
 
 /** Many strings used throughout the engine are likely to be duplicated.

@@ -201,7 +201,7 @@ qof_util_whitespace_filter (const char * val)
 int
 qof_util_bool_to_int (const char * val)
 {
-	const char * p = whitespace_filter (val);
+	const char * p = qof_util_whitespace_filter (val);
 	if (!p) return 0;
 	if ('t' == p[0]) return 1;
 	if ('T' == p[0]) return 1;
