@@ -51,24 +51,6 @@ typedef char * (*QueryToString) (gpointer object, QofParam *getter);
 typedef gboolean (*QueryPredicateEqual) (QofQueryPredData *p1, 
                                          QofQueryPredData *p2);
 
-/* This function registers a new Core Object with the QofQuery
- * subsystem.  It maps the "core_name" object to the given
- * query_predicate, predicate_copy, and predicate_data_free functions.
- */
-static void qof_query_register_core_object (char const *type_name,
-                                 QofQueryPredicateFunc pred,
-                                 QofCompareFunc comp,
-                                 QueryPredicateCopyFunc copy,
-                                 QueryPredDataFree pd_free,
-                                 QueryToString to_string,
-                                 QueryPredicateEqual pred_equal);
-/* An example:
- *
- * qof_query_register_core_object (QOF_TYPE_STRING, string_match_predicate,
- *                               string_compare_fcn, string_free_pdata,
- *                               string_print_fcn, pred_equal_fcn);
- */
-
 static QueryPredicateCopyFunc qof_query_copy_predicate (QofType type);
 static QueryPredDataFree qof_query_predicate_free (QofType type);
 
@@ -1247,6 +1229,47 @@ qof_query_kvp_predicate (QofQueryCompare how,
 }
 
 /* initialization ================================================== */
+/** This function registers a new Core Object with the QofQuery
+ * subsystem.  It maps the "core_name" object to the given
+ * query_predicate, predicate_copy, and predicate_data_free functions.
+ *
+ * An example:
+ * qof_query_register_core_object (QOF_TYPE_STRING, string_match_predicate,
+ *                               string_compare_fcn, string_free_pdata,
+ *                               string_print_fcn, pred_equal_fcn);
+ */
+
+
+static void 
+qof_query_register_core_object (QofType core_name,
+                                QofQueryPredicateFunc pred,
+                                QofCompareFunc comp,
+                                QueryPredicateCopyFunc copy,
+                                QueryPredDataFree pd_free,
+                                QueryToString toString,
+                                QueryPredicateEqual pred_equal)
+{
+  g_return_if_fail (core_name);
+  g_return_if_fail (*core_name != '\0');
+
+  if (pred)
+    g_hash_table_insert (predTable, (char *)core_name, pred);
+
+  if (comp)
+    g_hash_table_insert (cmpTable, (char *)core_name, comp);
+
+  if (copy)
+    g_hash_table_insert (copyTable, (char *)core_name, copy);
+
+  if (pd_free)
+    g_hash_table_insert (freeTable, (char *)core_name, pd_free);
+
+  if (toString)
+    g_hash_table_insert (toStringTable, (char *)core_name, toString);
+
+  if (pred_equal)
+    g_hash_table_insert (predEqualTable, (char *)core_name, pred_equal);
+}
 
 static void init_tables (void)
 {
@@ -1323,37 +1346,6 @@ qof_query_predicate_free (QofType type)
 {
   g_return_val_if_fail (type, NULL);
   return g_hash_table_lookup (freeTable, type);
-}
-
-static void 
-qof_query_register_core_object (QofType core_name,
-                                QofQueryPredicateFunc pred,
-                                QofCompareFunc comp,
-                                QueryPredicateCopyFunc copy,
-                                QueryPredDataFree pd_free,
-                                QueryToString toString,
-                                QueryPredicateEqual pred_equal)
-{
-  g_return_if_fail (core_name);
-  g_return_if_fail (*core_name != '\0');
-
-  if (pred)
-    g_hash_table_insert (predTable, (char *)core_name, pred);
-
-  if (comp)
-    g_hash_table_insert (cmpTable, (char *)core_name, comp);
-
-  if (copy)
-    g_hash_table_insert (copyTable, (char *)core_name, copy);
-
-  if (pd_free)
-    g_hash_table_insert (freeTable, (char *)core_name, pd_free);
-
-  if (toString)
-    g_hash_table_insert (toStringTable, (char *)core_name, toString);
-
-  if (pred_equal)
-    g_hash_table_insert (predEqualTable, (char *)core_name, pred_equal);
 }
 
 /********************************************************************/
