@@ -187,21 +187,69 @@ below.
      </p>
      <br>
 <li> <p><b>Why C (or C++)? Why not a better language?</b>
-     The C/C++ language has many problems, the most serious of which 
-     is the lack of garbage collection and of any sort of persistance.
-     In particular, C/C++ lack "object introspection", the ability to 
-     have a subroutine, when given an object of unknown type, to find
-     out about the object that it's dealing with.
-     Why not in another language, one that can do introspection, and has
-     object factories in it? e.g. Java, python, C#?  The short answer:
-     because the mapping between the dynamic (cached) object, and the 
-     thing that needs to be persisitent, is not one-to-one.  Thus, 
-     introspection is not enough: one really does need to specify how to 
-     map object fields to database fields; the mapping is not natively 
-     or inherently 1-to-1.  Thus, the object introspection available in
-     these othe languages doesn't solve all problems.  One still needs
-     to explicitly specify the mapping, while still making it easy on the
-     programmer.
+     Lets try again.
+     The C/C++ language has many problems. One of the most serious 
+     of these problems is the lack of "object introspection".
+     Without object introspection, it makes it hard to make objects
+     persistant; it also makes it hard to send objects over the
+     net, because "marshalling/unmarshalling" needed to do the 
+     RPC (or XML-RPC) gets hard.   When a system has "object
+     introspection",  you can ask some unknown, type-any object
+     a question about what its made of.  It can then respond:
+     "Gee, well, I'm made of three floats, two ints and some 
+     character strings".   You can then ask it for all of its 
+     pieces, and jam them into a file for safe-keeping, or 
+     "marshall" them into a socket to ship it over the net. 
+     (You "unmarshall" them at the otehr end of teh socket,
+     thus creating a copy of the object in some far away place).
+     With introspection, you can make and copy objects without 
+     having to know in advance (at compile time) what they are.
+     Note that GLib GObjects have introspection built in:
+     its done with <tt>g_object_class_list_properties()</tt>.
+     <br><br>
+     So, why not use another language, one that can do introspection, 
+     and has object factories built into it? For example, 
+     Java, python, C#?  The answer is that introspection, while
+     useful, is far too inflexible to use for object persistance
+     and for RPC-type work.   The deep problem is that introspection
+     doesn't deal with the problem of versioning.  Say I have
+     object version 1.0.  It consisted of three floats and two ints.
+     I stuck it into a file, and forgot about it.  Years later,
+     I try to open that file with the new improved version 2.0 
+     software: but object version 2.0 has five floats and six ints.
+     Whoops.  Ka-boom.   In order to be backwards-compatible, or
+     forwards-compatible, you need to deal with the versioning
+     problem in some flexible way.  Introspection, by itself, is not
+     flexible enough.
+     <br><br>
+     The XML world tries to deal with this by using schema's/DTD's.
+     It is understood that the DTD describes what to expect in your
+     object; thus, by knowing the DTD, you know how to parse the XML
+     file.  However, when you are writing your application in 
+     Java, Python, C# (or C or C++), I can gaurentee you that 
+     your internal objects are at best a weak mirror of what's in
+     the DTD.  Your objects might be similar to the XML input,
+     but hardly the same.   If your app is a web app, with an 
+     SQL backend, are your objects identical to the SQL tables?
+     I doubt it.  In other words, here you are, coding in this
+     great language with object factories and type-any 
+     and object introspection, but you aren't actually using 
+     these amazing whiz-bang features when you interface to 
+     your SQL or XML or XML-RPC.  
+     <br><br>
+     To summarize: the mapping between the run-time objects and 
+     the network/file/storage objects is not one-to-one.
+     A language with introspection doesn't save your bottom:
+     its not enough: one really does need to specify how to 
+     map object fields to database fields because the mapping is 
+     never 1-to-1.  This remains a difficult and tedious task
+     for the programmer.  These other langauges don't offer
+     an improvement over C. 
+     <br><br>
+     (P.S. Totally off-topic, but I sometimes get the feeling that
+     the XML standards people are trying to reinvent scheme/lisp
+     without being consciously aware that this is what they are 
+     doing. Yet the signs are clear.)
      </p>
      <br>
 <li> <p>Why not go directly from GUI to SQL, and back?  This is the traditional
