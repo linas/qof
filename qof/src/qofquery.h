@@ -20,11 +20,11 @@
  *                                                                  *
 \********************************************************************/
 
-/** @addtogroup QOF Query
+/** @addtogroup Query_Core_API
     @{ */
 
 /** @file qofquery.h
-    @breif find objects that match a certain expression.
+    @brief find objects that match a certain expression.
     @author Copyright (C) 2002 Derek Atkins <warlord@MIT.EDU>
     @author Copyright (C) 2003 Linas Vepstas <linas@linas.org>
 

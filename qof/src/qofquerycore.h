@@ -21,11 +21,11 @@
  *                                                                  *
 \********************************************************************/
 
-/** @addtogroup QOF Query Predicates
+/** @addtogroup Query_Core_Predicates
     @{ */
                                                                                 
 /** @file qofquerycore.h
-    @breif API for providing core Query data types
+    @brief API for providing core Query data types
     @author Copyright (C) 2002 Derek Atkins <warlord@MIT.EDU>
 */
 
