@@ -173,6 +173,20 @@ QofQuery *qof_query_from_xml (xmlNodePtr);
    }                                                         \
    else
 
+#define GET_MATCH5(VAL,TOK,PFX,A,B,C,D,E)                    \
+   if (0 == strcmp (TOK, node->name))                        \
+   {                                                         \
+      const char *str = GET_TEXT (node);                     \
+      int ival = QOF_##PFX##_##A;                            \
+      if (!strcmp (#A, str)) ival = QOF_##PFX##_##A;         \
+      else if (!strcmp (#B, str)) ival = QOF_##PFX##_##B;    \
+      else if (!strcmp (#C, str)) ival = QOF_##PFX##_##C;    \
+      else if (!strcmp (#D, str)) ival = QOF_##PFX##_##D;    \
+      else if (!strcmp (#E, str)) ival = QOF_##PFX##_##E;    \
+      VAL = ival;                                            \
+   }                                                         \
+   else
+
 /* =============================================================== */
 /* Autogen the code for the simple, repetitive predicates */
 
@@ -226,31 +240,103 @@ SIMPLE_PRED_HANDLER (qof_query_pred_boolean_from_xml,
 
 /* =============================================================== */
 
-#if 0
+static void wrap_new_gint64(KvpValue **v, gint64 value) {
+	*v = kvp_value_new_gint64 (value); }
+static void wrap_new_double(KvpValue **v, double value) {
+	*v = kvp_value_new_double (value); }
+static void wrap_new_numeric(KvpValue **v, gnc_numeric value) {
+	*v = kvp_value_new_gnc_numeric (value); }
+static void wrap_new_string(KvpValue **v, const char * value) {
+	*v = kvp_value_new_string (value); }
+static void wrap_new_guid(KvpValue **v, const GUID * value) {
+	*v = kvp_value_new_guid (value); }
+static void wrap_new_timespec(KvpValue **v, Timespec value) {
+	*v = kvp_value_new_timespec (value); }
+
+
+static QofQueryPredData *
+qof_query_pred_kvp_from_xml (xmlNodePtr root)
+{
+	xmlNodePtr xp = root->xmlChildrenNode;
+	xmlNodePtr node;
+
+	QofQueryCompare how = QOF_COMPARE_EQUAL;
+	GSList *path = NULL;
+	KvpValue *value = NULL;
+
+	for (node=xp; node; node = node->next)
+	{
+		if (node->type != XML_ELEMENT_NODE) continue;
+
+		GET_HOW (how, "qofquery:compare", LT, LTE, EQUAL, GT, GTE, NEQ);
+		if (0 == strcmp ("qofquery:kvp-path", node->name))
+		{
+			const char *str = GET_TEXT (node);
+			path = g_slist_append (path, (gpointer) str);
+		}
+		else
+		GET_INT64(&value,   wrap_new_gint64,   "qofquery:int64");
+		GET_DBL(&value,     wrap_new_double,   "qofquery:double");
+		GET_NUMERIC(&value, wrap_new_numeric,  "qofquery:numeric");
+		GET_STR(&value,     wrap_new_string,   "qofquery:string");
+		GET_GUID(&value,    wrap_new_guid,     "qofquery:guid");
+		GET_DATE(&value,    wrap_new_timespec, "qofquery:date");
+	}
+
+	QofQueryPredData *pred;
+	pred = qof_query_kvp_predicate (how, path, value);
+	g_slist_free (path);
+	return pred;
+}
+
+/* =============================================================== */
+
 static QofQueryPredData *
 qof_query_pred_guid_from_xml (xmlNodePtr root)
 {
 	xmlNodePtr xp = root->xmlChildrenNode;
 	xmlNodePtr node;
+   GList *guid_list = NULL;
 
-	QofGuidMatch sm = QOF_CHAR_MATCH_ANY;
+	QofGuidMatch sm = QOF_GUID_MATCH_ANY;
 
 	for (node=xp; node; node = node->next)
 	{
 		if (node->type != XML_ELEMENT_NODE) continue;
 
 		/* char pred doesn't have GET_HOW */
-		GET_MATCH2 (sm, "qofquery:char-match", 
-		            CHAR_MATCH, ANY, NONE);
-		GET_STR (0, char_list=, "qofquery:char-list");
-		{}
+		GET_MATCH5 (sm, "qofquery:guid-match", 
+		            GUID_MATCH, ANY, NONE, NULL, ALL, LIST_ANY);
+
+		if (0 == strcmp ("qofquery:guid", node->name))
+		{
+			const char *str = GET_TEXT (node);
+			GUID *guid = guid_malloc ();
+			gboolean decode = string_to_guid (str, guid);
+			if (decode)
+			{
+				guid_list = g_list_append (guid_list, guid);
+			}
+			else
+			{
+				guid_free (guid);
+				// XXX error!  let someone know!
+			}
+		}
 	}
 
 	QofQueryPredData *pred;
-	pred = qof_query_char_predicate (sm, char_list);
+	pred = qof_query_guid_predicate (sm, guid_list);
+
+	/* The predicate made a copy of everything, so free our stuff */
+   GList *n;
+	for (n=guid_list; n; n=n->next)
+	{
+		guid_free (n->data);
+	}
+   g_list_free (guid_list);
 	return pred;
 }
-#endif
 
 /* =============================================================== */
 
@@ -455,9 +541,17 @@ qof_query_term_from_xml (QofQuery *q, xmlNodePtr root)
 			pred = qof_query_pred_char_from_xml (node);
 		}
 		else
+		if (0 == strcmp (node->name, "qofquery:pred-guid"))
 		{
-// xxxxxxxxxxxxxxxxxxxx
-// todo kvp, guid 
+			pred = qof_query_pred_guid_from_xml (node);
+		}
+		else
+		if (0 == strcmp (node->name, "qofquery:pred-kvp"))
+		{
+			pred = qof_query_pred_kvp_from_xml (node);
+		}
+		else
+		{
 			// warning unhandled predicate type
 		}
 	}
@@ -563,6 +657,7 @@ int main (int argc, char * argv[])
 	QofQuery *q, *qnew;
 	QofSqlQuery *sq;
 
+	guid_init();
 	qof_query_init();
 	qof_object_initialize ();
 
@@ -576,6 +671,8 @@ int main (int argc, char * argv[])
 		{ "adate", QOF_TYPE_DATE, NULL, NULL},
 		{ "anum", QOF_TYPE_NUMERIC, NULL, NULL},
 		{ "achar", QOF_TYPE_CHAR, NULL, NULL},
+		{ "aguid", QOF_TYPE_GUID, NULL, NULL},
+		{ "akvp", QOF_TYPE_KVP, NULL, NULL},
 		{ NULL },
    };
 
@@ -591,6 +688,8 @@ int main (int argc, char * argv[])
 	    "and adate<\'01-01-01\' "
 	    "or anum<\'12301/100\' "
 	    "or achar != asdf "
+	    "and aguid != abcdef01234567890fedcba987654321 "
+	    "and akvp != \'/some/path:abcdef01234567890fedcba987654321\' "
 	    );
 	// qof_sql_query_parse (sq, "SELECT * from GncABC;");
 	q = qof_sql_query_get_query (sq);
