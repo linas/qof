@@ -11,6 +11,8 @@
 
 #include <libxml/tree.h>
 
+#include "qofquery-p.h"
+
 /* ======================================================= */
 
 #define PUT_STR(TOK,VAL) {                           \
@@ -119,9 +121,88 @@
 }
 
 static xmlNodePtr
+qof_query_param_path_to_xml (GSList *param_path)
+{
+	xmlNodePtr topnode = xmlNewNode (NULL, "qofquery:param-path");
+	GSList *n = param_path;
+	for ( ; n; n=n->next)
+	{
+		const char *path = n->data;
+		if (!path) continue;
+		PUT_STR ("qofquery:param", path);
+	}
+	return topnode;
+}
+
+static xmlNodePtr
+qof_query_pred_data_to_xml (QofQueryPredData *pd)
+{
+	xmlNodePtr topnode = xmlNewNode (NULL, "qofquery:pred-data");
+
+	PUT_STR ("qofquery:type", pd->type_name);
+// xxxxxxxxxxxx
+	return topnode;
+}
+
+
+static xmlNodePtr
+qof_query_one_term_to_xml (QofQueryTerm *qt)
+{
+	xmlNodePtr node;
+	xmlNodePtr term = xmlNewNode (NULL, "qofquery:term");
+
+	gboolean invert = qof_query_term_is_inverted (qt);
+	GSList *path = qof_query_term_get_param_path (qt);
+	QofQueryPredData *pd = qof_query_term_get_pred_data (qt);
+
+	xmlNodePtr topnode = term;
+	if (invert)
+	{
+		/* inverter becomes new top mode */
+		topnode = xmlNewNode (NULL, "qofquery:invert");
+		xmlAddChild (term, topnode);
+	}
+
+	node = qof_query_param_path_to_xml (path);
+	if (node) xmlAddChild (topnode, node);
+
+	node = qof_query_pred_data_to_xml (pd);
+	if (node) xmlAddChild (topnode, node);
+
+	return term;
+}
+
+static xmlNodePtr
+qof_query_and_terms_to_xml (GList *and_terms)
+{
+	xmlNodePtr terms = xmlNewNode (NULL, "qofquery:and-terms");
+	GList *n = and_terms;
+	for ( ; n; n=n->next)
+	{
+		QofQueryTerm *qt = n->data;
+		if (!qt) continue;
+
+		xmlNodePtr t = qof_query_one_term_to_xml (n->data);
+		if (t) xmlAddChild (terms, t);
+	}
+	return terms;
+}
+
+static xmlNodePtr
 qof_query_terms_to_xml (QofQuery *q)
 {
-	return NULL;
+	xmlNodePtr terms = NULL;
+	GList *n = qof_query_get_terms (q);
+
+	if (!n) return NULL;
+	terms = xmlNewNode (NULL, "qofquery:or-terms");
+
+	for ( ; n; n=n->next)
+	{
+		xmlNodePtr andt = qof_query_and_terms_to_xml (n->data);
+		if (andt) xmlAddChild (terms, andt);
+	}
+	return terms;
 }
 
 void
@@ -130,7 +211,7 @@ do_qof_query_to_xml (QofQuery *q, xmlNodePtr topnode)
 	QofIdType search_for = qof_query_get_search_for (q);
 	PUT_STR ("search-for", search_for);
 
-	xmlNodePtr *terms = qof_query_terms_to_xml(q);
+	xmlNodePtr terms = qof_query_terms_to_xml(q);
 	if (terms) xmlAddChild (topnode, terms);
 
 	gint max_results = qof_query_get_max_results (q);
@@ -164,11 +245,19 @@ int main (int argc, char * argv[])
 	qof_query_init();
 	qof_object_initialize ();
 
-	qof_class_register ("GncABC", NULL, NULL);
+static QofParam params[] = {
+      { "adate", QOF_TYPE_DATE, NULL, NULL},
+      { "aint", QOF_TYPE_INT32, NULL, NULL},
+      { "astr", QOF_TYPE_STRING, NULL, NULL},
+      { NULL },
+   };
+
+	qof_class_register ("GncABC", NULL, params);
 	sq = qof_sql_query_new();
 
-	// qof_sql_query_parse (sq, "SELECT * from GncABC WHERE asdf = 123;");
-	qof_sql_query_parse (sq, "SELECT * from GncABC;");
+	qof_sql_query_parse (sq, 
+	    "SELECT * from GncABC WHERE aint = 123 or not astr=\'asdf\';");
+	// qof_sql_query_parse (sq, "SELECT * from GncABC;");
 	q = qof_sql_query_get_query (sq);
 
 	qof_query_print (q);
