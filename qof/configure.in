@@ -107,11 +107,18 @@ dnl If DWI is found on the build system, then build with it.
 dnl Need to check for libdwi-qof too .... 
 dnl **************************************************************
 
-AC_CHECK_LIB(dwi,dui_field_set_sql,
-              AC_DEFINE(HAVE_DWI,,We Have Found DWI),
-              AC_MSG_WARN([****** DWI not found; can't use the DWI backend.]),)
+DWI_CFLAGS=`$PKG_CONFIG --cflags dwi-0`
+DWI_LIBS=`$PKG_CONFIG --libs dwi-0`
+AC_SUBST(DWI_CFLAGS)
+AC_SUBST(DWI_LIBS)
+                                                                                
+if test x$DWI_LIBS = x; then
+   AC_MSG_WARN([****** DWI libs not found; build without DWI.])
+else
+   AC_DEFINE(HAVE_DWI,,We Have Found DWI)
+fi
 
-AM_CONDITIONAL(BUILD_DWI, [test x$HAVE_DWI = x])
+AM_CONDITIONAL(BUILD_DWI, [test x$HAVE_DWI != x])
 
 # check for doxygen, mostly stolen from http://log4cpp.sourceforge.net/
 # ----------------------------------------------------------------------------
@@ -184,6 +191,7 @@ echo ""
 dnl <= CFLAGS and LDFLAGS =>
 echo "CFLAGS : $CFLAGS"
 echo "LDFLAGS : $LDFLAGS"
+echo "DWI_LIBS : $DWI_LIBS"
 echo ""
 
 dnl <= Prefixes =>
