@@ -75,7 +75,8 @@ main (int argc, char *argv[])
 	QofSession *sess = qof_session_new();
 	qof_session_begin (sess, "sql://myinst", FALSE, TRUE);
 
-	QofBook *book = qof_book_new();
+	QofBook *book = qof_session_get_book();
+	qof_session_load (sess, NULL);
 
 #if 0
 	qof_map_set_book (map, book);

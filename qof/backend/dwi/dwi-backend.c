@@ -17,6 +17,15 @@ typedef struct DwiBackend_s DwiBackend;
 /* ============================================================= */
 
 static void
+dwiend_load_foundation (QofBackend *qbe,  QofBook *book)
+{
+	DwiBackend *be = (DwiBackend *) qbe;
+	printf ("load foundation %p\n", be);
+}
+
+/* ============================================================= */
+
+static void
 dwiend_session_begin (QofBackend *qbe,
                       QofSession *session,
                       const char *book_id,
@@ -43,6 +52,7 @@ dwiend_init (DwiBackend *be)
 	qof_backend_init (&be->be);
 	be->db = NULL;
 	be->be.session_begin = dwiend_session_begin;
+	be->be.load = dwiend_load_foundation;
 }
 
 /* ============================================================= */
