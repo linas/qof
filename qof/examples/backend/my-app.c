@@ -7,6 +7,7 @@
  */
 
 #include <qof/qof.h>
+#include <qof/qofbook-p.h>
 
 #include "my-instance.h"
 
@@ -44,6 +45,29 @@ print_all (QofBook *book)
 }
 
 /* ============================================================== */
+/* Run a query, print the results */
+
+void 
+my_app_run_query (QofSqlQuery *q, char *sql_str)
+{
+   GList *results, *n;
+
+   /* Run the query */
+   results = qof_sql_query_run (q, sql_str);
+
+   printf ("------------------------------------------\n");
+   printf ("Query string is: %s\n", sql_str);
+   printf ("Query returned %d results:\n", g_list_length(results));
+   for (n=results; n; n=n->next)
+   {
+      MyInst *m = n->data;
+      printf ("Found a matching object, a=%d b=%d memo=\"%s\"\n", 
+          m->a, m->b, m->memo);
+   }
+   printf ("\n");
+}
+
+/* ============================================================== */
 
 MyInst *
 add_entity (QofBook *book)
@@ -74,10 +98,20 @@ main (int argc, char *argv[])
 
 	QofSession *sess = qof_session_new();
 	qof_session_begin (sess, "sql://myinst", FALSE, TRUE);
-
-	QofBook *book = qof_session_get_book();
 	qof_session_load (sess, NULL);
+	
+	QofBook *book = qof_session_get_book(sess);
 
+	/* Create a new query */
+	QofSqlQuery *qry =  qof_sql_query_new ();
+
+	/* Set the book to be searched */
+	qof_sql_query_set_book(qry, book);
+
+	/* Run a query */
+	// my_app_run_query (qry, "SELECT * FROM MyInst WHERE MyObj_a = 1;");
+	my_app_run_query (qry, "SELECT * FROM MyInst;");
+	
 #if 0
 	qof_map_set_book (map, book);
 

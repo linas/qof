@@ -109,7 +109,8 @@ static QofObject myent_object_def =
 	version_cmp:       (int (*)(gpointer, gpointer)) qof_instance_version_cmp,
 };
 
-gboolean my_inst_register (void)
+gboolean 
+my_inst_register (void)
 {
 	/* Associate an ASCII name to each getter, as well as the return type */
 	static QofParam params[] = {
