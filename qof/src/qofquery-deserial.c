@@ -106,12 +106,12 @@ QofQuery *qof_query_from_xml (xmlNodePtr);
    }                                                         \
    else
 
-#define GET_BOOL(VAL,TOK)                                    \
+#define GET_BOOL(SELF,FN,TOK)                                \
    if (0 == strcmp (TOK, node->name))                        \
    {                                                         \
       const char *str = GET_TEXT (node);                     \
       gboolean bval = atol (str);                            \
-      VAL = bval;                                            \
+      FN (SELF, bval);                                       \
    }                                                         \
    else
 
@@ -180,53 +180,53 @@ QofQuery *qof_query_from_xml (xmlNodePtr);
 
 /* =============================================================== */
 
-static QofQueryPredData *
-qof_query_pred_int64_from_xml (xmlNodePtr root)
-{
-	xmlNodePtr xp = root->xmlChildrenNode;
-	xmlNodePtr node;
-
-	QofQueryCompare how = QOF_COMPARE_EQUAL;
-	gint64 val = 0;
-
-	for (node=xp; node; node = node->next)
-	{
-		if (node->type != XML_ELEMENT_NODE) continue;
-
-		GET_HOW (how, "qofquery:compare", LT, LTE, EQUAL, GT, GTE, NEQ);
-		GET_INT64 (0, val=, "qofquery:int64");
-		{}
-	}
-
-	QofQueryPredData *pred;
-	pred = qof_query_int64_predicate (how, val);
-	return pred;
+#define SIMPLE_PRED_HANDLER(SUBRNAME,CTYPE,GETTER,XMLTYPE,PRED) \
+static QofQueryPredData *                                       \
+SUBRNAME (xmlNodePtr root)                                      \
+{                                                               \
+	xmlNodePtr xp = root->xmlChildrenNode;                       \
+	xmlNodePtr node;                                             \
+                                                                \
+	QofQueryCompare how = QOF_COMPARE_EQUAL;                     \
+	CTYPE val = 0;                                               \
+                                                                \
+	for (node=xp; node; node = node->next)                       \
+	{                                                            \
+		if (node->type != XML_ELEMENT_NODE) continue;             \
+                                                                \
+		GET_HOW (how, "qofquery:compare", LT, LTE, EQUAL, GT, GTE, NEQ); \
+		GETTER (0, val=, XMLTYPE);                                \
+		{}                                                        \
+	}                                                            \
+                                                                \
+	QofQueryPredData *pred;                                      \
+	pred = PRED (how, val);                                      \
+	return pred;                                                 \
 }
 
-/* =============================================================== */
+SIMPLE_PRED_HANDLER (qof_query_pred_double_from_xml,
+                     double,
+                     GET_DBL,
+                     "qofquery:double",
+	                  qof_query_double_predicate);
 
-static QofQueryPredData *
-qof_query_pred_int32_from_xml (xmlNodePtr root)
-{
-	xmlNodePtr xp = root->xmlChildrenNode;
-	xmlNodePtr node;
+SIMPLE_PRED_HANDLER (qof_query_pred_int64_from_xml,
+                     gint64,
+                     GET_INT64,
+                     "qofquery:int64",
+	                  qof_query_int64_predicate);
 
-	QofQueryCompare how = QOF_COMPARE_EQUAL;
-	gint32 val = 0;
+SIMPLE_PRED_HANDLER (qof_query_pred_int32_from_xml,
+                     gint32,
+                     GET_INT32,
+                     "qofquery:int32",
+	                  qof_query_int32_predicate);
 
-	for (node=xp; node; node = node->next)
-	{
-		if (node->type != XML_ELEMENT_NODE) continue;
-
-		GET_HOW (how, "qofquery:compare", LT, LTE, EQUAL, GT, GTE, NEQ);
-		GET_INT32 (0, val=, "qofquery:int32");
-		{}
-	}
-
-	QofQueryPredData *pred;
-	pred = qof_query_int32_predicate (how, val);
-	return pred;
-}
+SIMPLE_PRED_HANDLER (qof_query_pred_boolean_from_xml,
+                     gboolean,
+                     GET_BOOL,
+                     "qofquery:boolean",
+	                  qof_query_boolean_predicate);
 
 /* =============================================================== */
 
@@ -246,7 +246,7 @@ qof_query_pred_string_from_xml (xmlNodePtr root)
 		if (node->type != XML_ELEMENT_NODE) continue;
 
 		GET_HOW (how, "qofquery:compare", LT, LTE, EQUAL, GT, GTE, NEQ);
-		GET_BOOL (is_regex, "qofquery:is-regex");
+		GET_BOOL (0, is_regex=, "qofquery:is-regex");
 		GET_STR (0, pstr=, "qofquery:string");
 		GET_STRING_MATCH (sm, "qofquery:string-match", NORMAL, CASEINSENSITIVE);
 		{}
@@ -317,6 +317,21 @@ qof_query_term_from_xml (QofQuery *q, xmlNodePtr root)
 			pred = qof_query_pred_int32_from_xml (node);
 		}
 		else
+		if (0 == strcmp (node->name, "qofquery:pred-int64"))
+		{
+			pred = qof_query_pred_int64_from_xml (node);
+		}
+		else
+		if (0 == strcmp (node->name, "qofquery:pred-double"))
+		{
+			pred = qof_query_pred_double_from_xml (node);
+		}
+		else
+		if (0 == strcmp (node->name, "qofquery:pred-boolean"))
+		{
+			pred = qof_query_pred_boolean_from_xml (node);
+		}
+		else
 		{
 // xxxxxxxxxxxxxxxxxxxx
 			// warning unhandled predicate type
@@ -325,8 +340,6 @@ qof_query_term_from_xml (QofQuery *q, xmlNodePtr root)
 
 	/* At this level, the terms should always be anded */
 	qof_query_add_term (q, path, pred, QOF_QUERY_AND);
-printf ("  ------- duuuuuude addeddd a tere-------------------------------- \n");
-qof_query_print (q);
 }
 
 /* =============================================================== */
@@ -363,8 +376,6 @@ qof_query_or_terms_from_xml (QofQuery *q, xmlNodePtr root)
 		{
 			QofQuery *qand = qof_query_create ();
 			qof_query_and_terms_from_xml (qand, node);
-printf ("  ------- duuuuuude and terms ---------------------------------------------- \n");
-qof_query_print (qand);
 			qof_query_merge_in_place (q, qand, QOF_QUERY_OR);
 			qof_query_destroy (qand);
 		}
@@ -435,6 +446,8 @@ int main (int argc, char * argv[])
 		{ "adate", QOF_TYPE_DATE, NULL, NULL},
 		{ "aint", QOF_TYPE_INT32, NULL, NULL},
 		{ "aint64", QOF_TYPE_INT64, NULL, NULL},
+		{ "aflt", QOF_TYPE_DOUBLE, NULL, NULL},
+		{ "abool", QOF_TYPE_BOOLEAN, NULL, NULL},
 		{ "astr", QOF_TYPE_STRING, NULL, NULL},
 		{ "adate", QOF_TYPE_DATE, NULL, NULL},
 		{ NULL },
@@ -446,6 +459,8 @@ int main (int argc, char * argv[])
 	qof_sql_query_parse (sq, 
 	    "SELECT * from GncABC WHERE aint = 123 " 
 	    "and not aint64 = 6123123456789 "
+	    "or abool = TRUE "
+	    "and not aflt >= \'3.14159265358979\' "
 	    "or not astr=\'asdf\' "
 	    // "and adate<\'01-01-01\' ;"
 	    );
