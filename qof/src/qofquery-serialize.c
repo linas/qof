@@ -255,7 +255,6 @@ qof_query_pred_data_to_xml (QofQueryPredData *pd)
 		PUT_HOW ("qofquery:compare", pd->how, LT, LTE, EQUAL, GT, GTE, NEQ);
 
 		query_int64_t pdata = (query_int64_t) pd;
-		
 		PUT_INT64 ("qofquery:int64", pdata->val);
 		return topnode;
 	}
@@ -478,9 +477,10 @@ int main (int argc, char * argv[])
 	qof_object_initialize ();
 
 	static QofParam params[] = {
-		{ "adate", QOF_TYPE_DATE, NULL, NULL},
-		{ "aint", QOF_TYPE_INT32, NULL, NULL},
-		{ "astr", QOF_TYPE_STRING, NULL, NULL},
+		{ "adate",  QOF_TYPE_DATE, NULL, NULL},
+		{ "aint",   QOF_TYPE_INT32, NULL, NULL},
+		{ "aint64", QOF_TYPE_INT64, NULL, NULL},
+		{ "astr",   QOF_TYPE_STRING, NULL, NULL},
 		{ NULL },
    };
 
@@ -488,7 +488,9 @@ int main (int argc, char * argv[])
 	sq = qof_sql_query_new();
 
 	qof_sql_query_parse (sq, 
-	    "SELECT * from GncABC WHERE aint = 123 or not astr=\'asdf\';");
+	    "SELECT * from GncABC WHERE aint = 123 "
+	    "or not astr=\'asdf\' "
+	    "and aint64 = 9876123456789;");
 	// qof_sql_query_parse (sq, "SELECT * from GncABC;");
 	q = qof_sql_query_get_query (sq);
 

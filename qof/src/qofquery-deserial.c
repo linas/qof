@@ -36,6 +36,7 @@ QofQuery *qof_query_from_xml (xmlNodePtr);
 
 // #include "config.h"
 
+#include <stdlib.h>
 #include <glib.h>
 #include <libxml/parser.h>
 
@@ -83,6 +84,15 @@ QofQuery *qof_query_from_xml (xmlNodePtr);
    {                                                         \
       const char *str = GET_TEXT (node);                     \
       gint32 ival = atoi (str);                              \
+      FN (SELF, ival);                                       \
+   }                                                         \
+   else
+
+#define GET_INT64(SELF,FN,TOK)                               \
+   if (0 == strcmp (TOK, node->name))                        \
+   {                                                         \
+      const char *str = GET_TEXT (node);                     \
+      gint64 ival = atoll (str);                             \
       FN (SELF, ival);                                       \
    }                                                         \
    else
@@ -167,6 +177,31 @@ QofQuery *qof_query_from_xml (xmlNodePtr);
       VAL = ival;                                            \
    }                                                         \
    else
+
+/* =============================================================== */
+
+static QofQueryPredData *
+qof_query_pred_int64_from_xml (xmlNodePtr root)
+{
+	xmlNodePtr xp = root->xmlChildrenNode;
+	xmlNodePtr node;
+
+	QofQueryCompare how = QOF_COMPARE_EQUAL;
+	gint64 val = 0;
+
+	for (node=xp; node; node = node->next)
+	{
+		if (node->type != XML_ELEMENT_NODE) continue;
+
+		GET_HOW (how, "qofquery:compare", LT, LTE, EQUAL, GT, GTE, NEQ);
+		GET_INT64 (0, val=, "qofquery:int64");
+		{}
+	}
+
+	QofQueryPredData *pred;
+	pred = qof_query_int64_predicate (how, val);
+	return pred;
+}
 
 /* =============================================================== */
 
@@ -259,18 +294,12 @@ qof_query_term_from_xml (QofQuery *q, xmlNodePtr root)
 		if (0 == strcmp (node->name, "qofquery:invert"))
 		{
 			QofQuery *qt = qof_query_create();
-printf ("duude invert\n");
 			qof_query_term_from_xml (qt, node);
 			QofQuery *qinv = qof_query_invert (qt);
-printf ("duuuuuu postinvert -- uuuuuuuuuuuuuuuuuuuuuuuuuuuuude\n");
-qof_query_print (qinv);
 			qof_query_merge_in_place (q, qinv, QOF_QUERY_AND);
-printf ("duuuuuu post  nerge -- uuuuuuuuuuuuuuuuuuuuuude\n");
-qof_query_print (q);
-printf ("---------------------------------------------------\n");
 			qof_query_destroy (qinv);
 			qof_query_destroy (qt);
-			continue;
+			return;
 		}
 		else
 		if (0 == strcmp (node->name, "qofquery:param-path"))
@@ -289,12 +318,15 @@ printf ("---------------------------------------------------\n");
 		}
 		else
 		{
+// xxxxxxxxxxxxxxxxxxxx
 			// warning unhandled predicate type
 		}
 	}
 
 	/* At this level, the terms should always be anded */
 	qof_query_add_term (q, path, pred, QOF_QUERY_AND);
+printf ("  ------- duuuuuude addeddd a tere-------------------------------- \n");
+qof_query_print (q);
 }
 
 /* =============================================================== */
@@ -331,6 +363,8 @@ qof_query_or_terms_from_xml (QofQuery *q, xmlNodePtr root)
 		{
 			QofQuery *qand = qof_query_create ();
 			qof_query_and_terms_from_xml (qand, node);
+printf ("  ------- duuuuuude and terms ---------------------------------------------- \n");
+qof_query_print (qand);
 			qof_query_merge_in_place (q, qand, QOF_QUERY_OR);
 			qof_query_destroy (qand);
 		}
@@ -400,7 +434,9 @@ int main (int argc, char * argv[])
 	static QofParam params[] = {
 		{ "adate", QOF_TYPE_DATE, NULL, NULL},
 		{ "aint", QOF_TYPE_INT32, NULL, NULL},
+		{ "aint64", QOF_TYPE_INT64, NULL, NULL},
 		{ "astr", QOF_TYPE_STRING, NULL, NULL},
+		{ "adate", QOF_TYPE_DATE, NULL, NULL},
 		{ NULL },
    };
 
@@ -408,7 +444,11 @@ int main (int argc, char * argv[])
 	sq = qof_sql_query_new();
 
 	qof_sql_query_parse (sq, 
-	    "SELECT * from GncABC WHERE aint = 123 or not astr=\'asdf\';");
+	    "SELECT * from GncABC WHERE aint = 123 " 
+	    "and not aint64 = 6123123456789 "
+	    "or not astr=\'asdf\' "
+	    // "and adate<\'01-01-01\' ;"
+	    );
 	// qof_sql_query_parse (sq, "SELECT * from GncABC;");
 	q = qof_sql_query_get_query (sq);
 
@@ -417,6 +457,7 @@ int main (int argc, char * argv[])
    xmlNodePtr topnode = qof_query_to_xml (q);
 
 	qnew = qof_query_from_xml (topnode);
+	printf ("  ------------------------------------------------------- \n");
 	qof_query_print (qnew);
 
 	gboolean eq = qof_query_equal (q, qnew);
