@@ -1,0 +1,25 @@
+
+                          libsql
+                          ------
+
+The contents of this directory contain the libsql SQL statement parser.
+This has been copied, without modification, from the
+gnomedb/libgda/libsql subdirectory on April 7th, 2004. 
+(See http://www.gnome-db.org/)
+
+None of the files indicate the provenance of this code, or the
+applicable license; and the gnomedb folks don't seem to provide 
+any clarifying remarks; however, gnomedb itself is under the GPL 
+license and parts of it are under the less restrictive LGPL license.
+
+I think I've seen this SQL parsing code before, I think its in the
+public domain.  I think its two or three decades old.  Certainly, 
+the pre-world-wide-web (pre-1994) alt.sources newsgroup contained 
+a parser very similar to this; so did some late 1980's ftp sites.
+
+I copied this code here because I did not want to make QOF dependent 
+on the install of libgda or libsql.  If/when libsql is widely 
+available and readily installed, then maybe we can remove this code.
+In the meanwhile, this copy will stop "dependency hell".
+
+--Linas  Vepstas 7 April 2004
