@@ -656,16 +656,19 @@ guid_predicate_equal (QofQueryPredData *p1, QofQueryPredData *p2)
 }
 
 QofQueryPredData *
-qof_query_guid_predicate (QofGuidMatch options, GList *guids)
+qof_query_guid_predicate (QofGuidMatch options, GList *guid_list)
 {
   query_guid_t pdata;
   GList *node;
+
+  if (NULL == guid_list) return NULL;
 
   pdata = g_new0 (query_guid_def, 1);
   pdata->pd.how = QOF_COMPARE_EQUAL;
   pdata->pd.type_name = query_guid_type;
   pdata->options = options;
-  pdata->guids = g_list_copy (guids);
+
+  pdata->guids = g_list_copy (guid_list);
   for (node = pdata->guids; node; node = node->next) 
   {
     GUID *guid = guid_malloc ();
