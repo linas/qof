@@ -116,8 +116,78 @@ that are questionable, and need to be addressed. These are discussed
 below.
 <p>
 <ul>
+<li> <p><b>Why C? Why not a better language?</b>
+     The C language has many problems, the most serious of which 
+     is the lack of <b><i>lambda</i></b>.  I know you're thinking 
+     "What in the world is lambda? I've been programming for years,
+     I've never needed one."  Well, the jokes on you.
+     <b><i>Lambda</i></b>
+     is a way of declaring a function by binding some (but not all)
+     arguments to a different function.  Lambda allows you to 
+     pass functions as if they were arguments, without having to 
+     fix the type.  The lack of lambda in C deeply affects how 
+     people program and design in C.  One can sort-of work around
+     the missing lambda, but not very well.  One stunt is to 
+     code in an object-oriented fashion.  This helps because 
+     an object method implicitly drags along its "missing arguments"
+     in the form of a reference to the instance (the 'this' or 'self'
+     pointer).  Unfortunately, this makes object-oriented languages
+     strongly typed (C++ and Java are both strongly typed).
+     Strong typing makes it hard to work with "generic", unknown
+     types.  The work-around for this is the "Master Base Class"
+     design pattern: One creates a master base class, and then 
+     every other object must inherit from it.  For example, 
+     in GTK, the master base class is GObject.  In Motif, it 
+     was Widget.
+     <br><br>
+     By having a master base class, one can write quasi-generic 
+     algorithms because one is guarenteed that everything that
+     inherited from the base class can be treated as if it were 
+     really the base class itself.  So, 
+     <b><tt>some_func (Base *b);</tt></b> can be applied to any 
+     derived object, and so <tt>some_func</b> is more-or-less 
+     generic: it can act on <i>any</i> type (as long as that type
+     inherits from <tt>Base</tt>).   Of course, this falls apart
+     if one has multiple base classes (multiple inheritance), or
+     ints, floats as your base type. 
+     <br><br>
+     So the other way to work around a missing lambda, and write 
+     generic algorithms, is to introduce the idea of "type templates".
+     Templates are now a part of C++.  By using templates in C++,
+     one can write generic, type-independent algorithms.  
+     Unfortunately, templates are hard to use, template code is 
+     hard to read and write, and, worst of all, templates "bubble"
+     through.  In other words, if <tt>func_a()</tt> calls 
+     <tt>func_b()</tt> which calls <tt>func_c()</tt>, and
+     <tt>func_c()</tt> can handle generic types
+     (because its is a template), the only way to expose this
+     is to also make <tt>func_a()</tt> and <tt>func_b()</tt> also 
+     be templates.  So even if <tt>func_a()</tt> and <tt>func_b()</tt>
+     had no reason to be templates, they were forced to become so.
+     This is "bubbling", and its all because C++ doesn't support
+     <b><i>lambda</i></b>.  Oh well. 
+     <br><br>
+     The way C avoids the missing-lambda problem is by being 
+     weakly-typed.  One casts things to <tt>(void *)</tt> and passes
+     those around.  Take a look at typical GTK/Gnome code: 
+     <tt>gpointer</tt> is everywhere.  Its in the arguments for
+     signals. Its what glib <tt>GList</tt>'s and <tt>GArray</tt>'s
+     store, and on and on ... of course, you can imagine the 
+     kind of type-casting trouble this can get you into, which
+     is why GTK has this incredible run-time dynamic type-casting
+     system built into it.
+     <br><br>
+     So, to answer the question "Why C? Why not a Better Language?"
+     Because C++, Java, Python, Eiffel, C# still don't have a lambda.
+     One <i>still</i> has to use the "master base class design patern",
+     or bubbling templates, or <tt>(void *)</tt> pointers and run-time
+     type-checking/type-casting.  These other langauges still don't
+     rescue you, they don't offer any advantage over C in regard to
+     this deep, fundamental issue.
+     </p>
+     <br>
 <li> <p><b>Why C (or C++)? Why not a better language?</b>
-     The C/C++ language has many ther problems, the most serious of which 
+     The C/C++ language has many problems, the most serious of which 
      is the lack of garbage collection and of any sort of persistance.
      In particular, C/C++ lack "object introspection", the ability to 
      have a subroutine, when given an object of unknown type, to find
