@@ -42,7 +42,7 @@ dnl pkg-config check time
 dnl *****************************************
 
 dnl LIBGNOMEVFS_REQUIRED=2.0.0
-LIBXML2_REQUIRED=2.0.0
+LIBXML2_REQUIRED=2.5.2
 
 AM_PATH_GLIB_2_0("2.0.0", , ,gobject)
 
@@ -50,11 +50,15 @@ dnl **************************************************************
 dnl libxml2
 dnl The libxml2 library is required only if the serializer/xml
 dnl backend is used. Should probably dynamic-load this thing?
+dnl libxml2 v2.5.2 is required for QSF (backend/file)
 dnl **************************************************************
 
 PKG_CHECK_MODULES(LIBXML2, libxml-2.0 >= $LIBXML2_REQUIRED)
+LIBXML_VERSION=`xml2-config --version`
 AC_SUBST(LIBXML2_CFLAGS)
 AC_SUBST(LIBXML2_LIBS)
+dnl QSF_SCHEMA_DIR='$datadir/qsf'
+dnl AC_SUBST(QSF_SCHEMA_DIR)
 
 dnl **************************************************************
 dnl Stuff needed to build the example progs only ... 
@@ -179,10 +183,14 @@ AC_SUBST(CFLAGS)
 AC_SUBST(CPPFLAGS)
 AC_SUBST(LDFLAGS)
 
+QSF_SCHEMA_DIR=`eval echo $datadir`"/qsf"
+AC_SUBST(QSF_SCHEMA_DIR)
+
 AC_OUTPUT([
 Makefile
 backend/Makefile
 backend/dwi/Makefile
+backend/file/Makefile
 doc/Makefile
 examples/Makefile
 examples/backend/Makefile
@@ -204,7 +212,8 @@ dnl <= CFLAGS and LDFLAGS =>
 echo "CFLAGS : $CFLAGS"
 echo "LDFLAGS : $LDFLAGS"
 echo "DWI_LIBS : $DWI_LIBS"
-echo ""
+echo "LIBXML2 :"`eval echo $LIBXML_VERSION`
+echo "QSF DIR : "`eval echo $QSF_SCHEMA_DIR`
 
 dnl <= Prefixes =>
 echo "prefix : $prefix"

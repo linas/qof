@@ -42,7 +42,7 @@
 #define OBJ_MINOR 			"tiny"
 #define OBJ_ACTIVE 			"ofcourse"
 
-static void test_rule_loop 	(qof_book_mergeRule*, guint);
+static void test_rule_loop 	(qof_book_mergeData *mergeData, qof_book_mergeRule*, guint);
 static void test_merge 		(void);
 gboolean 	myobjRegister 	(void);
 void 		test_ForeachParam	( QofParam*, 	gpointer );
@@ -235,7 +235,7 @@ gboolean myobjRegister (void)
 {
   static QofParam params[] = {
 	{ OBJ_NAME,		QOF_TYPE_STRING,	(QofAccessFunc)obj_getName,		(QofSetterFunc)obj_setName		},
-	{ OBJ_AMOUNT,   QOF_TYPE_NUMERIC,   (QofAccessFunc)obj_getAmount,   (QofSetterFunc)obj_setAmount	},
+	{ OBJ_AMOUNT, QOF_TYPE_NUMERIC, (QofAccessFunc)obj_getAmount,(QofSetterFunc)obj_setAmount },
 	{ OBJ_GUID,		QOF_TYPE_GUID,		(QofAccessFunc)obj_getGUID,		(QofSetterFunc)obj_setGUID		},
 	{ OBJ_DATE,		QOF_TYPE_DATE,		(QofAccessFunc)obj_getDate,		(QofSetterFunc)obj_setDate		},
 	{ OBJ_DISCOUNT, QOF_TYPE_DOUBLE,	(QofAccessFunc)obj_getDiscount, (QofSetterFunc)obj_setDiscount  },
@@ -265,6 +265,7 @@ test_merge (void)
 	gint64 minor;
 	gchar *import_init, *target_init;
 	gnc_numeric obj_amount;
+	qof_book_mergeData *mergeData;
 	
 	target = qof_book_new();
 	import = qof_book_new();
@@ -328,18 +329,18 @@ test_merge (void)
 	obj_setMinor(target_obj, minor);
 	obj_setDate(target_obj, tc );
 	
-	result = qof_book_mergeInit(import, target);
-	g_return_if_fail(result != -1);
- 	qof_book_mergeRuleForeach(test_rule_loop, MERGE_REPORT);
+	mergeData = qof_book_mergeInit(import, target);
+	g_return_if_fail(mergeData != NULL);
+ 	qof_book_mergeRuleForeach(mergeData, test_rule_loop, MERGE_REPORT);
 
- 	result = qof_book_mergeCommit();
+ 	result = qof_book_mergeCommit(mergeData);
 	g_return_if_fail(result == 0);
 	qof_object_foreach_type(test_ForeachType, target);
 
 }
 
 static void
-test_rule_loop (qof_book_mergeRule *rule, guint remainder)
+test_rule_loop (qof_book_mergeData *mergeData, qof_book_mergeRule *rule, guint remainder)
 {
 	GSList *user_reports;
 	QofParam *one_param;
@@ -392,16 +393,24 @@ test_rule_loop (qof_book_mergeRule *rule, guint remainder)
 			note that all possible changes are shown. */
 		
 		switch(resolution) {
-			case 1 : { qof_book_mergeUpdateResult(rule, MERGE_UPDATE); input_ok = TRUE; break; }
+			case 1 : { 
+				mergeData = qof_book_mergeUpdateResult(mergeData, MERGE_UPDATE); 
+				input_ok = TRUE; 
+				break; 
+				}
 			case 2 : { 
-				if(rule->mergeAbsolute == FALSE) { qof_book_mergeUpdateResult(rule, MERGE_DUPLICATE); }
-				if(rule->mergeAbsolute == TRUE) { qof_book_mergeUpdateResult(rule, MERGE_ABSOLUTE); }
+				if(rule->mergeAbsolute == FALSE) { 
+					mergeData = qof_book_mergeUpdateResult(mergeData, MERGE_DUPLICATE); 
+				}
+				if(rule->mergeAbsolute == TRUE) { 
+					mergeData = qof_book_mergeUpdateResult(mergeData, MERGE_ABSOLUTE); 
+				}
 				input_ok = TRUE; 
 				break; 
 			}
 			case 3 : { 
 				if(rule->mergeAbsolute == FALSE) { 
-					qof_book_mergeUpdateResult(rule, MERGE_NEW); 
+					mergeData = qof_book_mergeUpdateResult(mergeData, MERGE_NEW); 
 					input_ok = TRUE; 
 				}
 				/* if rule->mergeAbsolute is TRUE, the GUID matches and a NEW object would corrupt
@@ -416,7 +425,7 @@ test_rule_loop (qof_book_mergeRule *rule, guint remainder)
 				
 				if((safe_strcmp("y",&y) == 0)||(safe_strcmp("",&y) == 0)) {
 					printf("Aborting . . \n\n");
-					qof_book_mergeUpdateResult(rule, MERGE_INVALID);
+					mergeData = qof_book_mergeUpdateResult(mergeData, MERGE_INVALID);
 					input_ok = TRUE;
 				}
 				break;

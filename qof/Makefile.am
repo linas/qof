@@ -20,4 +20,3 @@ EXTRA_DIST =                   \
 	intltool-merge.in           \
 	intltool-update.in          \
 	qof-0.pc.in
-
