@@ -94,17 +94,30 @@ qof_sql_query_run (QofSqlQuery *query, const char *str)
 		return NULL;
 	}
 
-	if (SQL_select != query->parse_result)
+	if (SQL_select != query->parse_result->type)
 	{
-		printf ("only support the select type\n");
+		printf ("Error: currently, only SELECT statements are supported, "
+		                     "got type=%d\n", query->parse_result);
 		return NULL;
+	}
+
+	/* If the user wrote "SELECT * FROM tablename WHERE ..."
+	 * then we have a single global tablename.  But if the 
+	 * user wrote "SELECT * FROM tableA, tableB WHERE ..."
+	 * then we don't have a single unique table-name.
+	 */
+	char * single_global_tablename = NULL;
+	GList *tables = sql_statement_get_tables (query->parse_result);
+	if (1 == g_list_length (tables))
+	{
+		single_global_tablename = tables->data;
 	}
 
 	sql_select_statement *sss = query->parse_result->statement;
 	sql_where * swear = sss->where;
 	if (NULL == swear)
 	{
-		printf ("expecting 'where' statement\n");
+		printf ("Error: expecting 'where' statement\n");
 		return NULL;
 	}
 
@@ -128,6 +141,7 @@ qof_sql_query_run (QofSqlQuery *query, const char *str)
 				return NULL;
 			}
 			
+			/* -------------------------------- */
 			/* field to match, assumed, for now to be on the left */
 			/* XXX fix the left-right thing */
 			if (NULL == cond->d.pair.left)
@@ -142,12 +156,18 @@ qof_sql_query_run (QofSqlQuery *query, const char *str)
 				return NULL;
 			}
 			char * qparam_name = sparam->d.name->data;
+			if (NULL == qparam_name)
+			{
+				printf ("Error: we missing paramter name\n");
+				return NULL;
+			}
 
+			/* -------------------------------- */
 			/* value to match, assumed, for now, to be on the right. */
 			/* XXX fix the left-right thing */
 			if (NULL == cond->d.pair.right)
 			{
-				printf ("duude missing left paramter\n");
+				printf ("duude missing right paramter\n");
 				return NULL;
 			}
 			sql_field_item * svalue = cond->d.pair.right->item;
@@ -157,7 +177,13 @@ qof_sql_query_run (QofSqlQuery *query, const char *str)
 				return NULL;
 			}
 			char * qvalue_name = svalue->d.name->data;
+			if (NULL == qvalue_name)
+			{
+				printf ("Error: we missing value\n");
+				return NULL;
+			}
 
+			/* -------------------------------- */
 			/* Now start building the QOF paramter */
 			param_list = qof_query_build_param_list (qparam_name, NULL);
 
@@ -171,6 +197,9 @@ qof_sql_query_run (QofSqlQuery *query, const char *str)
 				case SQL_geq: qop = QOF_COMPARE_GTE; break;
 				case SQL_leq:   qop = QOF_COMPARE_LTE; break;
 				case SQL_diff:  qop = QOF_COMPARE_NEQ; break;
+				default:
+					printf ("duude unsupported compare op for now\n");
+					return NULL;
 			}
 			
 			/* OK, need to know the type of the thing being matched 
@@ -181,18 +210,30 @@ qof_sql_query_run (QofSqlQuery *query, const char *str)
 			get_table_and_param (qparam_name, &table_name, &param_name);
 			if (NULL == table_name)
 			{
-				printf ("error: unsupported, naed a table name for now \n");
-				// XXX if no table here, we should use the global query table.
-				// unless there's more than one global query table, and 
-				// then its indeterminate again.
+				table_name = single_global_tablename;
+			}
+				
+			if (NULL == table_name)
+			{
+				printf ("Error: Need to specify a table to query\n");
 				return NULL;
 			}
 			
 			QofType param_type = qof_class_get_parameter_type (table_name,
 			                  param_name);
+printf ("duude parse table=%s param=%s type=%s\n",
+table_name, param_name, param_type);
 
 			if (!strcmp (param_type, QOF_TYPE_STRING))
 			{
+				/* strip out quotation marks ...  */
+				if (('\'' == qvalue_name[0]) ||
+				    ('\"' == qvalue_name[0]))
+				{
+					qvalue_name ++;
+					size_t len = strlen(qvalue_name);
+					qvalue_name[len-1] = 0;
+				}
 				pred_data = 
 				    qof_query_string_predicate (qop, /* comparison to make */
 				    qvalue_name,                     /* string to match */
@@ -214,14 +255,9 @@ qof_sql_query_run (QofSqlQuery *query, const char *str)
 	 * a list of QofEntity.  Otherwise, we return ... ?
 	 * XXX all this needs fixing.
 	 */
-	GList *tables = sql_statement_get_tables (query->parse_result);
-	for (node=tables; node; node=node->next)
-	{
-		char * tablename = node->data;
-		qof_query_search_for (query->qof_query, tablename);
-		break;
-	}
+	qof_query_search_for (query->qof_query, single_global_tablename);
 
+qof_query_print (query->qof_query);
 	GList *results = qof_query_run (query->qof_query);
 
 	return results;
