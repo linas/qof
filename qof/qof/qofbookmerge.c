@@ -25,16 +25,25 @@
 #include "qofid-p.h"
 static short module = MOD_IMPORT; 
 
+/* private rule iteration struct */
+struct qof_book_mergeRuleIterate {
+	qof_book_mergeRuleForeachCB   fcn;
+	qof_book_mergeRule *data;
+	GList *ruleList;
+	guint remainder;
+};
+
+/* Make string type parameters 3 times more
+	important in the match than default types.
+	i.e. even if two other parameters differ, 
+	a string match will still provide a better target
+	than when other types match and the string does not.
+*/
+#define DEFAULT_MERGE_WEIGHT	1
+#define QOF_STRING_WEIGHT		3
+
 /* all qof_book_merge data is held in mergeData. */
 static qof_book_mergeData* mergeData = NULL;
-
-/*
-currentRule is only used when a qof_book_mergeRule is being inspected or
-tested, not when it is created. This is to avoid the need for g_new()
-every time a single rule is checked.
-
-Rules are created and freed separately, via the mergeData GList, mergeList.
-*/
 static qof_book_mergeRule* currentRule = NULL;
 
 /* ================================================================ */
@@ -57,7 +66,7 @@ qof_book_mergeInit( QofBook *importBook, QofBook *targetBook)
 	while(check != NULL) {
 		currentRule = check->data;
 		if(currentRule->mergeResult == MERGE_INVALID) {
-			qof_book_merge_abort();
+			mergeData->abort = TRUE;
 			return(-1);
 		}
 		check = g_list_next(check);
@@ -69,18 +78,21 @@ qof_book_mergeInit( QofBook *importBook, QofBook *targetBook)
 void
 qof_book_merge_abort (void)
 {
-	if(currentRule) {
+	while(mergeData->mergeList != NULL) {
+		currentRule = mergeData->mergeList->data;
 		g_slist_free(currentRule->linkedEntList);
 		g_slist_free(currentRule->mergeParam);
-		g_free(currentRule);
-	}
-	while(mergeData->mergeList != NULL) {
 		g_free(mergeData->mergeList->data);
 		mergeData->mergeList = g_list_next(mergeData->mergeList);
 	}
 	while(mergeData->targetList != NULL) {
 		g_free(mergeData->targetList->data);
 		mergeData->targetList = g_slist_next(mergeData->targetList);
+	}
+	if(currentRule) {
+		g_slist_free(currentRule->linkedEntList);
+		g_slist_free(currentRule->mergeParam);
+		g_free(currentRule);
 	}
 	g_list_free(mergeData->mergeList);
 	g_slist_free(mergeData->mergeObjectParams);
@@ -181,10 +193,7 @@ qof_book_mergeUpdateResult(qof_book_mergeRule *resolved, qof_book_mergeResult ta
 	if((currentRule->mergeResult == MERGE_NEW)&&(tag == MERGE_UPDATE)) { tag = MERGE_NEW; }
 	if(currentRule->updated == FALSE) { currentRule->mergeResult = tag;	}
 	currentRule->updated = TRUE;
-	if(tag == MERGE_INVALID) {
-		mergeData->abort = TRUE;
-		qof_book_merge_abort();
-	}
+	if(tag == MERGE_INVALID) { mergeData->abort = TRUE; }
 	return 0;
 }
 
@@ -201,7 +210,7 @@ qof_book_mergeCommit( void )
 	while(check != NULL) {
 		currentRule = check->data;
 		if(currentRule->mergeResult == MERGE_INVALID) {
-			qof_book_merge_abort();
+			mergeData->abort = TRUE;
 			return(-1);
 		}
 		if(currentRule->mergeResult == MERGE_REPORT) {
@@ -213,9 +222,14 @@ qof_book_mergeCommit( void )
 	g_list_free(check);
 	qof_book_mergeCommitForeach( qof_book_mergeCommitRuleLoop, MERGE_NEW);
 	qof_book_mergeCommitForeach( qof_book_mergeCommitRuleLoop, MERGE_UPDATE);
+	/* Placeholder for QofObject merge_helper_cb - all objects and all parameters set */
 	while(mergeData->mergeList != NULL) {
 		g_free(mergeData->mergeList->data);
 		mergeData->mergeList = g_list_next(mergeData->mergeList);
+	}
+	while(mergeData->targetList != NULL) {
+		g_free(mergeData->targetList->data);
+		mergeData->targetList = g_slist_next(mergeData->targetList);
 	}
 	g_list_free(mergeData->mergeList);
 	g_slist_free(mergeData->mergeObjectParams);
@@ -253,9 +267,8 @@ void qof_book_mergeRuleForeach( qof_book_mergeRuleForeachCB cb, qof_book_mergeRe
 	g_list_free(matching_rules);
 }
 
-
 void
-qof_book_mergeUpdateRule(gboolean match)
+qof_book_mergeUpdateRule(gboolean match, gint weight)
 {
 	gboolean absolute;
 
@@ -268,7 +281,7 @@ qof_book_mergeUpdateRule(gboolean match)
 			currentRule->mergeResult = MERGE_DUPLICATE;
 	}
 	if(!absolute && !match) {
-		currentRule->difference++;
+		currentRule->difference += weight;
 		if(currentRule->mergeResult == MERGE_DUPLICATE) {
 			currentRule->mergeResult = MERGE_REPORT;
 		}
@@ -301,6 +314,7 @@ qof_book_mergeCompare( void )
 	paramList = currentRule->mergeParam;
 	currentRule->difference = 0;
 	currentRule->mergeResult = MERGE_UNDEF;
+	currentRule->linkedEntList = NULL;
 	g_return_val_if_fail((targetEnt)||(mergeEnt)||(paramList), -1);
 	
 	kvpImport = kvp_frame_new();
@@ -321,7 +335,8 @@ qof_book_mergeCompare( void )
 			if(stringImport == NULL) { stringImport = ""; }
 			if(stringTarget == NULL) { stringTarget = ""; }
 			if(safe_strcmp(stringImport,stringTarget) == 0) { mergeMatch = TRUE; }
-			qof_book_mergeUpdateRule(mergeMatch);
+			/* Give special weight to a string match */
+			qof_book_mergeUpdateRule(mergeMatch, QOF_STRING_WEIGHT);
 			stringImport = stringTarget = NULL;
 			knowntype= TRUE;
 		}
@@ -330,7 +345,7 @@ qof_book_mergeCompare( void )
 			tsImport = date_getter(mergeEnt, qtparam);
 			tsTarget = date_getter(targetEnt, qtparam);
 			if(timespec_cmp(&tsImport, &tsTarget) == 0) { mergeMatch = TRUE; }
-			qof_book_mergeUpdateRule(mergeMatch);
+			qof_book_mergeUpdateRule(mergeMatch, DEFAULT_MERGE_WEIGHT);
 			knowntype= TRUE;
 		}
 		if((safe_strcmp(mergeType, QOF_TYPE_NUMERIC) == 0)  ||
@@ -339,14 +354,14 @@ qof_book_mergeCompare( void )
 			numericImport = numeric_getter(mergeEnt,qtparam);
 			numericTarget = numeric_getter(targetEnt,qtparam);
 			if(gnc_numeric_compare (numericImport, numericTarget) == 0) { mergeMatch = TRUE; }
-			qof_book_mergeUpdateRule(mergeMatch);
+			qof_book_mergeUpdateRule(mergeMatch, DEFAULT_MERGE_WEIGHT);
 			knowntype= TRUE;
 		}
 		if(safe_strcmp(mergeType, QOF_TYPE_GUID) == 0) { 
 			guidImport = qtparam->param_getfcn(mergeEnt,qtparam);
 			guidTarget = qtparam->param_getfcn(targetEnt,qtparam);
 			if(guid_compare(guidImport, guidTarget) == 0) { mergeMatch = TRUE; }
-			qof_book_mergeUpdateRule(mergeMatch);
+			qof_book_mergeUpdateRule(mergeMatch, DEFAULT_MERGE_WEIGHT);
 			knowntype= TRUE;
 		}
 		if(safe_strcmp(mergeType, QOF_TYPE_INT32) == 0) { 
@@ -354,7 +369,7 @@ qof_book_mergeCompare( void )
 			i32Import = int32_getter(mergeEnt, qtparam);
 			i32Target = int32_getter(targetEnt, qtparam);
 			if(i32Target == i32Import) { mergeMatch = TRUE; }
-			qof_book_mergeUpdateRule(mergeMatch);
+			qof_book_mergeUpdateRule(mergeMatch, DEFAULT_MERGE_WEIGHT);
 			knowntype= TRUE;
 		}
 		if(safe_strcmp(mergeType, QOF_TYPE_INT64) == 0) { 
@@ -362,7 +377,7 @@ qof_book_mergeCompare( void )
 			i64Import = int64_getter(mergeEnt, qtparam);
 			i64Target = int64_getter(targetEnt, qtparam);
 			if(i64Target == i64Import) { mergeMatch = TRUE; }
-			qof_book_mergeUpdateRule(mergeMatch); 
+			qof_book_mergeUpdateRule(mergeMatch, DEFAULT_MERGE_WEIGHT); 
 			knowntype= TRUE;
 		}
 		if(safe_strcmp(mergeType, QOF_TYPE_DOUBLE) == 0) { 
@@ -370,7 +385,7 @@ qof_book_mergeCompare( void )
 			doubleImport = double_getter(mergeEnt, qtparam);
 			doubleTarget = double_getter(mergeEnt, qtparam);
 			if(doubleImport == doubleTarget) { mergeMatch = TRUE; }
-			qof_book_mergeUpdateRule(mergeMatch); 
+			qof_book_mergeUpdateRule(mergeMatch, DEFAULT_MERGE_WEIGHT); 
 			knowntype= TRUE;
 		}
 		if(safe_strcmp(mergeType, QOF_TYPE_BOOLEAN) == 0){ 
@@ -380,44 +395,39 @@ qof_book_mergeCompare( void )
 			if(booleanImport != FALSE && booleanImport != TRUE) { booleanImport = FALSE; }
 			if(booleanTarget != FALSE && booleanTarget != TRUE) { booleanTarget = FALSE; }
 			if(booleanImport == booleanTarget) { mergeMatch = TRUE; }
-			qof_book_mergeUpdateRule(mergeMatch);
+			qof_book_mergeUpdateRule(mergeMatch, DEFAULT_MERGE_WEIGHT);
 			knowntype= TRUE;
 		}
 		if(safe_strcmp(mergeType, QOF_TYPE_KVP) == 0) { 
 			kvpImport = kvp_frame_copy(qtparam->param_getfcn(mergeEnt,qtparam));
 			kvpTarget = kvp_frame_copy(qtparam->param_getfcn(targetEnt,qtparam));
 			if(kvp_frame_compare(kvpImport, kvpTarget) == 0) { mergeMatch = TRUE; }
-			qof_book_mergeUpdateRule(mergeMatch); 
+			qof_book_mergeUpdateRule(mergeMatch, DEFAULT_MERGE_WEIGHT); 
 			knowntype= TRUE;
 		}
 		if(safe_strcmp(mergeType, QOF_TYPE_CHAR) == 0) { 
 			charImport = qtparam->param_getfcn(mergeEnt,qtparam);
 			charTarget = qtparam->param_getfcn(targetEnt,qtparam);
 			if(charImport == charTarget) { mergeMatch = TRUE; }
-			qof_book_mergeUpdateRule(mergeMatch); 
+			qof_book_mergeUpdateRule(mergeMatch, DEFAULT_MERGE_WEIGHT); 
 			knowntype= TRUE;
 		}
+		/* No object should have QofSetterFunc defined for the book, but just to be safe, do nothing. */
 		if(safe_strcmp(mergeType, QOF_ID_BOOK) == 0) { knowntype= TRUE;	}
-		/* deal with custom type parameters : */
-		/* using references to other registered QOF objects */
-		/* these references are NOT compared again here, just stored for the commit. */
+		/* deal with custom type parameters : 
+		 using references to other registered QOF objects. */
 		if(knowntype == FALSE) {
-			referenceEnt = g_new(QofEntity,1);
-			referenceEnt = qtparam->param_getfcn(targetEnt, qtparam);
-			if(referenceEnt != NULL) {
-				if(referenceEnt->e_type != NULL) {
-					if(safe_strcmp(referenceEnt->e_type, mergeType) != 0) {
-						referenceEnt->e_type = NULL;
-						g_free(referenceEnt);
-					}
-				}
-			}
-			/* add to the rule so that the reference can be picked up in commit */
-			if(referenceEnt) {
-				currentRule->linkedEntList = g_slist_prepend(currentRule->linkedEntList, referenceEnt);
+			referenceEnt = qtparam->param_getfcn(mergeEnt, qtparam);
+			if((referenceEnt != NULL)
+				&&(referenceEnt->e_type != NULL)
+				&&(safe_strcmp(referenceEnt->e_type, mergeType) == 0)) {
+					currentRule->linkedEntList = g_slist_prepend(currentRule->linkedEntList, referenceEnt);
+					/* Compare the mergeEnt reference with targetEnt reference */
+					if(referenceEnt == qtparam->param_getfcn(targetEnt, qtparam)) { mergeMatch = TRUE; }
+					qof_book_mergeUpdateRule(mergeMatch, DEFAULT_MERGE_WEIGHT);
 			}
 		}
-	paramList = g_slist_next(paramList);
+		paramList = g_slist_next(paramList);
 	}
 	g_free(kvpImport);
 	g_free(kvpTarget);
@@ -489,30 +499,36 @@ qof_book_mergeForeach ( QofEntity* mergeEnt, gpointer user_data)
 		mergeRule->mergeAbsolute = TRUE;
 		mergeRule->targetEnt = targetEnt;
 		g_return_if_fail(qof_book_mergeCompare() != -1);
+		mergeRule->linkedEntList = g_slist_copy(currentRule->linkedEntList);
 		mergeData->mergeList = g_list_prepend(mergeData->mergeList,mergeRule);
 		return;
 	}
+	/* no absolute match exists */
 	g_slist_free(mergeData->targetList);
 	mergeData->targetList = NULL;
 	qof_object_foreach_type(qof_book_mergeForeachTypeTarget, NULL);
 	if(g_slist_length(mergeData->targetList) == 0) {
 		mergeRule->mergeResult = MERGE_NEW;
 	}
-	difference = g_slist_length(mergeRule->mergeParam);
+	difference = g_slist_length(mergeRule->mergeParam) * 2;
 	c = g_slist_copy(mergeData->targetList);
-	gnc_set_log_level(MOD_IMPORT, GNC_LOG_DEBUG);
 	while(c != NULL) {
 		mergeRule->targetEnt = c->data;
 		currentRule = mergeRule;
+		/* compare two entities and sum the differences */
 		g_return_if_fail(qof_book_mergeCompare() != -1);
 		if(mergeRule->difference == 0) {
 			best_matchEnt = mergeRule->targetEnt;
 			mergeRule->mergeResult = MERGE_DUPLICATE;
+			mergeRule->linkedEntList = g_slist_copy(currentRule->linkedEntList);
 			g_slist_free(c);
 			guid_free(g);
+			/* exact match, return */
 			return;
 		}
 		if(difference > mergeRule->difference) {
+			/* FIXME: This partial match code is weak and needs to be improved */
+			/* The chosen targetEnt determines the parenting of any child object */
 			best_matchEnt = mergeRule->targetEnt;
 			difference = mergeRule->difference;
 		}
@@ -522,14 +538,15 @@ qof_book_mergeForeach ( QofEntity* mergeEnt, gpointer user_data)
 	if(best_matchEnt != NULL ) {
 		mergeRule->targetEnt = best_matchEnt;
 		mergeRule->difference = difference;
+		/* compare again with the best partial match */
+		g_return_if_fail(qof_book_mergeCompare() != -1);
+		mergeRule->linkedEntList = g_slist_copy(currentRule->linkedEntList);
 	}
 	else {
 		mergeRule->targetEnt = NULL;
 		mergeRule->difference = 0;
 		mergeRule->mergeResult = MERGE_NEW;
-	}
-	if(best_matchEnt != NULL ) {
-		g_return_if_fail(qof_book_mergeCompare() != -1);
+		mergeRule->linkedEntList = g_slist_copy(currentRule->linkedEntList);
 	}
 	mergeData->mergeList = g_list_prepend(mergeData->mergeList,mergeRule);
 	guid_free(g);
@@ -538,19 +555,12 @@ qof_book_mergeForeach ( QofEntity* mergeEnt, gpointer user_data)
 
 void qof_book_mergeForeachTarget (QofEntity* targetEnt, gpointer user_data)
 {
-	g_return_if_fail(targetEnt != NULL);
-
-	qof_book_merge_target_check(targetEnt);
-}
-
-
-void qof_book_merge_target_check (QofEntity* targetEnt)
-{
 	GList *checklist;
 	qof_book_mergeRule *destination;
 	const GUID *guid_ent, *guid_dest;
 	gboolean exists;
 	
+	g_return_if_fail(targetEnt != NULL);
 	exists = FALSE;
 	checklist = NULL;
 	if(mergeData->mergeList == NULL) { return; }
@@ -611,6 +621,27 @@ qof_book_mergeRuleCB(gpointer lister, gpointer arg)
 	iter = arg;
 	iter->fcn ((qof_book_mergeRule*)lister, iter->remainder);
 	iter->remainder--;
+}
+
+static QofEntity*
+qof_book_mergeLocateReference( QofEntity *ent)
+{
+	GList *all_rules;
+	qof_book_mergeRule *rule;
+
+	/* locates the rule referring to this import entity */
+	if(!ent) { return NULL; }
+	g_return_val_if_fail((mergeData != NULL), NULL);
+	all_rules = NULL;
+	currentRule = NULL;
+	all_rules = g_list_copy(mergeData->mergeList);
+	while(all_rules != NULL) {
+		rule = all_rules->data;
+		if(rule->importEnt == ent) { currentRule = rule; }
+		all_rules = g_list_next(all_rules);
+	}
+	if(!currentRule->targetEnt) { return NULL; }
+	return currentRule->targetEnt;
 }
 
 void qof_book_mergeCommitRuleLoop(qof_book_mergeRule *rule, guint remainder) 
@@ -734,11 +765,20 @@ void qof_book_mergeCommitRuleLoop(qof_book_mergeRule *rule, guint remainder)
 		}
 		if(registered_type == FALSE) {
 			linkage = g_slist_copy(rule->linkedEntList);
+			referenceEnt = NULL;
+			currentRule = NULL;
+			reference_setter = (void(*)(QofEntity*, QofEntity*))cm_param->param_setfcn;
+			if((linkage == NULL)&&(rule->mergeResult == MERGE_NEW)) {
+				referenceEnt = cm_param->param_getfcn(rule->importEnt, cm_param);
+				reference_setter(rule->targetEnt, qof_book_mergeLocateReference(referenceEnt));
+			}
 			while(linkage != NULL) {
 				referenceEnt = linkage->data;
-				if(safe_strcmp(referenceEnt->e_type, rule->mergeType) == 0) {
-					reference_setter = (void(*)(QofEntity*, QofEntity*))cm_param->param_setfcn;
-					if(reference_setter != NULL) { reference_setter(rule->targetEnt, referenceEnt); }
+				if((referenceEnt)
+					&&(referenceEnt->e_type)
+					&&(safe_strcmp(referenceEnt->e_type, rule->mergeType) == 0)) {
+					/* The function behind reference_setter must create objects for any non-QOF references */
+					reference_setter(rule->targetEnt, qof_book_mergeLocateReference(referenceEnt));
 				}
 				linkage = g_slist_next(linkage);
 			}

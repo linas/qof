@@ -146,7 +146,7 @@ structures.
 typedef struct
 {
 	GSList 	*mergeObjectParams;	/**< GSList of ::QofParam details for each parameter in the current object. */
-	GList 	*mergeList;			/**< GSList of ::qof_book_mergeRule rules for the import data. */
+	GList 	*mergeList;			/**< GList of all ::qof_book_mergeRule rules for the merge operation. */
 	GSList 	*targetList;		/**< GSList of ::QofEntity * for each object of this type in the target book */
 	QofBook *mergeBook;			/**< pointer to the import book for this merge operation. */
 	QofBook *targetBook;		/**< pointer to the target book for this merge operation. */
@@ -154,9 +154,9 @@ typedef struct
 }qof_book_mergeData;
 
 
-/** \brief One rule per entity, built into a single GSList for the entire merge 
+/** \brief One rule per entity, built into a single GList for the entire merge 
 
-All rules are stored in the GSList qof_book_mergeData::mergeList.
+All rules are stored in the GList qof_book_mergeData::mergeList.
 
 If the ::GUID matches it's the always same semantic object,
 regardless of whether other data fields are changed.
@@ -264,12 +264,11 @@ The parameters are:
 \n
 
 If the dialog sets \b any rule result to ::MERGE_INVALID, the import will abort when
-::qof_book_mergeCommit is called. It is the responsibility of the calling 
-function to handle the error code from ::qof_book_mergeCommit, close the dialog
-and return to GnuCash. The merge routines in these files will already have halted the merge 
-operation and freed any memory allocated to merge structures before returning the error code.
+::qof_book_mergeCommit is called. It is the responsibility of the calling function to
+handle the error code from ::qof_book_mergeCommit, close the dialog and return.
+The merge routines in these files will already have halted the merge operation and
+freed any memory allocated to merge structures before returning the error code.
 There is no need for the dialog process to report back to qof_book_merge in this situation.
-
 */
 typedef void (* qof_book_mergeRuleForeachCB)(qof_book_mergeRule*, guint);
 
@@ -286,17 +285,6 @@ return the two specific entities.
 
 */
 void qof_book_mergeRuleForeach( qof_book_mergeRuleForeachCB, qof_book_mergeResult);
-
-
-/** \brief Holds details of each rule as the callbacks iterate over the list.
-
-*/
-struct qof_book_mergeRuleIterate {
-	qof_book_mergeRuleForeachCB   fcn;
-	qof_book_mergeRule *data;
-	GList *ruleList;
-	guint remainder;
-};
 
 /** \brief provides easy string access to parameter data for dialog use
 
@@ -515,22 +503,18 @@ void qof_book_mergeForeachTypeTarget ( QofObject* merge_obj, gpointer mergeData)
 \n
 	Stores details of the QofEntity* of each suitable object in the target book
 	for later comparison by ::qof_book_mergeCompare .
-	
-*/
-void qof_book_mergeForeachTarget (QofEntity* mergeEnt, gpointer mergeData);
-
-/** \brief Omits target entities that have already been matched.
 
 	It is possible for two entities in the import book to match a single entity in
 	the target book, resulting in a loss of data during commit.
 	
-	qof_book_merge_target_check simply checks the GUID of all existing
+	The callback simply checks the GUID of all existing
 	target entities against the full list of all entities of a suitable type
 	in the ::qof_book_mergeForeachTarget iteration. Possible target entity
 	matches are only added to the qof_book_mergeData::targetList if the GUID
 	does not match.
+
 */
-void qof_book_merge_target_check (QofEntity* targetEnt);
+void qof_book_mergeForeachTarget (QofEntity* mergeEnt, gpointer mergeData);
 
 /** @} */
 /** @name Phase 3: User Intervention
@@ -620,6 +604,10 @@ qof_book_mergeCompare( void );
 
 /** \brief Makes the decisions about how matches and conflicts are tagged.
 
+Paramater Type Weighting is used via the gint argument. This is used to give
+priority to string matches over boolean or numerical matches. Higher values
+of weight decrease the likelihood of that entity being the best match.
+
 New rules start at:
 	- ::MERGE_ABSOLUTE\n 
 		(GUID's match; first parameter matches) OR
@@ -638,17 +626,22 @@ If subsequent parameters in the same object FAIL a match:
 		(GUID does not match and some parameters now DO match)
 
 <b>Comparisons without a GUID match.</b>
-	Only sets a failed match if ALL objects fail to match.
-	when absolute is FALSE, all suitable target objects are compared.
-	mergeResult is not set until all targets checked.
+	Only sets a failed match if ALL parameters fail to match.
+	When absolute is FALSE, all suitable target objects are compared.
+
 	Identifies the closest match using a difference rank. This avoids 
-	using non-generic tests for object similarities. difference has a 
-	maximum value of the total number of comparable parameters and the
-	value closest to zero is used. In the case of a tie, it is
-	currently first-come-first-served. FIXME!
+	using non-generic tests for object similarities. The
+	value closest to zero is used.
+	
+	Use a high value of weight to make a good match more important and
+	make it more likely that the chosen target will have matching
+	values for the types with the highest weight.
+
+@param	mergeMatch	- whether the two entities match or not
+@param	weight		- Parameter Type Weighting.
 
 */
-void qof_book_mergeUpdateRule( gboolean match);
+void qof_book_mergeUpdateRule( gboolean, gint);
 
 /** @} */
 /** @} */
