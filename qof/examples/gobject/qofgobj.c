@@ -1,13 +1,73 @@
+/********************************************************************\
+ * qofgobj.h -- QOF to GLib GObject mapping                         *
+ *                                                                  *
+ * This program is free software; you can redistribute it and/or    *
+ * modify it under the terms of the GNU General Public License as   *
+ * published by the Free Software Foundation; either version 2 of   *
+ * the License, or (at your option) any later version.              *
+ *                                                                  *
+ * This program is distributed in the hope that it will be useful,  *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of   *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the    *
+ * GNU General Public License for more details.                     *
+ *                                                                  *
+ * You should have received a copy of the GNU General Public License*
+ * along with this program; if not, contact:                        *
+ *                                                                  *
+ * Free Software Foundation           Voice:  +1-617-542-5942       *
+ * 59 Temple Place - Suite 330        Fax:    +1-617-542-2652       *
+ * Boston, MA  02111-1307,  USA       gnu@gnu.org                   *
+ *                                                                  *
+\********************************************************************/
+
+#ifndef QOF_GOBJ_H
+#define QOF_GOBJ_H
+
+/** @addtogroup Engine
+    @{ */
+/** @file qofgobj.h
+    @brief QOF to GLib GObject mapping
+    @author Copyright (C) 2004 Linas Vepstas <linas@linas.org>
+*/
+
+/** The API defined in this file allows a user to register any
+ *  GLib GObject (and any object derived from one, e.g. GTK/Gnome)
+ *  with the QOF system so that it becomes searchable.  
+ */  
 
 #include <glib-object.h>
-#include <qof/qof.h>
-#include <stdio.h>
+#include <qof/qofbook.h>
+#include <qof/qofclass.h>
 
+/** Initalize and shut down this subsystem. */
 void qof_gobject_init(void);
 void qof_gobject_shutdown (void);
 
+/** Register an instance of a GObject with the QOF subsystem.
+ *
+ *  The QofType can be any string you desire, although typically
+ *  you might want to set it to G_OBJECT_CLASS_NAME() of the 
+ *  object class.  Note that this type will become the name of
+ *  the "table" that is searched by SQL queries:
+ *  e.g. in order to be able to say "SELECT * FROM MyStuff;"
+ *  you must first say:
+ *   qof_gobject_register_instance (book, "MyStuff", obj);
+ *
+ *  The 'book' argument specifies an anchor point for the collection
+ *  of all of the registered instances.  By working with disjoint books,
+ *  you can have multiple disjoint searchable sets of objects.
+ */
+
+void qof_gobject_register_instance (QofBook *book, QofType, GObject *);
+
+#endif /* QOF_GOBJ_H */
+
+#include <qof/qof.h>
+#include <stdio.h>
+
 static gboolean initialized = FALSE;
-static GHashTable *gobjectTable = NULL;
+
+/* =================================================================== */
 
 static gboolean 
 clear_table (gpointer key, gpointer value, gpointer user_data)
@@ -22,7 +82,10 @@ qof_gobject_init(void)
   if (initialized) return;
   initialized = TRUE;
                                                                                 
-  gobjectTable = g_hash_table_new (g_str_hash, g_str_equal);
+  // bookTable = g_hash_table_new (g_str_hash, g_str_equal);
+	/* Init the other subsystems that we need */
+	qof_object_initialize();
+	qof_query_init ();
 }
 
 void 
@@ -31,18 +94,32 @@ qof_gobject_shutdown (void)
   if (!initialized) return;
   initialized = FALSE;
                                                                                 
-  g_hash_table_foreach_remove (gobjectTable, clear_table, NULL);
-  g_hash_table_destroy (gobjectTable);
+#if 0
+  // XXX need to walk over books, and collection and delete
+  // the collection get_data instance lists !!
+  // without this we have a memory leak !!
+  g_hash_table_foreach_remove (bookTable, clear_table, NULL);
+  g_hash_table_destroy (bookTable);
+#endif
 }
 
+/* =================================================================== */
+
+#define GOBJECT_TABLE  "GobjectTable"
 
 void 
-qof_gobject_register_instance (QofType type, GObject *gob)
+qof_gobject_register_instance (QofBook *book, QofType type, GObject *gob)
 {
-	GSList * instance_list = g_hash_table_lookup (gobjectTable, type);
+	if (!book || !type) return;
+
+	QofCollection *coll = qof_book_get_collection (book, type);
+
+	GSList * instance_list = qof_collection_get_data (coll);
 	instance_list = g_slist_prepend (instance_list, gob);
-	g_hash_table_insert (gobjectTable, (char *) type, instance_list);
+   qof_collection_set_data (coll, instance_list);
 }
+
+/* =================================================================== */
 
 static gpointer
 qof_gobject_getter (gpointer data, QofParam *getter)
@@ -54,25 +131,25 @@ printf ("duude trying to get type %s\n", getter->param_type);
 	return NULL;
 }
 
+/* =================================================================== */
 /* Loop over every instance of the given type in the collection
  * of instances that we have on hand.
  */
 static void
 qof_gobject_foreach (QofCollection *coll, QofEntityForeachCB cb, gpointer ud)
 {
-	printf ("duude foreach caled \n");
-#if 0
-xxxxxxxxxxxxxxxx
+QofType e_type = qof_collection_get_type(coll);
+printf ("duude foreach called  coll from book is =%p %s\n", coll, e_type);
+
    GSList *n;
-	n = g_hash_table_lookup (gobjectTable, type);
+	n = qof_collection_get_data (coll);
    for (; n; n=n->next)
    {
       cb (n->data, ud);
    }
-#endif
 }
                                                                                 
-
+/* =================================================================== */
 
 void
 qof_gobject_register (GObjectClass *obclass)
@@ -132,6 +209,8 @@ printf ("its an int!! %s \n", qpar->param_name);
    qof_object_register (class_def);
 }
 
+/* ======================= END OF FILE ================================ */
+
 #include <gtk/gtk.h>
 
 int
@@ -147,22 +226,21 @@ main(int argc, char *argv[])
 
 	GObjectClass *goc = G_OBJECT_CLASS(wc);
 
-	qof_object_initialize();
-	qof_query_init ();
 	qof_gobject_init ();
 	qof_gobject_register (goc);
 
+   QofBook *book =  qof_book_new();
+
 // xxx do we really want a separate type, or not ?? how about the other
 // register ?? what if we leave a NULL in there ??
-	qof_gobject_register_instance (G_OBJECT_CLASS_NAME(goc), G_OBJECT(w));
+	qof_gobject_register_instance (book, "GtkButton", G_OBJECT(w));
 
 	w = gtk_button_new_with_label ("dorf");
-	qof_gobject_register_instance (G_OBJECT_CLASS_NAME(goc), G_OBJECT(w));
+	qof_gobject_register_instance (book, "GtkButton", G_OBJECT(w));
 
 	w = gtk_button_new_with_label ("zinger");
-	qof_gobject_register_instance (G_OBJECT_CLASS_NAME(goc), G_OBJECT(w));
+	qof_gobject_register_instance (book, "GtkButton", G_OBJECT(w));
 
-   QofBook *book =  qof_book_new();
 
 	QofSqlQuery *q;
    /* Create a new query */
