@@ -28,8 +28,10 @@
 #include <glib.h>
 
 /* =============================================================== */
-/* Quick-n-dirty 128-bit math lib. The mult128 routine should work 
- * great; I think that div128 works, but its not really tested.
+/** @addtogroup Math128
+ *  Quick-n-dirty 128-bit integer math lib.   Things seem to mostly
+ *  work, and have been tested, but not comprehensively tested.
+ * @{
  */
 
 typedef struct {
@@ -342,5 +344,6 @@ int main ()
 }
 
 #endif /* TEST_128_BIT_MULT */
+/** @} */
 
 /* ======================== END OF FILE =================== */
