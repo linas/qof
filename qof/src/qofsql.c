@@ -38,7 +38,9 @@
 #include <qof/guid.h>
 #include <qof/qofbook.h>
 #include <qof/qofquery.h>
+#include <qof/qofquerycore.h>
 #include <qof/qofsql.h>
+#include <qof/gnc-engine-util.h>
 
 static short module = MOD_QUERY;
 
@@ -194,7 +196,7 @@ handle_single_condition (QofSqlQuery *query, sql_condition * cond)
 		return NULL;
 	}
 	qvalue_name = dequote_string (qvalue_name);
-	qvalue_name = qof_util_whitespace_filter (qvalue_name);
+	qvalue_name = (char *) qof_util_whitespace_filter (qvalue_name);
 
 	/* Look to see if its the special KVP value holder.
 	 * If it is, look up the value. */
@@ -382,14 +384,71 @@ handle_single_condition (QofSqlQuery *query, sql_condition * cond)
 
 		g_list_free (guid_list);
 	}
-#if 0
 	else if (!strcmp (param_type, QOF_TYPE_KVP))
 	{
-xxxxxhd
-		xxxx gboolean ival = 
-		pred_data = qof_query_kvp_predicate (qop, ival);
+		/* We are expecting an encoded value that looks like
+		 * /some/path/string:value
+		 */
+		char *sep = strchr (qvalue_name, ':');
+		if (!sep) return NULL;
+		*sep = 0;
+		char * path = qvalue_name;
+		char * str = sep +1;
+		char * p;
+		/* If str has only digits, we know its a plain number.
+		 * If its numbers and a decimal point, assume a float
+		 * If its numbers and a slash, assume numeric
+		 * If its 32 bytes of hex, assume GUID
+		 * If it looks like an iso date ... 
+		 * else assume its a string.
+		 */
+		KvpValue *kval = NULL;
+		int len = strlen (str);
+		if (len == strspn (str, "0123456789"))
+		{
+			kval = kvp_value_new_gint64 (atoll(str));
+		}
+		else
+		if ((32 == len) && (32 == strspn (str, "0123456789abcdef")))
+		{
+			GUID guid;
+			string_to_guid (str, &guid);
+			kval = kvp_value_new_guid (&guid);
+		}
+		else
+		if ((p=strchr (str, '.')) && 
+		    ((len-1) == (strspn (str, "0123456789") + 
+		                 strspn (p+1, "0123456789"))))
+		{
+			kval = kvp_value_new_double (atof(str));
+		}
+
+		else
+		if ((p=strchr (str, '/')) && 
+		    ((len-1) == (strspn (str, "0123456789") + 
+		                 strspn (p+1, "0123456789"))))
+		{
+			gnc_numeric num;
+			string_to_gnc_numeric (str, &num);
+			kval = kvp_value_new_gnc_numeric (num);
+		}
+		else
+		if ((p=strchr (str, '-')) && 
+		    (p=strchr (p+1, '-')) && 
+		    (p=strchr (p+1, ' ')) && 
+		    (p=strchr (p+1, ':')) && 
+		    (p=strchr (p+1, ':')))
+		{
+			kval = kvp_value_new_timespec (gnc_iso8601_to_timespec_gmt(str));
+		}
+
+		/* The default handler is a string */
+		if (NULL == kval)
+		{
+			kval = kvp_value_new_string (str);
+		}
+		pred_data = qof_query_kvp_predicate_path (qop, path, kval);
 	}
-#endif
 	else
 	{
 		PWARN ("The predicate type \"%s\" is unsupported for now", param_type);

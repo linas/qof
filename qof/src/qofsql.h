@@ -71,6 +71,14 @@ void qof_sql_query_set_book (QofSqlQuery *q, QofBook *book);
  * together with parenthesis can be used to construct arbitrarily 
  * nested predicates.
  *
+ * If the param is a KVP frame, then we use a special markup to 
+ * indicate frame values.  The markup should look like 
+ * /some/kvp/path:value. Thus, for example,
+ *   SELECT * FROM SomeObj WHERE (param_a < '/some/kvp:10.0')
+ * will search for the object where param_a is a KVP frame, and this
+ * KVP frame contains a path '/some/kvp' and the value stored at that
+ * path is floating-point and that float value is less than 10.0.
+ *
  * The following are types of queries are NOT supported:
  *   SELECT a,b,c FROM ...
  * I am thinking of implementing the above as a list of KVP's
