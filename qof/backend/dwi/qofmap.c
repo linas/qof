@@ -28,6 +28,7 @@
  */
 
 #include <qof/qofinstance-p.h>
+#include <qof/gnc-trace.h>
 #include "qofmap.h"
 
 #include <dwi/database.h>
@@ -37,7 +38,8 @@
 #include <dwi/duiresolver.h>
 #include <dwi/duitxnquery.h>
 #include <dwi/duitxnreport.h>
-#include <dwi/perr.h>
+
+static short module = MOD_BACKEND;
 
 /* ============================================================== */
 
