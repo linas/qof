@@ -1,9 +1,9 @@
 
                         QOF Examples
                         ------------
-                        April 2004
+                        May 2004
 
-There are three examples in this directory, showing how to use
+There are fivee examples in this directory, showing how to use
 QOF for queries.  One example shows how to use the raw, c-language
 query-construction programming interface, the other shows how to
 use an SQL-like language that is parsed and executed on the client 
@@ -16,7 +16,10 @@ SQL query parsing and execution.
 The "query-example" program provides an example of the usage of
 the low-level query-construction routines.
 
-
-The gobject subdirectory contains example code showing how to use 
+The "gobject" subdirectory contains example code showing how to use 
 QOF to perform a query over GObjects.
+
+The "backend" subdirectory contains example code showing how a QOF
+object can use the DWI backend to save and restore itself from
+an SQL database.
 

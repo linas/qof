@@ -429,7 +429,7 @@ PACKAGE_VERSION=
 PACKAGE_STRING=
 PACKAGE_BUGREPORT=
 
-ac_unique_file="src"
+ac_unique_file="qof"
 # Factoring default headers for most tests.
 ac_includes_default="\
 #include <stdio.h>
@@ -13631,7 +13631,7 @@ fi
 
 
 
-                                                                                                              ac_config_files="$ac_config_files Makefile backend/Makefile backend/dwi/Makefile doc/Makefile examples/Makefile examples/gobject/Makefile lib/Makefile lib/dwi/Makefile lib/libsql/Makefile qof/Makefile qof-0.pc"
+                                                                                                                        ac_config_files="$ac_config_files Makefile backend/Makefile backend/dwi/Makefile doc/Makefile examples/Makefile examples/backend/Makefile examples/gobject/Makefile lib/Makefile lib/dwi/Makefile lib/libsql/Makefile qof/Makefile qof-0.pc"
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
 # tests run on this system so they can be shared between configure
@@ -14229,6 +14229,7 @@ do
   "backend/dwi/Makefile" ) CONFIG_FILES="$CONFIG_FILES backend/dwi/Makefile" ;;
   "doc/Makefile" ) CONFIG_FILES="$CONFIG_FILES doc/Makefile" ;;
   "examples/Makefile" ) CONFIG_FILES="$CONFIG_FILES examples/Makefile" ;;
+  "examples/backend/Makefile" ) CONFIG_FILES="$CONFIG_FILES examples/backend/Makefile" ;;
   "examples/gobject/Makefile" ) CONFIG_FILES="$CONFIG_FILES examples/gobject/Makefile" ;;
   "lib/Makefile" ) CONFIG_FILES="$CONFIG_FILES lib/Makefile" ;;
   "lib/dwi/Makefile" ) CONFIG_FILES="$CONFIG_FILES lib/dwi/Makefile" ;;

@@ -5,6 +5,7 @@ lib_LTLIBRARIES = libqof_backend_dwi.la
 # libqof_backend_dwi_la_LDFLAGS= -version-info $(LIBDWI_LIBRARY_VERSION) -release $(VERSION) 
 
 libqof_backend_dwi_la_SOURCES = \
+	dwi-backend.c                \
 	qofmap.c
 
 qof_backend_dwiincludedir = ${pkgincludedir}

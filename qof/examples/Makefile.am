@@ -20,7 +20,8 @@ noinst_HEADERS = \
 	my-object.h
 
 EXTRA_DIST =     \
-    .cvsignore
+	README        \
+	.cvsignore
 
 
 AM_CFLAGS =           \
