@@ -373,10 +373,11 @@ qof_session_load_backend(QofSession * session, char * access_method)
 	ENTER (" ");
 
 	/* If the provider list is null, try to register the 'well-known'
-	 *  backends. Right now, there's only one. */
+	 *  backends. Right now, there's only two. */
 	if (NULL == provider_list)
 	{
 		load_backend_library ("libqof_backend_dwi.so", "dwiend_provider_init");
+		load_backend_library ("libqsf-backend-file.so", "qsf_provider_init" );
 	}
 
 	for (p = provider_list; p; p=p->next)
