@@ -75,6 +75,40 @@ qof_sql_query_set_book (QofSqlQuery *q, QofBook *book)
 	q->book = book;
 }
 
+/* =================================================================== */
+/* return NULL if the field is whitespace (blank, tab, formfeed etc.)  */
+
+static const char *
+whitespace_filter (const char * val)
+{
+	size_t len;
+	if (!val) return NULL;
+
+	len = strspn (val, "\a\b\t\n\v\f\r ");
+	if (0 == val[len]) return NULL;
+	return val+len;
+}
+
+/* =================================================================== */
+/* return integer 1 if the string starts with 't' or 'T" or contians the 
+ * word 'true' or 'TRUE'; if string is a number, return that number. */
+
+static int
+util_bool_to_int (const char * val)
+{
+	const char * p = whitespace_filter (val);
+	if (!p) return 0;
+	if ('t' == p[0]) return 1;
+	if ('T' == p[0]) return 1;
+	if ('y' == p[0]) return 1;
+	if ('Y' == p[0]) return 1;
+	if (strstr (p, "true")) return 1;
+	if (strstr (p, "TRUE")) return 1;
+	if (strstr (p, "yes")) return 1;
+	if (strstr (p, "YES")) return 1;
+	return atoi (val);
+}
+
 /* ========================================================== */
 
 static inline void
@@ -183,8 +217,6 @@ handle_single_condition (sql_condition * cond, char *globalname)
 	}
 			
 	QofType param_type = qof_class_get_parameter_type (table_name, param_name);
-printf ("duude parse table=%s param=%s type=%s\n",
-table_name, param_name, param_type);
 
 	if (!strcmp (param_type, QOF_TYPE_STRING))
 	{
@@ -202,6 +234,10 @@ table_name, param_name, param_type);
                 QOF_STRING_MATCH_CASEINSENSITIVE,  /* case matching */
        	       FALSE);                            /* use_regexp */
 	}
+	else if (!strcmp (param_type, QOF_TYPE_CHAR))
+	{
+		pred_data = qof_query_char_predicate (qop, qvalue_name);
+	}
 	else if (!strcmp (param_type, QOF_TYPE_INT32))
 	{
 		gint32 ival = atoi (qvalue_name);
@@ -212,6 +248,48 @@ table_name, param_name, param_type);
 		gint64 ival = atoll (qvalue_name);
 		pred_data = qof_query_int64_predicate (qop, ival);
 	}
+	else if (!strcmp (param_type, QOF_TYPE_DOUBLE))
+	{
+		double ival = atof (qvalue_name);
+		pred_data = qof_query_double_predicate (qop, ival);
+	}
+	else if (!strcmp (param_type, QOF_TYPE_BOOLEAN))
+	{
+		gboolean ival = util_bool_to_int (qvalue_name);
+		pred_data = qof_query_boolean_predicate (qop, ival);
+	}
+#if 0
+	else if (!strcmp (param_type, QOF_TYPE_DATE))
+	{
+xxxxxx
+		gboolean ival = util_bool_to_int (qvalue_name);
+		pred_data = qof_query_boolean_predicate (qop, ival);
+	}
+	else if (!strcmp (param_type, QOF_TYPE_NUMERIC))
+	{
+xxxxxx
+		gboolean ival = util_bool_to_int (qvalue_name);
+		pred_data = qof_query_boolean_predicate (qop, ival);
+	}
+	else if (!strcmp (param_type, QOF_TYPE_DEBCRED))
+	{
+xxxxxx
+		gboolean ival = util_bool_to_int (qvalue_name);
+		pred_data = qof_query_boolean_predicate (qop, ival);
+	}
+	else if (!strcmp (param_type, QOF_TYPE_GUID))
+	{
+xxxxxx
+		gboolean ival = util_bool_to_int (qvalue_name);
+		pred_data = qof_query_boolean_predicate (qop, ival);
+	}
+	else if (!strcmp (param_type, QOF_TYPE_KVP))
+	{
+xxxxxx
+		gboolean ival = util_bool_to_int (qvalue_name);
+		pred_data = qof_query_boolean_predicate (qop, ival);
+	}
+#endif
 	else
 	{
 		printf ("Error: predicate type unsupported for now \n");
@@ -305,15 +383,16 @@ qof_sql_query_run (QofSqlQuery *query, const char *str)
 
 	sql_select_statement *sss = query->parse_result->statement;
 	sql_where * swear = sss->where;
-	if (NULL == swear)
+	if (swear)
 	{
-		printf ("Error: expecting 'where' statement\n");
-		return NULL;
+		/* Walk over the where terms, turn them into QOF predicates */
+		query->qof_query = handle_where (query, swear);
+		if (NULL == query->qof_query) return NULL;
 	}
-
-	/* Walk over the where terms, turn them into QOF predicates */
-	query->qof_query = handle_where (query, swear);
-	if (NULL == query->qof_query) return NULL;
+	else
+	{
+		query->qof_query = qof_query_create();
+	}
 
 	/* We also want to set the type of thing to search for.
 	 * If the user said SELECT * FROM ... then we should return
@@ -323,7 +402,7 @@ qof_sql_query_run (QofSqlQuery *query, const char *str)
 	qof_query_search_for (query->qof_query, query->single_global_tablename);
 	qof_query_set_book (query->qof_query, query->book);
 
-qof_query_print (query->qof_query);
+	// qof_query_print (query->qof_query);
 	GList *results = qof_query_run (query->qof_query);
 
 	return results;
