@@ -43,6 +43,20 @@
 void qof_gobject_init(void);
 void qof_gobject_shutdown (void);
 
+/** Register a GObject class with the QOF subsystem.
+ *  Doing this will make this GObject searchable using the
+ *  QOF subsystem.
+ *
+ *  The QofType can be any string you desire, although typically
+ *  you might want to set it to G_OBJECT_CLASS_NAME() of the 
+ *  object class.  Note that this type will become the name of
+ *  the "table" that is searched by SQL queries:
+ *  e.g. in order to be able to say "SELECT * FROM MyStuff;"
+ *  you must first say:
+ *   qof_gobject_register ("MyStuff", gobj_class);
+ */
+void qof_gobject_register (QofType type, GObjectClass *obclass);
+
 /** Register an instance of a GObject with the QOF subsystem.
  *
  *  The QofType can be any string you desire, although typically
@@ -66,15 +80,19 @@ void qof_gobject_register_instance (QofBook *book, QofType, GObject *);
 #include <stdio.h>
 
 static gboolean initialized = FALSE;
+static GSList *paramList = NULL;
+static GSList *classList = NULL;
 
 /* =================================================================== */
 
+#if 0
 static gboolean 
 clear_table (gpointer key, gpointer value, gpointer user_data)
 {
   g_slist_free (value);
   return TRUE;
 }
+#endif
 
 void 
 qof_gobject_init(void)
@@ -82,7 +100,8 @@ qof_gobject_init(void)
   if (initialized) return;
   initialized = TRUE;
                                                                                 
-  // bookTable = g_hash_table_new (g_str_hash, g_str_equal);
+  // gobjectClassTable = g_hash_table_new (g_str_hash, g_str_equal);
+
 	/* Init the other subsystems that we need */
 	qof_object_initialize();
 	qof_query_init ();
@@ -94,12 +113,19 @@ qof_gobject_shutdown (void)
   if (!initialized) return;
   initialized = FALSE;
                                                                                 
+	GSList *n;
+	for (n=paramList; n; n=n->next) g_free(n->data);
+	g_slist_free (paramList);
+
+	for (n=classList; n; n=n->next) g_free(n->data);
+	g_slist_free (classList);
+
 #if 0
-  // XXX need to walk over books, and collection and delete
+  // XXX also need to walk over books, and collection and delete
   // the collection get_data instance lists !!
   // without this we have a memory leak !!
-  g_hash_table_foreach_remove (bookTable, clear_table, NULL);
-  g_hash_table_destroy (bookTable);
+  g_hash_table_foreach_remove (gobjectParamTable, clear_table, NULL);
+  g_hash_table_destroy (gobjectParamTable);
 #endif
 }
 
@@ -138,9 +164,6 @@ printf ("duude trying to get type %s\n", getter->param_type);
 static void
 qof_gobject_foreach (QofCollection *coll, QofEntityForeachCB cb, gpointer ud)
 {
-QofType e_type = qof_collection_get_type(coll);
-printf ("duude foreach called  coll from book is =%p %s\n", coll, e_type);
-
    GSList *n;
 	n = qof_collection_get_data (coll);
    for (; n; n=n->next)
@@ -152,22 +175,18 @@ printf ("duude foreach called  coll from book is =%p %s\n", coll, e_type);
 /* =================================================================== */
 
 void
-qof_gobject_register (GObjectClass *obclass)
+qof_gobject_register (QofType e_type, GObjectClass *obclass)
 {
-	/* Get the "type" as a string */
-	const char * qof_e_type =  G_OBJECT_CLASS_NAME (obclass);
-
-	printf ("object is %s\n", qof_e_type);
 
 	/* Get the GObject properties, convert to QOF properties */
 	GParamSpec **prop_list;
 	int n_props;
 	prop_list = g_object_class_list_properties (obclass, &n_props);
 
-	// XXX memory leak  need to free this someday
 	QofParam * qof_param_list = g_new0 (QofParam, n_props);
+	paramList = g_slist_prepend (paramList, qof_param_list);
 
-	printf ("got %d props\n", n_props);
+printf ("got %d props\n", n_props);
 	int i, j=0;
 	for (i=0; i<n_props; i++)
 	{
@@ -189,16 +208,18 @@ printf ("its an int!! %s \n", qpar->param_name);
 	/* NULL-terminaed list !! */
 	qof_param_list[j].param_type = NULL;
 
-   qof_class_register (qof_e_type, NULL, qof_param_list);
+   qof_class_register (e_type, NULL, qof_param_list);
 
 	/* ------------------------------------------------------ */
    /* Now do the class itself */
-	// XXX memory leak,////  fixme
 	QofObject *class_def = g_new0 (QofObject, 1);
+	classList = g_slist_prepend (classList, class_def);
 
 	class_def->interface_version = QOF_OBJECT_VERSION;
-	class_def->e_type = qof_e_type;
-	class_def->type_label = qof_e_type; // XXX we want nickname, actually
+	class_def->e_type = e_type;
+	/* We could let the user specify a "nick" here, but
+	 * the actual class name seems reasonable, e.g. for debugging. */
+	class_def->type_label = G_OBJECT_CLASS_NAME (obclass);
 	class_def->book_begin = NULL;
 	class_def->book_end = NULL;
 	class_def->is_dirty = NULL;
@@ -227,19 +248,17 @@ main(int argc, char *argv[])
 	GObjectClass *goc = G_OBJECT_CLASS(wc);
 
 	qof_gobject_init ();
-	qof_gobject_register (goc);
+	qof_gobject_register ("MyGtkButton", goc);
 
    QofBook *book =  qof_book_new();
 
-// xxx do we really want a separate type, or not ?? how about the other
-// register ?? what if we leave a NULL in there ??
-	qof_gobject_register_instance (book, "GtkButton", G_OBJECT(w));
+	qof_gobject_register_instance (book, "MyGtkButton", G_OBJECT(w));
 
 	w = gtk_button_new_with_label ("dorf");
-	qof_gobject_register_instance (book, "GtkButton", G_OBJECT(w));
+	qof_gobject_register_instance (book, "MyGtkButton", G_OBJECT(w));
 
 	w = gtk_button_new_with_label ("zinger");
-	qof_gobject_register_instance (book, "GtkButton", G_OBJECT(w));
+	qof_gobject_register_instance (book, "MyGtkButton", G_OBJECT(w));
 
 
 	QofSqlQuery *q;
@@ -253,6 +272,7 @@ main(int argc, char *argv[])
 
 	printf ("got %d results \n", g_list_length (results));
 
+	qof_gobject_shutdown ();
 	return 0;
 }
 
