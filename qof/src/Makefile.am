@@ -11,10 +11,12 @@ libqof_la_SOURCES =  \
    gnc-trace.c       \
    guid.c            \
    kvp_frame.c       \
+   kvp-util.c        \
    md5.c             \
    qofbackend.c      \
    qofclass.c        \
    qofid.c           \
+   qofinstance.c     \
    qofquery.c        \
    qofbook.c         \
    qofobject.c       \
@@ -31,10 +33,12 @@ qofinclude_HEADERS = \
    gnc-trace.h       \
    guid.h            \
    kvp_frame.h       \
+   kvp-util.h        \
    qof.h             \
    qofbackend.h      \
    qofclass.h        \
    qofid.h           \
+   qofinstance.h     \
    qofquery.h        \
    qofbook.h         \
    qofobject.h       \
@@ -45,10 +49,12 @@ qofinclude_HEADERS = \
 
 noinst_HEADERS =      \
    gnc-event-p.h      \
+   kvp-util-p.h       \
    md5.h              \
    qofbackend-p.h     \
    qofclass-p.h       \
    qofid-p.h          \
+   qofinstance-p.h    \
    qofquery-p.h       \
    qofbook-p.h        \
    qofobject-p.h      \
