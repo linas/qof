@@ -73,6 +73,17 @@ my_obj_new (QofBook *book)
    /* Make sure we keep track of every object; 
     * otherwise we won't be able to search over them.  
     * Do this by storing them in a collection.
+    *
+    * Although we use a 'collection' in this example, there is no
+    * requirement that this be done.  One could use a global variable
+    * or something else.  The only requirement is that the 'foreach'
+    * below is able to find every object.
+    *
+    * The collection 'data' pointer can be used to store any kind
+    * of user-defined data.  Here, we use it to hold a linked
+    * list (the GList), but it could have held anything.  Most
+    * other objects (e.g. GnuCash objects) probably don't use the 
+    * data pointer in this way.
     */
    QofCollection *coll = qof_book_get_collection (book, MYOBJ_ID);
    GList *all_my_objs = qof_collection_get_data (coll);
@@ -115,7 +126,7 @@ my_obj_foreach (QofCollection *coll, QofEntityForeachCB cb, gpointer ud)
    }
 }
 
-/* Provide a default mechanism to sort MyObj 
+/* Provide a default mechanism to sort MyObj.
  * This is neeeded so that query results can be returned in
  * some 'reasonable' order.  If you don't want to sort,
  * just have this function always return 0.
