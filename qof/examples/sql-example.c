@@ -91,19 +91,10 @@ my_app_run_query (QofBook *book)
     * We want to find all objects whose "memo" field matches
     * a particular string, or all objects whose "b" field is 42.
     */
-	char * str = "SELECT * FROM " MYOBJ_ID " WHERE " MYOBJ_MEMO " = 'M M M My Sharona';";
+	char * str = "SELECT * FROM " MYOBJ_ID 
+	        " WHERE (" MYOBJ_MEMO " = 'M M M My Sharona') OR "
+			  "       (" MYOBJ_B " = 42);";
 
-#if 0
-   param_list = qof_query_build_param_list (MYOBJ_B,  /* field to match */
-                   NULL); 
-   pred_data = qof_query_int32_predicate (
-                   QOF_COMPARE_EQUAL,                 /* comparison to make */
-                   42);                               /* value to match */
-   
-   qof_query_add_term (q, param_list, pred_data, 
-                   QOF_QUERY_OR);                     /* How to combine terms */
-#endif
-   
    /* Run the query */
    results = qof_sql_query_run (q, str);
 

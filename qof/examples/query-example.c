@@ -116,7 +116,8 @@ my_app_run_query (QofBook *book)
    qof_query_add_term (q, param_list, pred_data, 
                    QOF_QUERY_OR);                     /* How to combine terms */
    
-	qof_query_print (q);
+	/* Handy debug print of the actual query */
+	/* qof_query_print (q); */
 	
    /* Run the query */
    results = qof_query_run (q);
