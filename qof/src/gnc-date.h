@@ -40,43 +40,43 @@
 #include <glib.h>
 #include <time.h>
 
-		/* Deprecated, backwards-compat defines; remove after gnome2 port */
-		#define getDateFormatString gnc_date_format_get_string
-		#define getDateTextFormatString gnc_date_format_get_format
-		#define getDateFormat gnc_date_format_get
-		#define setDateFormat gnc_date_format_set
-		#define DateFormat GNCDateFormat
-		#define printDateSecs gnc_print_date_secs_buff
-		#define printDate gnc_print_date_buff
-		#define printGDate gnc_print_gdate
-		#define xaccPrintDateSecs gnc_print_date_secs
-		#define scanDate gnc_scan_date
+/** The maximum length of a string created by the date printers */
+#define MAX_DATE_LENGTH 11
 
-		#define DATE_FORMAT_US GNC_DATE_FORMAT_US
-  		#define DATE_FORMAT_UK GNC_DATE_FORMAT_UK
-  		#define DATE_FORMAT_CE GNC_DATE_FORMAT_CE
-  		#define DATE_FORMAT_ISO GNC_DATE_FORMAT_ISO
-  		#define DATE_FORMAT_LOCALE GNC_DATE_FORMAT_LOCALE
-  		#define DATE_FORMAT_CUSTOM GNC_DATE_FORMAT_CUSTOM
+		/* Deprecated, backwards-compat defines; remove after gnome2 port */
+		#define getDateFormatString qof_date_format_get_string
+		#define getDateTextFormatString qof_date_format_get_format
+		#define getDateFormat qof_date_format_get
+		#define setDateFormat qof_date_format_set
+		#define DateFormat QofDateFormat
+		#define printDateSecs qof_print_date_secs_buff
+		#define printDate(S,D,M,Y) qof_print_date_buff(S,MAX_DATE_LENTH,D,M,Y)
+		#define printGDate qof_print_gdate
+		#define xaccPrintDateSecs qof_print_date_secs
+		#define scanDate qof_scan_date
+
+		#define DATE_FORMAT_US QOF_DATE_FORMAT_US
+  		#define DATE_FORMAT_UK QOF_DATE_FORMAT_UK
+  		#define DATE_FORMAT_CE QOF_DATE_FORMAT_CE
+  		#define DATE_FORMAT_ISO QOF_DATE_FORMAT_ISO
+  		#define DATE_FORMAT_LOCALE QOF_DATE_FORMAT_LOCALE
+  		#define DATE_FORMAT_CUSTOM QOF_DATE_FORMAT_CUSTOM
 
 /** Constants *******************************************************/
 
 /** Enum for determining a date format */
 typedef enum
 {
-  GNC_DATE_FORMAT_US,       /**< United states: mm/dd/yyyy */
-  GNC_DATE_FORMAT_UK,       /**< Britain: dd/mm/yyyy */
-  GNC_DATE_FORMAT_CE,       /**< Continental Europe: dd.mm.yyyy */
-  GNC_DATE_FORMAT_ISO,      /**< ISO: yyyy-mm-dd */
-  GNC_DATE_FORMAT_LOCALE,   /**< Take from locale information */
-  GNC_DATE_FORMAT_CUSTOM    /**< Used by the check printing code */
-} GNCDateFormat;
+  QOF_DATE_FORMAT_US,       /**< United states: mm/dd/yyyy */
+  QOF_DATE_FORMAT_UK,       /**< Britain: dd/mm/yyyy */
+  QOF_DATE_FORMAT_CE,       /**< Continental Europe: dd.mm.yyyy */
+  QOF_DATE_FORMAT_ISO,      /**< ISO: yyyy-mm-dd */
+  QOF_DATE_FORMAT_LOCALE,   /**< Take from locale information */
+  QOF_DATE_FORMAT_CUSTOM    /**< Used by the check printing code */
+} QofDateFormat;
 
-#define DATE_FORMAT_FIRST GNC_DATE_FORMAT_US
-#define DATE_FORMAT_LAST  GNC_DATE_FORMAT_LOCALE
-
-/** The maximum length of a string created by the date printers */
-#define MAX_DATE_LENGTH 11
+#define DATE_FORMAT_FIRST QOF_DATE_FORMAT_US
+#define DATE_FORMAT_LAST  QOF_DATE_FORMAT_LOCALE
 
 
 /**
@@ -91,9 +91,9 @@ typedef enum {
 
 
 /* The string->value versions return 0 on success and 1 on failure */
-const char* gnc_date_dateformat_to_string(GNCDateFormat format);
+const char* gnc_date_dateformat_to_string(QofDateFormat format);
 gboolean gnc_date_string_to_dateformat(const char* format_string,
-				       GNCDateFormat *format);
+				       QofDateFormat *format);
 
 
 const char* gnc_date_monthformat_to_string(GNCDateMonthFormat format);
@@ -220,16 +220,26 @@ long int gnc_timezone (struct tm *tm);
 
 
 /* ------------------------------------------------------------------------ */
-/** @name GNCDateFormat functions */
+/** @name QofDateFormat functions */
 /*@{*/
+/** The qof_date_format_get routine returns the date format that
+ *  the date printing will use when printing a date, and the scaning 
+ *  routines will assume when parsing a date.
+ * @returns: the one of the enumerated date formats.
+ */
+QofDateFormat qof_date_format_get(void);
+
+/** 
+ * The qof_date_format_set() routine sets date format to one of
+ *    US, UK, CE, OR ISO.  Checks to make sure it's a legal value.
+ *    Args: QofDateFormat: enumeration indicating preferred format
+ */
+void qof_date_format_set(QofDateFormat df);
+
 /** DOCUMENT ME! */
-GNCDateFormat gnc_date_format_get(void);
+const gchar *qof_date_format_get_string(QofDateFormat df);
 /** DOCUMENT ME! */
-void gnc_date_format_set(GNCDateFormat df);
-/** DOCUMENT ME! */
-const gchar *gnc_date_format_get_string(GNCDateFormat df);
-/** DOCUMENT ME! */
-const gchar *gnc_date_format_get_format(GNCDateFormat df);
+const gchar *qof_date_format_get_format(QofDateFormat df);
 /*@}*/
 
 /** dateSeparator
@@ -252,49 +262,76 @@ char dateSeparator(void);
  * itself, instead of depending on the routines here.
  */
 /*@{*/
-/** gnc_print_date_buff
+/** qof_print_date_buff
  *    Convert a date as day / month / year integers into a localized string
  *    representation
  *
  * Args:   buff - pointer to previously allocated character array; its size
  *                must be at lease MAX_DATE_LENTH bytes.
+ *         len - length of the buffer, in bytes.
  *         day - day of the month as 1 ... 31
  *         month - month of the year as 1 ... 12
  *         year - year (4-digit)
  *
- * Return: nothing
+ * Returns: number of characters printed
  *
  * Globals: global dateFormat value
  **/
-void gnc_print_date_buff (char * buff, int day, int month, int year);
+size_t qof_print_date_buff (char * buff, size_t buflen, int day, int month, int year);
 
-/** convenience: calls through to gnc_print_date_buff(). **/
-void gnc_print_date_secs_buff (char * buff, time_t secs);
+/** Convenience: calls through to qof_print_date_buff(). **/
+void qof_print_date_secs_buff (char * buff, time_t secs);
 
-/** Convenience; calls through to gnc_print_date_buff(). **/
-void gnc_print_gdate( char *buf, GDate *gd );
+/** Convenience; calls through to qof_print_date_buff(). **/
+void qof_print_gdate( char *buf, GDate *gd );
 
-/** Convenience; calls through to gnc_print_date_buff(). 
+/** Convenience; calls through to qof_print_date_buff(). 
  *  Return: string, which should be freed when no longer needed.
  * **/
-char * gnc_print_date_secs (time_t secs);
+char * qof_print_date_secs (time_t secs);
 
+/** Convenience; calls through to qof_print_date_buff(). 
+ *  Return: static global string.
+ *  \warning This routine is not thread-safe, because it uses a single
+ *      global buffer to store the return value.  Use qof_print_date_secs_buff()
+ *      or qof_print_date_secs instead.
+ * **/
+const char * gnc_print_date(Timespec ts);
+
+/* ------------------------------------------------------------------ */
+/* time printing utilities */
+
+/** The qof_print_hours_elapsed_buff() routine will print the 'secs' argument
+ *    as HH:MM, and will print the seconds if show_secs is true.  
+ *    Thus, for example, secs=3599 will print as 0:59
+ *    Returns the number of bytes copied.
+ */
+size_t qof_print_hours_elapsed_buff (char * buff, size_t len, int secs, gboolean show_secs);
+size_t qof_print_minutes_elapsed_buff (char * buff, size_t len, int secs, gboolean show_secs);
+
+/** The qof_print_time_buff() routine prints only the hour-part of the date.
+ *    Thus, if secs is  ...
+ *    Returns the number of bytes printed.
+ */
+
+size_t qof_print_time_buff (char * buff, size_t len, time_t secs);
+size_t qof_print_date_time_buff (char * buff, size_t len, time_t secs);
+
+/** The qof_is_same_day() routine returns 0 if both times are in the 
+ * same day.
+ */
+
+gboolean qof_is_same_day (time_t, time_t);
+
+/* ------------------------------------------------------------------ */
 /** The xaccDateUtilGetStamp() routine will take the given time in
  *  seconds and return a buffer containing a textual for the date.
  *  @param thyme The time in seconds to convert.
  *  @return A pointer to the generated string.
  *  @note The caller owns this buffer and must free it when done. */
 char * xaccDateUtilGetStamp (time_t thyme);
-
-/** Convenience; calls through to gnc_print_date_buff(). 
- *  Return: static global string.
- *  \warning This routine is not thread-safe, because it uses a single
- *      global buffer to store the return value.  Use gnc_print_date_secs_buff()
- *      or gnc_print_date_secs instead.
- * **/
-const char * gnc_print_date(Timespec ts);
-
-/** gnc_scan_date
+ 
+/** qof_scan_date
  *    Convert a string into  day / month / year integers according to
  *    the current dateFormat value.
  *
@@ -307,7 +344,7 @@ const char * gnc_print_date(Timespec ts);
  *
  * Globals: global dateFormat value
  */
-void gnc_scan_date (const char *buff, int *day, int *month, int *year);
+void qof_scan_date (const char *buff, int *day, int *month, int *year);
 
 
 /** @name Date Start/End Adjustment routines
