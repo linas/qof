@@ -9,7 +9,7 @@ EXTRA_DIST = \
   query-api.txt 
 
 
-docdir = $pkgdatadir
+docdir = $datadir
 
 all:
 

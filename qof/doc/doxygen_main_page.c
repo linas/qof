@@ -1,19 +1,17 @@
 
-/*! \mainpage GnuCash design and developer's reference
+/*! \mainpage QOF design and developer's reference
   
 \section intro Introduction
 
-This is the new GnuCash developer and design manual for GnuCash.
-Previous documentation will slowly be integrated into this, and
-eventually it should always be up to date since it is generated
-directly from the source files using Doxygen.
+This is the Query Object Framework developer and design manual.
+It is directly from the source files using Doxygen.
 
 \section hacking Hacking on this documentation
 
 I will eventually post a style guide for documenting, and document one
 of the files "by the book".  Until then, feel free to start
 documenting or playing with doxygen configuration. This main page can
-be found in src/doc/doxygen_main_page.c .
+be found in doc/doxygen_main_page.c .
 
 \subsection style_discussion Style discussion
 
@@ -55,7 +53,7 @@ non-source file.
 
 To edit the doxygen configuration, you can use:
 *
-cd src/doc
+cd doc
 *
 doxywizard doxygen.cfg &
 
