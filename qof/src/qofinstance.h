@@ -61,10 +61,21 @@ QofBook * qof_instance_get_book (QofInstance *);
 /** Return the GUID of this instance */
 const GUID * qof_instance_get_guid (QofInstance *);
 
-/** return the pointer to the kvp_data */
+/** Return the pointer to the kvp_data */
 KvpFrame* qof_instance_get_slots (QofInstance *);
 
-/** return value of is_dirty flag */
+/** Return the last time this instance was modified. */
+Timespec qof_instance_get_last_update (QofInstance *inst);
+
+/** Compare two instances, based on thier last update times. 
+ *  Returns a negative, zero or positive value, respectively, 
+ *  if 'left' is earlier, same as or later than 'right'.  
+ *  Accepts NULL pointers, NULL's are by definition earlier
+ *  than any value.
+ */
+int qof_instance_version_cmp (QofInstance *left, QofInstance *right);
+
+/** Return value of is_dirty flag */
 gboolean qof_instance_is_dirty (QofInstance *);
 
 /** Pair things up.  This routine inserts a kvp value into each instance
