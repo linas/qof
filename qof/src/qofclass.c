@@ -46,9 +46,10 @@ static gboolean clear_table (gpointer key, gpointer value, gpointer user_data)
 /********************************************************************/
 /* PUBLISHED API FUNCTIONS */
 
-void qof_class_register (QofIdTypeConst obj_name,
-                 QofSortFunc default_sort_function,
-                 const QofParam *params)
+void 
+qof_class_register (QofIdTypeConst obj_name,
+                    QofSortFunc default_sort_function,
+                    const QofParam *params)
 {
   int i;
 
@@ -74,7 +75,8 @@ void qof_class_register (QofIdTypeConst obj_name,
   }
 }
 
-void qof_class_init(void)
+void 
+qof_class_init(void)
 {
   if (initialized) return;
   initialized = TRUE;
@@ -83,7 +85,8 @@ void qof_class_init(void)
   sortTable = g_hash_table_new (g_str_hash, g_str_equal);
 }
 
-void qof_class_shutdown (void)
+void 
+qof_class_shutdown (void)
 {
   if (!initialized) return;
   initialized = FALSE;
