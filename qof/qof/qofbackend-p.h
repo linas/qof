@@ -43,6 +43,7 @@
 
 #include "qofbackend.h"
 #include "qofbook.h"
+#include "qofinstance.h"
 #include "qofquery.h"
 #include "qofsession.h"
 
@@ -234,9 +235,9 @@ struct _QofBackend
 
   void (*load) (QofBackend *, QofBook *);
 
-  void (*begin) (QofBackend *, QofIdTypeConst, gpointer);
-  void (*commit) (QofBackend *, QofIdTypeConst, gpointer);
-  void (*rollback) (QofBackend *, QofIdTypeConst, gpointer);
+  void (*begin) (QofBackend *, QofInstance *);
+  void (*commit) (QofBackend *, QofInstance *);
+  void (*rollback) (QofBackend *, QofInstance *);
 
   gpointer (*compile_query) (QofBackend *, QofQuery *);
   void (*free_query) (QofBackend *, gpointer);
