@@ -5,23 +5,62 @@
 </head>
 <body fgcolor="#000000" bgcolor="#ffffff">
 <h1>Why QOF?</h1>
+<a href="http://qof.sourceforge.net">
 <img src="qof-logo.jpg" width="100" height="150" border="5" align=left>
-An attempt to analyze the motivations and rational for something like
-this.
+</a>
+<b><i>Summary:</b></i>
+This page is a casual discussion of one style of desktop application 
+development and what sort of technologies are needed to sustain and 
+grow that style.  In particular, multi-user, data-intensive desktop
+applications are considered. These applications have (or should have) 
+database interfaces, so tha the user and query, report on and manipulate 
+large quantities of data.  Since they manipulate large collections
+of data, they inherenly are, or desire to be, multi-user applications.
+For most developers, the technology of choice, today, for creating 
+large, multi-user, data driven applications is the web and its specturm
+of supporting technologies: Java, .net, application servers.  However,
+this screed runs entirely counter to that trend: it is focused on 
+<i>Desktop</i> apps, apps that use traditional GUI elements for the
+user interface.   Unfortunately, the popularity of the Web seems to
+have caused traditional desktop, client-server technology to atrophy.
+This essay discusses what can be done to counter that trend.
+<p>
+Note that much of this discussion is from the vantage point of Free
+Software development, and explicitly ignores commercial/proprietary 
+technologies.  It is also somewhat focused on 
+<a href="http://qof.sourceforge.net">QOF</a> and the specific
+case study of two applications that benefit from QOF: 
+<a href="http://www.gnucash.org">GnuCash</a> and
+<a href="http://gttr.sourceforge.net</a>GnoTime</a>. 
 
 <p>
+<h3>Application Architecture</h3>
 QOF is an outgrowth of how I like to write application programs at
 this stage in my life.  I'm not saying its the best way; in fact,
-my development process seems very cumbersome to me, and I wonder 
-why I do it this way.  But I know the answer: I don't know a better 
-way.  The starting point of my GUI's is a design made in glade.
-I like to have the Glade GUI control a set of C objects.   I've 
-written a lot of C++ and I like using it, but I find that
-object-oriented design in C results in cleaner, better-designed code.
-But the C language has many ther problems, the most serious of which 
-is the lack of garbage collection and of any sort of persistance.
+my development process seems very cumbersome to me, and I sometimes
+wonder why I do it this way.  But I know the answer: I haven't heard
+of a better way.  The "correct" way to design and architect a complex 
+GUI application is highly debatable and rarely debated topic.
+There is no dominant paradigm, no unifying philosophy.  Tools
+and libraries are sorely lacking.  There are many promising avenues.
 <p>
-I also like to have my apps be natively multi-user.  This means dealing
+The starting point for the architecture is a modified
+"Object/View/Controller" paradigm.  The GUI acts as a controller,
+controlling and manipulating a set of objects in local system memory.
+The objects in system memory are a cache, or mirror, or local copy
+of data in a (remote) database.   Two technical problems immediately
+present themselves.  One is how to connect the GUI to the objects in 
+an easy-to-develop, easy-to-maintain style.  The second is how to 
+do the same in keeping the local copy of the objects in sync with 
+the database.  In particular, how keep them in sync with the data 
+in other (remote) objects that other users might be manipulating.
+One possible answer, and that is the answer used today by GnuCash,
+is to design the GUI with the <a href="http://glade.gnome.org">Glade</a>
+graphical GUI designer, and hook it up to some C (could have been 
+C++, or even other language) objects.  The objects are in turn loaded
+from either a file, or fetched from an SQL database.
+<p>
+I (would) like to have my apps be natively multi-user.  This means dealing
 with all of the locking and caching problems that multi-user presents.
 Multi-user also means that one needs to have a centralized data storage
 location: a database, and by presumption, an SQL database.   Thus, if
@@ -31,7 +70,37 @@ commercial software world, there are tools and companies that have
 systems that make this a lot easier, and even automatic; but there
 aren't any in the Free Software world.
 <p>
-Why not in another language, one that can do introspection, adn has
+After writing the shims between the first half-dozen objects and thier
+equivalent SQL tables, it becomes painfully appearent that the process
+can be mostly automated, as the shims consists of mostly common code.
+Unfortunately, the automatition of this process is easier said than
+done.  At first, it seems that all one needs is to specify a mapping 
+or 'dictionary' from an SQL table field to an object setter/getter.
+In practice, its more subtle than that.   None-the-less, one of the
+gaols of QOF is to provide a fairly generic dictionary or mapping
+mechanism.  To the best of my knowledge, as of today, in the 
+Free Software/Open Source world, there are no generic tools for
+mapping databases to objects, and back.  (It may be that 
+<a href="http://bond.treshna.com">bond-db</a> has taken some steps
+in that direction.)  At least one goal is to have QOF provide this
+kind of function.
+
+
+<p>
+<h3>Core Assumptions</h3>
+The QOF project, and the above comments, make some core assumptions
+that are questionable, and need to be addressed. These are discussed 
+below.
+<p>
+Why C (or C++)? Why not a better language?
+The C/C++ language has many ther problems, the most serious of which 
+is the lack of garbage collection and of any sort of persistance.
+<p>
+In particular, C/C++ lack "object introspection", the ability to 
+have a subroutine, when given an object of unknown type, to find
+out about the object that it's dealing with.
+<p>
+Why not in another language, one that can do introspection, and has
 object factories in it? e.g. Java, python, C#?  The short answer:
 because the mapping between the dynamic (cached) object, and the 
 thing that needs to be persisitent, is not one-to-one.  Thus, 
