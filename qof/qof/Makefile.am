@@ -58,6 +58,7 @@ qofinclude_HEADERS = \
    qofinstance.h     \
    qofquery.h        \
    qofbook.h         \
+   qofmath128.c      \
    qofobject.h       \
    qofquerycore.h    \
    qofquery-deserial.h     \
