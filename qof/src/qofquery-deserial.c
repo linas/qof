@@ -97,11 +97,12 @@ QofQuery *qof_query_from_xml (xmlNodePtr);
    }                                                         \
    else
 
-#define GET_TIM(SELF,FN,TOK)                                 \
+#define GET_DATE(SELF,FN,TOK)                                \
    if (0 == strcmp (TOK, node->name))                        \
    {                                                         \
       const char *str = GET_TEXT (node);                     \
-      time_t tval = atol (str);                              \
+      /* XXX work around bug by using local... */            \
+      Timespec tval = gnc_iso8601_to_timespec_local (str);   \
       FN (SELF, tval);                                       \
    }                                                         \
    else
@@ -110,7 +111,7 @@ QofQuery *qof_query_from_xml (xmlNodePtr);
    if (0 == strcmp (TOK, node->name))                        \
    {                                                         \
       const char *str = GET_TEXT (node);                     \
-      gboolean bval = atol (str);                            \
+      gboolean bval = qof_util_bool_to_int (str);            \
       FN (SELF, bval);                                       \
    }                                                         \
    else
@@ -122,33 +123,6 @@ QofQuery *qof_query_from_xml (xmlNodePtr);
       GUID guid;                                             \
       string_to_guid (str, &guid);                           \
       FN (SELF, &guid);                                      \
-   }                                                         \
-   else
-
-#define GET_ENUM_3(SELF,FN,TOK,A,B,C)                        \
-   if (0 == strcmp (TOK, node->name))                        \
-   {                                                         \
-      const char *str = GET_TEXT (node);                     \
-      int ival = GTT_##A;                                    \
-      if (!strcmp (#A, str)) ival = GTT_##A;                 \
-      else if (!strcmp (#B, str)) ival = GTT_##B;            \
-      else if (!strcmp (#C, str)) ival = GTT_##C;            \
-      else gtt_err_set_code (GTT_UNKNOWN_VALUE);             \
-      FN (SELF, ival);                                       \
-   }                                                         \
-   else
-
-#define GET_ENUM_4(SELF,FN,TOK,A,B,C,D)                      \
-   if (0 == strcmp (TOK, node->name))                        \
-   {                                                         \
-      const char *str = GET_TEXT (node);                     \
-      int ival = GTT_##A;                                    \
-      if (!strcmp (#A, str)) ival = GTT_##A;                 \
-      else if (!strcmp (#B, str)) ival = GTT_##B;            \
-      else if (!strcmp (#C, str)) ival = GTT_##C;            \
-      else if (!strcmp (#D, str)) ival = GTT_##D;            \
-      else gtt_err_set_code (GTT_UNKNOWN_VALUE);             \
-      FN (SELF, ival);                                       \
    }                                                         \
    else
 
@@ -167,18 +141,19 @@ QofQuery *qof_query_from_xml (xmlNodePtr);
    }                                                         \
    else
 
-#define GET_STRING_MATCH(VAL,TOK,A,B)                        \
+#define GET_MATCH2(VAL,TOK,PFX,A,B)                          \
    if (0 == strcmp (TOK, node->name))                        \
    {                                                         \
       const char *str = GET_TEXT (node);                     \
-      int ival = QOF_STRING_MATCH_##A;                       \
-      if (!strcmp (#A, str)) ival = QOF_STRING_MATCH_##A;    \
-      else if (!strcmp (#B, str)) ival = QOF_STRING_MATCH_##B;\
+      int ival = QOF_##PFX##_##A;                            \
+      if (!strcmp (#A, str)) ival = QOF_##PFX##_##A;         \
+      else if (!strcmp (#B, str)) ival = QOF_##PFX##_##B;    \
       VAL = ival;                                            \
    }                                                         \
    else
 
 /* =============================================================== */
+/* Autogen the code for the simple, repetitive predicates */
 
 #define SIMPLE_PRED_HANDLER(SUBRNAME,CTYPE,GETTER,XMLTYPE,PRED) \
 static QofQueryPredData *                                       \
@@ -231,6 +206,34 @@ SIMPLE_PRED_HANDLER (qof_query_pred_boolean_from_xml,
 /* =============================================================== */
 
 static QofQueryPredData *
+qof_query_pred_date_from_xml (xmlNodePtr root)
+{
+	xmlNodePtr xp = root->xmlChildrenNode;
+	xmlNodePtr node;
+
+	QofQueryCompare how = QOF_COMPARE_EQUAL;
+	QofDateMatch sm = QOF_DATE_MATCH_ROUNDED;
+	Timespec date = {0,0};
+
+	for (node=xp; node; node = node->next)
+	{
+		if (node->type != XML_ELEMENT_NODE) continue;
+
+		GET_HOW (how, "qofquery:compare", LT, LTE, EQUAL, GT, GTE, NEQ);
+		GET_MATCH2 (sm, "qofquery:date-match", 
+		            DATE_MATCH, NORMAL, ROUNDED);
+		GET_DATE (0, date=, "qofquery:date");
+		{}
+	}
+
+	QofQueryPredData *pred;
+	pred = qof_query_date_predicate (how, sm, date);
+	return pred;
+}
+
+/* =============================================================== */
+
+static QofQueryPredData *
 qof_query_pred_string_from_xml (xmlNodePtr root)
 {
 	xmlNodePtr xp = root->xmlChildrenNode;
@@ -248,7 +251,8 @@ qof_query_pred_string_from_xml (xmlNodePtr root)
 		GET_HOW (how, "qofquery:compare", LT, LTE, EQUAL, GT, GTE, NEQ);
 		GET_BOOL (0, is_regex=, "qofquery:is-regex");
 		GET_STR (0, pstr=, "qofquery:string");
-		GET_STRING_MATCH (sm, "qofquery:string-match", NORMAL, CASEINSENSITIVE);
+		GET_MATCH2 (sm, "qofquery:string-match", 
+		            STRING_MATCH, NORMAL, CASEINSENSITIVE);
 		{}
 	}
 
@@ -312,6 +316,11 @@ qof_query_term_from_xml (QofQuery *q, xmlNodePtr root)
 			pred = qof_query_pred_string_from_xml (node);
 		}
 		else
+		if (0 == strcmp (node->name, "qofquery:pred-date"))
+		{
+			pred = qof_query_pred_date_from_xml (node);
+		}
+		else
 		if (0 == strcmp (node->name, "qofquery:pred-int32"))
 		{
 			pred = qof_query_pred_int32_from_xml (node);
@@ -334,6 +343,7 @@ qof_query_term_from_xml (QofQuery *q, xmlNodePtr root)
 		else
 		{
 // xxxxxxxxxxxxxxxxxxxx
+// todo kvp, numeric, guid char
 			// warning unhandled predicate type
 		}
 	}
@@ -462,7 +472,7 @@ int main (int argc, char * argv[])
 	    "or abool = TRUE "
 	    "and not aflt >= \'3.14159265358979\' "
 	    "or not astr=\'asdf\' "
-	    // "and adate<\'01-01-01\' ;"
+	    "and adate<\'01-01-01\' "
 	    );
 	// qof_sql_query_parse (sq, "SELECT * from GncABC;");
 	q = qof_sql_query_get_query (sq);
