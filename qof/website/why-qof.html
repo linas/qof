@@ -25,14 +25,14 @@ with this type of discussion; I won't attempt to do that here.
 Instead, lets try to justify an approach like QOF in a broader
 Free Software framework
 <p>
-A number of applications become much more interesting to thier
+A number of applications become much more interesting to their
 users when they have access to large quantities of data,
 or are hooked into databases on the net in some way, or are
-multi-usr or collaborative in some way.  In fact, any large-data
+multi-user or collaborative in some way.  In fact, any large-data
 application is going to be multi-user, since having that much
 data is valuable, and leads to a tremendous pressure to share.
 There's a huge number of apps that fit this profile:
-everything from shopping catalogues, where the store 'shares'
+everything from shopping catalogs, where the store 'shares'
 the product data with the customer, to Bugzilla, where the
 bug status is 'shared' between developers and users, to 
 p2p networks for sharing mp3's.
@@ -88,15 +88,15 @@ with all of the locking and caching problems that multi-user presents.
 Multi-user also means that one needs to have a centralized data storage
 location: a database, and by presumption, an SQL database.   Thus, if
 one wants to have C objects, one needs to shim them onto SQL somehow.
-Today, for me, this is a labour-intensive, manual process.  In the
+Today, for me, this is a labor-intensive, manual process.  In the
 commercial software world, there are tools and companies that have
 systems that make this a lot easier, and even automatic; but there
 aren't any in the Free Software world.
 <p>
-After writing the shims between the first half-dozen objects and thier
-equivalent SQL tables, it becomes painfully appearent that the process
+After writing the shims between the first half-dozen objects and their
+equivalent SQL tables, it becomes painfully apparent that the process
 can be mostly automated, as the shims consists of mostly common code.
-Unfortunately, the automatition of this process is easier said than
+Unfortunately, the automation of this process is easier said than
 done.  At first, it seems that all one needs is to specify a mapping 
 or 'dictionary' from an SQL table field to an object setter/getter.
 In practice, its more subtle than that.   None-the-less, one of the
@@ -106,7 +106,7 @@ Free Software/Open Source world, there is only one system that maps
 databases to objects, and back: 
 <a href="http://dwi.sourceforge.net">DWI/DUI</a>.  However, that
 system is still rather primitive.  At least one goal is to have 
-QOF integrate with and expanmd on that function.
+QOF integrate with and expand on that function.
 
 
 <p>
@@ -141,11 +141,11 @@ below.
      was Widget.
      <br><br>
      By having a master base class, one can write quasi-generic 
-     algorithms because one is guarenteed that everything that
+     algorithms because one is guaranteed that everything that
      inherited from the base class can be treated as if it were 
      really the base class itself.  So, 
      <b><tt>some_func (Base *b);</tt></b> can be applied to any 
-     derived object, and so <tt>some_func</b> is more-or-less 
+     derived object, and so <tt>some_func</tt> is more-or-less 
      generic: it can act on <i>any</i> type (as long as that type
      inherits from <tt>Base</tt>).   Of course, this falls apart
      if one has multiple base classes (multiple inheritance), or
@@ -179,14 +179,14 @@ below.
      <br><br>
      So, to answer the question "Why C? Why not a Better Language?"
      Because C++, Java, Python, Eiffel, C# still don't have a lambda.
-     One <i>still</i> has to use the "master base class design patern",
+     One <i>still</i> has to use the "master base class design pattern",
      or bubbling templates, or <tt>(void *)</tt> pointers and run-time
-     type-checking/type-casting.  These other langauges still don't
+     type-checking/type-casting.  These other languages still don't
      rescue you, they don't offer any advantage over C in regard to
      this deep, fundamental issue.
      <br><br>
-     (Offtopic: try googling for the words "lambda" and your 
-     favorite programming langauge.  You will be surprised and 
+     (Off-topic: try googling for the words "lambda" and your 
+     favorite programming language.  You will be surprised and 
      intrigued by the results.)
      </p>
      <br>
@@ -195,16 +195,16 @@ below.
      The C/C++ language has many problems. One of the most serious 
      of these problems is the lack of "object introspection".
      Without object introspection, it makes it hard to make objects
-     persistant; it also makes it hard to send objects over the
-     net, because "marshalling/unmarshalling" needed to do the 
+     persistent; it also makes it hard to send objects over the
+     net, because "marshaling/unmarshaling" needed to do the 
      RPC (or XML-RPC) gets hard.   When a system has "object
      introspection",  you can ask some unknown, type-any object
      a question about what its made of.  It can then respond:
      "Gee, well, I'm made of three floats, two ints and some 
      character strings".   You can then ask it for all of its 
      pieces, and jam them into a file for safe-keeping, or 
-     "marshall" them into a socket to ship it over the net. 
-     (You "unmarshall" them at the otehr end of teh socket,
+     "marshal" them into a socket to ship it over the net. 
+     (You "unmarshal" them at the other end of the socket,
      thus creating a copy of the object in some far away place).
      With introspection, you can make and copy objects without 
      having to know in advance (at compile time) what they are.
@@ -214,7 +214,7 @@ below.
      So, why not use another language, one that can do introspection, 
      and has object factories built into it? For example, 
      Java, python, C#?  The answer is that introspection, while
-     useful, is far too inflexible to use for object persistance
+     useful, is far too inflexible to use for object persistence
      and for RPC-type work.   The deep problem is that introspection
      doesn't deal with the problem of versioning.  Say I have
      object version 1.0.  It consisted of three floats and two ints.
@@ -230,7 +230,7 @@ below.
      It is understood that the DTD describes what to expect in your
      object; thus, by knowing the DTD, you know how to parse the XML
      file.  However, when you are writing your application in 
-     Java, Python, C# (or C or C++), I can gaurentee you that 
+     Java, Python, C# (or C or C++), I can guarantee you that 
      your internal objects are at best a weak mirror of what's in
      the DTD.  Your objects might be similar to the XML input,
      but hardly the same.   If your app is a web app, with an 
@@ -247,7 +247,7 @@ below.
      its not enough: one really does need to specify how to 
      map object fields to database fields because the mapping is 
      never 1-to-1.  This remains a difficult and tedious task
-     for the programmer.  These other langauges don't offer
+     for the programmer.  These other languages don't offer
      an improvement over C. 
      <br><br>
      (P.S. Totally off-topic, but I sometimes get the feeling that
@@ -256,14 +256,15 @@ below.
      doing. Yet the signs are clear.)
      </p>
      <br>
-<li> <p>Why not go directly from GUI to SQL, and back?  This is the traditional
+<li> <p><b>Why not go directly from GUI to SQL, and back?</b>
+     This is the traditional
      'data-driven' programming style.  It has short-comings, the most notable
-     of which is the inability (or difficulty of) implenmenting application
-     behaviour.  One can all too easily get sucked into writing SQL triggers
-     and stored proceedures. That's bad.
+     of which is the inability (or difficulty of) implementing application
+     behavior.  One can all too easily get sucked into writing SQL triggers
+     and stored procedures. That's bad.
      Note, however, that much of what a typical GUI application does can,
      in fact, be specified by a declarative language; an algorithmic,
-     proceedural language, such as C, really is not required for the 
+     procedural language, such as C, really is not required for the 
      vast majority of the application guts.
      </p>
      <br>
