@@ -30,7 +30,7 @@
 /** @file qofinstance.h 
  *  @brief Object instance holds common fields that most gnucash objects use.
  * 
- *  @author Copyright (C) 2003 Linas Vepstas <linas@linas.org>
+ *  @author Copyright (C) 2003,2004 Linas Vepstas <linas@linas.org>
  */
 
 #ifndef QOF_INSTANCE_H
@@ -64,7 +64,12 @@ const GUID * qof_instance_get_guid (QofInstance *);
 /** Return the pointer to the kvp_data */
 KvpFrame* qof_instance_get_slots (QofInstance *);
 
-/** Return the last time this instance was modified. */
+/** Return the last time this instance was modified.  If QofInstances
+ *  are used with the QofObject storage backends, then the instance
+ *  update times are reserved for use by the backend, for managing
+ *  multi-user updates.  Non-backend code should not set the update 
+ *  times. 
+ */
 Timespec qof_instance_get_last_update (QofInstance *inst);
 
 /** Compare two instances, based on thier last update times. 
