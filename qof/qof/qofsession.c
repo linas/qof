@@ -337,11 +337,43 @@ qof_session_load_backend(QofSession * session, char * backend_name)
 
 #else /* GNUCASH */
 
+/* Specify a library, and a function name. Load the library, 
+ * call the function name in the library.  */
+static void
+load_backend_library (const char * libso, const char * loadfn)
+{
+	void *dl_hand = dlopen (libso, RTLD_LAZY);
+	if (NULL == dl_hand)
+	{
+		const char * err_str = dlerror();
+		PERR("Can't load %s backend, %s\n", libso, err_str);
+		return;
+	}
+	void (*initfn) (void)  = dlsym (dl_hand, loadfn);
+	if (initfn)
+	{
+		 (*initfn)();
+	}
+	else
+	{
+		const char * err_str = dlerror();
+		PERR("Can't find %s:%s, %s\n", libso, loadfn, err_str);
+	}
+}
+
 static void
 qof_session_load_backend(QofSession * session, char * access_method)
 {
 	GSList *p;
 	ENTER (" ");
+
+	/* If the provider list is null, try to register the 'well-known'
+	 *  backends. Right now, there's only one. */
+	if (NULL == provider_list)
+	{
+		load_backend_library ("libqof_backend_dwi.so", "dwiend_provider_init");
+	}
+
 	for (p = provider_list; p; p=p->next)
 	{
 		QofBackendProvider *prov = p->data;
