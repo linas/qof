@@ -117,6 +117,7 @@ static QofObject myobj_object_def =
    interface_version: QOF_OBJECT_VERSION,
    e_type:            MYOBJ_ID,
    type_label:        "My Blinking Object",
+   new:               my_obj_new,
    book_begin:        NULL,
    book_end:          NULL,
    is_dirty:          NULL,

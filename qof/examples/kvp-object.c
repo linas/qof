@@ -52,6 +52,7 @@ static QofObject kvp_object_def =
    interface_version: QOF_OBJECT_VERSION,
    e_type:            QOF_ID_KVP,
    type_label:        "KvpFrame",
+   new:               NULL,
    book_begin:        NULL,
    book_end:          NULL,
    is_dirty:          NULL,
