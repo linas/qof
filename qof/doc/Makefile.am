@@ -5,8 +5,7 @@ EXTRA_DIST = \
   doxygen_main_page.c \
   doxygen.cfg.in \
   backend-api.txt \
-  backend-errors.txt \
-  query-api.txt 
+  backend-errors.txt 
 
 
 docdir = $datadir
