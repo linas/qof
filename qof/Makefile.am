@@ -11,9 +11,13 @@ EXTRA_DIST =                   \
 	AUTHORS                     \
 	COPYING                     \
 	ChangeLog                   \
+	INSTALL                     \
 	NEWS                        \
+	README                      \
+	TODO                        \
 	autogen.sh                  \
 	intltool-extract.in         \
 	intltool-merge.in           \
-	intltool-update.in         
+	intltool-update.in          \
+	qof-0.pc.in
 

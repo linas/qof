@@ -1,14 +1,14 @@
 
-prefix=@prefix@
-exec_prefix=@exec_prefix@
-libdir=@libdir@
-includedir=@includedir@
+prefix=/usr/local
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
 
 Name: QOF
 Description: QOF Query Object Framework Library.
 Requires: glib-2.0 
-Version: @VERSION@
+Version: 0.5.1
 # The libqof.a isn't supposed to have aversion number 
-# Libs: -L${libdir} -lqof-@VERSION@ -lqofsql-@VERSION@
+# Libs: -L${libdir} -lqof-0.5.1 -lqofsql-0.5.1
 Libs: -L${libdir} -lqof -lqofsql
 Cflags: -I${includedir} 
