@@ -374,6 +374,54 @@ handle_where (QofSqlQuery *query, sql_where *swear)
 
 /* ========================================================== */
 
+static void 
+handle_sort_order (QofSqlQuery *query, GList *sorder_list)
+{
+	if (!sorder_list) return;
+
+	GSList *qsp[3];
+	gboolean direction[3];
+	int i;
+
+	for (i=0; i<3; i++)
+	{
+		qsp[i] = NULL;
+		direction[i] = 0;
+
+		if (sorder_list)
+		{
+			sql_order_field *sorder = sorder_list->data;
+
+			/* Set the sort direction */
+			if (SQL_asc == sorder->order_type) direction[i] = TRUE;
+
+			/* Find the paramter name */
+			char * qparam_name = NULL;
+			GList *n = sorder->name;
+			if (n)
+			{
+				qparam_name = n->data;
+				if (qparam_name) 
+				{
+					qsp[i] = qof_query_build_param_list (qparam_name, NULL);
+				}
+				n = n->next;   /* next paramter */
+			}
+			else
+			{
+				/* if no next paramter, then next order-by */
+				sorder_list = sorder_list->next;
+			}
+		}
+	}
+
+	qof_query_set_sort_order (query->qof_query, qsp[0], qsp[1], qsp[2]);
+	qof_query_set_sort_increasing (query->qof_query, direction[0],
+	                            direction[1], direction[2]);
+}
+
+/* ========================================================== */
+
 GList * 
 qof_sql_query_run (QofSqlQuery *query, const char *str)
 {
@@ -419,6 +467,9 @@ qof_sql_query_run (QofSqlQuery *query, const char *str)
 		query->qof_query = qof_query_create();
 	}
 
+	/* Provide support for different sort orders */
+	handle_sort_order (query, sss->order);
+
 	/* We also want to set the type of thing to search for.
 	 * If the user said SELECT * FROM ... then we should return
 	 * a list of QofEntity.  Otherwise, we return ... ?
@@ -431,31 +482,6 @@ qof_sql_query_run (QofSqlQuery *query, const char *str)
 	GList *results = qof_query_run (query->qof_query);
 
 	return results;
-
-#if 0
-	GList *fields = sql_statement_get_fields (query->parse_result);
-	for (node=fields; node; node=node->next)
-	{
-		char *fieldname = node->data;
-	}
-
-
-query: select * from myobj where myobj.thing=1;
-		   fields:
-		     *
-			from:
-			   table: myobj
-			   where:
-			     op: =
-			    left:
-			myobj.thing
-			   right:
-		        1
-		                      
-		       Tables: myobj
-		      Fields: *
-		 
-#endif
 }
 
 /* ========================== END OF FILE =================== */
