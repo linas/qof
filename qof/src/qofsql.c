@@ -306,7 +306,9 @@ handle_single_condition (QofSqlQuery *query, sql_condition * cond)
 	}
 	else if (!strcmp (param_type, QOF_TYPE_CHAR))
 	{
-		pred_data = qof_query_char_predicate (qop, qvalue_name);
+		QofCharMatch cm = QOF_CHAR_MATCH_ANY;
+		if (QOF_COMPARE_NEQ == qop) cm = QOF_CHAR_MATCH_NONE;
+		pred_data = qof_query_char_predicate (cm, qvalue_name);
 	}
 	else if (!strcmp (param_type, QOF_TYPE_INT32))
 	{
