@@ -379,7 +379,7 @@ qof_session_load_backend(QofSession * session, char * access_method)
 #ifdef BUILD_DWI
 		load_backend_library ("libqof_backend_dwi.so", "dwiend_provider_init");
 #endif
-		load_backend_library ("libqsf-backend-file.so", "qsf_provider_init" );
+		load_backend_library ("libqof-backend-qsf.so", "qsf_provider_init" );
 	}
 
 	for (p = provider_list; p; p=p->next)

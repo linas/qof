@@ -46,7 +46,7 @@ AM_CFLAGS =  \
   ${GLIB_CFLAGS}
 
 test_qsf_LDADD = \
-  ${top_srcdir}/backend/file/libqsf-backend-file.la \
+  ${top_srcdir}/backend/file/libqof-backend-qsf.la \
   ${top_srcdir}/qof/libqof.la           \
   ${top_srcdir}/lib/libsql/libqofsql.la \
   ${LIBXML2_LIBS}                         \

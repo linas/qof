@@ -1,7 +1,6 @@
 SUBDIRS = .
 
-#pkglib_LTLIBRARIES=libqsf-backend-file.la
-lib_LTLIBRARIES=libqsf-backend-file.la
+lib_LTLIBRARIES=libqof-backend-qsf.la
 
 AM_CFLAGS = \
 	-I.. -I../.. \
@@ -9,14 +8,14 @@ AM_CFLAGS = \
 	${LIBXML2_CFLAGS} \
 	${GLIB_CFLAGS}
 
-libqsf_backend_file_la_SOURCES = \
+libqof_backend_qsf_la_SOURCES = \
 	qsf-backend.c \
 	qsf-xml-map.c \
 	qsf-xml.c
 
 noinst_HEADERS = qsf-dir.h
 
-libqsf_backend_file_la_LIBADD = \
+libqof_backend_qsf_la_LIBADD = \
 	${LIBXML2_LIBS} \
 	${GLIB_LIBS}
 

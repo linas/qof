@@ -57,8 +57,6 @@ PKG_CHECK_MODULES(LIBXML2, libxml-2.0 >= $LIBXML2_REQUIRED)
 LIBXML_VERSION=`xml2-config --version`
 AC_SUBST(LIBXML2_CFLAGS)
 AC_SUBST(LIBXML2_LIBS)
-dnl QSF_SCHEMA_DIR='$datadir/qof/qsf'
-dnl AC_SUBST(QSF_SCHEMA_DIR)
 
 dnl **************************************************************
 dnl Stuff needed to build the example progs only ... 
@@ -183,7 +181,7 @@ AC_SUBST(CFLAGS)
 AC_SUBST(CPPFLAGS)
 AC_SUBST(LDFLAGS)
 
-QSF_SCHEMA_DIR=`eval echo $datadir`"/xml/qsf"
+QSF_SCHEMA_DIR=`eval echo $datadir`"/xml/qof/qsf"
 AC_SUBST(QSF_SCHEMA_DIR)
 
 QOF_CFLAGS="-I$includedir"
