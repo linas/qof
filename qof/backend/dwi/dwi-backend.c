@@ -23,6 +23,21 @@ dwiend_load_foundation (QofBackend *qbe,  QofBook *book)
 	printf ("load foundation %p\n", be);
 }
 
+static void
+dwiend_run_query (QofBackend *qbe, gpointer qry)
+{
+	DwiBackend *be = (DwiBackend *) qbe;
+	printf ("giddy yap %p run query %p\n", be, qry);
+}
+
+gpointer 
+dwiend_compile_query (QofBackend *qbe, QofQuery *qry)
+{
+	DwiBackend *be = (DwiBackend *) qbe;
+	printf ("howdy partner %p compile query\n", be);
+	return 0x1234;
+}
+
 /* ============================================================= */
 
 static void
@@ -53,6 +68,8 @@ dwiend_init (DwiBackend *be)
 	be->db = NULL;
 	be->be.session_begin = dwiend_session_begin;
 	be->be.load = dwiend_load_foundation;
+	be->be.compile_query = dwiend_compile_query;
+	be->be.run_query = dwiend_run_query;
 }
 
 /* ============================================================= */
