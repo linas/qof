@@ -118,7 +118,7 @@ else
    AC_DEFINE(HAVE_DWI,,We Have Found DWI)
 fi
 
-AM_CONDITIONAL(BUILD_DWI, [test x$HAVE_DWI != x])
+AM_CONDITIONAL(BUILD_DWI, [test x$HAVE_DWI = x])
 
 # check for doxygen, mostly stolen from http://log4cpp.sourceforge.net/
 # ----------------------------------------------------------------------------

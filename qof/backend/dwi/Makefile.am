@@ -2,7 +2,10 @@
 
 lib_LTLIBRARIES = libqof_backend_dwi.la
 
-libqof_backend_dwi_la_LDFLAGS= -version-info $(LIBQOF_LIBRARY_VERSION) -release $(VERSION) 
+# libqof_backend_dwi_la_LDFLAGS= -version-info $(LIBQOF_LIBRARY_VERSION) -release $(VERSION) 
+ 
+libqof_backend_dwi_la_LDFLAGS= -version-info $(LIBQOF_LIBRARY_VERSION)  
+
 # libqof_backend_dwi_la_LIBADD= libdwi.so
 LIBS = -ldwi
 

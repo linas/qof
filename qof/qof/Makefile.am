@@ -7,7 +7,9 @@
 
 lib_LTLIBRARIES = libqof.la
 
-libqof_la_LDFLAGS= -version-info $(LIBQOF_LIBRARY_VERSION) -release $(VERSION)
+# libqof_la_LDFLAGS= -version-info $(LIBQOF_LIBRARY_VERSION) -release $(VERSION)
+
+libqof_la_LDFLAGS= -version-info $(LIBQOF_LIBRARY_VERSION) 
 
 
 libqof_la_SOURCES =  \
