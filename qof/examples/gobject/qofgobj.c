@@ -161,6 +161,9 @@ qof_gobject_getter (gpointer data, QofParam *getter)
 
 	GParamSpec *gps = getter->param_userdata;
 
+	/* Note that the return type must actually be of type
+	 * getter->param_type but we just follow the hard-coded 
+	 * mapping below ... */
 	if (G_IS_PARAM_SPEC_STRING(gps))
 	{
 		GValue gval = {G_TYPE_INVALID};
@@ -170,9 +173,75 @@ qof_gobject_getter (gpointer data, QofParam *getter)
       const char * str = g_value_get_string (&gval);
       return (gpointer) str;
    }
+	else
+	if (G_IS_PARAM_SPEC_INT(gps))
+	{
+		GValue gval = {G_TYPE_INVALID};
+		g_value_init (&gval, G_TYPE_INT);
+		g_object_get_property (gob, getter->param_name, &gval);
 
-	PWARN ("unhandled parameter type %s", G_PARAM_SPEC_TYPE_NAME(gps));
+      int ival = g_value_get_int (&gval);
+      return (gpointer) ival;
+   }
+	else
+	if (G_IS_PARAM_SPEC_UINT(gps))
+	{
+		GValue gval = {G_TYPE_INVALID};
+		g_value_init (&gval, G_TYPE_UINT);
+		g_object_get_property (gob, getter->param_name, &gval);
+
+      int ival = g_value_get_uint (&gval);
+      return (gpointer) ival;
+   }
+	else
+	if (G_IS_PARAM_SPEC_BOOLEAN(gps))
+	{
+		GValue gval = {G_TYPE_INVALID};
+		g_value_init (&gval, G_TYPE_BOOLEAN);
+		g_object_get_property (gob, getter->param_name, &gval);
+
+      int ival = g_value_get_boolean (&gval);
+      return (gpointer) ival;
+   }
+
+	PWARN ("unhandled parameter type %s for paramter %s", 
+	        G_PARAM_SPEC_TYPE_NAME(gps), getter->param_name);
 	return NULL;
+}
+
+static double
+qof_gobject_double_getter (gpointer data, QofParam *getter)
+{
+	GObject *gob = data;
+
+	GParamSpec *gps = getter->param_userdata;
+
+	/* Note that the return type must actually be of type
+	 * getter->param_type but we just follow the hard-coded 
+	 * mapping below ... */
+	if (G_IS_PARAM_SPEC_FLOAT(gps))
+	{
+		GValue gval = {G_TYPE_INVALID};
+		g_value_init (&gval, G_TYPE_FLOAT);
+		g_object_get_property (gob, getter->param_name, &gval);
+
+      double fval = g_value_get_float (&gval);
+      return fval;
+   }
+	else
+	if (G_IS_PARAM_SPEC_DOUBLE(gps))
+	{
+		GValue gval = {G_TYPE_INVALID};
+		g_value_init (&gval, G_TYPE_DOUBLE);
+		g_object_get_property (gob, getter->param_name, &gval);
+
+      double fval = g_value_get_double (&gval);
+      return fval;
+   }
+
+	PWARN ("unhandled parameter type %s for paramter %s", 
+	        G_PARAM_SPEC_TYPE_NAME(gps), getter->param_name);
+	return 0.0;
 }
 
 /* =================================================================== */
@@ -255,6 +324,7 @@ qof_gobject_register (QofType e_type, GObjectClass *obclass)
 		if ((G_IS_PARAM_SPEC_FLOAT(gparam)) ||
 		    (G_IS_PARAM_SPEC_DOUBLE(gparam)))
 		{
+			qpar->param_getfcn = (QofAccessFunc) qof_gobject_double_getter;
 			qpar->param_type = QOF_TYPE_DOUBLE;
 			j++;
 		} 
@@ -338,7 +408,7 @@ main(int argc, char *argv[])
 	printf ("Going to perform the query %s\n", qstr); 
 
 	GList *results = qof_sql_query_run (q, qstr);
-	printf ("Query returned %d results\n", g_list_length (results));
+	printf ("\nQuery returned %d results\n", g_list_length (results));
 
 	GList *n;
 	for (n=results; n; n=n->next)
