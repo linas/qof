@@ -3,9 +3,45 @@
 #include <qof/qof.h>
 #include <stdio.h>
 
-void 
-qof_gobject_register_instance (GType type, GObject *gob)
+void qof_gobject_init(void);
+void qof_gobject_shutdown (void);
+
+static gboolean initialized = FALSE;
+static GHashTable *gobjectTable = NULL;
+
+static gboolean 
+clear_table (gpointer key, gpointer value, gpointer user_data)
 {
+  g_slist_free (value);
+  return TRUE;
+}
+
+void 
+qof_gobject_init(void)
+{
+  if (initialized) return;
+  initialized = TRUE;
+                                                                                
+  gobjectTable = g_hash_table_new (g_str_hash, g_str_equal);
+}
+
+void 
+qof_gobject_shutdown (void)
+{
+  if (!initialized) return;
+  initialized = FALSE;
+                                                                                
+  g_hash_table_foreach_remove (gobjectTable, clear_table, NULL);
+  g_hash_table_destroy (gobjectTable);
+}
+
+
+void 
+qof_gobject_register_instance (QofType type, GObject *gob)
+{
+	GSList * instance_list = g_hash_table_lookup (gobjectTable, type);
+	instance_list = g_slist_prepend (instance_list, gob);
+	g_hash_table_insert (gobjectTable, (char *) type, instance_list);
 }
 
 static gpointer
@@ -18,14 +54,22 @@ printf ("duude trying to get type %s\n", getter->param_type);
 	return NULL;
 }
 
-/* Loop over every instance of th
-xxxxxxxxxxxxxxxxxxxxxx
-MyObj, and apply the callback to it.
- * This routine must be defined for queries to be possible. */
+/* Loop over every instance of the given type in the collection
+ * of instances that we have on hand.
+ */
 static void
 qof_gobject_foreach (QofCollection *coll, QofEntityForeachCB cb, gpointer ud)
 {
 	printf ("duude foreach caled \n");
+#if 0
+xxxxxxxxxxxxxxxx
+   GSList *n;
+	n = g_hash_table_lookup (gobjectTable, type);
+   for (; n; n=n->next)
+   {
+      cb (n->data, ud);
+   }
+#endif
 }
                                                                                 
 
@@ -85,7 +129,7 @@ printf ("its an int!! %s \n", qpar->param_name);
 	class_def->foreach = qof_gobject_foreach;
 	class_def->printable = NULL;
  
-   qof_object_register (&myobj_object_def);
+   qof_object_register (class_def);
 }
 
 #include <gtk/gtk.h>
@@ -103,8 +147,33 @@ main(int argc, char *argv[])
 
 	GObjectClass *goc = G_OBJECT_CLASS(wc);
 
+	qof_object_initialize();
 	qof_query_init ();
+	qof_gobject_init ();
 	qof_gobject_register (goc);
+
+// xxx do we really want a separate type, or not ?? how about the other
+// register ?? what if we leave a NULL in there ??
+	qof_gobject_register_instance (G_OBJECT_CLASS_NAME(goc), G_OBJECT(w));
+
+	w = gtk_button_new_with_label ("dorf");
+	qof_gobject_register_instance (G_OBJECT_CLASS_NAME(goc), G_OBJECT(w));
+
+	w = gtk_button_new_with_label ("zinger");
+	qof_gobject_register_instance (G_OBJECT_CLASS_NAME(goc), G_OBJECT(w));
+
+   QofBook *book =  qof_book_new();
+
+	QofSqlQuery *q;
+   /* Create a new query */
+   q =  qof_sql_query_new ();
+ 
+   /* Set the book to be searched */
+   qof_sql_query_set_book(q, book);
+
+	GList *results = qof_sql_query_run (q, "SELECT * FROM GtkButton");
+
+	printf ("got %d results \n", g_list_length (results));
 
 	return 0;
 }
