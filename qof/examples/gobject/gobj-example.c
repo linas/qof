@@ -34,7 +34,7 @@ main(int argc, char *argv[])
 	qof_gobject_register ("MyGtkButton", goc);
 
 	/* Add a number of instances to the collection */
-   QofBook *book =  qof_book_new();
+	QofBook *book =  qof_book_new();
 	qof_gobject_register_instance (book, "MyGtkButton", G_OBJECT(w));
 
 	w = gtk_button_new_with_label ("dorf");
@@ -45,12 +45,12 @@ main(int argc, char *argv[])
 
 	printf ("\nCreated three objects and registered them\n\n");
 
-   /* Create a new query, run that query */
+	/* Create a new query, run that query */
 	QofSqlQuery *q;
-   q =  qof_sql_query_new ();
+	q =  qof_sql_query_new ();
  
-   /* Set the book to be searched */
-   qof_sql_query_set_book(q, book);
+	/* Set the book to be searched */
+	qof_sql_query_set_book(q, book);
 
 	char * qstr = "SELECT * FROM MyGtkButton WHERE (label = 'dorf')";
 	printf ("Going to perform the query %s\n", qstr); 
