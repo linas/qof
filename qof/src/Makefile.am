@@ -58,13 +58,13 @@ EXTRA_DIST =          \
    .cvsignore
 
 
-CFLAGS = -g \
-   @CFLAGS@ \
+AM_CFLAGS = -g    \
+   @CFLAGS@       \
    @GLIB_CFLAGS@
 
-INCLUDES =          \
-   -I$(includedir)      \
-   -DPREFIX=\""$(prefix)"\" \
+INCLUDES =                     \
+   -I$(includedir)             \
+   -DPREFIX=\""$(prefix)"\"    \
    -DDATADIR=\""$(datadir)"\" 
                    
 
