@@ -149,7 +149,7 @@ typedef struct qsf_metadata
 	GSList *supported_types; /**< The partial list of QOF types currently supported, in QSF order. */
 	xmlDocPtr input_doc, output_doc; /**< Pointers to the input and output xml document(s). */
 	/** \todo Review the list of xml nodes in qsf_param and rationalise. */
-	xmlNodePtr child_node, cur_node, param_node, output_node, output_root, lister;
+	xmlNodePtr child_node, cur_node, param_node, output_node, output_root, book_node, lister;
 	xmlNsPtr qsf_ns, map_ns;/**< Separate namespaces for QSF objects and QSF maps. */
 	const char *qof_type; /**< Holds details of the QOF_TYPE */
 	QofIdType qof_obj_type;	/**< current QofObject type (e_type) for the parameters. */

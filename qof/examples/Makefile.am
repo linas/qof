@@ -21,10 +21,14 @@ sql_example_SOURCES = \
 	sql-example.c      \
 	my-object.c 
 
+test_qsf_SOURCES = test-qsf.c
+
+
 noinst_PROGRAMS = \
 	test-book-merge \
 	query-example  \
-	sql-example
+	sql-example \
+	test-qsf
 
 noinst_HEADERS = \
 	my-object.h
@@ -34,12 +38,23 @@ EXTRA_DIST =     \
 	.cvsignore
 
 
-AM_CFLAGS =           \
+AM_CFLAGS =  \
   -I.. -I../.. \
   -I${top_srcdir}/qof \
   -I${top_srcdir}/backend/file \
   ${LIBXML2_CFLAGS} \
   ${GLIB_CFLAGS}
+
+test_qsf_LDADD = \
+  ${top_srcdir}/backend/file/libqsf-backend-file.la \
+  ${top_srcdir}/qof/libqof.la           \
+  ${top_srcdir}/lib/libsql/libqofsql.la \
+  ${LIBXML2_LIBS}                         \
+  ${GLIB_LIBS}                            \
+  -lltdl
+
+#test_book_merge_LDADD = \
+#  ${top_builddir}/qof/qof_book_merge.lo
 
 
 LDADD =                                   \

@@ -273,7 +273,7 @@ write_qsf_from_book(FILE *out, QofBook *book)
 	xmlDocPtr qsf_doc;
 	
 	qsf_doc = qofbook_to_qsf(book);
-//	g_return_if_fail(qsf_is_valid(QSF_SCHEMA_DIR, QSF_OBJECT_SCHEMA, qsf_doc) == TRUE);
+	g_return_if_fail(qsf_is_valid(QSF_SCHEMA_DIR, QSF_OBJECT_SCHEMA, qsf_doc) == TRUE);
 	xmlDocFormatDump(out, qsf_doc, 1);
 	fprintf(out, "\n");
 	xmlFreeDoc(qsf_doc);

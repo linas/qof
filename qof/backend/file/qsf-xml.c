@@ -304,21 +304,20 @@ qsf_entity_foreach(QofEntity *ent, gpointer data)
 	params = (qsf_param*)data;
 	param_count = params->count;
 	ns = params->qsf_ns;
-	node = xmlAddChild(params->output_node, xmlNewNode(params->qsf_ns, QSF_OBJECT_TAG));
-	xmlNewProp(node, QSF_OBJECT_TYPE, ent->e_type); 
+	object_node = xmlNewChild(params->book_node, params->qsf_ns, QSF_OBJECT_TAG, NULL);
+	xmlNewProp(object_node, QSF_OBJECT_TYPE, ent->e_type); 
 	sprintf(buffer, "%i", param_count);
-//	sprintf(buffer, "%i", 1);
-	xmlNewProp(node, QSF_OBJECT_COUNT, "1");
+	xmlNewProp(object_node, QSF_OBJECT_COUNT, buffer);
 	param_list = g_slist_copy(params->qsf_sequence);
-	params->output_node = node;
 	while(param_list != NULL) {
 		qof_param = param_list->data;
 		g_return_if_fail(qof_param != NULL);
 		if((qof_param->param_setfcn != NULL) && (qof_param->param_getfcn != NULL))
 		{
-			object_node = xmlAddChild(node, xmlNewNode(ns, qof_param->param_type));
+			node = xmlAddChild(object_node, xmlNewNode(ns, qof_param->param_type));
 			string_buffer = g_strdup(qof_book_merge_param_as_string(qof_param, ent));
-			xmlNodeAddContent(object_node, string_buffer);
+			xmlNodeAddContent(node, string_buffer);
+			xmlNewProp(node, QSF_OBJECT_TYPE ,qof_param->param_name);
 		}
 		param_list = g_slist_next(param_list);
 	}
@@ -377,13 +376,16 @@ qofbook_to_qsf(QofBook *book)
 	xmlSetNs(top_node, xmlNewNs(top_node, QSF_DEFAULT_NS, NULL));
 	params->qsf_ns = top_node->ns;
 	node = xmlNewChild(top_node, params->qsf_ns, QSF_BOOK_TAG, NULL);
+	params->book_node = node;
 	xmlNewProp(node, QSF_BOOK_COUNT, "1");
 	book_guid = qof_book_get_guid(book);
 	guid_to_string_buff(book_guid, buffer);
-	xmlNewChild(node, params->qsf_ns, QSF_BOOK_GUID, buffer);
+	xmlNewChild(params->book_node, params->qsf_ns, QSF_BOOK_GUID, buffer);
+	params->output_doc = doc;
+	params->book_node = node;
 	params->output_node = node;
 	qof_object_foreach_type(qsf_foreach_obj_type, params);
-	return doc;
+	return params->output_doc;
 }
 
 gboolean is_our_qsf_object(qsf_param *params)
@@ -476,7 +478,7 @@ qsf_supported_data_types(gpointer type, gpointer user_data)
 	params = (qsf_param*) user_data;
 	if(qsf_is_element(params->param_node, params->qsf_ns, (char*)type))
 	{
-		g_hash_table_insert(params->qsf_parameter_hash, 
+		g_hash_table_insert(params->qsf_parameter_hash,
 			xmlGetProp(params->param_node, QSF_OBJECT_TYPE), params->param_node);
 	}
 }
@@ -486,7 +488,6 @@ qsf_parameter_handler(xmlNodePtr child, xmlNsPtr qsf_ns, qsf_param *params)
 {
 
 	params->param_node = child;
-	params->qsf_ns = qsf_ns;
 	g_slist_foreach(params->supported_types, qsf_supported_data_types, params);
 }
 
@@ -515,6 +516,7 @@ qsf_object_node_handler(xmlNodePtr child, xmlNsPtr qsf_ns, qsf_param *params)
 
 	g_return_if_fail(child != NULL);
 	g_return_if_fail(qsf_ns != NULL);
+	params->qsf_ns = qsf_ns;
 	if(qsf_is_element(child, qsf_ns, QSF_OBJECT_TAG)) {
 		params->qsf_parameter_hash = NULL;
 		object_set = g_new(qsf_objects, 1);
@@ -565,6 +567,10 @@ qsf_book_node_handler(xmlNodePtr child, xmlNsPtr ns, qsf_param *params)
 			g_return_if_fail(TRUE == string_to_guid(buffer, &book_guid));
 			qof_book_set_guid(params->book, &book_guid);
 			g_free(buffer);
+		}
+		if(qsf_is_element(child_node, ns, QSF_OBJECT_TAG)) {
+			iter.ns = ns;
+			qsf_node_foreach(child_node, qsf_object_node_handler, &iter, params);
 		}
 	}
 }
@@ -639,9 +645,6 @@ qsf_object_commitCB(gpointer key, gpointer value, gpointer data)
 	qof_type = node->name;
 	qsf_ent = params->qsf_ent;
 	obj_type = xmlGetProp(node->parent, QSF_OBJECT_TYPE);
-	/* node=object     book - need the child */
-	printf("node=%s\t%s\tparameter=%s\n", node->name, node->parent->name, parameter_name );
-	printf("obj_type=%s\t%s\n", obj_type, qsf_ent->e_type);
 	if(0 == safe_strcasecmp(obj_type, parameter_name)) { return; }
 	cm_setter = qof_class_get_parameter_setter(obj_type, parameter_name);
 	object_set = params->object_set;
