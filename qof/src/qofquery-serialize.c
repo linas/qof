@@ -426,7 +426,7 @@ void
 do_qof_query_to_xml (QofQuery *q, xmlNodePtr topnode)
 {
 	QofIdType search_for = qof_query_get_search_for (q);
-	PUT_STR ("search-for", search_for);
+	PUT_STR ("qofquery:search-for", search_for);
 
 	xmlNodePtr terms = qof_query_terms_to_xml(q);
 	if (terms) xmlAddChild (topnode, terms);
@@ -435,7 +435,7 @@ do_qof_query_to_xml (QofQuery *q, xmlNodePtr topnode)
 	if (sorts) xmlAddChild (topnode, sorts);
 
 	gint max_results = qof_query_get_max_results (q);
-	PUT_INT32 ("max-results", max_results);
+	PUT_INT32 ("qofquery:max-results", max_results);
 }
 
 /* ======================================================= */
@@ -474,10 +474,10 @@ int main (int argc, char * argv[])
 	qof_object_initialize ();
 
 	static QofParam params[] = {
-      { "adate", QOF_TYPE_DATE, NULL, NULL},
-      { "aint", QOF_TYPE_INT32, NULL, NULL},
-      { "astr", QOF_TYPE_STRING, NULL, NULL},
-      { NULL },
+		{ "adate", QOF_TYPE_DATE, NULL, NULL},
+		{ "aint", QOF_TYPE_INT32, NULL, NULL},
+		{ "astr", QOF_TYPE_STRING, NULL, NULL},
+		{ NULL },
    };
 
 	qof_class_register ("GncABC", NULL, params);
