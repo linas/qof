@@ -54,10 +54,6 @@ INLINE_SOURCES         = YES
 
 if defined(LIBXML_VERSION) && LIBXML_VERSION >= 20000
 */
-#include <libxml/xmlmemory.h>
-#include <libxml/tree.h>
-#include <libxml/parser.h>
-#include <libxml/xmlschemas.h>
 #include "qsf-xml.h"
 #include "qofbook-p.h"
 
@@ -90,15 +86,21 @@ xmlNodePtr
 qsf_add_object_tag(qsf_param *params, int count)
 {
 	xmlNodePtr lister;
-	gchar temp[4];
+	GString *str;
+	xmlChar *property;
 
-	sprintf(temp, "%i", count);
+	str = g_string_new (" ");
+	/** \todo QOF contains numerous g_string_sprintf and g_string_sprintfa calls.
+	These are deprecated and should be renamed to g_string_printf and g_string_append_printf
+	respectively.*/
+	g_string_printf(str, "%i", count);
 	lister = NULL;
 	lister = xmlAddChild(params->output_node,
 		xmlNewNode(params->qsf_ns, QSF_OBJECT_TAG));
 	xmlNewProp(lister, QSF_OBJECT_TYPE,
 		xmlGetProp(params->cur_node, QSF_OBJECT_TYPE));
-	xmlNewProp(lister, "count", temp);
+	property = xmlCharStrdup(str->str);
+	xmlNewProp(lister, QSF_OBJECT_COUNT, property);
 	return lister;
 }
 
@@ -132,9 +134,6 @@ qsf_check_tag(qsf_param *params, char *qof_type)
 	return qsf_is_element(params->child_node, params->qsf_ns, qof_type);
 }
 
-/** \brief Compares an xmlDoc in memory against the schema file.
-
-*/
 gboolean
 qsf_is_valid(const char *schema_dir, const char* schema_filename, xmlDocPtr doc)
 {
@@ -142,17 +141,19 @@ qsf_is_valid(const char *schema_dir, const char* schema_filename, xmlDocPtr doc)
 	xmlSchemaPtr qsf_schema;
 	xmlSchemaValidCtxtPtr qsf_context;
 	gchar *schema_path;
+	gint result;
 
 	if(doc == NULL) return FALSE;
 	schema_path = g_strdup_printf("%s/%s", schema_dir, schema_filename);
 	qsf_schema_file = xmlSchemaNewParserCtxt(schema_path);
 	qsf_schema = xmlSchemaParse(qsf_schema_file);
 	qsf_context = xmlSchemaNewValidCtxt(qsf_schema);
-	if(xmlSchemaValidateDoc(qsf_context, doc) != 0) { return FALSE; }
+	result = xmlSchemaValidateDoc(qsf_context, doc);
 	xmlSchemaFreeParserCtxt(qsf_schema_file);
 	xmlSchemaFreeValidCtxt(qsf_context);
 	xmlSchemaFree(qsf_schema);
-	return TRUE;
+	if(result == 0) { return TRUE; }
+	return FALSE;
 }
 
 void
@@ -184,47 +185,21 @@ qsf_node_foreach(xmlNodePtr parent, qsf_nodeCB cb,
 void
 qsf_object_validation_handler(xmlNodePtr child, xmlNsPtr ns, qsf_validator *valid)
 {
-	xmlNodePtr child_node, cur_node;
+	xmlNodePtr cur_node;
 	xmlChar *object_declaration;
-	xmlChar *object_description;
 
 	for(cur_node = child->children; cur_node != NULL;
 		cur_node = cur_node->next)
 	{
 		if(qsf_is_element(cur_node, ns, QSF_OBJECT_TAG)) {
-			for(child_node = cur_node->children; child_node != NULL;
-				child_node = child_node->next)
-			{
 				object_declaration = xmlGetProp(cur_node, QSF_OBJECT_TYPE);
-				if(TRUE == qof_class_is_registered((QofIdTypeConst) object_description))
+			g_hash_table_insert(valid->validation_table, object_declaration, xmlNodeGetContent(cur_node));
+			if(TRUE == qof_class_is_registered((QofIdTypeConst) object_declaration))
 				{
 					valid->qof_registered_count++;
 				}
-				if(qsf_is_element(child_node, ns, QOF_TYPE_STRING) &&
-					qsf_strings_equal(xmlGetProp(child_node, QSF_OBJECT_TYPE),
-						object_declaration))
-				{
-					object_description = xmlNodeGetContent(child_node);
-					if(qsf_strings_equal(object_description,
-						(xmlChar*) g_hash_table_lookup(
-							valid->validation_table, object_declaration)))
-					{
-						valid->valid_object_count++;
-					}
-				}
-			}
 		}
 	}
-}
-
-static GSList*
-qsf_parameter_add(QofParam *qof_param, const char *qof_type, GSList *sequence)
-{
-	if(0 == safe_strcmp(qof_param->param_type, qof_type))
-	{
-		sequence = g_slist_append(sequence, qof_param);
-	}
-	return sequence;
 }
 
 /** \brief Set the QSF-specific parameter order
@@ -236,7 +211,11 @@ qsf_parameter_add(QofParam *qof_param, const char *qof_type, GSList *sequence)
 - all boolean parameters, any order
 - all numeric parameters, any order
 - all date parameters, any order
+- all int32 parameters, any order
 - all int64 parameters, any order
+- all double parameters, any order
+- all char parameters, any order
+- KVP frames support is pending.
 
 Receive one QOF_TYPE and iterate over the current object in params
 	to build a GSList of parameters in the correct sequence
@@ -271,7 +250,11 @@ Filters the parameter list to set each type in order:
 - QOF_TYPE_BOOLEAN
 - QOF_TYPE_NUMERIC
 - QOF_TYPE_DATE
+- QOF_TYPE_INT32
 - QOF_TYPE_INT64
+- QOF_TYPE_DOUBLE
+- QOF_TYPE_CHAR
+- QOF_TYPE_KVP (pending.)
 
 */
 static void
@@ -296,7 +279,8 @@ qsf_entity_foreach(QofEntity *ent, gpointer data)
 	GSList *param_list;
 	xmlNodePtr node, object_node;
 	xmlNsPtr ns;
-	gchar buffer[4000], *string_buffer;
+	gchar *string_buffer;
+	GString *buffer;
 	QofParam *qof_param;
 	int param_count;
 	
@@ -306,13 +290,15 @@ qsf_entity_foreach(QofEntity *ent, gpointer data)
 	ns = params->qsf_ns;
 	object_node = xmlNewChild(params->book_node, params->qsf_ns, QSF_OBJECT_TAG, NULL);
 	xmlNewProp(object_node, QSF_OBJECT_TYPE, ent->e_type); 
-	sprintf(buffer, "%i", param_count);
-	xmlNewProp(object_node, QSF_OBJECT_COUNT, buffer);
+	buffer = g_string_new(" ");
+	g_string_printf(buffer, "%i", param_count);
+	xmlNewProp(object_node, QSF_OBJECT_COUNT, buffer->str);
 	param_list = g_slist_copy(params->qsf_sequence);
 	while(param_list != NULL) {
 		qof_param = param_list->data;
 		g_return_if_fail(qof_param != NULL);
-		if((qof_param->param_setfcn != NULL) && (qof_param->param_getfcn != NULL))
+		if(((qof_param->param_setfcn != NULL) && (qof_param->param_getfcn != NULL)) ||
+			(0 == safe_strcmp(qof_param->param_type, QOF_TYPE_GUID)))
 		{
 			node = xmlAddChild(object_node, xmlNewNode(ns, qof_param->param_type));
 			string_buffer = g_strdup(qof_book_merge_param_as_string(qof_param, ent));
@@ -335,7 +321,8 @@ static void
 qsf_foreach_obj_type(QofObject *qsf_obj, gpointer data)
 {
 	qsf_param *params;
-	char *buffer;
+	QofBook *book;
+	GSList *support;
 	
 	g_return_if_fail(data != NULL);
 	params = (qsf_param*) data;
@@ -345,10 +332,11 @@ qsf_foreach_obj_type(QofObject *qsf_obj, gpointer data)
 		return;
 	}
 	params->qof_obj_type = qsf_obj->e_type;
-	buffer = g_strdup(qsf_obj->e_type);
 	params->qsf_sequence = NULL;
-	g_slist_foreach(params->supported_types,qsf_supported_parameters, params);
-	qof_object_foreach(qsf_obj->e_type, params->book, qsf_entity_foreach, params);
+	book = params->book;
+	support = g_slist_copy(params->supported_types);
+	g_slist_foreach(support,qsf_supported_parameters, params);
+	qof_object_foreach(qsf_obj->e_type, book, qsf_entity_foreach, params);
 }
 
 /** \brief Export routine
@@ -358,11 +346,11 @@ qsf_foreach_obj_type(QofObject *qsf_obj, gpointer data)
 xmlDocPtr
 qofbook_to_qsf(QofBook *book)
 {
-	xmlNodePtr top_node, node, book_node;
+	xmlNodePtr top_node, node;//, book_node;
 	xmlDocPtr doc;
-	xmlChar *output;
+//	xmlChar *output;
 	gchar buffer[GUID_ENCODING_LENGTH + 1];
-	gint counter;
+//	gint counter;
 	qsf_param *params;
 	const GUID *book_guid;
 	
@@ -388,7 +376,52 @@ qofbook_to_qsf(QofBook *book)
 	return params->output_doc;
 }
 
-gboolean is_our_qsf_object(qsf_param *params)
+gboolean is_our_qsf_object(const char *path)
+{
+	xmlDocPtr doc;
+	struct qsf_node_iterate iter;
+	xmlNodePtr object_root;
+	qsf_validator valid;
+	gint table_count;
+
+	g_return_val_if_fail((path != NULL),FALSE);
+	if(path == NULL) { return FALSE; }
+	doc = xmlParseFile(path);
+	if(doc == NULL)  { return FALSE; }
+	if(TRUE != qsf_is_valid(QSF_SCHEMA_DIR, QSF_OBJECT_SCHEMA, doc)) 
+	{
+		return FALSE;
+	}
+	object_root = xmlDocGetRootElement(doc);
+	valid.validation_table = g_hash_table_new(g_str_hash, g_str_equal);
+	valid.qof_registered_count = 0;
+	iter.ns = object_root->ns;
+	qsf_valid_foreach(object_root, qsf_object_validation_handler, &iter, &valid);
+	table_count = g_hash_table_size(valid.validation_table);
+	if(table_count == valid.qof_registered_count)
+	{
+		g_hash_table_destroy(valid.validation_table);
+		return TRUE;
+	}
+	g_hash_table_destroy(valid.validation_table);
+	return FALSE;
+}
+
+gboolean is_qsf_object(const char *path)
+{
+	xmlDocPtr doc;
+
+	g_return_val_if_fail((path != NULL),FALSE);
+	if(path == NULL) { return FALSE; }
+	doc = xmlParseFile(path);
+	if(doc == NULL) { return FALSE; }
+	if(TRUE != qsf_is_valid(QSF_SCHEMA_DIR, QSF_OBJECT_SCHEMA, doc)) { return FALSE; }
+	/** \todo implement a way of finding more than one map */
+	/** \todo set the map xmlDocPtr in params for later processing. */
+	return TRUE;
+}
+
+gboolean is_our_qsf_object_be(qsf_param *params)
 {
 	xmlDocPtr doc;
 	struct qsf_node_iterate iter;
@@ -419,17 +452,14 @@ gboolean is_our_qsf_object(qsf_param *params)
 	params->file_type = IS_QSF_OBJ;
 	object_root = xmlDocGetRootElement(doc);
 	valid.validation_table = g_hash_table_new(g_str_hash, g_str_equal);
-	valid.valid_object_count = 0;
 	valid.qof_registered_count = 0;
 	iter.ns = object_root->ns;
 	qsf_valid_foreach(object_root, qsf_object_validation_handler, &iter, &valid);
 	table_count = g_hash_table_size(valid.validation_table);
-	if((valid.valid_object_count == table_count)&&(valid.valid_object_count == valid.qof_registered_count))
+	if(table_count == valid.qof_registered_count)
 	{
 		g_hash_table_destroy(valid.validation_table);
-		/** \todo fix the error handling. */
 		qof_backend_set_error(params->be, ERR_BACKEND_NO_ERR);
-//		qof_backend_get_error(params->be);
 		return TRUE;
 	}
 	g_hash_table_destroy(valid.validation_table);
@@ -437,7 +467,7 @@ gboolean is_our_qsf_object(qsf_param *params)
 	return FALSE;
 }
 
-gboolean is_qsf_object(qsf_param *params)
+gboolean is_qsf_object_be(qsf_param *params)
 {
 	xmlDocPtr doc;
 	char *path;
@@ -465,7 +495,7 @@ gboolean is_qsf_object(qsf_param *params)
 	}
 	/** \todo implement a way of finding more than one map */
 	/** \todo set the map xmlDocPtr in params for later processing. */
-	return is_qsf_object_with_map("pilot-qsf-GnuCashInvoice.xml", params);
+	return is_qsf_object_with_map_be("pilot-qsf-GnuCashInvoice.xml", params);
 }
 
 static void
@@ -506,7 +536,7 @@ Need to work on only one object at a time
 	The GHashTable contains all the object data, 
 	indexed by the type attribute.
 */
-void
+static void
 qsf_object_node_handler(xmlNodePtr child, xmlNsPtr qsf_ns, qsf_param *params)
 {
 	struct qsf_node_iterate iter;
@@ -551,7 +581,7 @@ qsf_book_node_handler(xmlNodePtr child, xmlNsPtr ns, qsf_param *params)
 
 	if(qsf_is_element(child, ns, QSF_BOOK_TAG)) {
 		book_count_s = xmlGetProp(child,QSF_BOOK_COUNT);
-		if(book_count) {
+		if(book_count_s) {
 			book_count = (int)strtol(book_count_s, &tail, 0);
 			/* More than one book not currently supported. */
 			g_return_if_fail(book_count == 1);
@@ -565,7 +595,7 @@ qsf_book_node_handler(xmlNodePtr child, xmlNsPtr ns, qsf_param *params)
 		if(qsf_is_element(child_node, ns, QSF_BOOK_GUID)) {
 			buffer = g_strdup(xmlNodeGetContent(child_node));
 			g_return_if_fail(TRUE == string_to_guid(buffer, &book_guid));
-			qof_book_set_guid(params->book, &book_guid);
+			qof_entity_set_guid((QofEntity*)params->book, &book_guid);
 			g_free(buffer);
 		}
 		if(qsf_is_element(child_node, ns, QSF_OBJECT_TAG)) {
@@ -620,21 +650,21 @@ qsf_object_commitCB(gpointer key, gpointer value, gpointer data)
 	gint64 			cm_i64;
 	Timespec 		cm_date;
 	/* cm_ prefix used for variables that hold the data to commit */
-	gchar 			*cm_string, *cm_char;
-	const GUID 		*cm_guid;
-	KvpFrame 		*cm_kvp;
+	gchar 			/**cm_string,*/ *cm_char;
+	GUID 			*cm_guid;
+//	KvpFrame 		*cm_kvp;
 	QofSetterFunc 	cm_setter;
 	void	(*string_setter)	(QofEntity*, const char*);
 	void	(*date_setter)		(QofEntity*, Timespec);
 	void	(*numeric_setter)	(QofEntity*, gnc_numeric);
-	void	(*guid_setter)		(QofEntity*, const GUID*);
+//	void	(*guid_setter)		(QofEntity*, const GUID*);
 	void	(*double_setter)	(QofEntity*, double);
 	void	(*boolean_setter)	(QofEntity*, gboolean);
 	void	(*i32_setter)		(QofEntity*, gint32);
 	void	(*i64_setter)		(QofEntity*, gint64);
 	void	(*char_setter)		(QofEntity*, char*);
-	void	(*kvp_frame_setter)	(QofEntity*, KvpFrame*);
-	void	(*reference_setter)	(QofEntity*, QofEntity*);
+//	void	(*kvp_frame_setter)	(QofEntity*, KvpFrame*);
+//	void	(*reference_setter)	(QofEntity*, QofEntity*);
 	
 	g_return_if_fail(data != NULL);
 	g_return_if_fail(value != NULL);
@@ -666,16 +696,11 @@ qsf_object_commitCB(gpointer key, gpointer value, gpointer data)
 		string_to_gnc_numeric(xmlNodeGetContent(node), &cm_numeric);
 		if(numeric_setter != NULL) { numeric_setter(qsf_ent, cm_numeric); }
 	}
-/** \todo Process the GUID of this object.
-
 	if(safe_strcmp(qof_type, QOF_TYPE_GUID) == 0) { 
-			//qof_entity_set_guid(&inst->entity, qof_entity_get_guid(rule->importEnt));
-			cm_guid = cm_param->param_getfcn(rule->importEnt, cm_param);
-			guid_setter = (void(*)(QofEntity*, const GUID*))cm_param->param_setfcn;
-			if(guid_setter != NULL) { guid_setter(rule->targetEnt, cm_guid); }
-			registered_type = TRUE;
+		cm_guid = g_new(GUID, 1);
+		g_return_if_fail(TRUE == string_to_guid(xmlNodeGetContent(node), cm_guid));
+		qof_entity_set_guid(qsf_ent, cm_guid);
 		}
-*/
 	if(safe_strcmp(qof_type, QOF_TYPE_INT32) == 0) { 
 		errno = 0;
 		cm_i32 = (gint32)strtol (xmlNodeGetContent(node), &tail, 0);

@@ -37,16 +37,15 @@
 
 #define _GNU_SOURCE
 
-#include <libxml/xmlversion.h>
-#include <libxml/xmlmemory.h>
-#include <libxml/tree.h>
-#include <libxml/parser.h>
-#include <libxml/xmlschemas.h>
 #include "qsf-xml.h"
 #include "qsf-dir.h"
 
-static short module = MOD_BACKEND;
+//static short module = MOD_BACKEND;
 
+/** \brief QSF wrapper for QofBackend
+
+This makes a qsf_param struct available to the backend.
+*/
 struct QSFBackend_s 
 {
 	QofBackend be;
@@ -89,7 +88,11 @@ qsf_param_init(qsf_param *params)
 	params->supported_types = g_slist_append(params->supported_types, QOF_TYPE_BOOLEAN);
 	params->supported_types = g_slist_append(params->supported_types, QOF_TYPE_NUMERIC);
 	params->supported_types = g_slist_append(params->supported_types, QOF_TYPE_DATE);
+	params->supported_types = g_slist_append(params->supported_types, QOF_TYPE_INT32);
 	params->supported_types = g_slist_append(params->supported_types, QOF_TYPE_INT64);
+	params->supported_types = g_slist_append(params->supported_types, QOF_TYPE_DOUBLE);
+	params->supported_types = g_slist_append(params->supported_types, QOF_TYPE_CHAR);
+	params->supported_types = g_slist_append(params->supported_types, QOF_TYPE_KVP);
 	qsf_time_precision = "%j";
 	qsf_time_now_t = time(NULL);
 	qsf_ts = g_new(Timespec, 1);
@@ -133,8 +136,10 @@ qsf_session_begin(QofBackend *be, QofSession *session, const char *book_path,
 	else {
 		qsf_be->fullpath = g_strdup(book_path);
 	}
+	qof_backend_set_error(be, ERR_BACKEND_NO_ERR);
 }
 
+/** \brief Clean up the backend and the libxml2 parser. */
 static void
 qsf_session_end( QofBackend *be)
 {
@@ -166,6 +171,22 @@ qsf_write_file(QofBackend *be, QofBook *book)
 	out = fopen(path, "w");
 	write_qsf_from_book(out, book);
 	fclose(out);
+}
+
+QofBackendError qof_session_load_our_qsf_object(QofSession *first_session, const char *path)
+{
+	QofSession *qsf_session;
+	
+	first_session = qof_session_get_current_session();
+	qsf_session = qof_session_new();
+	qof_session_begin(qsf_session, path, FALSE, FALSE);
+	qof_session_load(qsf_session, NULL);
+	return qof_session_get_error(qsf_session);
+}
+
+QofBackendError qof_session_load_qsf_object(QofSession *first_session, const char *path)
+{
+	return ERR_QSF_NO_MAP;
 }
 
 /** \brief Types of QSF file:
@@ -200,7 +221,7 @@ qsf_file_type(QofBackend *be, QofBook *book)
 	params->filepath = g_strdup(path);
 	/* remove any previous error from the backend stack.*/
 	qof_backend_get_error(be);
-	result = is_our_qsf_object(params);
+	result = is_our_qsf_object_be(params);
 	if(result == TRUE) {
 		params->file_type = OUR_QSF_OBJ;
 		result = load_our_qsf_object(book, path, params);
@@ -209,13 +230,13 @@ qsf_file_type(QofBackend *be, QofBook *book)
 		}
 		return;
 	} 
-	else if(is_qsf_object(params)) {
+	else if(is_qsf_object_be(params)) {
 		qsf_be->params->file_type = IS_QSF_OBJ;
 		if(FALSE == load_qsf_object(book, qsf_be->params->filepath, qsf_be->params)) {
 			qof_backend_set_error(be, ERR_FILEIO_PARSE_ERROR);
 		}
 	}
-	else if(is_qsf_map(params)) {
+	else if(is_qsf_map_be(params)) {
 		qsf_be->params->file_type = IS_QSF_MAP;
 		qof_backend_set_error(be, ERR_QSF_MAP_NOT_OBJ);
 	}
@@ -259,7 +280,7 @@ static gboolean qsfdoc_to_qofbook(xmlDocPtr doc, qsf_param *params)
 		params->object_set = object_list->data;
 		params->qsf_parameter_hash = params->object_set->parameters;
 		inst = (QofInstance*)qof_object_new_instance(params->object_set->object_type, params->book);
-		g_return_if_fail(inst != NULL);
+		g_return_val_if_fail(inst != NULL, FALSE);
 		params->qsf_ent = &inst->entity;
 		g_hash_table_foreach(params->qsf_parameter_hash, qsf_object_commitCB, params);
 		object_list = g_list_next(object_list);
@@ -267,6 +288,16 @@ static gboolean qsfdoc_to_qofbook(xmlDocPtr doc, qsf_param *params)
 	return TRUE;
 }
 
+/** \brief Writes a QofBook to an open filehandle.
+
+@param	out Pointer to a FILE filehandle.
+@param	book Pointer to a QofBook to write as QSF XML.
+
+Any QofBook can be written to QSF XML, it does not need an
+AccountGroup or any specific QOF object. Any process that can
+create a new QofSession and populate the QofBook with QOF objects
+can write the data as QSF XML.
+*/
 void
 write_qsf_from_book(FILE *out, QofBook *book)
 {
@@ -279,6 +310,8 @@ write_qsf_from_book(FILE *out, QofBook *book)
 	xmlFreeDoc(qsf_doc);
 }
 
+/** \brief QofBackend routine to load from file - needs a map.
+*/
 gboolean
 load_qsf_object(QofBook *book, const char *fullpath, qsf_param *params)
 {
@@ -303,9 +336,10 @@ load_qsf_object(QofBook *book, const char *fullpath, qsf_param *params)
 	return FALSE;
 }
 
-/** \todo BUG: This is called by the file_type routine!
+/** \brief Load a QSF XML file without a map.
 
-It should be called after the type has been determined!
+The QSF XML file must ONLY contain QOF objects already known to the host
+application. i.e. which return TRUE in qof_class_is_registered();
 */
 gboolean
 load_our_qsf_object(QofBook *book, const char *fullpath, qsf_param *params)
@@ -363,6 +397,11 @@ qsf_backend_new(void)
 	return be;
 }
 
+/** \brief The QOF method of loading each backend.
+
+QSF does not use a GnuCash module, it is loaded using the QOF
+method - QofBackendProvider.
+*/
 static void 
 qsf_provider_free (QofBackendProvider *prov)
 {
@@ -371,6 +410,7 @@ qsf_provider_free (QofBackendProvider *prov)
 	g_free (prov);
 }
 
+/** \brief Describe this backend to the application. */
 void
 qsf_provider_init(void)
 {
@@ -382,6 +422,7 @@ qsf_provider_init(void)
 	prov->provider_free = qsf_provider_free;
 	qof_backend_register_provider (prov);
 }
+
 
 /** @} */
 /** @} */

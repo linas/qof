@@ -108,6 +108,10 @@ QSF is in three sections:
 #include <glib.h>
 #include <regex.h>
 #include <time.h>
+#include <libxml/xmlmemory.h>
+#include <libxml/tree.h>
+#include <libxml/parser.h>
+#include <libxml/xmlschemas.h>
 #include "gnc-date.h"
 #include "qof_book_merge.h"
 #include "qofbook.h"
@@ -124,6 +128,14 @@ typedef enum  {
 	OUR_QSF_OBJ,  /**< A QSF object that can be loaded without a map. */
 }qsf_type;
 	
+/** \internal Holds a description of the QofObject.
+
+Used when converting QOF objects from another application. The incoming,
+\b unknown, objects need to be stored prior to conversion. This allows 
+many-to-many conversions where an invoice can receive data from an incoming
+expense AND datebook and use data from an incoming contacts object to lookup
+the customer for the invoice.
+*/
 typedef struct qsf_object_set
 {
 	GHashTable *parameters;
@@ -131,85 +143,10 @@ typedef struct qsf_object_set
 	int object_count;
 }qsf_objects;
 
-/** \brief QSF Parameters
+#define QSF_QOF_VERSION QOF_OBJECT_VERSION /**< QOF Version check.
 
-This struct is a catch-all for all parameters required
-for various stages of the process. There are lots of elements
-here that will finally be removed.
+Make sure the same version of QOF is in use in both applications.
 */
-typedef struct qsf_metadata
-{
-	qsf_type file_type; /**< what type of file is being handled */
-	qsf_objects *object_set; /**< current object set for qsf_object_list. */
-	int count; /**< sequential counter for each object in the book */
-	GList *qsf_object_list; /**< list of qsf_objects */
-	GSList *qsf_sequence; /**< Parameter list sorted into QSF order */
-	GHashTable *qsf_parameter_hash; /**< Hashtable of parameters for each object */
-	GHashTable *qsf_calculate_hash, *qsf_default_hash, *qsf_define_hash;
-	GSList *supported_types; /**< The partial list of QOF types currently supported, in QSF order. */
-	xmlDocPtr input_doc, output_doc; /**< Pointers to the input and output xml document(s). */
-	/** \todo Review the list of xml nodes in qsf_param and rationalise. */
-	xmlNodePtr child_node, cur_node, param_node, output_node, output_root, book_node, lister;
-	xmlNsPtr qsf_ns, map_ns;/**< Separate namespaces for QSF objects and QSF maps. */
-	const char *qof_type; /**< Holds details of the QOF_TYPE */
-	QofIdType qof_obj_type;	/**< current QofObject type (e_type) for the parameters. */
-	QofEntity *qsf_ent; /**< Current entity in the book. */
-	QofBackend *be; /**< the current QofBackend for this operation. */
-	QofBook *book;	/**< the current QofBook.
-
-		Theoretically, QSF can handle multiple QofBooks - currently limited to 1.
-	*/
-	int boolean_calculation_done; /**< simple trip once this boolean is complete. */
-	char *filepath; /**< Path to the QSF file. */
-}qsf_param;
-
-void qsf_free_params(qsf_param *params);
-
-/** \brief map callback
-
-Investigate ways to get the map callback to do both
-the map and the validation tasks.
-**/
-typedef void (* qsf_nodeCB)(xmlNodePtr, xmlNsPtr, qsf_param*);
-
-/** \brief Validation metadata
-
-The validation is a separate parse with separate data.
-This may change but it currently saves workload.
-
-\todo Examine ways of making the Validation metadata
-into a sub-set of the main code, not an island on it's own.
-*/
-typedef struct qsf_validates
-{
-	QofBackendError error_state;
-	const char *object_path;
-	const char *map_path;
-	GHashTable *validation_table;
-	int valid_object_count;
-	int map_calculated_count;
-	int qof_registered_count;
-}qsf_validator;
-
-/** \brief validator callback
-
-\todo The need for separate metadata means a separate callback typedef
-	is needed for the validator, but this should be fixed to only need one.
-*/
-typedef void (* qsf_validCB)(xmlNodePtr, xmlNsPtr, qsf_validator*);
-
-/** \brief One iterator, two typedefs
-
-\todo resolve the two callbacks in ::qsf_node_iterate into one.
-*/
-struct qsf_node_iterate {
-	qsf_nodeCB *fcn;
-	qsf_validCB *v_fcn;
-	xmlNsPtr ns;
-};
-
-#define QSF_QOF_VERSION QOF_OBJECT_VERSION
-
 #define QSF_ROOT_TAG	"qof-qsf" /**< The top level root tag */
 #define QSF_DEFAULT_NS	"urn:qof-qsf-container" /**< Default namespace for QSF root tag
 
@@ -406,28 +343,60 @@ on other data types will be ignored.
 
 #define QSF_OBJECT_SCHEMA "qsf-object.xsd.xml" /**< Name of the QSF Object Schema. */
 #define QSF_MAP_SCHEMA "qsf-map.xsd.xml" /**< Name of the QSF Map Schema. */
+/** \brief QSF Parameters
 
-/** \brief Write a QofBook to QSF
-
-This function can be used to write any QofBook to QSF. Remember that
-only fully \b QOF-compliant objects are supported by QSF.
-
-Your QOF objects must have:
-	- a create: function in the QofObject definition
-	- a foreach: function in the QofObject definition
-	- QofParam params[] registered with QOF using
-		qof_class_register and containing all necessary parameters
-		to reconstruct this object without any further information.
-	- Logical distinction between those parameters that should be
-		set (have a QofAccessFunc and QofSetterFunc) and those that 
-		should only be calculated (only a QofAccessFunc).
-
-The file is validated against the QSF object schema before being written.
-Check the QofBackendError - don't assume the file is OK.
-
+This struct is a catch-all for all parameters required
+for various stages of the process. There are lots of elements
+here that will finally be removed.
 */
-void
-write_qsf_from_book(FILE *out, QofBook *book);
+typedef struct qsf_metadata
+{
+	qsf_type file_type; /**< what type of file is being handled */
+	qsf_objects *object_set; /**< current object set for qsf_object_list. */
+	int count; /**< sequential counter for each object in the book */
+	GList *qsf_object_list; /**< list of qsf_objects */
+	GSList *qsf_sequence; /**< Parameter list sorted into QSF order */
+	GHashTable *qsf_parameter_hash; /**< Hashtable of parameters for each object */
+	GHashTable *qsf_calculate_hash, *qsf_default_hash, *qsf_define_hash;
+	GSList *supported_types; /**< The partial list of QOF types currently supported, in QSF order. */
+	xmlDocPtr input_doc, output_doc; /**< Pointers to the input and output xml document(s). */
+	/** \todo Review the list of xml nodes in qsf_param and rationalise. */
+	xmlNodePtr child_node, cur_node, param_node, output_node, output_root, book_node, lister;
+	xmlNsPtr qsf_ns, map_ns;/**< Separate namespaces for QSF objects and QSF maps. */
+	const char *qof_type; /**< Holds details of the QOF_TYPE */
+	QofIdType qof_obj_type;	/**< current QofObject type (e_type) for the parameters. */
+	QofEntity *qsf_ent; /**< Current entity in the book. */
+	QofBackend *be; /**< the current QofBackend for this operation. */
+	QofBook *book;	/**< the current QofBook.
+
+		Theoretically, QSF can handle multiple QofBooks - currently limited to 1.
+	*/
+	int boolean_calculation_done; /**< simple trip once this boolean is complete. */
+	char *filepath; /**< Path to the QSF file. */
+}qsf_param;
+
+void qsf_free_params(qsf_param *params);
+
+
+/** \brief Validation metadata
+
+The validation is a separate parse with separate data.
+This may change but it currently saves workload.
+
+\todo Examine ways of making the Validation metadata
+into a sub-set of the main code, not an island on it's own.
+*/
+typedef struct qsf_validates
+{
+	QofBackendError error_state;
+	const char *object_path;
+	const char *map_path;
+	GHashTable *validation_table;
+	int valid_object_count;
+	int map_calculated_count;
+	int qof_registered_count;
+}qsf_validator;
+
 
 /** \brief shorthand function
 
@@ -461,6 +430,11 @@ This may look repetitive but each one is used separately
 int
 qsf_check_tag(qsf_param *params, char *qof_type);
 
+/** \brief Checks all incoming objects for QOF registration.
+
+Sums all existing objects in the QSF and counts the number of those
+objects that are also registered with QOF in the host application.
+*/
 void
 qsf_object_validation_handler(xmlNodePtr child, xmlNsPtr ns, qsf_validator *valid);
 
@@ -476,25 +450,30 @@ qsf_map_object_handler(xmlNodePtr child, xmlNsPtr ns, qsf_param *params);
 xmlNodePtr
 qsf_add_object_tag(qsf_param *params, int count);
 
-void
-qsf_valid_foreach(xmlNodePtr parent, qsf_validCB cb,
-	struct qsf_node_iterate *iter, qsf_validator *valid);
-
-void
-qsf_node_foreach(xmlNodePtr parent, qsf_nodeCB cb,
-	struct qsf_node_iterate *iter, qsf_param *params);
-	
 /** \brief Compares an xmlDoc in memory against the schema file.
 
+@params	schema_dir  set at compile time to $prefix/share/qsf/
+@params schema_filename Either the QSF Object Schema or the QSF Map Schema.
+@params doc 	The xmlDoc read from the file using libxml2.
+	
+Ensure that you call the right schema_filename for the doc in question!
+
+Incorrect validation will result in output to the terminal window.
+
+@return TRUE if the doc validates against the assigned schema, otherwise FALSE.
 */
 gboolean
 qsf_is_valid(const char *schema_dir, const char* schema_filename, xmlDocPtr doc);
 
 /** \brief Validate a QSF file and identify a suitable QSF map
 
-@param	path	Absolute or relative path to the file to be validated
 @param	params	Pointer to qsf_param context
 	
+These functions are in pairs. When called from within a QofSession, the qsf_param
+context will be available. When just determining the type of file, qsf_param is
+not necessary. Use the *_be functions from within the QofBackend and the 
+corresponding function in other code.
+
 The file is validated against the QSF object schema, qsf-object.xsd.xml and
 each object described in the file is checked to find out if a suitable QSF
 map exists. Map files are accepted if all objects described in the QSF object
@@ -503,11 +482,10 @@ file are defined in the QSF map.
 @return TRUE if the file validates and a QSF map can be found,
 otherwise FALSE.
 */
-gboolean is_qsf_object(qsf_param *params);
+gboolean is_qsf_object_be(qsf_param *params);
 
 /** \brief Validate a QSF file and determine type.
 
-@param	path	Absolute or relative path to the file to be validated
 @param	params	Pointer to qsf_param context
 
 The file is validated against the QSF object schema, qsf-object.xsd.xml and
@@ -520,11 +498,10 @@ for a QSF map.
 @return TRUE if the file validates and all objects pass,
 otherwise FALSE.
 */
-gboolean is_our_qsf_object(qsf_param *params);
+gboolean is_our_qsf_object_be(qsf_param *params);
 
 /** \brief Validate a QSF map file.
 
-@param	path	Absolute or relative path to the file to be validated
 @param	params	Pointer to qsf_param context
 
 The file is validated aginst the QSF map schema, qsf-map.xsd.xsml. This
@@ -534,11 +511,10 @@ user data and are used to import QSF object files.
 
 @return TRUE if the map validates, otherwise FALSE.
 */
-gboolean is_qsf_map(qsf_param *params);
+gboolean is_qsf_map_be(qsf_param *params);
 
 /** \brief Validate a QSF file and a selected QSF map
 
-@param	path	Absolute or relative path to the file to be validated
 @param	map_path	Absolute or relative path to the selected QSF map file
 @param	params	Pointer to qsf_param context
 
@@ -550,7 +526,7 @@ file are defined in the QSF map.
 @return TRUE if the file validates and the supplied QSF map is usable,
 otherwise FALSE.
 */
-gboolean is_qsf_object_with_map(char *map_path, qsf_param *params);
+gboolean is_qsf_object_with_map_be(char *map_path, qsf_param *params);
 
 /** \brief Main processing routine
 
@@ -597,6 +573,114 @@ void qsf_book_node_handler(xmlNodePtr child, xmlNsPtr qsf_ns, qsf_param *params)
 
 void qsf_object_commitCB(gpointer key, gpointer value, gpointer data);
 
+void qsf_param_init(qsf_param *params);
+
+
+/** \brief map callback
+
+Investigate ways to get the map callback to do both
+the map and the validation tasks.
+**/
+typedef void (* qsf_nodeCB)(xmlNodePtr, xmlNsPtr, qsf_param*);
+
+/** \brief validator callback
+
+\todo The need for separate metadata means a separate callback typedef
+	is needed for the validator, but this should be fixed to only need one.
+*/
+typedef void (* qsf_validCB)(xmlNodePtr, xmlNsPtr, qsf_validator*);
+
+
+/** \brief One iterator, two typedefs
+
+\todo resolve the two callbacks in ::qsf_node_iterate into one.
+*/
+struct qsf_node_iterate {
+	qsf_nodeCB *fcn;
+	qsf_validCB *v_fcn;
+	xmlNsPtr ns;
+};
+
+/** \brief Validate a QSF file and identify a suitable QSF map
+
+@param	path	Absolute or relative path to the file to be validated.
+
+These functions are in pairs. When called from within a QofSession, the qsf_param
+context will be available. When just determining the type of file, qsf_param is
+not necessary. Use the *_be functions from within the QofBackend and the 
+corresponding function in other code.
+	
+The file is validated against the QSF object schema, qsf-object.xsd.xml and
+each object described in the file is checked to find out if a suitable QSF
+map exists. Map files are accepted if all objects described in the QSF object
+file are defined in the QSF map.
+
+@return TRUE if the file validates and a QSF map can be found,
+otherwise FALSE.
+*/
+gboolean is_qsf_object(const char *path);
+
+/** \brief Validate a QSF file and determine type.
+
+@param	path	Absolute or relative path to the file to be validated
+
+These functions are in pairs. When called from within a QofSession, the qsf_param
+context will be available. When just determining the type of file, qsf_param is
+not necessary. Use the *_be functions from within the QofBackend and the 
+corresponding function in other code.
+
+The file is validated against the QSF object schema, qsf-object.xsd.xml and
+each object described in the file is checked to see if it is registered
+with QOF within the QOF environment of the calling process.
+
+Files that pass the test can be imported into the QOF appliction without the need
+for a QSF map.
+
+@return TRUE if the file validates and all objects pass,
+otherwise FALSE.
+*/
+gboolean is_our_qsf_object(const char *path);
+
+/** \brief Validate a QSF map file.
+
+@param	path	Absolute or relative path to the file to be validated
+
+These functions are in pairs. When called from within a QofSession, the qsf_param
+context will be available. When just determining the type of file, qsf_param is
+not necessary. Use the *_be functions from within the QofBackend and the 
+corresponding function in other code.
+
+The file is validated aginst the QSF map schema, qsf-map.xsd.xsml. This
+function is called by ::is_qsf_object. If called directly, the map file
+is validated and closed with a QofBackend error. QSF maps do not contain
+user data and are used to import QSF object files.
+
+@return TRUE if the map validates, otherwise FALSE.
+*/
+gboolean is_qsf_map(const char *path);
+
+/** \brief Write a QofBook to QSF
+
+This function can be used to write any QofBook to QSF. Remember that
+only fully \b QOF-compliant objects are supported by QSF.
+
+Your QOF objects must have:
+	- a create: function in the QofObject definition
+	- a foreach: function in the QofObject definition
+	- QofParam params[] registered with QOF using
+		qof_class_register and containing all necessary parameters
+		to reconstruct this object without any further information.
+	- Logical distinction between those parameters that should be
+		set (have a QofAccessFunc and QofSetterFunc) and those that 
+		should only be calculated (only a QofAccessFunc).
+
+The file is validated against the QSF object schema before being written.
+Check the QofBackendError - don't assume the file is OK.
+
+*/
+void
+write_qsf_from_book(FILE *out, QofBook *book);
+
 /** \brief Determine the type of QSF and load it into the QofBook
 
 @param	qsf_doc Pointer to the QSF object in memory, xmlDocPtr.
@@ -610,7 +694,51 @@ qsf_file_type (QofBackend *be, QofBook *book);
 
 void qsf_provider_init(void);
 
-void qsf_param_init(qsf_param *params);
+void
+qsf_valid_foreach(xmlNodePtr parent, qsf_validCB cb,
+	struct qsf_node_iterate *iter, qsf_validator *valid);
+
+void
+qsf_node_foreach(xmlNodePtr parent, qsf_nodeCB cb,
+	struct qsf_node_iterate *iter, qsf_param *params);
+
+/** \brief Loads the QSF into a QofSession, ready to merge.
+
+Loads a QSF object file containing only GnuCash objects
+into a second QofSession.
+
+@param first_session A QofSession pointer to the original session. This
+	will become the target of the subsequent qof_book_merge.
+@param path	Absolute or relative path to the file to be loaded
+
+@return ERR_BACKEND_NO_ERR == 0 on success, otherwise the QofBackendError
+	set by the QSFBackend.
+	
+\todo Build the qof_book_merge code onto this function if session loads
+	properly.
+*/
+QofBackendError qof_session_load_our_qsf_object(QofSession *first_session, const char *path);
+
+/** \brief Placeholder so far.
+
+
+\todo Determine the map to use and convert the QOF objects
+
+Much of the map code is written but there is still work to do.
+*/
+QofBackendError qof_session_load_qsf_object(QofSession *first_session, const char *path);
+	
+void qsf_destroy_backend (QofBackend *be);
+
+/** \brief Backend routine to open a file to write
+
+Calls write_qsf_from_book to convert the QofBook to QSF XML.
+*/
+void qsf_write_file(QofBackend *be, QofBook *book);
+
+/** \brief Create a new QSF backend.
+*/
+QofBackend* qsf_backend_new(void);
 
 /** @} */
 /** @} */

@@ -78,10 +78,46 @@ targetNamespace="urn:qof-qsf-container" xmlns="urn:qof-qsf-container">
      </xsd:simpleContent>
      </xsd:complexType>
    </xsd:element>
+   <xsd:element name="gint32" minOccurs="0" maxOccurs="unbounded">
+     <xsd:complexType>
+     <xsd:simpleContent>
+      <xsd:extension base="xsd:int">
+       <xsd:attribute name="type" type="xsd:string"/>
+      </xsd:extension>
+     </xsd:simpleContent>
+     </xsd:complexType>
+   </xsd:element>
    <xsd:element name="gint64" minOccurs="0" maxOccurs="unbounded">
      <xsd:complexType>
      <xsd:simpleContent>
       <xsd:extension base="xsd:int">
+       <xsd:attribute name="type" type="xsd:string"/>
+      </xsd:extension>
+     </xsd:simpleContent>
+     </xsd:complexType>
+   </xsd:element>
+   <xsd:element name="double" minOccurs="0" maxOccurs="unbounded">
+     <xsd:complexType>
+	 <xsd:simpleContent>
+	  <xsd:extension base="xsd:double">
+	   <xsd:attribute name="type" type="xsd:string"/>
+	  </xsd:extension>
+	 </xsd:simpleContent>
+	 </xsd:complexType>
+   </xsd:element>
+   <xsd:element name="char" minOccurs="0" maxOccurs="unbounded">
+     <xsd:complexType>
+     <xsd:simpleContent>
+      <xsd:extension base="xsd:string">
+       <xsd:attribute name="type" type="xsd:string"/>
+      </xsd:extension>
+     </xsd:simpleContent>
+     </xsd:complexType>
+   </xsd:element>
+   <xsd:element name="kvp" minOccurs="0" maxOccurs="unbounded">
+     <xsd:complexType>
+     <xsd:simpleContent>
+      <xsd:extension base="xsd:string">
        <xsd:attribute name="type" type="xsd:string"/>
       </xsd:extension>
      </xsd:simpleContent>

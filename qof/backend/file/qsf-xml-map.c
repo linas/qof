@@ -45,7 +45,7 @@
 #include "qsf-xml.h"
 #include "qsf-dir.h"
 
-static short int module = MOD_BACKEND;
+//static short int module = MOD_BACKEND;
 
 static void
 qsf_date_default_handler(const char *default_name, GHashTable *qsf_default_hash,
@@ -80,14 +80,16 @@ qsf_string_default_handler(const char *default_name, GHashTable *qsf_default_has
 void
 qsf_map_validation_handler(xmlNodePtr child, xmlNsPtr ns, qsf_validator *valid)
 {
-	gchar *qof_version, buff[6];
+	gchar *qof_version;
+	GString *buff;
 	xmlNodePtr child_node;
 	xmlChar *match;
 
 	if (qsf_is_element(child, ns, MAP_DEFINITION_TAG)) {
 		qof_version = xmlGetProp(child, MAP_QOF_VERSION);
-		sprintf(buff, "%i", QSF_QOF_VERSION);
-		if(xmlStrcmp(qof_version, buff) != 0)
+		buff = g_string_new(" ");
+		g_string_printf(buff, "%i", QSF_QOF_VERSION);
+		if(xmlStrcmp(qof_version, buff->str) != 0)
 		{
 			valid->error_state = ERR_QSF_BAD_QOF_VERSION;
 			return;
@@ -130,7 +132,7 @@ Need to code for how to find these files.
 Check QofBackendError for a description of the error.
 
 */
-gboolean is_qsf_object_with_map(char *map_path, qsf_param *params)
+gboolean is_qsf_object_with_map_be(char *map_file, qsf_param *params)
 {
 	xmlDocPtr doc, map_doc;
 	int valid_count;
@@ -139,9 +141,11 @@ gboolean is_qsf_object_with_map(char *map_path, qsf_param *params)
 	xmlNsPtr map_ns;
 	qsf_validator valid;
 	char *path;
+	gchar *map_path;
 
 	g_return_val_if_fail((params != NULL),FALSE);
 	path = g_strdup(params->filepath);
+	map_path = g_strdup_printf("%s/%s", QSF_SCHEMA_DIR, map_file);
 	if(path == NULL) {
 		qof_backend_set_error(params->be, ERR_FILEIO_FILE_NOT_FOUND);
 		return FALSE; 
@@ -197,7 +201,7 @@ gboolean is_qsf_object_with_map(char *map_path, qsf_param *params)
 	return FALSE;
 }
 
-gboolean is_qsf_map(qsf_param *params)
+gboolean is_qsf_map_be(qsf_param *params)
 {
 	xmlDocPtr doc;
 	struct qsf_node_iterate iter;
@@ -236,6 +240,35 @@ gboolean is_qsf_map(qsf_param *params)
 	g_hash_table_destroy(valid.validation_table);
 	return TRUE;
 }
+
+gboolean is_qsf_map(const char *path)
+{
+	xmlDocPtr doc;
+	struct qsf_node_iterate iter;
+	qsf_validator valid;
+	xmlNodePtr map_root;
+	xmlNsPtr map_ns;
+
+	g_return_val_if_fail((path != NULL),FALSE);
+	if(path == NULL) { return FALSE; }
+	doc = xmlParseFile(path);
+	if(doc == NULL) { return FALSE; }
+	if(TRUE != qsf_is_valid(QSF_SCHEMA_DIR, QSF_MAP_SCHEMA, doc)) {
+		return FALSE; 
+	}
+	map_root = xmlDocGetRootElement(doc);
+	map_ns = map_root->ns;
+	iter.ns = map_ns;
+	valid.error_state = ERR_BACKEND_NO_ERR;
+	qsf_valid_foreach(map_root, qsf_map_validation_handler, &iter, &valid);
+	if (valid.error_state != ERR_BACKEND_NO_ERR) {
+		g_hash_table_destroy(valid.validation_table);
+		return FALSE;
+	}
+	g_hash_table_destroy(valid.validation_table);
+	return TRUE;
+}
+
 
 /** \brief Handling defaults.
 
@@ -315,17 +348,19 @@ qsf_map_default_handler(xmlNodePtr child, xmlNsPtr ns, qsf_param *params )
 void
 qsf_map_top_node_handler(xmlNodePtr child, xmlNsPtr ns, qsf_param *params)
 {
-	gchar *qof_version, buff[6];
-	xmlChar *qsf_enum;
-	xmlNodePtr child_node;
+	gchar *qof_version;
+	GString *buff;
+/*	xmlChar *qsf_enum;
+	xmlNodePtr child_node;*/
 	struct qsf_node_iterate iter;
 
 	if(!params->qsf_define_hash) return;
 	if(!params->qsf_default_hash) return;
 	if(qsf_is_element(child, ns, MAP_DEFINITION_TAG)) {
 		qof_version = xmlGetProp(child, MAP_QOF_VERSION);
-		sprintf(buff, "%i", QSF_QOF_VERSION);
-		if(xmlStrcmp(qof_version, buff) != 0) {
+		buff = g_string_new(" ");
+		g_string_printf(buff, "%i", QSF_QOF_VERSION);
+		if(xmlStrcmp(qof_version, buff->str) != 0) {
 			qof_backend_set_error(params->be, ERR_QSF_BAD_QOF_VERSION);
 			return;
 		}
@@ -373,7 +408,8 @@ qsf_set_handler(xmlNodePtr parent, GHashTable *default_hash,
 				lookup_node = (xmlNodePtr) g_hash_table_lookup(default_hash, 
 					xmlNodeGetContent(cur_node));
 				content = xmlGetProp(lookup_node, MAP_VALUE_ATTR);
-				printf("Lookup %s in the receiving application\n", content );
+				/** \todo FIXME: do the lookup. */
+				g_message("Lookup %s in the receiving application\n", content );
 				return content;
 			}
 			if(content) 
