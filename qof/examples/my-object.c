@@ -1,12 +1,26 @@
 
 /** @file my-object.c
  *  @breif Example definition of a queriable object. 
- *  @author Copyright (c) 2003 Linas Vepstas <linas@linas.org>
+ *  @author Copyright (c) 2003,2004 Linas Vepstas <linas@linas.org>
  *
  *  This example program shows how to configure an arbitrary
  *  programmer-defined oject "MyObj" so that the Query routines
  *  can be used on it.  It shows one part of the total:
  *  -- The object definition, showing how to hook into the query system.
+ *
+ * Please make note of how the 'book' is used.  A 'book' can serve
+ * as a collection of collections.  In the example below, the book
+ * will be used to hold all of the instances of 'my object' so that
+ * these can be found later.  Note that the book doesn't need to 
+ * exclusively hold only instances of 'my object', it can hold 
+ * collections of other types as well. 
+ *
+ * The above ability is one reason why 'book' holds such a central
+ * place in the QOF system.  Note also: when the query is performed
+ * over all instances of 'my object', its not really over *all* 
+ * instances; its only over those instances stored in the given book.
+ * Thus, the book is a kind of dataset, and by using books, one
+ * can have multiple disjoint datasets.
  */
 
 #include <glib.h>
