@@ -2,6 +2,7 @@
 SUBDIRS = src examples
 
 EXTRA_DIST =                   \
+	.cvsignore                  \
 	AUTHORS                     \
 	COPYING                     \
 	ChangeLog                   \

@@ -25,16 +25,16 @@ noinst_HEADERS = 	\
 	gnc-book.h       \
 	gnc-book-p.h     \
 	gnc-date.h       \
-	gnc-engine-util.h		\
+	gnc-engine-util.h	\
 	gnc-numeric.h		\
-	gnc-event.h		\
+	gnc-event.h		  \
 	gnc-event-p.h    \
-	gnc-session.h		\
-	gnc-session-p.h		\
-	gnc-trace.h		\
-	guid.h			\
-	kvp_frame.h		\
-	md5.h          \
+	gnc-session.h	  \
+	gnc-session-p.h  \
+	gnc-trace.h		  \
+	guid.h			  \
+	kvp_frame.h		  \
+	md5.h            \
 	Backend.h        \
 	BackendP.h       \
 	GNCId.h          \
@@ -46,6 +46,9 @@ noinst_HEADERS = 	\
 	QueryObject.h    \
 	QueryObjectP.h
 	
+EXTRA_DIST =                   \
+   .cvsignore
+
 
 CFLAGS = -g \
 	@CFLAGS@ \

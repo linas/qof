@@ -13,3 +13,6 @@ noinst_PROGRAMS = \
 	query-example
 
 
+EXTRA_DIST =                   \
+    .cvsignore
+
