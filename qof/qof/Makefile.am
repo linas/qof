@@ -34,7 +34,8 @@ libqof_la_SOURCES =  \
    qofquery-deserial.c     \
    qofquery-serialize.c    \
    qofsession.c      \
-   qofsql.c
+   qofsql.c          \
+   qof_book_merge.c
 
 # qofconfigdir = ${pkgincludedir}
 # qofconfig_DATA = config.h
