@@ -68,7 +68,8 @@ qofinclude_HEADERS = \
    qofquery-deserial.h     \
    qofquery-serialize.h    \
    qofsession.h      \
-   qofsql.h
+   qofsql.h	     \
+   qof_book_merge.h
 
 
 noinst_HEADERS =      \
