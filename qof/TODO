@@ -1,0 +1,7 @@
+
+Mac OSX needs checks for strcasestr:
+
+> ld: warning multiple definitions of symbol _strcasestr
+> ../lib/qof/.libs/libqof.dylib(gnc-engine-util.o) definition of
+> _strcasestr
+> /usr/lib/libpthread.dylib(strcasestr.So) definition of _strcasestr

@@ -1,5 +1,8 @@
 
 
+April 2004 : make teh documentation look much nicer by using doxygen
+     markup correctly.
+
 June 27 2003 : rename many files and functions to use qof prefix, and 
      to use a gnome style naming convention.
 
