@@ -184,7 +184,7 @@ qof_query_pred_data_to_xml (QofQueryPredData *pd)
 	if (!safe_strcmp (pd->type_name, QOF_TYPE_GUID))
 	{
 		xmlNodePtr topnode = xmlNewNode (NULL, "qofquery:pred-guid");
-		PUT_HOW ("qofquery:compare", pd->how, LT, LTE, EQUAL, GT, GTE, NEQ);
+		/* GUID Predicate doesn't do a PUT_HOW */
 
 		GList *n;
 		query_guid_t pdata = (query_guid_t) pd;
@@ -193,7 +193,7 @@ qof_query_pred_data_to_xml (QofQueryPredData *pd)
 
 		for (n = pdata->guids; n; n = n->next)
 		{
-			PUT_STR ("qofquery:guid", n->data);
+			PUT_GUID ("qofquery:guid", n->data);
 		}
 		return topnode;
 	}
