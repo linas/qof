@@ -21,9 +21,6 @@ sql_example_SOURCES = \
 	sql-example.c      \
 	my-object.c 
 
-test_qsf_SOURCES = test-qsf.c
-
-
 noinst_PROGRAMS = \
 	test-book-merge \
 	query-example  \
