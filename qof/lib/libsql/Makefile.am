@@ -2,7 +2,7 @@
 
 lib_LTLIBRARIES = libqofsql.la
 
-libqofsql_la_LDFLAGS= -version-info $(LIBQOFSQL_LIBRARY_VERSION) -release $(VERSION) 
+libqofsql_la_LDFLAGS= -version-info $(LIBQOF_LIBRARY_VERSION) -release $(VERSION) 
 
 libqofsql_la_SOURCES = \
 	parser.c \

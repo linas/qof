@@ -2,9 +2,10 @@
 
 lib_LTLIBRARIES = libdwi.la
 
-# libdwi_la_LDFLAGS= -version-info $(LIBDWI_LIBRARY_VERSION) -release $(VERSION) 
+libdwi_la_LDFLAGS= -version-info $(LIBQOF_LIBRARY_VERSION) -release $(VERSION) 
 
 libdwi_la_SOURCES = \
+	database.c       \
 	duifield.c       \
 	duifield-qof.c   \
 	duifield-sql.c   \
@@ -16,13 +17,14 @@ libdwi_la_SOURCES = \
 
 dwiincludedir = ${pkgincludedir}
 dwiinclude_HEADERS = \
-	duifield.h       \
-	duifield-qof.h   \
-	duifield-sql.h   \
-	duifieldmap.h    \
-	duifilter.h      \
-	duiresolver.h    \
-	duitxnquery.h    \
+	database.h        \
+	duifield.h        \
+	duifield-qof.h    \
+	duifield-sql.h    \
+	duifieldmap.h     \
+	duifilter.h       \
+	duiresolver.h     \
+	duitxnquery.h     \
 	duitxnreport.h 
 
 EXTRA_DIST =       \

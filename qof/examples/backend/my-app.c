@@ -72,16 +72,13 @@ main (int argc, char *argv[])
 {
 	init();
 
+	QofSession *sess = qof_session_new();
+	qof_session_begin (sess, "sql://myinst", FALSE, TRUE);
+
 	QofBook *book = qof_book_new();
 
+#if 0
 	qof_map_set_book (map, book);
-
-	DuiDatabase *db = dui_database_new ("my db object", 
-                          // "libdbi", "my-qof-db", 
-                          // "odbc", "my-qof-db", 
-                          "libpg", "my-qof-db", 
-                          // "127.0.0.1", "linas", "abc123");
-                          NULL, "linas", NULL);
 
 	qof_map_set_database (map, db);
 
@@ -115,6 +112,7 @@ main (int argc, char *argv[])
 	ts.tv_nsec -=10;
 	qof_instance_set_last_update (&me->inst, ts);
 	qof_map_write_to_db (map, QOF_INSTANCE (me));
+#endif
 
 	shutdown ();
 
