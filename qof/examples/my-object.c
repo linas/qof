@@ -117,13 +117,14 @@ static QofObject myobj_object_def =
    interface_version: QOF_OBJECT_VERSION,
    e_type:            MYOBJ_ID,
    type_label:        "My Blinking Object",
-   new:               my_obj_new,
+   create:            my_obj_new,
    book_begin:        NULL,
    book_end:          NULL,
    is_dirty:          NULL,
    mark_clean:        NULL,
    foreach:           my_obj_foreach,
    printable:         NULL,
+   version_cmp:       NULL,
 };
 
 gboolean myObjRegister (void)
