@@ -1560,6 +1560,7 @@ qof_query_printAndTerms (GList * terms, GList * output)
     path = qof_query_term_get_param_path (qt);
     invert = qof_query_term_is_inverted (qt);
 
+    if (invert) output = g_list_append (output, g_string_new("INVERT SENSE "));
     output = g_list_append (output, qof_query_printParamPath (path));
     output = g_list_append (output, qof_query_printPredData (pd));
     output = g_list_append (output, g_string_new("\n"));
