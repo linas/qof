@@ -32,9 +32,9 @@
 #define QOF_SQL_QUERY_H
 
 #include <glib.h>
-#include <qof/kvp_frame.h>
-#include <qof/qofbook.h>
-#include <qof/qofquery.h>
+#include <kvp_frame.h>
+#include <qofbook.h>
+#include <qofquery.h>
 
 /** @addtogroup SQL SQL Interface to Query
   @{ */
