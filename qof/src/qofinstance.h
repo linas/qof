@@ -37,6 +37,7 @@
 #define QOF_INSTANCE_H
 
 #include "guid.h"
+#include "gnc-date.h"
 #include "kvp_frame.h"
 #include "qofbook.h"
 #include "qofid.h"
