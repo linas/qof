@@ -18,6 +18,7 @@ EXTRA_DIST =       \
 
 
 AM_CFLAGS =           \
+  -I. -I../../ -I../../qof \
   ${GLIB_CFLAGS}
 
 

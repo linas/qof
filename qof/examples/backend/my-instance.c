@@ -7,7 +7,7 @@
  */
 
 #include <glib.h>
-#include <qof/qof.h>
+#include "qofsql.h"
 #include "my-instance.h"
 
 /* ===================================================== */

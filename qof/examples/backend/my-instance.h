@@ -9,8 +9,9 @@
 #ifndef MY_INSTANCE_H_
 #define MY_INSTANCE_H_
 
-#include <qof/qof.h>
-#include <qof/qofinstance-p.h>
+#include "qofsql.h"
+#include "qofinstance-p.h"
+#include "qofobject.h"
 
 /** Define "my" object.  Replace by your object. */
 typedef struct myinst_s 
