@@ -60,7 +60,7 @@ are prior art.)
 
 <p>
 <!-- ====================================================== -->
-<h3>Sharing Technologies</h3>
+<h3>Sharing Technologies and the Future of Programming</h3>
 One traditional solution to the sharing problem has been <b>the
 idea of a shared or even global filesystem</b>.  This was the
 original vision behind NFS and Microsoft Windows Workgroups
@@ -80,6 +80,24 @@ same file at the same time is a recipie for disaster.
 The two apps that are updating the same file at the same 
 time don't know about each other, and there is no native 
 or built-in default that would let them find out.
+<p>
+Another older solution to the sharing problem is the 
+idea behind RPC, CORBA, SOM/DSOM, COM/DCOM, and, more
+recently, SOAP and the <b>Microsoft .net</b> frameworks.  
+Here, the focus of sharing is actually about the physical 
+movement of objects (OOP objects) from one system to 
+another.  Each of these technologies in some way enable
+the programmer to touch or work with objects on some
+other, remote system.  However, as most programmers
+eventually seem to figure out, its bitchingly hard 
+to use CORBA (or its cousins), and there seems to be 
+relatively little payoff for the effort.  Great:
+now one has distributed, networked objects, but so 
+what?  One still doesn't have persistance (which
+is the strength file systems), and one doesn't 
+have searchability (which is what databases offer)
+and one doesn't have much in the way of security
+(witness Microsoft's Virus Apocalypse).
 <p>
 <b>The latest file-sharing technology is 'P2P'</b>, the 
 peer-to-peer networks.  Unfortunately, MP3 trading
@@ -134,13 +152,20 @@ and one discovers that SQL is not terribly well standardized.
 The next problem comes when one wants to add or change tables.
 Programmers typically discover that the SQL code they are 
 maintaining is not modular, and sometimes very poorly structured.
-Object origneted programming and SQL weren't really made for 
+Object oriented programming and SQL weren't really made for 
 each other, although object oriented databases do help.
 <p>
-
-
-corba why not .... 
-
+In summary, <b>the future of desktop programming lies with a 
+broadly powerful query engine, coupled to persistant OOP-style
+objects that are distrubuted, decentralized, secure, 
+protectable and versionable</b>.  This is the true 'convergence':
+not that of TV's, phones and computers, but 
+the convergence of the best features of P2P, SQL, file systems,
+version control and the web, which, to the programmer, looks
+like nothing more than 'peristant objects', and is no harder
+to 'use' than garbage collection is for a java programmer. 
+This is the grand vision of what desktop programming should 
+be.
 
 
 
@@ -394,7 +419,7 @@ See also:
 
 
 <hr>
-Linas Vepstas &lt;linas@linas.org&gt; July 2003, April 2004
+Linas Vepstas &lt;linas@linas.org&gt; July 2003, April, June 2004
 
 
 
