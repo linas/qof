@@ -21,29 +21,9 @@
  *                                                                  *
 \********************************************************************/
 
-/** @file qofquery-serialize.h
-    @breif Convert QofQuery to XML
-    @author Copyright (C) 2001,2002,2004 Linas Vepstas <linas@linas.org>
- */
+#include "config.h"
 
-#ifndef QOF_QUERY_SERIALIZE_H
-#define QOF_QUERY_SERIALIZE_H
-
-#include <qof/qofquery.h>
-#include <libxml/tree.h>
-
-/** Take the query passed as input, and serialize it into XML.
- *  The DTD used will be a very qofquery specific DTD
- *  This is NOT the XQuery XML.
- */
-xmlNodePtr qof_query_to_xml (QofQuery *q);
-
-#endif /* QOF_QUERY_SERIALIZE_H */
-
-// #include "config.h"
-
-#include <stdio.h>
-//#include "qofquery-serialize.h"
+#include "qofquery-serialize.h"
 #include "qofquery-p.h"
 #include "qofquerycore-p.h"
 
@@ -195,6 +175,8 @@ xmlNodePtr qof_query_to_xml (QofQuery *q);
    xmlAddChild (topnode, node);                      \
 }
 
+/* ======================================================= */
+
 static xmlNodePtr
 qof_query_pred_value_to_xml (QofQueryPredData *pd)
 {
@@ -303,6 +285,8 @@ qof_query_pred_value_to_xml (QofQueryPredData *pd)
 	return NULL;
 }
 
+/* ======================================================= */
+
 static xmlNodePtr
 qof_query_pred_data_to_xml (QofQueryPredData *pd)
 {
@@ -317,6 +301,8 @@ qof_query_pred_data_to_xml (QofQueryPredData *pd)
 	return topnode;
 }
 
+/* ======================================================= */
+
 static xmlNodePtr
 qof_query_param_path_to_xml (GSList *param_path)
 {
@@ -324,13 +310,14 @@ qof_query_param_path_to_xml (GSList *param_path)
 	GSList *n = param_path;
 	for ( ; n; n=n->next)
 	{
-		const char *path = n->data;
+		QofIdTypeConst path = n->data;
 		if (!path) continue;
 		PUT_STR ("qofquery:param", path);
 	}
 	return topnode;
 }
 
+/* ======================================================= */
 
 static xmlNodePtr
 qof_query_one_term_to_xml (QofQueryTerm *qt)
@@ -359,6 +346,8 @@ qof_query_one_term_to_xml (QofQueryTerm *qt)
 	return term;
 }
 
+/* ======================================================= */
+
 static xmlNodePtr
 qof_query_and_terms_to_xml (GList *and_terms)
 {
@@ -374,6 +363,8 @@ qof_query_and_terms_to_xml (GList *and_terms)
 	}
 	return terms;
 }
+
+/* ======================================================= */
 
 static xmlNodePtr
 qof_query_terms_to_xml (QofQuery *q)
@@ -392,6 +383,45 @@ qof_query_terms_to_xml (QofQuery *q)
 	return terms;
 }
 
+/* ======================================================= */
+
+xmlNodePtr
+qof_query_sorts_to_xml (QofQuery *q)
+{
+	QofQuerySort *s[3];
+	qof_query_get_sorts (q, &s[0], &s[1], &s[2]);
+
+	if (NULL == s[0]) return NULL;
+
+	xmlNodePtr sortlist = xmlNewNode (NULL, "qofquery:sort-list");
+	int i;
+	for (i=0; i<3; i++)
+	{
+		if (NULL == s[i]) continue;
+
+		GSList *plist = qof_query_sort_get_param_path (s[i]);
+		if (!plist) continue;
+
+		xmlNodePtr sort = xmlNewNode (NULL, "qofquery:sort");
+		xmlAddChild (sortlist, sort);
+
+		xmlNodePtr topnode = sort;
+
+		gboolean increasing = qof_query_sort_get_increasing (s[i]);
+		PUT_STR ("qofquery:order", increasing ? "DESCENDING" : "ASCENDING");
+
+		gint opt = qof_query_sort_get_sort_options (s[i]);
+		PUT_INT32 ("qofquery:options", opt);
+
+		xmlNodePtr pl = qof_query_param_path_to_xml (plist);
+		if (pl) xmlAddChild (sort, pl);
+	}
+
+	return sortlist;
+}
+
+/* ======================================================= */
+
 void
 do_qof_query_to_xml (QofQuery *q, xmlNodePtr topnode)
 {
@@ -401,10 +431,14 @@ do_qof_query_to_xml (QofQuery *q, xmlNodePtr topnode)
 	xmlNodePtr terms = qof_query_terms_to_xml(q);
 	if (terms) xmlAddChild (topnode, terms);
 
+	xmlNodePtr sorts = qof_query_sorts_to_xml (q);
+	if (sorts) xmlAddChild (topnode, sorts);
+
 	gint max_results = qof_query_get_max_results (q);
 	PUT_INT32 ("max-results", max_results);
-
 }
+
+/* ======================================================= */
 
 xmlNodePtr
 qof_query_to_xml (QofQuery *q)
@@ -426,9 +460,9 @@ qof_query_to_xml (QofQuery *q)
 
 /* =============================================================== */
 
-#define UNIT_TEST
 #ifdef UNIT_TEST
 
+#include <stdio.h>
 #include <qof/qofsql.h>
 
 int main (int argc, char * argv[])
@@ -439,7 +473,7 @@ int main (int argc, char * argv[])
 	qof_query_init();
 	qof_object_initialize ();
 
-static QofParam params[] = {
+	static QofParam params[] = {
       { "adate", QOF_TYPE_DATE, NULL, NULL},
       { "aint", QOF_TYPE_INT32, NULL, NULL},
       { "astr", QOF_TYPE_STRING, NULL, NULL},
