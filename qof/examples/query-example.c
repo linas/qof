@@ -78,6 +78,7 @@ my_obj_foreach (QofBook *book, QofEntityForeachCB cb, gpointer ud)
  * some 'reasonable' order.  If you don't want to sort,
  * just have this function always return 0.
  */ 
+int
 my_obj_order (MyObj *a, MyObj *b)
 {
    if ( (a) && !(b) ) return -1;
@@ -114,14 +115,14 @@ static QofObject myobj_object_def =
 gboolean myObjRegister (void)
 {
    /* Associate an ASCII name to each getter, as well as the return type */
-   static QofQueryObject params[] = {
-     { MYOBJ_A,     QOF_QUERYCORE_INT32, (QofAccessFunc)my_obj_get_a },
-     { MYOBJ_B,     QOF_QUERYCORE_INT32, (QofAccessFunc)my_obj_get_b },
-     { MYOBJ_MEMO,  QOF_QUERYCORE_STRING, (QofAccessFunc)my_obj_get_memo },
+   static QofParam params[] = {
+     { MYOBJ_A,     QOF_TYPE_INT32, (QofAccessFunc)my_obj_get_a, NULL },
+     { MYOBJ_B,     QOF_TYPE_INT32, (QofAccessFunc)my_obj_get_b, NULL },
+     { MYOBJ_MEMO,  QOF_TYPE_STRING, (QofAccessFunc)my_obj_get_memo, NULL },
      { NULL },
    };
 
-   qof_query_object_register (MYOBJ_ID, (QofSortFunc)my_obj_order, params);
+   qof_class_register (MYOBJ_ID, (QofSortFunc)my_obj_order, params);
    return qof_object_register (&myobj_object_def);
 }
 
