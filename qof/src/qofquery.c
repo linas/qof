@@ -1532,12 +1532,11 @@ qof_query_printSorts (QofQuerySort *s[], const gint numSorts, GList * output)
 
     for (gsl = qof_query_sort_get_param_path (s[curSort]); gsl; gsl = gsl->next)
     {
-      GString *sortParm = g_string_new (gsl->data);
-      g_string_sprintfa (gs, "    Param: %s %s\n", sortParm->str,
+      QofIdType param_name = gsl->data;
+      g_string_sprintfa (gs, "    Param: %s %s\n", param_name,
                          increasing ? "DESC" : "ASC");
-      g_string_free (sortParm, TRUE);
     }
-    /* TODO: finish this for loop */
+    g_string_sprintfa (gs, "    Options: 0x%x\n", s[curSort]->options);
   }
 
   output = g_list_append (output, gs);
