@@ -1,17 +1,51 @@
+/********************************************************************\
+ * qofquery-serialize.c -- Convert QofQuery to XML                  *
+ * Copyright (C) 2001,2002,2004 Linas Vepstas <linas@linas.org>     *
+ *                                                                  *
+ * This program is free software; you can redistribute it and/or    *
+ * modify it under the terms of the GNU General Public License as   *
+ * published by the Free Software Foundation; either version 2 of   *
+ * the License, or (at your option) any later version.              *
+ *                                                                  *
+ * This program is distributed in the hope that it will be useful,  *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of   *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the    *
+ * GNU General Public License for more details.                     *
+ *                                                                  *
+ * You should have received a copy of the GNU General Public License*
+ * along with this program; if not, contact:                        *
+ *                                                                  *
+ * Free Software Foundation           Voice:  +1-617-542-5942       *
+ * 59 Temple Place - Suite 330        Fax:    +1-617-542-2652       *
+ * Boston, MA  02111-1307,  USA       gnu@gnu.org                   *
+ *                                                                  *
+\********************************************************************/
 
-/* 
- * Take a query, serialize it into XML
-
- * Copyright (C) 2001,2002,2004 Linas Vepstas <linas@linas.org>
+/** @file qofquery-serialize.h
+    @breif Convert QofQuery to XML
+    @author Copyright (C) 2001,2002,2004 Linas Vepstas <linas@linas.org>
  */
-#include <stdio.h>
+
+#ifndef QOF_QUERY_SERIALIZE_H
+#define QOF_QUERY_SERIALIZE_H
 
 #include <qof/qofquery.h>
-#include <qof/qofsql.h>
-
 #include <libxml/tree.h>
 
+/** Take the query passed as input, and serialize it into XML.
+ *  The DTD used will be a very qofquery specific DTD
+ *  This is NOT the XQuery XML.
+ */
+xmlNodePtr qof_query_to_xml (QofQuery *q);
+
+#endif /* QOF_QUERY_SERIALIZE_H */
+
+// #include "config.h"
+
+#include <stdio.h>
+//#include "qofquery-serialize.h"
 #include "qofquery-p.h"
+#include "qofquerycore-p.h"
 
 /* ======================================================= */
 
@@ -26,7 +60,7 @@
    }                                                 \
 }
 
-#define PUT_INT(TOK,VAL) {                           \
+#define PUT_INT32(TOK,VAL) {                         \
    xmlNodePtr node;                                  \
    char buff[80];                                    \
    g_snprintf (buff, sizeof(buff), "%d", (VAL));     \
@@ -35,10 +69,10 @@
    xmlAddChild (topnode, node);                      \
 }
 
-#define PUT_LONG(TOK,VAL) {                          \
+#define PUT_INT64(TOK,VAL) {                         \
    xmlNodePtr node;                                  \
    char buff[80];                                    \
-   g_snprintf (buff, sizeof(buff), "%ld", (VAL));    \
+   g_snprintf (buff, sizeof(buff), "%lld", (VAL));   \
    node = xmlNewNode (NULL, TOK);                    \
    xmlNodeAddContent(node, buff);                    \
    xmlAddChild (topnode, node);                      \
@@ -75,49 +109,212 @@
    xmlAddChild (topnode, node);                      \
 }
 
-#define PUT_ENUM_3(TOK,VAL,A,B,C) {                  \
+#define PUT_HOW(TOK,VAL,A,B,C,D,E,F) {               \
    xmlNodePtr node;                                  \
-   const char * str = #A;                            \
+   const char * str = "EQUAL";                       \
    switch (VAL)                                      \
    {                                                 \
-      case GTT_##A: str = #A; break;                 \
-      case GTT_##B: str = #B; break;                 \
-      case GTT_##C: str = #C; break;                 \
+      case QOF_COMPARE_##A: str = #A; break;         \
+      case QOF_COMPARE_##B: str = #B; break;         \
+      case QOF_COMPARE_##C: str = #C; break;         \
+      case QOF_COMPARE_##D: str = #D; break;         \
+      case QOF_COMPARE_##E: str = #E; break;         \
+      case QOF_COMPARE_##F: str = #F; break;         \
    }                                                 \
    node = xmlNewNode (NULL, TOK);                    \
    xmlNodeAddContent(node, str);                     \
    xmlAddChild (topnode, node);                      \
 }
 
-#define PUT_ENUM_4(TOK,VAL,A,B,C, D) {               \
+#define PUT_GUID_MATCH(TOK,VAL,A,B,C,D,E) {          \
    xmlNodePtr node;                                  \
-   const char * str = #A;                            \
+   const char * str = "ANY";                         \
    switch (VAL)                                      \
    {                                                 \
-      case GTT_##A: str = #A; break;                 \
-      case GTT_##B: str = #B; break;                 \
-      case GTT_##C: str = #C; break;                 \
-      case GTT_##D: str = #D; break;                 \
+      case QOF_GUID_MATCH_##A: str = #A; break;      \
+      case QOF_GUID_MATCH_##B: str = #B; break;      \
+      case QOF_GUID_MATCH_##C: str = #C; break;      \
+      case QOF_GUID_MATCH_##D: str = #D; break;      \
+      case QOF_GUID_MATCH_##E: str = #E; break;      \
    }                                                 \
    node = xmlNewNode (NULL, TOK);                    \
    xmlNodeAddContent(node, str);                     \
    xmlAddChild (topnode, node);                      \
 }
 
-#define PUT_ENUM_5(TOK,VAL,A,B,C,D,E) {              \
+#define PUT_STRING_MATCH(TOK,VAL,A,B) {              \
    xmlNodePtr node;                                  \
-   const char * str = #A;                            \
+   const char * str = "NORMAL";                      \
    switch (VAL)                                      \
    {                                                 \
-      case GTT_##A: str = #A; break;                 \
-      case GTT_##B: str = #B; break;                 \
-      case GTT_##C: str = #C; break;                 \
-      case GTT_##D: str = #D; break;                 \
-      case GTT_##E: str = #E; break;                 \
+      case QOF_STRING_MATCH_##A: str = #A; break;    \
+      case QOF_STRING_MATCH_##B: str = #B; break;    \
    }                                                 \
    node = xmlNewNode (NULL, TOK);                    \
    xmlNodeAddContent(node, str);                     \
    xmlAddChild (topnode, node);                      \
+}
+
+#define PUT_CHAR_MATCH(TOK,VAL,A,B) {                \
+   xmlNodePtr node;                                  \
+   const char * str = "ANY";                         \
+   switch (VAL)                                      \
+   {                                                 \
+      case QOF_CHAR_MATCH_##A: str = #A; break;      \
+      case QOF_CHAR_MATCH_##B: str = #B; break;      \
+   }                                                 \
+   node = xmlNewNode (NULL, TOK);                    \
+   xmlNodeAddContent(node, str);                     \
+   xmlAddChild (topnode, node);                      \
+}
+
+#define PUT_DATE_MATCH(TOK,VAL,A,B) {                \
+   xmlNodePtr node;                                  \
+   const char * str = "ROUNDED";                     \
+   switch (VAL)                                      \
+   {                                                 \
+      case QOF_DATE_MATCH_##A: str = #A; break;      \
+      case QOF_DATE_MATCH_##B: str = #B; break;      \
+   }                                                 \
+   node = xmlNewNode (NULL, TOK);                    \
+   xmlNodeAddContent(node, str);                     \
+   xmlAddChild (topnode, node);                      \
+}
+
+#define PUT_NUMERIC_MATCH(TOK,VAL,A,B,C) {           \
+   xmlNodePtr node;                                  \
+   const char * str = #A;                            \
+   switch (VAL)                                      \
+   {                                                 \
+      case QOF_NUMERIC_MATCH_##A: str = #A; break;   \
+      case QOF_NUMERIC_MATCH_##B: str = #B; break;   \
+      case QOF_NUMERIC_MATCH_##C: str = #C; break;   \
+   }                                                 \
+   node = xmlNewNode (NULL, TOK);                    \
+   xmlNodeAddContent(node, str);                     \
+   xmlAddChild (topnode, node);                      \
+}
+
+static xmlNodePtr
+qof_query_pred_value_to_xml (QofQueryPredData *pd)
+{
+
+	if (!safe_strcmp (pd->type_name, QOF_TYPE_GUID))
+	{
+		xmlNodePtr topnode = xmlNewNode (NULL, "qofquery:pred-guid");
+		GList *n;
+		query_guid_t pdata = (query_guid_t) pd;
+		PUT_GUID_MATCH("qofquery:guid-match", pdata->options, 
+		                ANY, ALL, NONE, NULL, LIST_ANY);
+
+		for (n = pdata->guids; n; n = n->next)
+		{
+			PUT_STR ("qofquery:guid", n->data);
+		}
+		return topnode;
+	}
+	if (!safe_strcmp (pd->type_name, QOF_TYPE_STRING))
+	{
+		xmlNodePtr topnode = xmlNewNode (NULL, "qofquery:pred-string");
+		query_string_t pdata = (query_string_t) pd;
+		PUT_STRING_MATCH("qofquery:string-match", pdata->options,
+		                 NORMAL, CASEINSENSITIVE);
+		PUT_BOOL ("qofquery:is-regex", pdata->is_regex);
+		PUT_STR ("qofquery:string", pdata->matchstring);
+		return topnode;
+	}
+	if (!safe_strcmp (pd->type_name, QOF_TYPE_NUMERIC))
+	{
+		xmlNodePtr topnode = xmlNewNode (NULL, "qofquery:pred-numeric");
+		query_numeric_t pdata = (query_numeric_t) pd;
+		PUT_NUMERIC_MATCH("qofquery:numeric-match", pdata->options,
+		                 DEBIT, CREDIT, ANY);
+		
+		PUT_STR ("qofquery:numeric", gnc_numeric_to_string (pdata->amount));
+		return topnode;
+	}
+	if (!safe_strcmp (pd->type_name, QOF_TYPE_KVP))
+	{
+		xmlNodePtr topnode = xmlNewNode (NULL, "qofquery:pred-kvp");
+		query_kvp_t pdata = (query_kvp_t) pd;
+		
+		GSList *n;
+		for (n=pdata->path; n; n=n->next)
+		{
+			PUT_STR ("qofquery:kvp", n->data);
+		}
+		return topnode;
+	}
+	if (!safe_strcmp (pd->type_name, QOF_TYPE_DATE))
+	{
+		xmlNodePtr topnode = xmlNewNode (NULL, "qofquery:pred-date");
+		query_date_t pdata = (query_date_t) pd;
+		
+		PUT_DATE_MATCH("qofquery:date-match", pdata->options,
+		                 NORMAL, ROUNDED);
+		char buf[60];
+		gnc_timespec_to_iso8601_buff (pdata->date, buf);
+		PUT_STR ("qofquery:date", buf);
+		return topnode;
+	}
+	if (!safe_strcmp (pd->type_name, QOF_TYPE_INT64))
+	{
+		xmlNodePtr topnode = xmlNewNode (NULL, "qofquery:pred-int64");
+		query_int64_t pdata = (query_int64_t) pd;
+		
+		PUT_INT64 ("qofquery:int64", pdata->val);
+		return topnode;
+	}
+	if (!safe_strcmp (pd->type_name, QOF_TYPE_INT32))
+	{
+		xmlNodePtr topnode = xmlNewNode (NULL, "qofquery:pred-int32");
+		query_int32_t pdata = (query_int32_t) pd;
+		
+		PUT_INT32 ("qofquery:int32", pdata->val);
+		return topnode;
+	}
+	if (!safe_strcmp (pd->type_name, QOF_TYPE_DOUBLE))
+	{
+		xmlNodePtr topnode = xmlNewNode (NULL, "qofquery:pred-double");
+		query_double_t pdata = (query_double_t) pd;
+		
+		PUT_DBL ("qofquery:double", pdata->val);
+		return topnode;
+	}
+	if (!safe_strcmp (pd->type_name, QOF_TYPE_BOOLEAN))
+	{
+		xmlNodePtr topnode = xmlNewNode (NULL, "qofquery:pred-boolean");
+		query_boolean_t pdata = (query_boolean_t) pd;
+		
+		PUT_BOOL ("qofquery:boolean", pdata->val);
+		return topnode;
+	}
+	if (!safe_strcmp (pd->type_name, QOF_TYPE_CHAR))
+	{
+		xmlNodePtr topnode = xmlNewNode (NULL, "qofquery:pred-char");
+		query_char_t pdata = (query_char_t) pd;
+		
+		PUT_CHAR_MATCH("qofquery:char-match", pdata->options,
+		                 ANY, NONE);
+		
+		PUT_STR ("qofquery:char-list", pdata->char_list);
+		return topnode;
+	}
+	return NULL;
+}
+
+static xmlNodePtr
+qof_query_pred_data_to_xml (QofQueryPredData *pd)
+{
+	xmlNodePtr topnode = xmlNewNode (NULL, "qofquery:pred-data");
+
+	PUT_STR ("qofquery:type", pd->type_name);
+	PUT_HOW ("qofquery:compare", pd->how, LT, LTE, EQUAL, GT, GTE, NEQ);
+
+	xmlNodePtr node = qof_query_pred_value_to_xml (pd);
+	if (node) xmlAddChild (topnode, node);
+
+	return topnode;
 }
 
 static xmlNodePtr
@@ -131,16 +328,6 @@ qof_query_param_path_to_xml (GSList *param_path)
 		if (!path) continue;
 		PUT_STR ("qofquery:param", path);
 	}
-	return topnode;
-}
-
-static xmlNodePtr
-qof_query_pred_data_to_xml (QofQueryPredData *pd)
-{
-	xmlNodePtr topnode = xmlNewNode (NULL, "qofquery:pred-data");
-
-	PUT_STR ("qofquery:type", pd->type_name);
-// xxxxxxxxxxxx
 	return topnode;
 }
 
@@ -215,7 +402,7 @@ do_qof_query_to_xml (QofQuery *q, xmlNodePtr topnode)
 	if (terms) xmlAddChild (topnode, terms);
 
 	gint max_results = qof_query_get_max_results (q);
-	PUT_INT ("max-results", max_results);
+	PUT_INT32 ("max-results", max_results);
 
 }
 
@@ -236,6 +423,13 @@ qof_query_to_xml (QofQuery *q)
 
 	return topnode;
 }
+
+/* =============================================================== */
+
+#define UNIT_TEST
+#ifdef UNIT_TEST
+
+#include <qof/qofsql.h>
 
 int main (int argc, char * argv[])
 {
@@ -289,3 +483,6 @@ printf ("duude\n");
 	return 0;
 }
 
+#endif /* UNIT_TEST */
+
+/* ======================== END OF FILE =================== */
