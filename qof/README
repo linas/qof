@@ -1,0 +1,41 @@
+
+                QOF - Query Object Framework
+
+Breif Description:
+------------------
+QOF - Query Object Framework is a library for adding a query engine 
+to C applications.  An SQL database is not needed; any collection
+of C/C++ objects can act as 'tables' which can be 'joined' using 
+an SQL-like programming interface.
+
+Long Description:
+-----------------
+QOF is an offshoot of the GnuCash engine, consisting of those pieces 
+unrelated to accounting.  The Query Engine allows C/C++ applications 
+to treat random collections of objects as if they were SQL tables,
+and perform table-join type queries across them.  In addition, the 
+query engine can be backed by an actual database, so that instances
+of local objects can act as a 'cache' to a much larger SQL database.
+
+QOF also includes other utilities from GnuCash:
+ o Key-Value Pair trees (KVP aka slots and frames), for providing 
+   extensibility by associating arbitrary-format data with an object, 
+   using a URL-like identifier.
+ o Universally-unique 128-bit ID support, so that an instance of an 
+   object can be obtained from its unique identifier, thus simplifying
+   associations, cross-network operation, etc.
+ o Rational Number Support, providing exact math for working with
+   money or prices or other quantities.
+ o Miscellaneous date & time utilities.
+ o Program tracing infrastructure; handing for tracing/debugging
+   complex applications.
+
+
+The system consists of 15 KLOC of C code that has been ported to many
+Unixes, including Mac OS X.  Although this code is in production use
+in stable versions of GnuCash, the split-off into QOF is recent and
+still under some flux in order to flesh it out.  In particular, the
+subroutine naming convention is highly inconsistent.
+
+
+
