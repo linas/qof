@@ -1,0 +1,8 @@
+
+                         GOBML
+                         -----
+
+This directory is going to contain a simple, prototype GLib-GObject 
+to XML converter.  
+
+my-object.gob: the gob definition file for a GObject

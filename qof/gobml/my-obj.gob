@@ -1,0 +1,49 @@
+
+/* 
+ * FILE:
+ * my-obj.gob
+ *
+ * FUNCTION:
+ * Implements an example GObject that will be serialized into an
+ * XML file, and back.
+ *
+ * This file must be 'compiled' with gob to produce C source code.
+ */
+
+
+requires 2.0.0
+%{
+#include <stdio.h>
+%}
+
+class My:Object from G:Object
+{
+	/* Some provate data members */
+	private float fleeting=0.0;
+	property FLOAT fleeting
+		(nick = "fleeting thing",
+		 blurb = "Some Fleeting Float Value",
+		 export,
+		 link);
+
+	private int integral=0;
+	property INT integral
+		(nick = "innergal",
+		 blurb = "Integer, Integral, whats the difference?",
+		 export,
+		 link);
+
+	public GObject *
+	new (void)
+	{
+		return (GObject *) GET_NEW;
+	}
+
+	public void
+	printme (self)
+	{
+		printf ("I am a sample demonstration object\n");
+		printf ("My float value is %g\n", selfp->fleeting);
+		printf ("My int value is %d\n", selfp->integral);
+	}
+}
