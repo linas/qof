@@ -216,24 +216,36 @@ gnc_numeric_positive_p(gnc_numeric a)
  ********************************************************************/
 
 int
-gnc_numeric_compare(gnc_numeric a, gnc_numeric b) {
-  gint64 ab, ba;
+gnc_numeric_compare(gnc_numeric a, gnc_numeric b) 
+{
+  gint64 aa, bb;
 
-  if(gnc_numeric_check(a) || gnc_numeric_check(b)) {
+  if(gnc_numeric_check(a) || gnc_numeric_check(b)) 
+  {
     return 0;
   }
-  ab = a.num * b.denom;
-  ba = b.num * a.denom;
 
-  if(ab == ba) {
-    return 0;
-  }
-  else if(ab > ba) {
-    return 1;
-  }
-  else {
+  if (a.denom == b.denom)
+  {
+    if(a.num == b.num) return 0;
+    if(a.num > b.num) return 1;
     return -1;
   }
+
+  if  ((a.denom > 0) && (b.denom > 0))
+  {
+    /* Avoid overflows using 128-bit intermediate math */
+    qofint128 l = mult128 (a.num, b.denom);
+    qofint128 r = mult128 (b.num, a.denom);
+    return cmp128 (l,r);
+  }
+
+  aa = a.num * a.denom;
+  bb = b.num * b.denom;
+
+  if(aa == bb) return 0;
+  if(aa > bb) return 1;
+  return -1;
 }
 
 
@@ -327,9 +339,11 @@ gnc_numeric_add(gnc_numeric a, gnc_numeric b,
     }
     else if(b.num == 0) {
       denom = a.denom;
+      b.denom = a.denom;
     }
     else if(a.num == 0) {
       denom = b.denom;
+      a.denom = b.denom;
     }
     else {
       return gnc_numeric_error(GNC_ERROR_DENOM_DIFF);
@@ -378,6 +392,7 @@ gnc_numeric_add(gnc_numeric a, gnc_numeric b,
     if (cab.isbig) return gnc_numeric_error(GNC_ERROR_OVERFLOW);
     
     sum.num   = cab.lo;
+    if (cab.isneg) sum.num = -sum.num;
     sum.denom = lcd;
   }
   
@@ -418,7 +433,7 @@ gnc_numeric_mul(gnc_numeric a, gnc_numeric b,
                 gint64 denom, gint how) 
 {
   gnc_numeric product, result;
-  qofint128 bigprod;
+  qofint128 bignume, bigdeno;
   
   if(gnc_numeric_check(a) || gnc_numeric_check(b)) {
     return gnc_numeric_error(GNC_ERROR_ARG);
@@ -450,17 +465,44 @@ gnc_numeric_mul(gnc_numeric a, gnc_numeric b,
     b.denom = 1;
   }
 
-  bigprod = mult128 (a.num, b.num);
+  bignume = mult128 (a.num, b.num);
+  bigdeno = mult128 (a.denom, b.denom);
   product.num   = a.num*b.num;
   product.denom = a.denom*b.denom;
 
   /* If it looks to be overflowing, try to reduce the fraction ... */
-  if (bigprod.isbig)
+  if (bignume.isbig || bigdeno.isbig)
   {
-    product = reduce128 (bigprod, product.denom);
-    if (gnc_numeric_check (product))
+    /* If rounding allowed, then shift until there's no 
+     * more overflow. The conversion at the end will fix 
+     * things up for the final value. Else overflow. */
+    if ((how & GNC_NUMERIC_RND_MASK) == GNC_HOW_RND_NEVER)
     {
-      return gnc_numeric_error (GNC_ERROR_OVERFLOW);
+      if (bigdeno.isbig)
+      {
+        return gnc_numeric_error (GNC_ERROR_OVERFLOW);
+      }
+      product = reduce128 (bignume, product.denom);
+      if (gnc_numeric_check (product))
+      {
+        return gnc_numeric_error (GNC_ERROR_OVERFLOW);
+      }
+    } 
+    else 
+    {
+      while (bignume.isbig || bigdeno.isbig)
+      {
+         bignume = shift128 (bignume);
+         bigdeno = shift128 (bigdeno);
+      }
+      product.num = bignume.lo;
+      if (bignume.isneg) product.num = -product.num;
+
+      product.denom = bigdeno.lo;
+      if (0 == product.denom) 
+      {
+        return gnc_numeric_error (GNC_ERROR_OVERFLOW);
+      }
     }
   }
   
@@ -581,11 +623,10 @@ gnc_numeric_div(gnc_numeric a, gnc_numeric b,
       }
       else
       {
-        /* If not exact/fixed, and rounding allowed, then
-         * shift until there's no more overflow. The conversion
-         * at the end will fix things up the final value. */
-        if (((how & GNC_NUMERIC_RND_MASK) == GNC_HOW_RND_NEVER) ||
-            ((how & GNC_NUMERIC_DENOM_MASK) == GNC_HOW_DENOM_EXACT))
+        /* If rounding allowed, then shift until there's no 
+         * more overflow. The conversion at the end will fix 
+         * things up for the final value. */
+        if ((how & GNC_NUMERIC_RND_MASK) == GNC_HOW_RND_NEVER)
         {
           return gnc_numeric_error (GNC_ERROR_OVERFLOW);
         }
@@ -596,6 +637,10 @@ gnc_numeric_div(gnc_numeric a, gnc_numeric b,
         }
         quotient.num = sgn * rnume.lo;
         quotient.denom = rdeno.lo;
+        if (0 == quotient.denom) 
+        {
+          return gnc_numeric_error (GNC_ERROR_OVERFLOW);
+        }
       }
     }
   }
@@ -1121,6 +1166,22 @@ gnc_numeric_to_string(gnc_numeric n)
   result = g_strdup_printf("%lld/%lld", tmpnum, tmpdenom);
 
   return result;
+}
+
+gchar *
+gnc_num_dbg_to_string(gnc_numeric n) 
+{
+  static char buff[1000];
+  static char *p = buff;
+  long long int tmpnum = n.num;
+  long long int tmpdenom = n.denom;
+
+  p+= 100;
+  if (p-buff >= 1000) p = buff;
+   
+  sprintf(p, "%lld/%lld", tmpnum, tmpdenom);
+
+  return p;
 }
 
 const gchar *
