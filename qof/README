@@ -45,6 +45,14 @@ Examples:
 Example programs showing usage can be found in the "examples" subdirectory
 
 
+Documentation:
+--------------
+The QOF documentation is embedded mostly in the header files.  You
+can build an html version of the documentation by installing the
+'doxygen' package, and then 'cd doc; make doc'.  Skim the doc/README
+file for more info.
+
+
 Linking/Building
 ----------------
 This version of QOF uses the 'pkg' system of managing include files
@@ -57,3 +65,5 @@ LIBS += `pkg-config qof-0 --libs`
 This will automatically supply the correct paths to include files and 
 libraries for your application.
 
+
+------------------------- END OF DOCUMENT -------------------------
