@@ -75,8 +75,19 @@ are <a href="why-qof.html">discussed here.</a>
 <li><p>
     Provide an object framework that allows programmers to create
     expressive queries that will search through a collection of 
-    objects, returning the desired set of objects.
+    objects, returning the desired set of objects. 
     </p>
+    <p>
+    <b>Status:</b> Completed, in that queries can be built
+    and run.  Queries can be build with either a low-level C API,
+    or by writing in an SQL-like language (for example, 
+    <tt>SELECT memo FROM gncTransaction WHERE
+    gncTransaction.date='15.06.2003';</tt>).  This is done
+    with a "client-side" parser, that parses this SQL locally, 
+    because, of course, it has to be run locally.  See the 
+    <tt>sql-example.c</tt> file for a usage example.
+    </p>
+    <br><br>
 <li><p>
     Provide integration with database backends.  In particular, the
     programmer should be able to use QOF to create a local 'cache'
@@ -98,22 +109,25 @@ are <a href="why-qof.html">discussed here.</a>
     a middle ground, allowing small fast apps to access huge databases.
     </p>
     <p>
-    Status: The GnuCash backend provides access to file and to SQL
+    <b>Status:</b> The GnuCash backend provides access to file and to SQL
     storage.  However, none of this code has been abstracted out in 
-    a generic way, and hasn't been brought back into QOF.
+    a generic way, and hasn't been brought back into QOF.  I've
+    got the major pieces ready to go, in the DWI project, but they're
+    not integrated yet.
     </p>
+    <br><br>
 <li><p>
-    Provide a QL (query language) parser, so that ASCII expressions
-    such as <tt>SELECT memo FROM gncTransaction WHERE
-    gncTransaction.date='15.06.2003';</tt> are turned into the 
-    aprorpiate queries.
+    The current 'client-side' SQL engine is rather basic in its
+    features and performance.  For example, the current search 
+    over object fields is O(N), because each object instance is 
+    checked for a match.  It would be nice to add support for 
+    'primary keys' and/or indexes as the first step towards a 
+    query optimizer.  Alternately (or in addition), a different
+    query engine might be wedged into place. For example, sqllite
+    might make for an excellent client-side sql engine: its small
+    fast and optimized.
     </p>
-<li><p>
-    The current iteration over object fields is O(N), because each
-    object instance is checked for a match.  It would be nice to add
-    support for 'primary keys' and/or indexes as the first step
-    towards a query optimizer.
-    </p>
+    <br><br>
 <li><p>
     Provide for off-line operation.  Because the object data is cached
     locally, users should be able to continue doing useful work even
@@ -123,6 +137,7 @@ are <a href="why-qof.html">discussed here.</a>
     <p>
     Status: just an idea, not started.
     </p>
+    <br><br>
 <li><p>
     Provide memory-management facilities. If objects in the local 
     object cache haven't been used in a while, and the application
@@ -155,8 +170,7 @@ Site</a>.
 
 <hr>
 Last modified by Linas Vepstas &lt;linas@linas.org&gt;
-Sun Jun 15 CDT 2003
+April 2004
 <br>
 </body>
 </html>
-
