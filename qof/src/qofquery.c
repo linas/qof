@@ -1722,7 +1722,7 @@ qof_query_printValueForParam (QofQueryPredData *pd, GString * gs)
   if (!safe_strcmp (pd->type_name, QOF_TYPE_DOUBLE))
   {
     query_double_t pdata = (query_double_t) pd;
-    g_string_sprintfa (gs, " double: %20.16g", pdata->val);
+    g_string_sprintfa (gs, " double: %.18g", pdata->val);
     return;
   }
   if (!safe_strcmp (pd->type_name, QOF_TYPE_DATE))
