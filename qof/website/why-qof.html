@@ -60,7 +60,7 @@ are prior art.)
 
 <p>
 <!-- ====================================================== -->
-<h3>Sharing Technologies and the Future of Programming</h3>
+<h3>Sharing Technologies, Querying and the Future of Programming</h3>
 One traditional solution to the sharing problem has been <b>the
 idea of a shared or even global filesystem</b>.  This was the
 original vision behind NFS and Microsoft Windows Workgroups
@@ -81,8 +81,8 @@ The two apps that are updating the same file at the same
 time don't know about each other, and there is no native 
 or built-in default that would let them find out.
 <p>
-Another older solution to the sharing problem is the 
-idea behind RPC, CORBA, SOM/DSOM, COM/DCOM, and, more
+<b>Another older solution to the sharing problem is the 
+idea behind RPC, CORBA</b>, SOM/DSOM, COM/DCOM, and, more
 recently, SOAP and the <b>Microsoft .net</b> frameworks.  
 Here, the focus of sharing is actually about the physical 
 movement of objects (OOP objects) from one system to 
@@ -99,7 +99,7 @@ have searchability (which is what databases offer)
 and one doesn't have much in the way of security
 (witness Microsoft's Virus Apocalypse).
 <p>
-<b>The latest file-sharing technology is 'P2P'</b>, the 
+The latest file-sharing technology is 'P2P', the 
 peer-to-peer networks.  Unfortunately, MP3 trading
 has given them a bad name.  The other problem is that 
 P2P doesn't really provide security (would you use
@@ -111,16 +111,18 @@ They have no built-in versioning for the files they
 do share: you can't do SCCS/CVS/Subversion/BitKeeper 
 on top of P2P, even though that would be useful.  
 Curiously, though, P2P networks do have the one true
-important feature that makes them popular: <b>P2P query</b>.
-You can issue a query to find the one thing that 
-you really wanted, and it will run that query in
-a distributed, decentralized way, across a panalopy
+important feature that makes them popular: P2P query.
+You can <b>issue a query to find the one thing that 
+you really wanted, and P2P will run that query in
+a distributed, decentralized way</b>, across a panalopy
 of servers.  How else can you find that rare MP3 that
 you wanted?   Unfortunately, <b>none of the P2P query
 protocols are as rich or as powerful as SQL</b>.
 <p>
-Most true multi-user apps are (and have been, from the 
-start, for decades) based on database technology if not 
+As P2P illustrates, what's old is new: querying is central
+to sharing and to multi-user applications.  In fact, 
+most true multi-user apps are (and have been, from the 
+start, for many decades) based on database technology if not 
 SQL proper.  This is because <b>SQL can scale to extremely
 large datasets without loosing the ability for a user to
 focus in on one or two records</b>.  SQL came with a kind-of
@@ -162,30 +164,33 @@ protectable and versionable</b>.  This is the true 'convergence':
 not that of TV's, phones and computers, but 
 the convergence of the best features of P2P, SQL, file systems,
 version control and the web, which, to the programmer, looks
-like nothing more than 'persistent objects', and is no harder
-to 'use' than garbage collection is for a Java programmer. 
+like nothing more than 'persistent objects', <b>and is no harder
+to 'use' than garbage collection</b> is for a Java programmer. 
 This is the grand vision of what desktop programming should 
 be.
 
-
-
 <p>
-Note that much of this discussion is from the vantage point of Free
-Software development, and explicitly ignores commercial/proprietary 
-technologies.  It is also somewhat focused on 
-<a href="http://qof.sourceforge.net">QOF</a> and the specific
-case study of two applications that benefit from QOF: 
+<!-- ====================================================== -->
+<h3>Application Architecture</h3>
+The QOF architecture, as it currently stands, is taken from
+the vantage point of Free Software development, and explicitly 
+ignores commercial/proprietary technologies.  It is also somewhat 
+focused on the specific case study of two applications that 
+currently benefit most from QOF: 
 <a href="http://www.gnucash.org">GnuCash</a> and
 <a href="http://gttr.sourceforge.net">GnoTime</a>. 
-
+But this is the good news: QOF has evolved through trial-by-fire,
+in  the forge of real-world application development, rather
+than through the the over-arching, abstract principles 
+discussed above.
 <p>
-<h3>Application Architecture</h3>
+
 QOF is an outgrowth of how I like to write application programs at
 this stage in my life.  I'm not saying its the best way; in fact,
-my development process seems very cumbersome to me, and I sometimes
+my development process sometimes seems cumbersome to me, and I sometimes
 wonder why I do it this way.  But I know the answer: I haven't heard
 of a better way.  The "correct" way to design and architect a complex 
-GUI application is highly debatable and rarely debated topic.
+GUI application is a highly debatable and rarely debated topic.
 There is no dominant paradigm, no unifying philosophy.  Tools
 and libraries are sorely lacking.  There are many promising avenues.
 <p>
@@ -217,7 +222,7 @@ aren't any in the Free Software world.
 <p>
 After writing the shims between the first half-dozen objects and their
 equivalent SQL tables, it becomes painfully apparent that the process
-can be mostly automated, as the shims consists of mostly common code.
+can be mostly automated, as the shims consist of mostly common code.
 Unfortunately, the automation of this process is easier said than
 done.  At first, it seems that all one needs is to specify a mapping 
 or 'dictionary' from an SQL table field to an object setter/getter.
@@ -260,18 +265,20 @@ below.
      design pattern: One creates a master base class, and then 
      every other object must inherit from it.  For example, 
      in GTK, the master base class is GObject.  In Motif, it 
-     was Widget.
+     was Widget.  The selection of candidate bases classes for 
+     Java and C++ is dizzying.
      <br><br>
      By having a master base class, one can write quasi-generic 
      algorithms because one is guaranteed that everything that
      inherited from the base class can be treated as if it were 
-     really the base class itself.  So, 
+     really the base class itself.  So, for example, 
      <b><tt>some_func (Base *b);</tt></b> can be applied to any 
      derived object, and so <tt>some_func</tt> is more-or-less 
      generic: it can act on <i>any</i> type (as long as that type
      inherits from <tt>Base</tt>).   Of course, this falls apart
      if one has multiple base classes (multiple inheritance), or
-     ints, floats as your base type. 
+     if ints, floats are your base type.   The object-orientation
+     of Java and C++ does not go down that deep.
      <br><br>
      So the other way to work around a missing lambda, and write 
      generic algorithms, is to introduce the idea of "type templates".
@@ -286,7 +293,9 @@ below.
      is to also make <tt>func_a()</tt> and <tt>func_b()</tt> also 
      be templates.  So even if <tt>func_a()</tt> and <tt>func_b()</tt>
      had no reason to be templates, they were forced to become so.
-     This is "bubbling", and its all because C++ doesn't support
+     This is "bubbling", and bubbling is the Achilles heel of 
+     templates; its what makes C++ templates so danged hard to use.
+     The "bubbling" happens all because C++ doesn't support
      <b><i>lambda</i></b>.  Oh well. 
      <br><br>
      The way C avoids the missing-lambda problem is by being 
@@ -309,7 +318,10 @@ below.
      <br><br>
      (Off-topic: try googling for the words "lambda" and your 
      favorite programming language.  You will be surprised and 
-     intrigued by the results.)
+     intrigued by the results.)  Addendum: at least one pop 
+     lanaguage, perl, does have lambda.  All I can say is that 
+     lambda in perl is currently not central to perl or to the 
+     style of perl programming. 
      </p>
      <br>
 <li> <p><b>Why C (or C++)? Why not a better language?</b>
@@ -393,12 +405,22 @@ below.
      Note, however, that much of what a typical GUI application does can,
      in fact, be specified by a declarative language; an algorithmic,
      procedural language, such as C, really is not required for the 
-     vast majority of the application guts.
+     vast majority of the application guts.  The realization that 
+     most of what a real-world application does can be accomplished 
+     declaratively is the driving force behind 
+     <a href="http://dwi.sourceforge.net">DWI</a>.
      </p>
      <br>
-<li><p>Why not use GLib GObjects?  I dunno.  Actually, I'm working 
-    on a QOF-to-GObject glue right now. Next release, GLib GObjects
-    will be searchable with QOF.
+<li><p><b>Why not use GLib GObjects?</b> Well, in the narrowest sense,
+     QOF already does: there is a QOF to GObject glue layer, and GLib GObjects
+     (including GTK objects) are searchable with QOF.  More broadly,
+     the problem with GObjects is that they don't support unique object
+     id's, and they don't support versioning.  Now, I suppose we could
+     build those on top of GObjects ... and maybe we will someday.
+     But QOF evolved in parallel, independently from GObjects, and thus
+     there's overlap of ideas. Parts of QOF date back to 1997, and thus
+     the parallel evolution is in part because GObjects didn't exist 
+     back then.  Maybe there might be some convergence, maybe, someday.
     </p>
 <li><p>Why not UML?  What's UML got to do with it?
     </p>
