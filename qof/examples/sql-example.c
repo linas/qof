@@ -72,9 +72,6 @@ my_app_create_data (QofBook *book)
  * print the results.
  */
 
-/* cheap hack to keep the demo simple */
-extern GList *all_my_objs;
-
 void 
 my_app_run_query (QofSqlQuery *q, char *sql_str)
 {
@@ -104,6 +101,8 @@ my_app_do_some_queries (QofBook *book)
    /* Print out the baseline: all of the instances in the system */
    printf ("\n");
    printf ("My Object collection contains the following objects:\n");
+   QofCollection *coll = qof_book_get_collection (book, MYOBJ_ID);
+   GList *all_my_objs = qof_collection_get_data (coll);
    for (n=all_my_objs; n; n=n->next)
    {
       MyObj *m = n->data;

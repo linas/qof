@@ -15,16 +15,20 @@
 
 /* ===================================================== */
 
-GList *all_my_objs = NULL;
 
 MyObj *
 my_obj_new (QofBook *book)
 {
    MyObj *m = g_new0 (MyObj,1);
 
-   /* Make sure we keep track of every object; otherwise we won't
-    * be able to search over them.  */
+   /* Make sure we keep track of every object; 
+    * otherwise we won't be able to search over them.  
+    * Do this by storing them in a collection.
+    */
+   QofCollection *coll = qof_book_get_collection (book, MYOBJ_ID);
+   GList *all_my_objs = qof_collection_get_data (coll);
    all_my_objs = g_list_prepend (all_my_objs, m);
+   qof_collection_set_data (coll, all_my_objs);
 
    return m;
 }
@@ -54,6 +58,8 @@ void
 my_obj_foreach (QofCollection *coll, QofEntityForeachCB cb, gpointer ud)
 {
    GList *n;
+   GList *all_my_objs = qof_collection_get_data (coll);
+
    for (n=all_my_objs; n; n=n->next)
    {
       cb (n->data, ud);

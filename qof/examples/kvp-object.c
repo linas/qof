@@ -17,7 +17,8 @@ void
 my_obj_foreach (QofCollection *coll, QofEntityForeachCB cb, gpointer ud)
 {
    GList *n;
-   
+
+   GList *all_my_objs = qof_collection_get_data (coll);
    for (n=all_my_objs; n; n=n->next)
    {
       cb (n->data, ud);
