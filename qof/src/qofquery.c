@@ -1707,11 +1707,15 @@ qof_query_printValueForParam (QofQueryPredData *pd, GString * gs)
   {
     GSList *node;
     query_kvp_t pdata = (query_kvp_t) pd;
+    g_string_sprintfa (gs, "\n      kvp path: ");
     for (node = pdata->path; node; node = node->next)
     {
-      g_string_sprintfa (gs, "\n      kvp path: %s", (gchar *) node->data);
-      return;
+      g_string_sprintfa (gs, "/%s", (gchar *) node->data);
     }
+    g_string_sprintfa (gs, "\n");
+    g_string_sprintfa (gs, "      kvp value: %s\n", 
+                         kvp_value_to_string (pdata->value));
+    return;
   }
   if (!safe_strcmp (pd->type_name, QOF_TYPE_INT64))
   {
