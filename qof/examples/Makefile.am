@@ -25,7 +25,6 @@ EXTRA_DIST =     \
 
 
 AM_CFLAGS =           \
-  -I${top_srcdir}/src \
   ${GLIB_CFLAGS}
 
 

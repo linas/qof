@@ -8,8 +8,9 @@ noinst_PROGRAMS =     \
 EXTRA_DIST =          \
     .cvsignore
 
+#   -I${top_srcdir}/qof 
+
 AM_CFLAGS =           \
-  -I${top_srcdir}/src \
   ${GTK_CFLAGS}       \
   ${GLIB_CFLAGS}
 

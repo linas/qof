@@ -99,14 +99,14 @@ static QofObject myent_object_def =
 	interface_version: QOF_OBJECT_VERSION,
 	e_type:            MYINST_ID,
 	type_label:        "My Blinking Object",
-	create:            my_inst_new,
+	create:            (gpointer (*)(QofBook *)) my_inst_new,
 	book_begin:        NULL,
 	book_end:          NULL,
 	is_dirty:          NULL,
 	mark_clean:        NULL,
 	foreach:           qof_collection_foreach,
-	printable:         my_inst_print,
-	version_cmp:       qof_instance_version_cmp,
+	printable:         (const char * (*)(gpointer)) my_inst_print,
+	version_cmp:       (int (*)(gpointer, gpointer)) qof_instance_version_cmp,
 };
 
 gboolean my_inst_register (void)
