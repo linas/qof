@@ -13,11 +13,14 @@ libqof_backend_qsf_la_SOURCES = \
 	qsf-xml-map.c \
 	qsf-xml.c
 
-noinst_HEADERS = qsf-dir.h
-
 libqof_backend_qsf_la_LIBADD = \
 	${LIBXML2_LIBS} \
 	${GLIB_LIBS}
+
+qofincludedir = ${pkgincludedir}
+
+qofinclude_HEADERS = \
+	qsf-xml.h
 
 qsfschemadir = $(QSF_SCHEMA_DIR)
 qsfschema_DATA = \
