@@ -104,10 +104,6 @@ qof_book_merge_abort (qof_book_mergeData *mergeData)
 		}
 		mergeData->mergeList = g_list_next(mergeData->mergeList);
 	}
-	while(mergeData->targetList != NULL) {
-		g_free(mergeData->targetList->data);
-		mergeData->targetList = g_slist_next(mergeData->targetList);
-	}
 	g_list_free(mergeData->mergeList);
 	g_slist_free(mergeData->mergeObjectParams);
 	g_slist_free(mergeData->targetList);
@@ -116,9 +112,7 @@ qof_book_merge_abort (qof_book_mergeData *mergeData)
 	g_free(mergeData);
 }
 
-/*  Q: This could be a general usage function:
-	qof_param_as_string(QofParam*, QofEntity*);
-	Useful? Worth transferring to qofclass.c?
+/* 
 	Need to fix the KVP->string. How?
 
 	The QOF_TYPE_DATE output format from
@@ -285,10 +279,6 @@ qof_book_mergeCommit( qof_book_mergeData *mergeData )
 		g_slist_free(currentRule->mergeParam);
 		g_slist_free(currentRule->linkedEntList);
 		mergeData->mergeList = g_list_next(mergeData->mergeList);
-	}
-	while(mergeData->targetList != NULL) {
-		g_free(mergeData->targetList->data);
-		mergeData->targetList = g_slist_next(mergeData->targetList);
 	}
 	g_list_free(mergeData->mergeList);
 	g_slist_free(mergeData->mergeObjectParams);
@@ -538,7 +528,7 @@ qof_book_mergeCommitForeach (
 void qof_book_mergeCommitForeachCB(gpointer rule, gpointer arg)
 {
 	struct qof_book_mergeRuleIterate *iter;
-	
+
 	g_return_if_fail(arg != NULL);
 	iter = (struct qof_book_mergeRuleIterate*)arg;
 	g_return_if_fail(iter->data != NULL);
@@ -724,7 +714,7 @@ void qof_book_mergeForeachTarget (QofEntity* targetEnt, gpointer user_data)
 	g_return_if_fail(user_data != NULL);
 	mergeData = (qof_book_mergeData*)user_data;
 	g_return_if_fail(targetEnt != NULL);
-		mergeData->targetList = g_slist_prepend(mergeData->targetList,targetEnt);
+	mergeData->targetList = g_slist_prepend(mergeData->targetList,targetEnt);
 }
 
 void 
