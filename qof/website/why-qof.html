@@ -10,7 +10,8 @@
 <img src="qof-logo.jpg" width="100" height="150" border="5" align=left>
 </a>
 <b><i>Summary:</b></i>
-Desktop application development is not, and desktop application 
+Desktop application development is not particularly easy, 
+and desktop application 
 development for multi-user, client-server apps is so hard that 
 almost no one attempts these.  In fact, this is the primary 
 reason for the explosion of web applications:  If you need
@@ -23,7 +24,7 @@ reasons why this is so, and there are many ways in which one
 can attempt to change this situation.  One can boil the ocean
 with this type of discussion; I won't attempt to do that here.
 Instead, lets try to justify an approach like QOF in a broader
-Free Software framework
+Free Software framework.
 <p>
 A number of applications become much more interesting to their
 users when they have access to large quantities of data,
@@ -35,14 +36,61 @@ There's a huge number of apps that fit this profile:
 everything from shopping catalogs, where the store 'shares'
 the product data with the customer, to Bugzilla, where the
 bug status is 'shared' between developers and users, to 
-p2p networks for sharing mp3's.
+p2p networks for sharing mp3's.   Today, certain types
+of 'basic' sharing are still incredibly hard: for example, 
+syncing the addressbook on my cell phone with the address book 
+on my home computer with the address book on my work computer(s).
+Never mind sharing parts of my address book with friends.
+<p>
+One traditional solution to the sharing problem has been the
+idea of a shared or even global filesystem.  This was the
+original vision behind NFS and Microsoft Windows Workgroups
+(SMB/Samba file shares).  Global filesystem attempts include
+AFS (the Andrew File System, from the early 90's), DFS 
+(from the late 90's) and Coda (A free/open solution).  
+The local solutions, NFS and Samba, don't/can't scale to
+a global level.  The global filesystems haven't really 
+worked out either, with one grand exception: the web itself
+(i.e. HTTP) is is in many ways filesystem-like.  But the
+success of the web is not due to its filesystem-like aspects,
+but rather due to the existance of a common document viewer:
+the web browser.  Shared file systems, though better than 
+nothing, have one major pitfall: they still don't make 
+writing multi-user apps easy.   Two users updating the
+same file at the same time is a recipie for disaster.  
+The two apps that are updating the same file at the same 
+time don't know about each other, and there is no native 
+or built-in default that would let them find out.
+<p>
+Most true multi-user apps are (and have been, from the 
+start, for decades) based on database technology if not 
+SQL proper.  This is because SQL can scale to extremely
+large datasets without loosing the ability for a user to
+focus in on one or two records.  SQL came with a kind-of
+browser: the SQL command line.  Though pale in comparision
+to the web browser, it did allow you to look where you
+wanted, to find the needle in the haysack.   Thus it is
+natural to think of SQL when thinking of future multi-user
+applications.
+<p>
+
+
+SQL, however,
+has its drawbacks.  
+
+
+
 <p>
 What does one need to build that kind of application?
 Well, one needs at a minimum a query mechanism, so that the 
 user can query, sort, report on and manipulate the data.  
 Even good single-user apps need this ability: personal photo
 and music organizers will have this kind of interface, as
-well as address-books, and etc.
+well as address-books, <i>etc</i>.  Blogging tools could benefit 
+from a generalized query mechanism.  Indeed, these types of
+considerations are driving the 
+<a href="http://www.gnome.org/~seth/storage/">Gnome Storage</a> 
+project (with whom we'd like to collaborate).
 
 Next one needs .... ahhhh ..........
 
