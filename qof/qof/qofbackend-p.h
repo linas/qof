@@ -223,8 +223,26 @@
  *
  */
 
-struct _QofBackend
+struct QofBackendProvider_s
 {
+  /** Some arbitrary name given for this particular backend provider */
+  const char * provider_name;
+
+  /** The access method that this provider provides, for example,
+   *  http:// or postgres:// or rpc://, but without the :// at the end
+   */
+  const char * access_method;
+
+  /** Return a new, initialized backend backend. */
+  QofBackend * (*backend_new) (void);
+
+  /** Free this structure, unregister this backend handler. */
+  void (*provider_free) (QofBackendProvider *);
+};
+
+struct QofBackend_s
+{
+
   void (*session_begin) (QofBackend *be,
                          QofSession *session,
                          const char *book_id, 
@@ -271,6 +289,15 @@ struct _QofBackend
    */
   void (*export) (QofBackend *, QofBook *);
 };
+
+/** Let the ssytem know about a new provider of backends.  This function
+ *  is typically called by the provider library at library load time.
+ *  This function allows the backend library to tell the QOF infrastructure
+ *  that it can handle URL's of a certain type.  Note that a single
+ *  backend library may register more than one provider, if it is
+ *  capable of handling more than one URL access method.
+ */
+void qof_backend_register_provider (QofBackendProvider *);
 
 /**
  * The qof_backend_set_error() routine pushes an error code onto the error
