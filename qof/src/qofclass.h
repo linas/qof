@@ -73,7 +73,7 @@ typedef struct _QofParam QofParam;
  * also provides a place for the user to hang additional user-defined
  * data.
  */
-typedef gpointer (*QofAccessFunc)(gpointer object, QofParam *param);
+typedef gpointer (*QofAccessFunc)(gpointer object, const QofParam *param);
 
 /** The QofSetterFunc defines an function pointer for parameter
  *  setters. Real functions must be of the form:
