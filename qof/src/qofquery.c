@@ -304,8 +304,7 @@ static int cmp_func (QofQuerySort *sort, QofSortFunc default_sort,
   convb = (gpointer)b;
   for (node = sort->param_fcns; node; node = node->next) 
   {
-    QofParam *param = node->data;
-    QofAccessFunc get_fcn = param->param_getfcn;
+    param = node->data;
 
     /* The last term is really the "parameter getter",
      * unless we're comparing objects ;) */
@@ -313,8 +312,8 @@ static int cmp_func (QofQuerySort *sort, QofSortFunc default_sort,
       break;
 
     /* Do the converstions */
-    conva = get_fcn (conva, param);
-    convb = get_fcn (convb, param);
+    conva = (param->param_getfcn) (conva, param);
+    convb = (param->param_getfcn) (convb, param);
   }
 
   /* And now return the (appropriate) compare */
