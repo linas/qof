@@ -1,6 +1,6 @@
 <html>
 <head>
-<title>QOF - Query Object Fraemwork</title>
+<title>QOF - Query Object Framework</title>
 </head>
 <body fgcolor=#000000 bgcolor=#ffffff>
 <h1>Query Object Framework</h1>
@@ -8,8 +8,66 @@
 <IMG src="http://sourceforge.net/sflogo.php?group_id=83302&amp;type=5" 
 align=right width="210" height="62" border="0" alt="SourceForge Logo"></A>
 <br>
+<p>
+QOF, the Query Object Framework, provides a set of C Language utilities
+for performing generic structured complex queries on a set of data
+held by a set of C/C++ objects.  This framework is unique in that 
+it does NOT require SQL or any database at all to perform the query.
+Thus, it allows programmers to add query-like support to their 
+applications without having to hook into SQL.  Typically, if you
+have an app, and you want to add the ability to show a set of reports,
+you will need the ability to perform queries in order to get the data
+you need to show a report.  Of course, you can always write a 
+set of ad-hoc subroutines to return the data that you need. But
+this kind of a programming style is not extensible: just wait till
+you get a user who wants a slightly different report.  The idea behind
+QOF is to provide a generic framework so that any query can be 
+executed, including queries designed by the end-user.  Normally,
+this is possible only if you use SQL; QOF provides another, more 
+natural interface.
+</p>
+<p>
+QOF is an offshoot from the <a href="http://www.gnucash.org/">GnuCash
+Project</a>, where this framework is a deep, central component.  
+QOF is basically the GnuCash "engine" with all of the financial 
+objects removed.  As such, QOF is "tried and true", and has proven 
+its worth.  However, this SourceForge project is listed as "alpha"
+because much work remains to be done, including the expanded support
+for SQL backends, scheme wrappers, and many other features.  
+Currently, the QOF code is kept manually in sync with the GnuCash
+code; how it will be handled in the future is uncertain.
+</p>
+<p>
+Besides the query framework, QOF also provides a number of other 
+base functions from GnuCash:
+<ul>
+<li>Universally-Unique 128-bit identifiers. These can be used to 
+    reference an object without having to have a pointer to it: 
+    references can be stored in files, passed over the net, etc.
+<li>Persistent-Storage backend.  A collection of objects can be 
+    associated with a particular data store.  Besides just reading
+    from and writing to the backend, queries can be passed to the
+    backend, so that if a particular object does not exist locally,
+    it can be fetched from the backend.
+<li>Key-Value Pair trees (also known as "frames and slots"). 
+    KVP trees provide a generic, extensible way to hang additional
+    data onto an object.  The trees store the data hierarchically,
+    in a set of hash tables, and can be accessed using a URL-like 
+    path name. KVP trees are a great way to allow objects to be
+    extensible.
+<li>Trace Utilities allow warning, error and debugging messages 
+    to be enabled or disabled at run-time, thus allowing individual
+    components of an application to be individually traced.
+<li>Numeric support provides a set of exact-math functions for 
+    quantities that can be expressed as ratios.  In particular,
+    this is handy for working with money and prices, where round-off
+    errors need to be eliminated and/or precisely controlled.
+<li>Date and time utilities. A variety of different utilities for 
+    parsing and printing dates and time.
+</ul>
+</p>
 
-(description)
+
 
 <h2>Project Goals</h2>
 <ul>
@@ -32,9 +90,9 @@ align=right width="210" height="62" border="0" alt="SourceForge Logo"></A>
     all of the data have terrible startup times, since they need to
     load either a huge file or make a huge database query. They also
     use a huge amount of memory.  Applications that pull in none of
-    thier data, and instead issue SQL queries as needed, tend to have
+    their data, and instead issue SQL queries as needed, tend to have
     terrible performance profiles, since the user must wait for the 
-    query to complete and return data.  In otherwords, QOF provides 
+    query to complete and return data.  In other words, QOF provides 
     scalability: instead of the all-or-nothing approach, it provides
     a middle ground, allowing small fast apps to access huge databases.
     </p>
@@ -53,11 +111,11 @@ align=right width="210" height="62" border="0" alt="SourceForge Logo"></A>
     Status: just an idea, not started.
     </p>
 <li><p>
-    Provide memory-mangement facilities. If objects in the local 
+    Provide memory-management facilities. If objects in the local 
     object cache haven't been used in a while, and the application
     memory usage is getting too large, the unused objects should 
     be "reaped" or garbage-collected.  Of course, this can be done
-    only if the object is fully in sync with the persistant storage
+    only if the object is fully in sync with the persistent storage
     backend.
     </p>
     <p>
@@ -72,9 +130,15 @@ This code is in active, daily use in
 'stable' code.  However, the code in this CVS tree is under development, 
 is lacking in certain desired features, and might not compile. It lacks
 adequate documentation.  It lacks examples.  It lacks a snazzy webpage.
+Furthermore, the subroutine naming convention is a complete mess; its
+a mish-mash of several different old and new GnuCash naming conventions.
 <p>
 The only other project currently using QOF is 
 <a href="http://gnotime.sourceforge.net">GnoTime</a>.
+<p>
+You can download code and find out more about the project at the
+<a href="http://sourceforge.net/projects/qof/">QOF SourceForge Project
+Site</a>.
 
 <hr>
 Last modified by Linas Vepstas &lt;linas@linas.org&gt;
