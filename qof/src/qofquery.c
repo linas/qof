@@ -1626,8 +1626,9 @@ qof_query_printPredData (QofQueryPredData *pd)
   gs = g_string_new ("    Pred Data:\n      ");
   g_string_append (gs, (gchar *) pd->type_name);
 
-  /* Char Predicate doesn't use the 'how' field. */
-  if (safe_strcmp (pd->type_name, QOF_TYPE_CHAR))
+  /* Char Predicate and GUID predicate dosn't use the 'how' field. */
+  if (safe_strcmp (pd->type_name, QOF_TYPE_CHAR) &&
+      safe_strcmp (pd->type_name, QOF_TYPE_GUID))
   {
     g_string_sprintfa (gs, "\n      how: %s",
                        qof_query_printStringForHow (pd->how));
