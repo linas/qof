@@ -364,20 +364,23 @@ handle_single_condition (QofSqlQuery *query, sql_condition * cond)
 	}
 	else if (!strcmp (param_type, QOF_TYPE_GUID))
 	{
-		GUID *guid = guid_malloc();
-		gboolean rc = string_to_guid (qvalue_name, guid);
+		GUID guid;
+		gboolean rc = string_to_guid (qvalue_name, &guid);
 		if (0 == rc)
 		{
 			PWARN ("unable to parse guid: %s", qvalue_name);
 			return NULL;
 		}
 
-		// XXX match any means eqal, what about not equal ?? 
 		// XXX less, than greater than don't make sense,
 		// should check for those bad conditions
-		GList *guid_list = g_list_append (NULL, guid);
-		pred_data = qof_query_guid_predicate (QOF_GUID_MATCH_ANY, guid_list);
-		// XXX FIXME the above is a memory leak! we leak both guid and glist.
+
+		QofGuidMatch gm = QOF_GUID_MATCH_ANY;
+		if (QOF_COMPARE_NEQ == qop) gm = QOF_GUID_MATCH_NONE;
+		GList *guid_list = g_list_append (NULL, &guid);
+		pred_data = qof_query_guid_predicate (gm, guid_list);
+
+		g_list_free (guid_list);
 	}
 #if 0
 	else if (!strcmp (param_type, QOF_TYPE_KVP))
