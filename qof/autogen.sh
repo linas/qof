@@ -102,7 +102,7 @@ do
     echo processing $dr
     ( cd $dr
 
-      aclocalinclude="$ACLOCAL_FLAGS"
+      aclocalinclude="-I m4 $ACLOCAL_FLAGS"
 
       if grep "^AM_GLIB_GNU_GETTEXT" configure.in >/dev/null; then
 	echo "Creating $dr/aclocal.m4 ..."
