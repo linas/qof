@@ -82,7 +82,7 @@ QofQuery *qof_query_from_xml (xmlNodePtr);
    if (0 == strcmp (TOK, node->name))                        \
    {                                                         \
       const char *str = GET_TEXT (node);                     \
-      int ival = atoi (str);                                 \
+      gint32 ival = atoi (str);                              \
       FN (SELF, ival);                                       \
    }                                                         \
    else
@@ -96,12 +96,12 @@ QofQuery *qof_query_from_xml (xmlNodePtr);
    }                                                         \
    else
 
-#define GET_BOL(SELF,FN,TOK)                                 \
+#define GET_BOOL(VAL,TOK)                                    \
    if (0 == strcmp (TOK, node->name))                        \
    {                                                         \
       const char *str = GET_TEXT (node);                     \
       gboolean bval = atol (str);                            \
-      FN (SELF, bval);                                       \
+      VAL = bval;                                            \
    }                                                         \
    else
 
@@ -142,28 +142,84 @@ QofQuery *qof_query_from_xml (xmlNodePtr);
    }                                                         \
    else
 
-#define GET_ENUM_5(SELF,FN,TOK,A,B,C,D,E)                    \
+#define GET_HOW(VAL,TOK,A,B,C,D,E,F)                         \
    if (0 == strcmp (TOK, node->name))                        \
    {                                                         \
       const char *str = GET_TEXT (node);                     \
-      int ival = GTT_##A;                                    \
-      if (!strcmp (#A, str)) ival = GTT_##A;                 \
-      else if (!strcmp (#B, str)) ival = GTT_##B;            \
-      else if (!strcmp (#C, str)) ival = GTT_##C;            \
-      else if (!strcmp (#D, str)) ival = GTT_##D;            \
-      else if (!strcmp (#E, str)) ival = GTT_##E;            \
-      else gtt_err_set_code (GTT_UNKNOWN_VALUE);             \
-      FN (SELF, ival);                                       \
+      int ival = QOF_COMPARE_##A;                            \
+      if (!strcmp (#A, str)) ival = QOF_COMPARE_##A;         \
+      else if (!strcmp (#B, str)) ival = QOF_COMPARE_##B;    \
+      else if (!strcmp (#C, str)) ival = QOF_COMPARE_##C;    \
+      else if (!strcmp (#D, str)) ival = QOF_COMPARE_##D;    \
+      else if (!strcmp (#E, str)) ival = QOF_COMPARE_##E;    \
+      else if (!strcmp (#F, str)) ival = QOF_COMPARE_##F;    \
+      VAL = ival;                                            \
+   }                                                         \
+   else
+
+#define GET_STRING_MATCH(VAL,TOK,A,B)                        \
+   if (0 == strcmp (TOK, node->name))                        \
+   {                                                         \
+      const char *str = GET_TEXT (node);                     \
+      int ival = QOF_STRING_MATCH_##A;                       \
+      if (!strcmp (#A, str)) ival = QOF_STRING_MATCH_##A;    \
+      else if (!strcmp (#B, str)) ival = QOF_STRING_MATCH_##B;\
+      VAL = ival;                                            \
    }                                                         \
    else
 
 /* =============================================================== */
 
 static QofQueryPredData *
-qof_query_predicate_from_xml (xmlNodePtr root)
+qof_query_pred_int32_from_xml (xmlNodePtr root)
 {
-printf ("duude hunt predicate %s\n", root->name);
-	return NULL;
+	xmlNodePtr xp = root->xmlChildrenNode;
+	xmlNodePtr node;
+
+	QofQueryCompare how = QOF_COMPARE_EQUAL;
+	gint32 val = 0;
+
+	for (node=xp; node; node = node->next)
+	{
+		if (node->type != XML_ELEMENT_NODE) continue;
+
+		GET_HOW (how, "qofquery:compare", LT, LTE, EQUAL, GT, GTE, NEQ);
+		GET_INT32 (0, val=, "qofquery:int32");
+		{}
+	}
+
+	QofQueryPredData *pred;
+	pred = qof_query_int32_predicate (how, val);
+	return pred;
+}
+
+/* =============================================================== */
+
+static QofQueryPredData *
+qof_query_pred_string_from_xml (xmlNodePtr root)
+{
+	xmlNodePtr xp = root->xmlChildrenNode;
+	xmlNodePtr node;
+
+	QofQueryCompare how = QOF_COMPARE_EQUAL;
+	QofStringMatch sm = QOF_STRING_MATCH_CASEINSENSITIVE;
+	gboolean is_regex = FALSE;
+	const char *pstr = NULL;
+
+	for (node=xp; node; node = node->next)
+	{
+		if (node->type != XML_ELEMENT_NODE) continue;
+
+		GET_HOW (how, "qofquery:compare", LT, LTE, EQUAL, GT, GTE, NEQ);
+		GET_BOOL (is_regex, "qofquery:is-regex");
+		GET_STR (0, pstr=, "qofquery:string");
+		GET_STRING_MATCH (sm, "qofquery:string-match", NORMAL, CASEINSENSITIVE);
+		{}
+	}
+
+	QofQueryPredData *pred;
+	pred = qof_query_string_predicate (how, pstr, sm , is_regex);
+	return pred;
 }
 
 /* =============================================================== */
@@ -182,7 +238,6 @@ qof_query_param_path_from_xml (xmlNodePtr root)
 		{
 			const char *str = GET_TEXT (node);
 			plist = g_slist_append (plist, CACHE_INSERT(str));
-printf ("duude found param %s\n", str);
 		}
 	}
 	return plist;
@@ -195,12 +250,11 @@ qof_query_term_from_xml (QofQuery *q, xmlNodePtr root)
 {
 	xmlNodePtr node;
 	xmlNodePtr term = root->xmlChildrenNode;
+	QofQueryPredData *pred = NULL;
+	GSList *path = NULL;
 
 	for (node=term; node; node = node->next)
 	{
-		QofQueryPredData *pred = NULL;
-		GSList *path = NULL;
-
 		if (node->type != XML_ELEMENT_NODE) continue;
 		if (0 == strcmp (node->name, "qofquery:invert"))
 		{
@@ -208,7 +262,12 @@ qof_query_term_from_xml (QofQuery *q, xmlNodePtr root)
 printf ("duude invert\n");
 			qof_query_term_from_xml (qt, node);
 			QofQuery *qinv = qof_query_invert (qt);
+printf ("duuuuuu postinvert -- uuuuuuuuuuuuuuuuuuuuuuuuuuuuude\n");
+qof_query_print (qinv);
 			qof_query_merge_in_place (q, qinv, QOF_QUERY_AND);
+printf ("duuuuuu post  nerge -- uuuuuuuuuuuuuuuuuuuuuude\n");
+qof_query_print (q);
+printf ("---------------------------------------------------\n");
 			qof_query_destroy (qinv);
 			qof_query_destroy (qt);
 			continue;
@@ -219,15 +278,23 @@ printf ("duude invert\n");
 			path = qof_query_param_path_from_xml (node);
 		}
 		else
-		if (0 == strcmp (node->name, "qofquery:pred-data"))
+		if (0 == strcmp (node->name, "qofquery:pred-string"))
 		{
-			pred = qof_query_predicate_from_xml (node);
-printf ("duude pred=%p\n", pred);
+			pred = qof_query_pred_string_from_xml (node);
 		}
-	
-		/* At this level, the terms should always be anded */
-		qof_query_add_term (q, path, pred, QOF_QUERY_AND);
+		else
+		if (0 == strcmp (node->name, "qofquery:pred-int32"))
+		{
+			pred = qof_query_pred_int32_from_xml (node);
+		}
+		else
+		{
+			// warning unhandled predicate type
+		}
 	}
+
+	/* At this level, the terms should always be anded */
+	qof_query_add_term (q, path, pred, QOF_QUERY_AND);
 }
 
 /* =============================================================== */
@@ -355,7 +422,7 @@ int main (int argc, char * argv[])
 	gboolean eq = qof_query_equal (q, qnew);
 	printf ("Are the two equal? answer=%d\n", eq);
 
-#define DOPRINT 1
+// #define DOPRINT 1
 #ifdef DOPRINT
    xmlDocPtr doc = doc = xmlNewDoc("1.0");
 	xmlDocSetRootElement(doc,topnode);
