@@ -53,8 +53,8 @@ qof_book_mergeInit( QofBook *importBook, QofBook *targetBook)
 {
 	qof_book_mergeData *mergeData;
 	qof_book_mergeRule *currentRule;
-	
 	GList *check;
+
 	g_return_val_if_fail((importBook != NULL)&&(targetBook != NULL), NULL);
 	mergeData = g_new(qof_book_mergeData, 1);
 	mergeData->abort = FALSE;
@@ -196,6 +196,7 @@ qof_book_merge_param_as_string(QofParam *qtparam, QofEntity *qtEnt)
 		if(safe_strcmp(paramType, QOF_TYPE_BOOLEAN) == 0){ 
 			boolean_getter = (gboolean (*)(QofEntity*, QofParam*)) qtparam->param_getfcn;
 			param_boolean = boolean_getter(qtEnt, qtparam);
+			/* Boolean values need to be lowercase for QSF validation. */
 			if(param_boolean == TRUE) { param_string = g_strdup("true"); }
 			else { param_string = g_strdup("false"); }
 			return param_string;

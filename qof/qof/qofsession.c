@@ -376,7 +376,9 @@ qof_session_load_backend(QofSession * session, char * access_method)
 	 *  backends. Right now, there's only two. */
 	if (NULL == provider_list)
 	{
+#ifdef BUILD_DWI
 		load_backend_library ("libqof_backend_dwi.so", "dwiend_provider_init");
+#endif
 		load_backend_library ("libqsf-backend-file.so", "qsf_provider_init" );
 	}
 

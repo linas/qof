@@ -2,7 +2,6 @@
 # Makefile.am for the libqof sources
 #
 
-
 # pkglib_LTLIBRARIES = libqof.la
 
 lib_LTLIBRARIES = libqof.la
@@ -10,7 +9,6 @@ lib_LTLIBRARIES = libqof.la
 # libqof_la_LDFLAGS= -version-info $(LIBQOF_LIBRARY_VERSION) -release $(VERSION)
 
 libqof_la_LDFLAGS= -version-info $(LIBQOF_LIBRARY_VERSION) 
-
 
 libqof_la_SOURCES =  \
    gnc-date.c        \
@@ -37,10 +35,9 @@ libqof_la_SOURCES =  \
    qofsql.c          \
    qof_book_merge.c
 
-# qofconfigdir = ${pkgincludedir}
-# qofconfig_DATA = config.h
 
 qofincludedir = ${pkgincludedir}
+
 qofinclude_HEADERS = \
    gnc-date.h        \
    gnc-engine-util.h \
@@ -71,7 +68,6 @@ qofinclude_HEADERS = \
    qofsql.h	     \
    qof_book_merge.h
 
-
 noinst_HEADERS =      \
    gnc-event-p.h      \
    kvp-util-p.h       \
@@ -84,10 +80,8 @@ noinst_HEADERS =      \
    qofquerycore-p.h   \
    qofsession-p.h
 
-   
 EXTRA_DIST =          \
    .cvsignore
-
 
 AM_CFLAGS = -g        \
    @CFLAGS@           \
@@ -100,4 +94,3 @@ INCLUDES =                     \
    -DPREFIX=\""$(prefix)"\"    \
    -DDATADIR=\""$(datadir)"\" 
                    
-
