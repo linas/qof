@@ -279,7 +279,6 @@ qof_book_mergeCompare( void )
 {
 	gchar 		*stringImport, *stringTarget, 
 				*charImport, *charTarget;
-	char 		sa[GUID_ENCODING_LENGTH + 1];
 	const GUID 	*guidImport, *guidTarget;
 	QofInstance *inst;
 	gpointer 	unknown_obj;
@@ -288,7 +287,7 @@ qof_book_mergeCompare( void )
 	QofIdType 	mergeParamName;
 	QofType 	mergeType;
 	GSList 		*paramList;
-	QofEntity 	*mergeEnt, *targetEnt, *childEnt;
+	QofEntity 	*mergeEnt, *targetEnt, *referenceEnt;
 	Timespec 	tsImport, tsTarget, 			(*date_getter)		(QofEntity*, QofParam*);
 	gnc_numeric numericImport, numericTarget, 	(*numeric_getter)	(QofEntity*, QofParam*);
 	double 		doubleImport, doubleTarget, 	(*double_getter)	(QofEntity*, QofParam*);
@@ -405,19 +404,19 @@ qof_book_mergeCompare( void )
 		if(safe_strcmp(mergeType, QOF_ID_BOOK) == 0) { knowntype= TRUE;	}
 		/* deal with non-QOF type parameters : */
 		/* references to other registered QOF objects */
+		/* these references are NOT compared again here. */
 		if(knowntype == FALSE) {
 			if(qof_class_is_registered(currentRule->mergeLabel)) {
-				childEnt = g_new(QofEntity,1);
-				unknown_obj = qtparam->param_getfcn(mergeEnt, qtparam);
+				/* this may be a parent or child */
+				referenceEnt = g_new(QofEntity,1);
+				unknown_obj = qtparam->param_getfcn(targetEnt, qtparam);
 				inst = ((QofInstance*)(unknown_obj));
-				childEnt = &inst->entity;
-				currentRule->linkedEntList = g_slist_prepend(currentRule->linkedEntList, childEnt);
-				guidImport = qof_entity_get_guid(childEnt);
-				if(guidImport != NULL) {
-					guid_to_string_buff(guidImport, sa);
-					stringImport = g_strdup(sa);
-					printf("Test routine GUID: %s\n", stringImport);
-				}
+				/* referenceEnt takes the target book instance as a reference. */
+				referenceEnt = &inst->entity;
+				/* add to the rule so that the reference can be picked up in commit */
+				currentRule->linkedEntList = g_slist_prepend(currentRule->linkedEntList, referenceEnt);
+				/* it becomes a known type because it is registered */
+				knowntype = TRUE;
 			}
 		}
 	g_return_val_if_fail(knowntype == TRUE, -1);
@@ -621,6 +620,7 @@ void qof_book_mergeCommitRuleLoop(qof_book_mergeRule *rule, guint remainder)
 { 
 	QofInstance 	*inst;
 	gboolean		registered_type;
+	QofCollection *col;
 	/* cm_ prefix used for variables that hold the data to commit */
 	QofParam 		*cm_param;
 	char 			*cm_string, *cm_char;
@@ -644,6 +644,7 @@ void qof_book_mergeCommitRuleLoop(qof_book_mergeRule *rule, guint remainder)
 	void	(*i64_setter)		(QofEntity*, gint64);
 	void	(*char_setter)		(QofEntity*, char*);
 	void	(*kvp_frame_setter)	(QofEntity*, KvpFrame*);
+	void	(*reference_setter)	(QofEntity*, QofEntity*);
 
 	g_return_if_fail(rule != NULL);
 	g_return_if_fail((rule->mergeResult != MERGE_NEW)||(rule->mergeResult != MERGE_UPDATE));
@@ -731,22 +732,27 @@ void qof_book_mergeCommitRuleLoop(qof_book_mergeRule *rule, guint remainder)
 			if(char_setter != NULL) { char_setter(rule->targetEnt, cm_char); }
 			registered_type = TRUE;
 		}
-		if(registered_type == FALSE) {
-			if(qof_class_is_registered(rule->mergeLabel)) {
-			/* need to lookup childEnt in the target book to
+		if((registered_type == FALSE)&&(qof_class_is_registered(rule->mergeLabel))) {
+			registered_type = TRUE;
+			if(rule->mergeResult == MERGE_NEW) {
+				/* need to lookup referenceEnt in the target book to
 				ensure it has the right QofCollection */
 				GSList *linkage = g_slist_copy(rule->linkedEntList);
 				while(linkage != NULL) {
-					QofEntity *childEnt = linkage->data;
-					/* there may be more than one linked QofEntity for this rule */
-					if(safe_strcmp(childEnt->e_type, rule->mergeType) == 0) {
-						cm_guid = qof_entity_get_guid(childEnt);
-						QofCollection *col;
+					/* referenceEnt already refers to the target book */
+					QofEntity *referenceEnt = linkage->data;
+					/* there may be more than one linked QofEntity for this rule
+						so check that the types match. */
+					if(safe_strcmp(referenceEnt->e_type, rule->mergeType) == 0) {
+						cm_guid = qof_entity_get_guid(referenceEnt);
+						/* This may prove unnecessary */
     					col = qof_book_get_collection (mergeData->targetBook, rule->mergeType);
-					    childEnt = qof_collection_lookup_entity (col, cm_guid);
-						/* childEnt isn't used here yet. It may be too early to set */
-						/* intention is to set the parameter if childEnt is not null.
-						might have to store the param and set later, after Commit. */
+					    referenceEnt = qof_collection_lookup_entity (col, cm_guid);
+						/* referenceEnt is now in use here. It is not too early */
+						/* because the reference does not need to be queried
+							until after Commit. */
+						reference_setter = (void(*)(QofEntity*, QofEntity*))cm_param->param_setfcn;
+						if(reference_setter != NULL) { reference_setter(rule->targetEnt, referenceEnt); }
 					}
 					linkage = g_slist_next(linkage);
 				}

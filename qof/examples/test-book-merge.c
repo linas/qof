@@ -24,7 +24,7 @@
  * Test the gncBookMerge infrastructure.
  */
 #include <glib.h>
-#include <libguile.h>
+
 #define _GNU_SOURCE
 
 #include "qof/qofinstance-p.h"
@@ -346,7 +346,8 @@ test_rule_loop (qof_book_mergeRule *rule, guint remainder)
 	gchar *importstring, *targetstring;
 	gint resolution, count;
 	gboolean input_ok;
-	
+	gchar y;
+
 	resolution = 0;
 	count = 1;
 	importstring = targetstring = NULL;
@@ -411,7 +412,6 @@ test_rule_loop (qof_book_mergeRule *rule, guint remainder)
 				printf("Are you sure you want to abort the entire merge operation?\n");
 				printf("The rest of the import data will not be processed.\n");
 				printf("Your original data will not be modified. Abort? y/n : ");
-				gchar y;
 				scanf("%s", &y);
 				
 				if((safe_strcmp("y",&y) == 0)||(safe_strcmp("",&y) == 0)) {

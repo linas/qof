@@ -1,8 +1,15 @@
 #
 # Makefile.am for the QOF example directory
 #
+if BUILD_GTK
+EXAMPLES=gobject
+else
+EXAMPLES=
+endif
 
-SUBDIRS = gobject
+SUBDIRS = $(EXAMPLES)
+
+# SUBDIRS = gobject
 
 test_book_merge_SOURCES = test-book-merge.c
 

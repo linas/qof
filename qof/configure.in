@@ -59,12 +59,23 @@ AC_SUBST(LIBXML2_LIBS)
 dnl **************************************************************
 dnl Stuff needed to build the example progs only ... 
 dnl XXX should fix this so that not required if not building examples.
+dnl NW: Trying to fix this for pilot-link to build without Gtk.
 dnl **************************************************************
 
 GTK_CFLAGS=`$PKG_CONFIG --cflags gtk+-2.0`
 GTK_LIBS=`$PKG_CONFIG --libs gtk+-2.0`
 AC_SUBST(GTK_CFLAGS)
 AC_SUBST(GTK_LIBS)
+
+if test x$GTK_LIBS = x; then
+   AC_MSG_WARN([****** GTK libs not found; build without GTK.])
+   else
+      AC_DEFINE(HAVE_GTK,,We Have Found GTK)
+      HAVE_GTK="use_gtk"
+fi
+
+AM_CONDITIONAL(BUILD_GTK, [test x$HAVE_GTK != x])
+AM_CONDITIONAL(BUILD_GTK, [test "$USE_GTK" = use_gtk])
 
 dnl **************************************************************
 dnl Checks for typedefs, structures, and compiler characteristics.

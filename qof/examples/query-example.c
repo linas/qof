@@ -76,9 +76,10 @@ void
 my_app_run_query (QofBook *book)
 {
    QofQueryPredData *pred_data;
+   QofCollection *coll;
    GSList *param_list;
    QofQuery *q;
-   GList *results, *n;
+   GList *results, *n, *all_my_objs ;
 
    /* Create a new query */
    q =  qof_query_create ();
@@ -122,8 +123,8 @@ my_app_run_query (QofBook *book)
    /* Print out the results */
 	printf ("\n");
    printf ("My Object collection contains the following objects:\n");
-   QofCollection *coll = qof_book_get_collection (book, MYOBJ_ID);
-   GList *all_my_objs = qof_collection_get_data (coll);
+   coll = qof_book_get_collection (book, MYOBJ_ID);
+   all_my_objs = qof_collection_get_data (coll);
    for (n=all_my_objs; n; n=n->next)
    {
       MyObj *m = n->data;

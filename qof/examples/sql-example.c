@@ -96,13 +96,15 @@ void
 my_app_do_some_queries (QofBook *book)
 {
    QofSqlQuery *q;
-   GList *n;
-
+   GList *n, *all_my_objs;
+   QofCollection *coll;
+   char *str;
+	
    /* Print out the baseline: all of the instances in the system */
    printf ("\n");
    printf ("My Object collection contains the following objects:\n");
-   QofCollection *coll = qof_book_get_collection (book, MYOBJ_ID);
-   GList *all_my_objs = qof_collection_get_data (coll);
+   coll = qof_book_get_collection (book, MYOBJ_ID);
+   all_my_objs = qof_collection_get_data (coll);
    for (n=all_my_objs; n; n=n->next)
    {
       MyObj *m = n->data;
@@ -121,7 +123,7 @@ my_app_do_some_queries (QofBook *book)
     * We want to find all objects whose "memo" field matches
     * a particular string, or all objects whose "b" field is 42.
     */
-   char * str = "SELECT * FROM " MYOBJ_ID 
+   str = "SELECT * FROM " MYOBJ_ID 
            " WHERE (" MYOBJ_MEMO " = 'M M M My Sharona') OR "
    		  "       (" MYOBJ_B " = 42);";
 
