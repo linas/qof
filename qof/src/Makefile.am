@@ -40,7 +40,7 @@ qofinclude_HEADERS = \
    qofobject.h       \
    qofquerycore.h    \
    qofsession.h      \
-	qofsql.h
+   qofsql.h
 
 
 noinst_HEADERS =      \
@@ -60,8 +60,8 @@ EXTRA_DIST =          \
    .cvsignore
 
 
-AM_CFLAGS = -g    \
-   @CFLAGS@       \
+AM_CFLAGS = -g        \
+   @CFLAGS@           \
    @GLIB_CFLAGS@
 
 INCLUDES =                     \
