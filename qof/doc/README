@@ -1,0 +1,11 @@
+ 
+                    QOF Documentation 
+                    -----------------
+
+The QOF documentation is embedded in the source code (mostly
+in the header files) using 'doxygen' (JavaDoc style) markup.
+
+To extract the documentation into HTML pages, you must install
+the 'doxygen' documentation system, and then say 'make doc'. 
+The HTML docuemtnation will be placed in the 'html' subdirectory.
+
