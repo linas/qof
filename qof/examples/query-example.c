@@ -27,7 +27,7 @@ typedef struct myobj_s
    char *memo;     /* Some string value */
 } MyObj;
 
-GSList *all_my_objs = NULL;
+GList *all_my_objs = NULL;
 
 MyObj *
 my_obj_new (QofBook *book)
@@ -36,7 +36,7 @@ my_obj_new (QofBook *book)
 
    /* Make sure we keep track of ever object; otherwise we won't
     * be able to search over them.  */
-   all_my_objs = g_slist_prepend (all_my_objs, m);
+   all_my_objs = g_list_prepend (all_my_objs, m);
 
    return m;
 }
@@ -65,7 +65,7 @@ my_obj_get_memo (MyObj *m)
 void
 my_obj_foreach (QofBook *book, QofEntityForeachCB cb, gpointer ud)
 {
-   GSList *n;
+   GList *n;
    
    for (n=all_my_objs; n; n=n->next)
    {

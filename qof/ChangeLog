@@ -1,0 +1,6 @@
+
+2003-06-25 Linas Vepstas <linas@linas.org>
+	* src/*, examples/*:  rename Gnucash files to qof prefix
+
+2003-06-16 Linas Vepstas <linas@linas.org>
+	* initial release

@@ -1,5 +1,7 @@
 
-pkglib_LTLIBRARIES = libqof.la
+# pkglib_LTLIBRARIES = libqof.la
+
+lib_LTLIBRARIES = libqof.la
 
 libqof_la_SOURCES =  \
    gnc-date.c        \

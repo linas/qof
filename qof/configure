@@ -1709,7 +1709,7 @@ fi
 
 # Define the identity of the package.
  PACKAGE=qof
- VERSION=0.1.0
+ VERSION=0.2.0
 
 
 cat >>confdefs.h <<_ACEOF
@@ -14697,8 +14697,9 @@ echo ""
 echo "prefix : $prefix"
 # echo "sysconf dir : "`eval echo $sysconfdir`
 echo "bin dir : "`eval echo $bindir`
-# echo "sbin dir : "`eval echo $sbindir`
 echo "data dir : "`eval echo $datadir`
+echo "include dir : "`eval echo $includedir`
+echo "lib dir : "`eval echo $libdir`
 echo ""
 
 
