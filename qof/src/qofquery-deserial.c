@@ -1,6 +1,6 @@
 /********************************************************************\
  * qofquery-deserial.c -- Convert Qof-Query XML to QofQuery         *
- * Copyright (C) 2004 Linas Vepstas <linas@linas.org>               *
+ * Copyright (C) 2001,2002,2004 Linas Vepstas <linas@linas.org>     *
  *                                                                  *
  * This program is free software; you can redistribute it and/or    *
  * modify it under the terms of the GNU General Public License as   *
@@ -25,10 +25,159 @@
 
 // #include "config.h"
 
+#include <glib.h>
+#include <libxml/parser.h>
+
 #include "qofquery-serialize.h"
 #include "qofquery-p.h"
 #include "qofquerycore-p.h"
 
+/* =========================================================== */
+
+#define GET_TEXT(node)  ({                                   \
+   char * sstr = NULL;                                       \
+   xmlNodePtr text;                                          \
+   text = node->xmlChildrenNode;                             \
+   if (text && 0 == strcmp ("text", text->name)) {           \
+      sstr = text->content;                                  \
+   }                                                         \
+   sstr;                                                     \
+})
+
+#define GET_STR(SELF,FN,TOK)                                 \
+   if (0 == strcmp (TOK, node->name))                        \
+   {                                                         \
+      const char *str = GET_TEXT (node);                     \
+      FN (SELF, str);                                        \
+   }                                                         \
+   else
+
+
+#define GET_DBL(SELF,FN,TOK)                                 \
+   if (0 == strcmp (TOK, node->name))                        \
+   {                                                         \
+      const char *str = GET_TEXT (node);                     \
+      double rate = atof (str);                              \
+      FN (SELF, rate);                                       \
+   }                                                         \
+   else
+
+#define GET_INT32(SELF,FN,TOK)                               \
+   if (0 == strcmp (TOK, node->name))                        \
+   {                                                         \
+      const char *str = GET_TEXT (node);                     \
+      int ival = atoi (str);                                 \
+      FN (SELF, ival);                                       \
+   }                                                         \
+   else
+
+#define GET_TIM(SELF,FN,TOK)                                 \
+   if (0 == strcmp (TOK, node->name))                        \
+   {                                                         \
+      const char *str = GET_TEXT (node);                     \
+      time_t tval = atol (str);                              \
+      FN (SELF, tval);                                       \
+   }                                                         \
+   else
+
+#define GET_BOL(SELF,FN,TOK)                                 \
+   if (0 == strcmp (TOK, node->name))                        \
+   {                                                         \
+      const char *str = GET_TEXT (node);                     \
+      gboolean bval = atol (str);                            \
+      FN (SELF, bval);                                       \
+   }                                                         \
+   else
+
+#define GET_GUID(SELF,FN,TOK)                                \
+   if (0 == strcmp (TOK, node->name))                        \
+   {                                                         \
+      const char *str = GET_TEXT (node);                     \
+      GUID guid;                                             \
+      string_to_guid (str, &guid);                           \
+      FN (SELF, &guid);                                      \
+   }                                                         \
+   else
+
+#define GET_ENUM_3(SELF,FN,TOK,A,B,C)                        \
+   if (0 == strcmp (TOK, node->name))                        \
+   {                                                         \
+      const char *str = GET_TEXT (node);                     \
+      int ival = GTT_##A;                                    \
+      if (!strcmp (#A, str)) ival = GTT_##A;                 \
+      else if (!strcmp (#B, str)) ival = GTT_##B;            \
+      else if (!strcmp (#C, str)) ival = GTT_##C;            \
+      else gtt_err_set_code (GTT_UNKNOWN_VALUE);             \
+      FN (SELF, ival);                                       \
+   }                                                         \
+   else
+
+#define GET_ENUM_4(SELF,FN,TOK,A,B,C,D)                      \
+   if (0 == strcmp (TOK, node->name))                        \
+   {                                                         \
+      const char *str = GET_TEXT (node);                     \
+      int ival = GTT_##A;                                    \
+      if (!strcmp (#A, str)) ival = GTT_##A;                 \
+      else if (!strcmp (#B, str)) ival = GTT_##B;            \
+      else if (!strcmp (#C, str)) ival = GTT_##C;            \
+      else if (!strcmp (#D, str)) ival = GTT_##D;            \
+      else gtt_err_set_code (GTT_UNKNOWN_VALUE);             \
+      FN (SELF, ival);                                       \
+   }                                                         \
+   else
+
+#define GET_ENUM_5(SELF,FN,TOK,A,B,C,D,E)                    \
+   if (0 == strcmp (TOK, node->name))                        \
+   {                                                         \
+      const char *str = GET_TEXT (node);                     \
+      int ival = GTT_##A;                                    \
+      if (!strcmp (#A, str)) ival = GTT_##A;                 \
+      else if (!strcmp (#B, str)) ival = GTT_##B;            \
+      else if (!strcmp (#C, str)) ival = GTT_##C;            \
+      else if (!strcmp (#D, str)) ival = GTT_##D;            \
+      else if (!strcmp (#E, str)) ival = GTT_##E;            \
+      else gtt_err_set_code (GTT_UNKNOWN_VALUE);             \
+      FN (SELF, ival);                                       \
+   }                                                         \
+   else
+
+/* =============================================================== */
+
+void 
+qof_query_and_terms_from_xml (QofQuery *q, xmlNodePtr root)
+{
+	xmlNodePtr andterms = root->xmlChildrenNode;
+	xmlNodePtr node;
+	for (node=andterms; node; node = node->next)
+	{
+		if (node->type != XML_ELEMENT_NODE) continue;
+
+		if (0 == strcmp (node->name, "qofquery:term"))
+		{
+printf ("duude term\n");
+		}
+	}
+}
+
+/* =============================================================== */
+
+void 
+qof_query_or_terms_from_xml (QofQuery *q, xmlNodePtr root)
+{
+	xmlNodePtr andterms = root->xmlChildrenNode;
+	xmlNodePtr node;
+	for (node=andterms; node; node = node->next)
+	{
+		if (node->type != XML_ELEMENT_NODE) continue;
+
+		if (0 == strcmp (node->name, "qofquery:and-terms"))
+		{
+			qof_query_and_terms_from_xml (q, node);
+		}
+	}
+}
+
+/* =============================================================== */
 
 QofQuery *
 qof_query_from_xml (xmlNodePtr root)
@@ -47,10 +196,26 @@ qof_query_from_xml (xmlNodePtr root)
 	q = qof_query_create ();
 
 	xmlNodePtr qpart = root->xmlChildrenNode;
-	xmlNodePtr qp;
-	for (qp=qpart; qp; qp = qp->next)
+	xmlNodePtr node;
+	for (node=qpart; node; node = node->next)
 	{
-		printf ("duude got a %s\n", qp->name);
+		if (node->type != XML_ELEMENT_NODE) continue;
+
+		GET_STR   (q, qof_query_search_for,      "qofquery:search-for");
+		GET_INT32 (q, qof_query_set_max_results, "qofquery:max-results");
+		if (0 == strcmp (node->name, "qofquery:or-terms"))
+		{
+			qof_query_or_terms_from_xml (q, node);
+		}
+		else 
+		if (0 == strcmp (node->name, "qofquery:sort-list"))
+		{
+// XXX unfinished
+		}
+		else 
+		{
+			// XXX unknown node type 
+		}
 	}
 
 	return q;
