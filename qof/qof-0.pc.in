@@ -8,5 +8,7 @@ Name: QOF
 Description: QOF Query Object Framework Library.
 Requires: glib-2.0 
 Version: @VERSION@
-Libs: -L${libdir} -lqof-@VERSION@ -lqofsql-@VERSION@
+# The libqof.a isn't supposed to ahve aversion number 
+# Libs: -L${libdir} -lqof-@VERSION@ -lqofsql-@VERSION@
+Libs: -L${libdir} -lqof -lqofsql
 Cflags: -I${includedir} 
