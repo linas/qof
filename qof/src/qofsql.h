@@ -49,6 +49,7 @@ void qof_sql_query_destroy (QofSqlQuery *);
 void qof_sql_query_set_book (QofSqlQuery *q, QofBook *book);
 
 /** Perform the query, return the results.
+ *  The book must be set in order to be able to perform a query.
  *
  *  The returned list is a list of ... See below ... 
  *  The returned list will have been sorted using the indicated sort 
@@ -85,6 +86,23 @@ void qof_sql_query_set_book (QofSqlQuery *q, QofBook *book);
  */
 
 GList * qof_sql_query_run (QofSqlQuery *query, const char * str);
+
+/** Same as above, but just parse/pre-process the query; do
+ *  not actually run it over the dataset.  The QofBook does not
+ *  need to be set before calling this function.
+ */
+void qof_sql_query_parse (QofSqlQuery *query, const char * str);
+
+/** Return the QofQuery form of the previously parsed query. */
+QofQuery * qof_sql_query_get_query (QofSqlQuery *);
+
+/** Run the previously parsed query.  The QofBook must be set 
+ *  before this function can be called.  Note, teh QofBook can
+ *  be changed between each successive call to this routine.
+ *  This routine can be called after either qof_sql_query_parse()
+ *  or qof_sql_query_run() because both will set up the parse.
+ */
+GList * qof_sql_query_rerun (QofSqlQuery *query);
 
 /** 
  * Set the kvp frame to be used for formulating 'indirect' predicates.

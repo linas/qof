@@ -50,6 +50,8 @@ qofinclude_HEADERS = \
    qofclass.h        \
    qofgobj.h         \
    qofid.h           \
+   qofid-p.h         \
+   qofinstance-p.h   \
    qofinstance.h     \
    qofquery.h        \
    qofbook.h         \
@@ -65,8 +67,6 @@ noinst_HEADERS =      \
    md5.h              \
    qofbackend-p.h     \
    qofclass-p.h       \
-   qofid-p.h          \
-   qofinstance-p.h    \
    qofquery-p.h       \
    qofbook-p.h        \
    qofobject-p.h      \

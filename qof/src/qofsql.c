@@ -56,7 +56,7 @@ struct _QofSqlQuery
 QofSqlQuery *
 qof_sql_query_new(void)
 {
-	QofSqlQuery * sqn = (QofSqlQuery *) g_new (QofSqlQuery, 1);
+	QofSqlQuery * sqn = (QofSqlQuery *) g_new0 (QofSqlQuery, 1);
 	
 	sqn->qof_query = NULL;
 	sqn->parse_result = NULL;
@@ -76,6 +76,15 @@ qof_sql_query_destroy (QofSqlQuery *q)
 	qof_query_destroy (q->qof_query);
 	sql_destroy (q->parse_result);
 	g_free (q);
+}
+
+/* ========================================================== */
+
+QofQuery * 
+qof_sql_query_get_query (QofSqlQuery *q)
+{
+	if (!q) return NULL;
+	return q->qof_query;
 }
 
 /* ========================================================== */
@@ -505,25 +514,33 @@ handle_sort_order (QofSqlQuery *query, GList *sorder_list)
 
 /* ========================================================== */
 
-GList * 
-qof_sql_query_run (QofSqlQuery *query, const char *str)
+void 
+qof_sql_query_parse (QofSqlQuery *query, const char *str)
 {
-	GList *node;
+	if (!query) return;
 
-	if (!query) return NULL;
+	/* Delete old query, if any */
+   /* XXX FIXME we should also delete the parse_result as well */
+	if (query->qof_query)
+	{
+		qof_query_destroy (query->qof_query);
+		query->qof_query = NULL;
+	}
+
+	/* Parse the SQL string */
 	query->parse_result = sql_parse (str);
 
 	if (!query->parse_result) 
 	{
 		PWARN ("parse error"); 
-		return NULL;
+		return;
 	}
 
 	if (SQL_select != query->parse_result->type)
 	{
 		PWARN("currently, only SELECT statements are supported, "
 		                     "got type=%d", query->parse_result);
-		return NULL;
+		return;
 	}
 
 	/* If the user wrote "SELECT * FROM tablename WHERE ..."
@@ -543,7 +560,7 @@ qof_sql_query_run (QofSqlQuery *query, const char *str)
 	{
 		/* Walk over the where terms, turn them into QOF predicates */
 		query->qof_query = handle_where (query, swear);
-		if (NULL == query->qof_query) return NULL;
+		if (NULL == query->qof_query) return;
 	}
 	else
 	{
@@ -559,6 +576,37 @@ qof_sql_query_run (QofSqlQuery *query, const char *str)
 	 * XXX all this needs fixing.
 	 */
 	qof_query_search_for (query->qof_query, query->single_global_tablename);
+}
+
+/* ========================================================== */
+
+GList * 
+qof_sql_query_run (QofSqlQuery *query, const char *str)
+{
+	GList *node;
+
+	if (!query) return NULL;
+
+	qof_sql_query_parse (query, str);
+	if (NULL == query->qof_query) return NULL;
+
+	qof_query_set_book (query->qof_query, query->book);
+
+	// qof_query_print (query->qof_query);
+	GList *results = qof_query_run (query->qof_query);
+
+	return results;
+}
+
+GList * 
+qof_sql_query_rerun (QofSqlQuery *query)
+{
+	GList *node;
+
+	if (!query) return NULL;
+
+	if (NULL == query->qof_query) return NULL;
+
 	qof_query_set_book (query->qof_query, query->book);
 
 	// qof_query_print (query->qof_query);
