@@ -1,0 +1,12 @@
+
+This directory contains code that is needed by QOF,
+code that is normally 'external' to QOF, but
+is not generally available as a library.  Thus, the
+code has been copied into QOF until such time 
+that this is no longer needed.
+
+In particular:
+The libsql directory contains code copied from the
+libgda (http://www.gnome-db.org/) Gnome database system.
+
+
