@@ -30,6 +30,9 @@
 
 /** @addtogroup KVP
     @{ */
+/** @addtogroup KVP_Private
+    Private interfaces, not meant to be used by applications.
+    @{ */
 /* @file kvp-util-p.h
  * @brief misc odd-job kvp utils engine-private routines
  * @author Copyright (C) 2001, 2003 Linas Vepstas <linas@linas.org>               *
@@ -104,6 +107,7 @@ KvpFrame * gnc_kvp_bag_find_by_guid (KvpFrame *root,  const char * path,
 void gnc_kvp_bag_remove_frame (KvpFrame *root, const char *path,
                                KvpFrame *fr);
 
+/* @} */
 /* @} */
 /* @} */
 #endif /* XACC_KVP_UTIL_P_H */

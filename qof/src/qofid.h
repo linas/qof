@@ -54,6 +54,10 @@
     does refer to an entity, the type of the entity will match the 
     type of the identifier. 
 
+    If you have a type name, and you want to have a way of finding
+    a collection that is associated with that type, then you must use
+    Books.
+
  @{ */
 /** @file qofid.h
     @brief QOF entity type identification system 
