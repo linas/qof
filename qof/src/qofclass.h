@@ -142,9 +142,11 @@ typedef int (*QofSortFunc)(gpointer, gpointer);
  *  In particular, it registers the set of setters and getters for
  *  controlling the object.   The getters are typically used by the
  *  query subsystem to query type specific data.   Note that there
- *  is no particular reqquirement for there to be a setter for every
- *  getter or even v.v. nor is there any requeirement for these to 
- *  map 'cleanly' or orthogonaly to the actual object design.
+ *  is no particular requirement for there to be a setter for every
+ *  getter or even vice-versa, nor is there any requeirement for these
+ *  to map 'cleanly' or orthogonaly to the underlying object.  The
+ *  parameters are really just a set of value setting and getting 
+ *  routines.
  *
  *  The "params" argument must be a NULL-terminated array of QofParam. 
  *  It may be NULL if there are no parameters to be registered.
