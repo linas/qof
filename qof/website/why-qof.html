@@ -1,0 +1,69 @@
+
+<html>
+<head>
+<title>Why Qof?</title>
+</head>
+<body fgcolor="#000000" bgcolor="#ffffff">
+<h1>Why QOF?</h1>
+<img src="qof-logo.jpg" width="100" height="150" border="5" align=left>
+An attempt to analyze the motivations and rational for something like
+this.
+
+<p>
+QOF is an outgrowth of how I like to write application programs at
+this stage in my life.  I'm not saying its the best way; in fact,
+my development process seems very cumbersome to me, and I wonder 
+why I do it this way.  But I know the answer: I don't know a better 
+way.  The starting point of my GUI's is a design made in glade.
+I like to have the Glade GUI control a set of C objects.   I've 
+written a lot of C++ and I like using it, but I find that
+object-oriented design in C results in cleaner, better-designed code.
+But the C language has many ther problems, the most serious of which 
+is the lack of garbage collection and of any sort of persistance.
+<p>
+I also like to have my apps be natively multi-user.  This means dealing
+with all of the locking and caching problems that multi-user presents.
+Multi-user also means that one needs to have a centralized data storage
+location: a database, and by presumption, an SQL database.   Thus, if
+one wants to have C objects, one needs to shim them onto SQL somehow.
+Today, for me, this is a labour-intensive, manual process.  In the
+commercial software world, there are tools and companies that have
+systems that make this a lot easier, and even automatic; but there
+aren't any in the Free Software world.
+<p>
+Why not in another language, one that can do introspection, adn has
+object factories in it? e.g. Java, python, C#?  The short answer:
+because the mapping between the dynamic (cached) object, and the 
+thing that needs to be persisitent, is not one-to-one.  Thus, 
+introspection is not enough: one really does need to specify how to 
+map object fields to database fields; the mapping is not natively 
+or inherently 1-to-1.  Thus, the object introspection available in
+these othe languages doesn't solve all problems.  One still needs
+to explicitly specify the mapping, while still making it easy on the
+programmer.
+<p>
+Why not go directly from GUI to SQL, and back?  This is the traditional
+'data-driven' programming style.  It has short-comings, the most notable
+of which is the inability (or difficulty of) implenmenting application
+behaviour.  One can all too easily get sucked into writing SQL triggers
+and stored proceedures. That's bad.
+<p>
+Note, however, that much of what a typical GUI application does can,
+in fact, be specified by a declarative language; an algorithmic,
+proceedural language, such as C, really is not required for the 
+vast majority of the application guts.
+<p>
+Why not use GLib GObjects?  I dunno.
+<p>
+Why not UML?  What's UML got to do with it?
+<p>
+Hacking a front/backend onto SQLite, the why's and whynots.
+
+
+
+
+
+
+
+</body>
+</html>
