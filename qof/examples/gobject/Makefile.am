@@ -10,11 +10,13 @@ EXTRA_DIST =                   \
 
 AM_CFLAGS = \
   -I${top_srcdir}/src \
+  ${GTK_CFLAGS} \
   ${GLIB_CFLAGS}
 
 LDADD = \
   ${top_builddir}/src/libqof.la \
   ${top_builddir}/lib/libsql/libqofsql.la \
+  ${GTK_LIBS} \
   ${GLIB_LIBS} \
   -lltdl -lm
 

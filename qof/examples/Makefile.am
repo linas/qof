@@ -1,3 +1,8 @@
+#
+# Makefile.am for the QOF example directory
+#
+
+SUBDIRS = gobject
 
 query_example_SOURCES = \
 	query-example.c      \
@@ -14,7 +19,7 @@ noinst_PROGRAMS = \
 noinst_HEADERS = \
 	my-object.h
 
-EXTRA_DIST =                   \
+EXTRA_DIST =     \
     .cvsignore
 
 
