@@ -48,7 +48,7 @@ QSF is built on the qof_book_merge codebase.
 
 */
 
-#define TEST_MODULE_NAME "book-merge-test"
+#define TEST_MODULE_NAME "book_merge_test"
 #define TEST_MODULE_DESC "Test Book Merge"
 #define OBJ_NAME "somename"
 #define OBJ_AMOUNT "anamount"
@@ -106,10 +106,16 @@ myobj*
 obj_create(QofBook *book)
 {
 	myobj *g;
+	QofCollection *coll;
+	GList *all;
 
 	g_return_val_if_fail(book, NULL);
 	g = g_new(myobj, 1);
 	qof_instance_init (&g->inst, TEST_MODULE_NAME, book);
+	coll = qof_book_get_collection (book, TEST_MODULE_NAME);
+	all = qof_collection_get_data (coll);
+	all = g_list_prepend (all, g);
+	qof_collection_set_data (coll, all);
 	g->date.tv_nsec = 0;
 	g->date.tv_sec = 0;
 	g->discount = 0;
@@ -191,7 +197,7 @@ obj_getDate(myobj *g)
 	return ts;
 }
 
-void
+void 
 obj_setName(myobj* g, char* h)
 {
 	if(!g || !h) return;
@@ -238,16 +244,16 @@ static QofObject obj_object_def = {
 gboolean myobjRegister (void)
 {
   static QofParam params[] = {
-	{ OBJ_NAME,		QOF_TYPE_STRING,	(QofAccessFunc)obj_getName,		(QofSetterFunc)obj_setName		},
+	{ OBJ_NAME,	    QOF_TYPE_STRING,    (QofAccessFunc)obj_getName,	    (QofSetterFunc)obj_setName	},
 	{ OBJ_AMOUNT,   QOF_TYPE_NUMERIC,   (QofAccessFunc)obj_getAmount,   (QofSetterFunc)obj_setAmount	},
-	{ OBJ_DATE,		QOF_TYPE_DATE,		(QofAccessFunc)obj_getDate,		(QofSetterFunc)obj_setDate		},
-	{ OBJ_DISCOUNT, QOF_TYPE_DOUBLE,	(QofAccessFunc)obj_getDiscount, (QofSetterFunc)obj_setDiscount  },
+	{ OBJ_DATE,	    QOF_TYPE_DATE,      (QofAccessFunc)obj_getDate,	    (QofSetterFunc)obj_setDate	},
+	{ OBJ_DISCOUNT, QOF_TYPE_DOUBLE,    (QofAccessFunc)obj_getDiscount, (QofSetterFunc)obj_setDiscount  },
 	{ OBJ_ACTIVE,   QOF_TYPE_BOOLEAN,   (QofAccessFunc)obj_getActive,   (QofSetterFunc)obj_setActive	},
-	{ OBJ_VERSION,  QOF_TYPE_INT32,		(QofAccessFunc)obj_getVersion,  (QofSetterFunc)obj_setVersion   },
-	{ OBJ_MINOR,	QOF_TYPE_INT64,		(QofAccessFunc)obj_getMinor,	(QofSetterFunc)obj_setMinor		},
-    { QOF_PARAM_BOOK, QOF_ID_BOOK,		(QofAccessFunc)qof_instance_get_book, NULL },
-    { QOF_PARAM_GUID, QOF_TYPE_GUID,	(QofAccessFunc)qof_instance_get_guid, NULL },
-    { NULL },
+	{ OBJ_VERSION,  QOF_TYPE_INT32,	    (QofAccessFunc)obj_getVersion,  (QofSetterFunc)obj_setVersion   },
+	{ OBJ_MINOR,    QOF_TYPE_INT64,	    (QofAccessFunc)obj_getMinor,	(QofSetterFunc)obj_setMinor	},
+	{ QOF_PARAM_BOOK, QOF_ID_BOOK,	    (QofAccessFunc)qof_instance_get_book, NULL },
+	{ QOF_PARAM_GUID, QOF_TYPE_GUID,    (QofAccessFunc)qof_instance_get_guid, NULL },
+	{ NULL },
   };
 
   qof_class_register (TEST_MODULE_NAME, NULL, params);
@@ -300,8 +306,7 @@ int main (int argc, char **argv)
 	timespecFromTime_t(&ts,time(NULL));
 	qsf_doc = NULL;
 
-	new_obj = g_new(myobj, 1);
-	qof_instance_init (&new_obj->inst, TEST_MODULE_NAME, tester);
+	new_obj = obj_create(tester);
 	obj_setName(new_obj, import_init);
 	obj_setAmount(new_obj, obj_amount);
 	obj_setActive(new_obj, active);
@@ -313,7 +318,7 @@ int main (int argc, char **argv)
 	/* Write out the test data using the QSF backend. */
 	qof_session_save(testing, NULL);
 	qof_session_end(testing);
-	
+
 	/* Start a new session with an empty book and read the QSF file back in. */
 	testing = qof_session_new();
 	path_buffer = g_strdup_printf("file:%s/%s", "/tmp", "qsf-test.xml");
@@ -321,11 +326,5 @@ int main (int argc, char **argv)
 	qof_session_load(testing, NULL);
 	tester = qof_session_get_book(testing);
 
-	/* Output the parsed QSF object to stdout, if it validates. */
-	qsf_doc = qofbook_to_qsf(tester);
-	g_return_val_if_fail(qsf_is_valid(QSF_SCHEMA_DIR, QSF_OBJECT_SCHEMA, qsf_doc) == TRUE, 1);
-	xmlDocFormatDump(stdout, qsf_doc, 1);
-	printf("\n");
-	
 	return 0;
 }

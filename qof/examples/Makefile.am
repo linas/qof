@@ -7,7 +7,7 @@ else
 EXAMPLES=
 endif
 
-SUBDIRS = $(EXAMPLES)
+SUBDIRS = $(EXAMPLES) backend
 
 # SUBDIRS = gobject
 
