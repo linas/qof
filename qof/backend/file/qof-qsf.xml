@@ -6,8 +6,7 @@ $ CCYY-MM-DDThh:mm:ss[Z|(+|-)hh:mm This is iso-8601 with : in the final timezone
 <!-- would be omitted for other repeats, shown here as example -->
 <!--  event_week_starts_day en_gb Sunday = 0, Friday = 5 -->
 <!-- category is not specifically 'addr_' - it is common to most Palm objects -->
-<qof-qsf
-xmlns="urn:qof-qsf-container">
+<qof-qsf xmlns="http://qof.sourceforge.net/">
 <book count="1">
 	<book-guid>c0dd5ca1b11338f3ceae57f6e0106d75</book-guid>
 	<object type="qof-expenses" count="1">
@@ -22,6 +21,7 @@ xmlns="urn:qof-qsf-container">
 		<guid type="guid">c9c3c49db198b3b87e8d513e618f9078</guid>
 		<numeric type="expense_amount">2432/100</numeric>
 		<date type="expense_date">2004-11-02T14:55:00Z</date>
+		<kvp type="expense_slots" path="/expense/next" value="boolean">false</kvp>
 	</object>
 	<object type="qof-datebook" count="1">
 		<string type="qof-datebook">Pilot-link QOF datebook</string>
