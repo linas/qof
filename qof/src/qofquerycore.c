@@ -1231,6 +1231,33 @@ qof_query_kvp_predicate (QofQueryCompare how,
   return ((QofQueryPredData*)pdata);
 }
 
+QofQueryPredData *
+qof_query_kvp_predicate_path (QofQueryCompare how,
+                              const char *path, const KvpValue *value)
+{
+  QofQueryPredData *pd;
+  GSList *spath = NULL;
+  char *str, *p;
+
+  if (!path) return NULL;
+
+  str = g_strdup (path);
+  p = str;
+  if (0 == *p) return NULL;
+  if ('/' == *p) p++;
+
+  while (p)
+  {
+    spath = g_slist_append (spath, p);
+    p = strchr (p, '/');
+    if (p) { *p = 0; p++; }
+  }
+
+  pd = qof_query_kvp_predicate (how, spath, value);
+  g_free (str);
+  return pd;
+}
+
 /* initialization ================================================== */
 /** This function registers a new Core Object with the QofQuery
  * subsystem.  It maps the "core_name" object to the given

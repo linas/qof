@@ -146,7 +146,7 @@ QofQueryPredData *qof_query_kvp_predicate (QofQueryCompare how,
 /** Same predicate as above, except that 'path' is assumed to be 
  * a string containing slash-separated pathname. */
 QofQueryPredData *qof_query_kvp_predicate_path (QofQueryCompare how,
-                                                char *path, 
+                                                const char *path, 
                                                 const KvpValue *value);
 
 /** Copy a predicate. */
