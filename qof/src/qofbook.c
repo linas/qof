@@ -221,6 +221,8 @@ qof_book_get_collection (QofBook *book, QofIdType entity_type)
 {
   QofCollection *col;
                                                                                 
+  if (!book || !entity_type) return NULL;
+
   col = g_hash_table_lookup (book->hash_of_collections, entity_type);
   if (col) return col;
                                                                                 
