@@ -21,25 +21,13 @@
  *                                                                  *
 \********************************************************************/
 
-#ifndef QOF_QUERY_DESERIAL_H
-#define QOF_QUERY_DESERIAL_H
-
-#include <qof/qofquery.h>
-#include <libxml/tree.h>
-
-/** Given an XML tree, reconstruct and return the 
- *  equivalent query. */
-QofQuery *qof_query_from_xml (xmlNodePtr);
-
-#endif /* QOF_QUERY_DESERIAL_H */
-
-
 // #include "config.h"
 
 #include <stdlib.h>
 #include <glib.h>
 #include <libxml/parser.h>
 
+#include "qofquery-deserial.h"
 #include "qofquery-serialize.h"
 #include "qofquery-p.h"
 #include "qofquerycore-p.h"
@@ -633,11 +621,11 @@ qof_query_from_xml (xmlNodePtr root)
 		else 
 		if (0 == strcmp (node->name, "qofquery:sort-list"))
 		{
-// XXX unfinished
+// XXX unfinished  I'm bored
 		}
 		else 
 		{
-			// XXX unknown node type 
+			// XXX unknown node type tell someone about it
 		}
 	}
 
@@ -646,7 +634,6 @@ qof_query_from_xml (xmlNodePtr root)
 
 /* =============================================================== */
 
-#define UNIT_TEST
 #ifdef UNIT_TEST
 
 #include <stdio.h>
@@ -690,6 +677,10 @@ int main (int argc, char * argv[])
 	    "or achar != asdf "
 	    "and aguid != abcdef01234567890fedcba987654321 "
 	    "and akvp != \'/some/path:abcdef01234567890fedcba987654321\' "
+	    "and not akvp != \'/some/path/glop:1234\' "
+	    "and akvp = \'/arf/arf/arf:10.234\' "
+	    "and akvp != \'/some/other/path:qwerty1234uiop\' "
+	    "and not akvp = \'/some/final/path:123401/100\' "
 	    );
 	// qof_sql_query_parse (sq, "SELECT * from GncABC;");
 	q = qof_sql_query_get_query (sq);
@@ -702,10 +693,11 @@ int main (int argc, char * argv[])
 	printf ("  ------------------------------------------------------- \n");
 	qof_query_print (qnew);
 
+   /* If the before and after trees are the same, the test pases. */
 	gboolean eq = qof_query_equal (q, qnew);
 	printf ("Are the two equal? answer=%d\n", eq);
 
-// #define DOPRINT 1
+#define DOPRINT 1
 #ifdef DOPRINT
    xmlDocPtr doc = doc = xmlNewDoc("1.0");
 	xmlDocSetRootElement(doc,topnode);
