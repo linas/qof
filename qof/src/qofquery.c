@@ -389,7 +389,7 @@ check_object (QofQuery *q, gpointer object)
         /* iterate through the conversions */
         for (node = qt->param_fcns; node; node = node->next) 
         {
-          QofParam *param = node->data;
+          param = node->data;
 
           /* The last term is the actual parameter getter */
           if (!node->next) break;

@@ -69,8 +69,8 @@ static void qof_query_register_core_object (char const *type_name,
  *                               string_print_fcn, pred_equal_fcn);
  */
 
-static QueryPredicateCopyFunc gncQueryCoreGetCopy (char const *type);
-static QueryPredDataFree gncQueryCoreGetPredFree (char const *type);
+static QueryPredicateCopyFunc qof_query_copy_predicate (QofType type);
+static QueryPredDataFree qof_query_predicate_free (QofType type);
 
 /* Core Type Predicate helpers */
 typedef const char * (*query_string_getter) (gpointer, QofParam *);
@@ -1251,15 +1251,17 @@ qof_query_kvp_predicate (QofQueryCompare how,
 static void init_tables (void)
 {
   unsigned int i;
-  struct {
-    char const *name;
-    QofQueryPredicateFunc pred;
-    QofCompareFunc comp;
+  struct 
+  {
+    QofType                name;
+    QofQueryPredicateFunc  pred;
+    QofCompareFunc         comp;
     QueryPredicateCopyFunc copy;
-    QueryPredDataFree pd_free;
-    QueryToString toString;
-    QueryPredicateEqual pred_equal;
-  } knownTypes[] = {
+    QueryPredDataFree      pd_free;
+    QueryToString          toString;
+    QueryPredicateEqual    pred_equal;
+  } knownTypes[] = 
+  {
     { QOF_TYPE_STRING, string_match_predicate, string_compare_func,
       string_copy_predicate, string_free_pdata, string_to_string, 
       string_predicate_equal },
@@ -1295,7 +1297,8 @@ static void init_tables (void)
   };
 
   /* Register the known data types */
-  for (i = 0; i < (sizeof(knownTypes)/sizeof(*knownTypes)); i++) {
+  for (i = 0; i < (sizeof(knownTypes)/sizeof(*knownTypes)); i++) 
+  {
     qof_query_register_core_object (knownTypes[i].name,
                                 knownTypes[i].pred,
                                 knownTypes[i].comp,
@@ -1306,7 +1309,8 @@ static void init_tables (void)
   }
 }
 
-static QueryPredicateCopyFunc gncQueryCoreGetCopy (char const *type)
+static QueryPredicateCopyFunc 
+qof_query_copy_predicate (QofType type)
 {
   QueryPredicateCopyFunc rc;
   g_return_val_if_fail (type, NULL);
@@ -1314,14 +1318,15 @@ static QueryPredicateCopyFunc gncQueryCoreGetCopy (char const *type)
   return rc;
 }
 
-static QueryPredDataFree gncQueryCoreGetPredFree (char const *type)
+static QueryPredDataFree 
+qof_query_predicate_free (QofType type)
 {
   g_return_val_if_fail (type, NULL);
   return g_hash_table_lookup (freeTable, type);
 }
 
 static void 
-qof_query_register_core_object (char const *core_name,
+qof_query_register_core_object (QofType core_name,
                                 QofQueryPredicateFunc pred,
                                 QofCompareFunc comp,
                                 QueryPredicateCopyFunc copy,
@@ -1385,14 +1390,14 @@ void qof_query_core_shutdown (void)
 }
 
 QofQueryPredicateFunc
-qof_query_core_get_predicate (char const *type)
+qof_query_core_get_predicate (QofType type)
 {
   g_return_val_if_fail (type, NULL);
   return g_hash_table_lookup (predTable, type);
 }
 
 QofCompareFunc
-qof_query_core_get_compare (char const *type)
+qof_query_core_get_compare (QofType type)
 {
   g_return_val_if_fail (type, NULL);
   return g_hash_table_lookup (cmpTable, type);
@@ -1406,7 +1411,7 @@ qof_query_core_predicate_free (QofQueryPredData *pdata)
   g_return_if_fail (pdata);
   g_return_if_fail (pdata->type_name);
 
-  free_fcn = gncQueryCoreGetPredFree (pdata->type_name);
+  free_fcn = qof_query_predicate_free (pdata->type_name);
   free_fcn (pdata);
 }
 
@@ -1418,24 +1423,24 @@ qof_query_core_predicate_copy (QofQueryPredData *pdata)
   g_return_val_if_fail (pdata, NULL);
   g_return_val_if_fail (pdata->type_name, NULL);
 
-  copy = gncQueryCoreGetCopy (pdata->type_name);
+  copy = qof_query_copy_predicate (pdata->type_name);
   return (copy (pdata));
 }
 
 char * 
-qof_query_core_to_string (char const *type, gpointer object,
-                          QofAccessFunc get)
+qof_query_core_to_string (QofType type, gpointer object,
+                          QofParam *getter)
 {
   QueryToString toString;
 
   g_return_val_if_fail (type, NULL);
   g_return_val_if_fail (object, NULL);
-  g_return_val_if_fail (get, NULL);
+  g_return_val_if_fail (getter, NULL);
 
   toString = g_hash_table_lookup (toStringTable, type);
   g_return_val_if_fail (toString, NULL);
 
-  return toString (object, get);
+  return toString (object, getter);
 }
 
 gboolean 
