@@ -15,6 +15,7 @@ libqof_la_SOURCES =  \
    md5.c             \
    qofbackend.c      \
    qofclass.c        \
+   qofgobj.c         \
    qofid.c           \
    qofinstance.c     \
    qofquery.c        \
@@ -37,6 +38,7 @@ qofinclude_HEADERS = \
    qof.h             \
    qofbackend.h      \
    qofclass.h        \
+   qofgobj.h         \
    qofid.h           \
    qofinstance.h     \
    qofquery.h        \
@@ -76,5 +78,4 @@ INCLUDES =                     \
    -DPREFIX=\""$(prefix)"\"    \
    -DDATADIR=\""$(datadir)"\" 
                    
-
 
