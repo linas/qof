@@ -20,15 +20,10 @@
  *                                                                  *
 \********************************************************************/
 
-/** @addtogroup Query_Core_API
-    @{ */
+/** @addtogroup Query
 
-/** @file qofquery.h
-    @brief find objects that match a certain expression.
-    @author Copyright (C) 2002 Derek Atkins <warlord@MIT.EDU>
-    @author Copyright (C) 2003 Linas Vepstas <linas@linas.org>
-
-BASIC QUERY API: With this API you can create arbitrary logical
+BASIC QUERY API: 
+With this API you can create arbitrary logical
 queries to find sets of arbitrary object.  To make simple
 queries (1 term, such as a search for a parameter with one value), 
 create the appropriate
@@ -37,6 +32,12 @@ xaccInitQuery. The QueryTerm should be malloced but the Query object
 will handle freeing it.  To make compound queries, make multiple
 simple queries and combine them using qof_query_merge() and the logical
 operations of your choice.
+
+SQL QUERY API: 
+As an alternative to building queries one predicate at a time,
+you can use the SQL query interface.  This interface will accept 
+a string containing an SQL query, parse it, convert it into the
+core representation, and execute it.
 
 STRUCTURE OF A QUERY: A Query is a logical function of any number of
 QueryTerms.  A QueryTerm consists of a C function pointer (the
@@ -68,6 +69,12 @@ AND-chain are sorted by predicate type, with Account queries sorted
 first to allow the evaluator to completely eliminate accounts from the
 search if there's no chance of them having splits that match.
 (XXX above no longer applies)
+
+ @{ */
+/** @file qofquery.h
+    @brief find objects that match a certain expression.
+    @author Copyright (C) 2002 Derek Atkins <warlord@MIT.EDU>
+    @author Copyright (C) 2003 Linas Vepstas <linas@linas.org>
 
 */
 
@@ -105,6 +112,8 @@ typedef enum {
 #define QOF_QUERY_PARAM_ACTIVE  "active" 
 
 /* --------------------------------------------------------- */
+/** @name Query Subsystem Initialization and Shudown  */
+/* @{ */
 /** Subsystem initialization and shutdown. Call init() once 
  *  to initalize the query subsytem; call shutdown() to free
  *  up any resources associated with the query subsystem. 
@@ -113,9 +122,11 @@ typedef enum {
 
 void qof_query_init (void);
 void qof_query_shutdown (void);
+/* @} */
 
 /* --------------------------------------------------------- */
-/** Basic API Functions */
+/** @name Low-Level API Functions */
+/* @{ */
 
 GSList * qof_query_build_param_list (char const *param, ...);
 
@@ -351,5 +362,6 @@ QofIdType qof_query_get_search_for (QofQuery *q);
 /** Return the list of books we're using */
 GList * qof_query_get_books (QofQuery *q);
 
+/* @} */
 #endif /* QOF_QUERYNEW_H */
-/*  @} */
+/* @} */

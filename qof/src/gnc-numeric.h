@@ -19,6 +19,9 @@
  *******************************************************************/
 
 /** @addtogroup Numeric
+    Please refer to the texinfo documentation for details 
+    on the numeric functions.
+
     @{ */
 /** @file gnc-numeric.h
     @brief An exact-rational-number library for gnucash.

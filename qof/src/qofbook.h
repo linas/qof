@@ -24,8 +24,6 @@
  * Encapsulate all the information about a dataset.
  * See src/docs/books.txt for implementation overview.
  *
- * HISTORY:
- * Created by Linas Vepstas December 1998
  * @author Copyright (c) 1998, 1999, 2001, 2003 Linas Vepstas <linas@linas.org>
  * @author Copyright (c) 2000 Dave Peticolas
  */
