@@ -42,6 +42,8 @@ my_obj_order (MyObj *a, MyObj *b)
    return -1;
 }
 
+gpointer  get_self (gpointer p) { return p; }
+
 /* ===================================================== */
 /* Provide infrastructure to register my object with QOF */
 
@@ -62,7 +64,7 @@ gboolean KvpObjRegister (void)
 {
    /* Associate an ASCII name to each getter, as well as the return type */
    static QofParam params[] = {
-     { MYOBJ_MEMO,  QOF_TYPE_STRING, (QofAccessFunc)my_obj_get_memo, NULL },
+     { MYOBJ_MEMO,  QOF_TYPE_KVP, get_self, NULL },
      { NULL },
    };
 
