@@ -100,6 +100,18 @@ base functions from GnuCash:
     a generic way, and hasn't been brought back into QOF.
     </p>
 <li><p>
+    Provide a QL (query language) parser, so that ASCII expressions
+    such as <tt>SELECT memo FROM gncTransaction WHERE
+    gncTransaction.date='15.06.2003';</tt> are turned into the 
+    aprorpiate queries.
+    </p>
+<li><p>
+    The current iteration over object fields is O(N), because each
+    object instance is checked for a match.  It would be nice to add
+    support for 'primary keys' and/or indexes as the first step
+    towards a query optimizer.
+    </p>
+<li><p>
     Provide for off-line operation.  Because the object data is cached
     locally, users should be able to continue doing useful work even
     if they are not attached to the net.  When they regain net access, 
