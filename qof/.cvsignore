@@ -8,6 +8,7 @@ config.h.in
 config.log
 config.status
 config.sub
+configure
 depcomp
 install-sh
 intltool-extract.in
