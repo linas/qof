@@ -1,7 +1,7 @@
 #
 # Makefile.am for libqof
 #
-SUBDIRS = lib backend src doc examples
+SUBDIRS = lib backend qof doc examples
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = qof-0.pc

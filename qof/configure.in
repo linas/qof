@@ -158,7 +158,7 @@ examples/gobject/Makefile
 lib/Makefile
 lib/dwi/Makefile
 lib/libsql/Makefile
-src/Makefile
+qof/Makefile
 qof-0.pc
 ])
 
