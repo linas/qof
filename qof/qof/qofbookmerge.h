@@ -53,7 +53,7 @@ type in the target book.
 	-# If the data has changed, the object is tagged as REPORT. 
 	-# If the data does not match, the object is tagged as NEW
 
-More information is at http://www.codehelp.co.uk/code/index.html
+More information is at http://code.neil.williamsleesmill.me.uk/
 
 Each foreach function uses g_return_if_fail checks to protect the target book. If
 any essential data is missing, the loop returns without changing the target book.
@@ -143,7 +143,7 @@ structures.
 typedef struct
 {
 	GSList 	*mergeObjectParams;	/**< GSList of ::QofParam details for each parameter in the current object. */
-	GSList 	*mergeList;			/**< GSList of ::qof_book_mergeRule rules for the import data. */
+	GList 	*mergeList;			/**< GSList of ::qof_book_mergeRule rules for the import data. */
 	GSList 	*targetList;		/**< GSList of ::QofEntity * for each object of this type in the target book */
 	QofBook *mergeBook;			/**< pointer to the import book for this merge operation. */
 	QofBook *targetBook;		/**< pointer to the target book for this merge operation. */
@@ -291,7 +291,7 @@ void qof_book_mergeRuleForeach( qof_book_mergeRuleForeachCB, qof_book_mergeResul
 struct qof_book_mergeRuleIterate {
 	qof_book_mergeRuleForeachCB   fcn;
 	qof_book_mergeRule *data;
-	GSList *ruleList;
+	GList *ruleList;
 	guint remainder;
 };
 
@@ -410,6 +410,16 @@ to import all entities tagged as ::MERGE_UPDATE or ::MERGE_NEW into the target b
 int
 qof_book_mergeCommit( void );
 
+/** \brief Abort the merge and free all memory allocated by the merge
+
+Sometimes, setting ::MERGE_INVALID is insufficient: e.g. if the user aborts the
+merge from outside the functions dealing with the merge ruleset. This function
+causes an immediate abort - the calling process must start again at Init if 
+a new merge is required.
+*/
+void
+qof_book_merge_abort(void);
+
 /** @} */
 
 /* ======================================================================== */
@@ -506,7 +516,7 @@ void qof_book_mergeForeachTypeTarget ( QofObject* merge_obj, gpointer mergeData)
 */
 void qof_book_mergeForeachTarget (QofEntity* mergeEnt, gpointer mergeData);
 
-/* \brief Omits target entities that have already been matched.
+/** \brief Omits target entities that have already been matched.
 
 	It is possible for two entities in the import book to match a single entity in
 	the target book, resulting in a loss of data during commit.
