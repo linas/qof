@@ -11,6 +11,9 @@ noinst_PROGRAMS = \
 	query-example  \
 	sql-example
 
+noinst_HEADERS = \
+	my-object.h
+
 EXTRA_DIST =                   \
     .cvsignore
 
