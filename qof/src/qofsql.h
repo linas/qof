@@ -34,6 +34,7 @@
 #include <glib.h>
 #include <qof/kvp_frame.h>
 #include <qof/qofbook.h>
+#include <qof/qofquery.h>
 
 typedef struct _QofSqlQuery QofSqlQuery;
 

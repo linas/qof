@@ -314,9 +314,20 @@ handle_single_condition (QofSqlQuery *query, sql_condition * cond)
 		PWARN ("Need to specify an object class to query");
 		return NULL;
 	}
-			
+
+	if (FALSE == qof_class_is_registered (table_name)) 
+	{
+		PWARN ("The query object \'%s\' is not known", table_name);
+		return NULL;
+	}
+
 	QofType param_type = qof_class_get_parameter_type (table_name, param_name);
-	if (!param_type) return NULL;  /* Can't happen */
+	if (!param_type) 
+	{
+		PWARN ("The paramter \'%s\' on object \'%s\' is not known", 
+		       param_type, table_name);
+		return NULL;
+	}
 
 	if (!strcmp (param_type, QOF_TYPE_STRING))
 	{
