@@ -34,6 +34,10 @@
     applications, besides just GnuCash, use this file.  In particular,
     GnoTime (gttr.sourcefore.net) uses this file, and this file is 
     formally a part of QOF (qof.sourceforge.net).
+
+    XXX Note that a number of the routines in here have time-zone bugs
+    in them.  All this horrid mess needs to be fixed.  See XXX below
+    for details about some ofthe bugs.
     *
     @author Copyright (C) 1997 Robin D. Clark <rclark@cs.hmc.edu> 
     @author Copyright (C) 1998-2001,2003 Linas Vepstas <linas@linas.org>
@@ -177,14 +181,31 @@ Timespec gnc_dmy2timespec_end (int day, int month, int year);
  *    date/time string to Timespec.
  *    For example: 1998-07-17 11:00:00.68-05 
  *    is 680 milliseconds after 11 o'clock, central daylight time 
- *    \return The time in local time.*/
+ *    \return The time in local time.
+ *
+ * XXX we should abolish this routine entirely.  The GNC engine should
+ * always assume that a numeric value of seconds is *ALWAYS* GMT,
+ * and thus it is fundamentaly wrong to assign 'local time' to
+ * a numeric time value.  Whoever is using this routine is probably
+ * screwing something up. FIXME XXX
+ */
 Timespec gnc_iso8601_to_timespec_local(const char *);
 
 /** The gnc_iso8601_to_timespec_gmt() routine converts an ISO-8601 style 
  *    date/time string to Timespec.
  *    For example: 1998-07-17 11:00:00.68-05 
  *    is 680 milliseconds after 11 o'clock, central daylight time 
- *    \return The time in gmt. */
+ *    \return The time in gmt. 
+ *
+ * XXXX The current implementation is buggy. Argh !!!!
+ * Specifying a number, using gnc_timespec_to_iso8601_buff() to create
+ * a string, and then converting it back to a number using 
+ * gnc_iso8601_to_timespec_gmt() gives us something that is wrong
+ * by a timezone worth of seconds.  Time handling is a nightmare.
+ * This shouldn't be, since iso8601 time strings are totally
+ * unambiguous, and gnc_timespec_to_iso8601_buff() assumes that
+ * the input is GMT seconds.  XXXX FIXME.
+ */
 Timespec gnc_iso8601_to_timespec_gmt(const char *);
 
 /** The gnc_timespec_to_iso8601_buff() routine prints a Timespec
@@ -206,7 +227,12 @@ void date_add_months (struct tm *tm, int months, gboolean track_last_day);
 
 /** \warning hack alert XXX FIXME -- these date routines return incorrect
  * values for dates before 1970.  Most of them are good only up 
- * till 2038.  This needs fixing ... */
+ * till 2038.  This needs fixing ... 
+ *
+ * XXX  This routine should be modified to assume that the 
+ * the user wanted the time at noon, localtime.  The returned 
+ * time_t should be seconds (at GMT) of the local noon-time.
+*/
 time_t xaccDMYToSec (int day, int month, int year);
 
 /** The gnc_timezone function returns the number of seconds *west*
