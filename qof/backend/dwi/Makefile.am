@@ -2,7 +2,9 @@
 
 lib_LTLIBRARIES = libqof_backend_dwi.la
 
-# libqof_backend_dwi_la_LDFLAGS= -version-info $(LIBDWI_LIBRARY_VERSION) -release $(VERSION) 
+libqof_backend_dwi_la_LDFLAGS= -version-info $(LIBQOF_LIBRARY_VERSION) -release $(VERSION) 
+# libqof_backend_dwi_la_LIBADD= libdwi.so
+LIBS = -ldwi
 
 libqof_backend_dwi_la_SOURCES = \
 	dwi-backend.c                \
@@ -21,6 +23,6 @@ AM_CFLAGS = -g     \
 	@GLIB_CFLAGS@
 
 INCLUDES = \
-	-I../../lib/dwi
+	-I../../lib
 
 
