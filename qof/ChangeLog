@@ -1,4 +1,9 @@
 
+2003-09-27 Linas Vepstas <linas@linas.org>
+	* src/*: sync with GnuCash CVS HEAD; includes misc cleanup, a whole
+	  class of new KVP functions, and and important cleanup of the trace 
+	  facility
+
 2003-06-25 Linas Vepstas <linas@linas.org>
 	* src/*, examples/*:  rename Gnucash files to use qof prefix
 	* release version 0.2
