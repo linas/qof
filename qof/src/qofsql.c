@@ -107,41 +107,6 @@ qof_sql_query_set_kvp (QofSqlQuery *q, KvpFrame *kvp)
 	q->kvp_join = kvp;
 }
 
-/* =================================================================== */
-/* Return NULL if the field is whitespace (blank, tab, formfeed etc.)  
- * Else return pointer to first non-whitespace character. */
-
-static const char *
-whitespace_filter (const char * val)
-{
-	size_t len;
-	if (!val) return NULL;
-
-	len = strspn (val, "\a\b\t\n\v\f\r ");
-	if (0 == val[len]) return NULL;
-	return val+len;
-}
-
-/* =================================================================== */
-/* Return integer 1 if the string starts with 't' or 'T" or contians the 
- * word 'true' or 'TRUE'; if string is a number, return that number. */
-
-static int
-util_bool_to_int (const char * val)
-{
-	const char * p = whitespace_filter (val);
-	if (!p) return 0;
-	if ('t' == p[0]) return 1;
-	if ('T' == p[0]) return 1;
-	if ('y' == p[0]) return 1;
-	if ('Y' == p[0]) return 1;
-	if (strstr (p, "true")) return 1;
-	if (strstr (p, "TRUE")) return 1;
-	if (strstr (p, "yes")) return 1;
-	if (strstr (p, "YES")) return 1;
-	return atoi (val);
-}
-
 /* ========================================================== */
 
 static inline void
@@ -229,7 +194,7 @@ handle_single_condition (QofSqlQuery *query, sql_condition * cond)
 		return NULL;
 	}
 	qvalue_name = dequote_string (qvalue_name);
-	qvalue_name = whitespace_filter (qvalue_name);
+	qvalue_name = qof_util_whitespace_filter (qvalue_name);
 
 	/* Look to see if its the special KVP value holder.
 	 * If it is, look up the value. */
@@ -360,7 +325,7 @@ handle_single_condition (QofSqlQuery *query, sql_condition * cond)
 	}
 	else if (!strcmp (param_type, QOF_TYPE_BOOLEAN))
 	{
-		gboolean ival = util_bool_to_int (qvalue_name);
+		gboolean ival = qof_util_bool_to_int (qvalue_name);
 		pred_data = qof_query_boolean_predicate (qop, ival);
 	}
 	else if (!strcmp (param_type, QOF_TYPE_DATE))
