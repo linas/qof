@@ -1,0 +1,19 @@
+
+                        QOF Examples
+                        ------------
+                        April 2004
+
+There are two examples in this directory, both showing how to use
+QOF for queries.  One example shows how to use the raw, c-language
+query-construction programming interface, the other shows how to
+use an SQL-like language that is parsed and executed on the client 
+side.  The two programs are both nearly identical; they both perform
+a query over a collection of instances of "MyObject".
+
+The "sql-example" program provides an example of the client-side 
+SQL query parsing and execution.
+
+The "query-example" program provides an example of the usage of
+the low-level query-construction routines.
+
+
