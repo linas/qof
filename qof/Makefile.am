@@ -1,12 +1,13 @@
 
-SUBDIRS = po src
+SUBDIRS = po src examples
 
 EXTRA_DIST =                   \
 	AUTHORS                     \
 	COPYING                     \
 	ChangeLog                   \
+	NEWS                        \
 	autogen.sh                  \
 	intltool-extract.in         \
 	intltool-merge.in           \
-	intltool-update.in          \
+	intltool-update.in         
 

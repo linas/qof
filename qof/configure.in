@@ -69,6 +69,7 @@ AC_SUBST(LDFLAGS)
 
 AC_OUTPUT([
 Makefile
+examples/Makefile
 po/Makefile.in
 src/Makefile
 ])
