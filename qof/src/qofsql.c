@@ -28,6 +28,9 @@
 
 #include <glib.h>
 #include <libsql/sql_parser.h>
+#include "gnc-date.h"
+#include "gnc-numeric.h"
+#include "guid.h"
 #include "qofbook.h"
 #include "qofquery.h"
 #include "qofsql.h"
@@ -258,36 +261,58 @@ handle_single_condition (sql_condition * cond, char *globalname)
 		gboolean ival = util_bool_to_int (qvalue_name);
 		pred_data = qof_query_boolean_predicate (qop, ival);
 	}
-#if 0
 	else if (!strcmp (param_type, QOF_TYPE_DATE))
 	{
-xxxxxx
-		gboolean ival = util_bool_to_int (qvalue_name);
-		pred_data = qof_query_boolean_predicate (qop, ival);
+		// XXX FIXME: this doesn't handle time strings, only date strings
+		// XXX should also see if we need to do a day-compare or time-compare.
+		time_t exact;
+		int rc = qof_scan_date_secs (qvalue_name, &exact);
+		if (0 == rc) 
+		{
+			printf ("Error: unable to parse date: %s\n", qvalue_name);
+			return NULL;
+		}
+		Timespec ts;
+		ts.tv_sec = exact;
+		ts.tv_nsec = 0;
+		pred_data = qof_query_date_predicate (qop, QOF_DATE_MATCH_DAY, ts);
 	}
 	else if (!strcmp (param_type, QOF_TYPE_NUMERIC))
 	{
-xxxxxx
-		gboolean ival = util_bool_to_int (qvalue_name);
-		pred_data = qof_query_boolean_predicate (qop, ival);
+		gnc_numeric ival;
+		string_to_gnc_numeric (qvalue_name, &ival);
+		pred_data = qof_query_numeric_predicate (qop, QOF_NUMERIC_MATCH_ANY, ival);
 	}
 	else if (!strcmp (param_type, QOF_TYPE_DEBCRED))
 	{
-xxxxxx
-		gboolean ival = util_bool_to_int (qvalue_name);
-		pred_data = qof_query_boolean_predicate (qop, ival);
+		// XXX this probably needs some work ... 
+		gnc_numeric ival;
+		string_to_gnc_numeric (qvalue_name, &ival);
+		pred_data = qof_query_numeric_predicate (qop, QOF_NUMERIC_MATCH_ANY, ival);
 	}
 	else if (!strcmp (param_type, QOF_TYPE_GUID))
 	{
-xxxxxx
-		gboolean ival = util_bool_to_int (qvalue_name);
-		pred_data = qof_query_boolean_predicate (qop, ival);
+		GUID *guid = guid_malloc();
+		gboolean rc = string_to_guid (qvalue_name, guid);
+		if (0 == rc)
+		{
+			printf ("Error: unable to parse guid: %s\n", qvalue_name);
+			return NULL;
+		}
+
+		// XXX match any means eqal, what about not equal ?? 
+		// XXX less, than greater than don't make sense,
+		// should check for those bad conditions
+		GList *guid_list = g_list_append (NULL, guid);
+		pred_data = qof_query_guid_predicate (QOF_GUID_MATCH_ANY, guid_list);
+		// XXX FIXME the above is a memory leak! we leak both guid and glist.
 	}
+#if 0
 	else if (!strcmp (param_type, QOF_TYPE_KVP))
 	{
-xxxxxx
-		gboolean ival = util_bool_to_int (qvalue_name);
-		pred_data = qof_query_boolean_predicate (qop, ival);
+xxxxxhd
+		xxxx gboolean ival = 
+		pred_data = qof_query_kvp_predicate (qop, ival);
 	}
 #endif
 	else
