@@ -1,5 +1,5 @@
 /********************************************************************\
- * gnc-book-p.h -- private functions for gnc books.                 *
+ * qof-book-p.h -- private functions for QOF books.                 *
  *                                                                  *
  * This program is free software; you can redistribute it and/or    *
  * modify it under the terms of the GNU General Public License as   *
@@ -27,15 +27,15 @@
  * Copyright (c) 2001,2003 Linas Vepstas <linas@linas.org>
  */
 
-#ifndef GNC_BOOK_P_H
-#define GNC_BOOK_P_H
+#ifndef QOF_BOOK_P_H
+#define QOF_BOOK_P_H
 
-#include "Backend.h"
-#include "GNCIdP.h"
-#include "gnc-book.h"
 #include "kvp_frame.h"
+#include "qofbackend.h"
+#include "qofbook.h"
+#include "qofid.h"
 
-struct gnc_book_struct
+struct _QofBook
 {
   /* Unique guid for this book. */
   GUID guid;
@@ -48,7 +48,7 @@ struct gnc_book_struct
    * belonging to this book, with their pointers to the respective
    * objects.  This allows a lookup of objects based on thier guid.
    */
-  GNCEntityTable *entity_table;
+  QofEntityTable *entity_table;
 
   /* In order to store arbitrary data, for extensibility, add a table
    * that will be used to hold arbitrary pointers.
@@ -72,7 +72,7 @@ struct gnc_book_struct
    * not books.  So the pointer below "really shouldn't be here", 
    * except that it provides a nice convenience, avoiding a lookup 
    * from the session.  Better solutions welcome ... */ 
-  Backend *backend;
+  QofBackend *backend;
 
   /* -------------------------------------------------------------- */
   /* Backend private expansion data */
@@ -80,25 +80,25 @@ struct gnc_book_struct
 };
 
 /*
- * These gnc_book_set_*() routines are used by backends to 
+ * These qof_book_set_*() routines are used by backends to 
  *    initialize the pointers in the book structure to 
  *    something that contains actual data.  These routines 
  *    should not be used otherwise.  (Its somewhat questionable
  *    if the backends should even be doing this much, but for
  *    backwards compatibility, we leave these here.)
  */
-void gnc_book_set_guid(GNCBook *book, GUID guid);
-void gnc_book_set_schedxactions( GNCBook *book, GList *newList );
+void qof_book_set_guid(QofBook *book, GUID guid);
+void qof_book_set_schedxactions( QofBook *book, GList *newList );
 
-void gnc_book_set_backend (GNCBook *book, Backend *be);
+void qof_book_set_backend (QofBook *book, QofBackend *be);
 
-/* The gnc_book_mark_saved() routine marks the book as having been
+/* The qof_book_mark_saved() routine marks the book as having been
  *    saved (to a file, to a database). Used by backends to mark the 
  *    notsaved flag as FALSE just after loading.  Do not use otherwise!
  */
-void gnc_book_mark_saved(GNCBook *book);
+void qof_book_mark_saved(QofBook *book);
 
 /* Register books with the engine */
-gboolean gnc_book_register (void);
+gboolean qof_book_register (void);
 
-#endif /* GNC_BOOK_P_H */
+#endif /* QOF_BOOK_P_H */

@@ -1,5 +1,5 @@
 /********************************************************************\
- * QueryNew.h -- API for finding Gnucash objects                    *
+ * qofquery.h -- API for finding objects that can be queried        *
  *                                                                  *
  * This program is free software; you can redistribute it and/or    *
  * modify it under the terms of the GNU General Public License as   *
@@ -20,56 +20,58 @@
  *                                                                  *
 \********************************************************************/
 
-/** @file QueryNew.h
-    @breif API for finding Gnucash objects 
+/** @file qofquery.h
+    @breif API for finding objects that can be queried
     @author Copyright (C) 2002 Derek Atkins <warlord@MIT.EDU>
 */
 
 
-#ifndef GNC_QUERYNEW_H
-#define GNC_QUERYNEW_H
+#ifndef QOF_QUERYNEW_H
+#define QOF_QUERYNEW_H
 
-#include "GNCId.h"
-#include "QueryCore.h"
-#include "gnc-book.h"
+#include "guid.h"
+#include "qofquerycore.h"
+#include "qofbook.h"
 
 /** A Query */
-typedef struct querynew_s QueryNew;
+typedef struct _QofQuery QofQuery;
 
 /** Query Term Operators, for combining Query Terms */
 typedef enum {
-  QUERY_FIRST_TERM=1,  /* First/only term is same as 'and' */
-  QUERY_AND=1,
-  QUERY_OR,
-  QUERY_NAND,
-  QUERY_NOR,
-  QUERY_XOR
-} QueryOp;
+  QOF_QUERY_AND=1,
+  QOF_QUERY_OR,
+  QOF_QUERY_NAND,
+  QOF_QUERY_NOR,
+  QOF_QUERY_XOR
+} QofQueryOp;
+
+/* First/only term is same as 'and' */
+#define QOF_QUERY_FIRST_TERM QOF_QUERY_AND
 
 /** Default sort object type */
 #define QUERY_DEFAULT_SORT	"GnucashQueryDefaultSortObject"
 
 /** "Known" Object Parameters -- all objects must support these */
-#define QUERY_PARAM_BOOK	"book"
-#define QUERY_PARAM_GUID	"guid"
-#define QUERY_PARAM_ACTIVE	"active" /* it's ok if an object does
+#define QOF_QUERY_PARAM_BOOK	"book"
+#define QOF_QUERY_PARAM_GUID	"guid"
+#define QOF_QUERY_PARAM_ACTIVE	"active" /* it's ok if an object does
 					  * not support this */
 
 /** Basic API Functions */
 
-GSList * gncQueryBuildParamList (char const *param, ...);
+GSList * qof_query_build_param_list (char const *param, ...);
 
 /** Create a new query.  A Query MUST be set with a 'search-for' type.
  *  you can create and set this value in one step or two */
-QueryNew * gncQueryCreate (void);
-QueryNew * gncQueryCreateFor (GNCIdTypeConst obj_type);
-void gncQueryDestroy (QueryNew *q);
+QofQuery * qof_query_create (void);
+QofQuery * qof_query_create_for (QofIdTypeConst obj_type);
+void qof_query_destroy (QofQuery *q);
 
 /** Set the object type to be searched for */
-void gncQuerySearchFor (QueryNew *query, GNCIdTypeConst obj_type);
+void qof_query_search_for (QofQuery *query, QofIdTypeConst obj_type);
 
 /** Set the book to be searched (you can search multiple books) */
-void gncQuerySetBook (QueryNew *q, GNCBook *book);
+void qof_query_set_book (QofQuery *q, QofBook *book);
 
 
 /** This is the general function that adds a new Query Term to a query.
@@ -84,40 +86,40 @@ void gncQuerySetBook (QueryNew *q, GNCBook *book);
  *
  * For example:
  *
- * acct_name_pred_data = make_string_pred_data(STRING_MATCH_CASEINSENSITIVE,
+ * acct_name_pred_data = make_string_pred_data(QOF_STRING_MATCH_CASEINSENSITIVE,
  *					       account_name);
  * param_list = make_list (SPLIT_ACCOUNT, ACCOUNT_NAME, NULL);
- * gncQueryAddTerm (query, param_list, COMPARE_EQUAL,
- *		    acct_name_pred_data, QUERY_AND);
+ * qof_query_add_term (query, param_list, QOF_COMPARE_EQUAL,
+ *		    acct_name_pred_data, QOF_QUERY_AND);
  */
 
-void gncQueryAddTerm (QueryNew *query, GSList *param_list,
-		      QueryPredData_t pred_data, QueryOp op);
+void qof_query_add_term (QofQuery *query, GSList *param_list,
+		      QofQueryPredData *pred_data, QofQueryOp op);
 
-void gncQueryAddGUIDMatch (QueryNew *q, GSList *param_list,
-			   const GUID *guid, QueryOp op);
-void gncQueryAddGUIDListMatch (QueryNew *q, GSList *param_list,
-			       GList *guid_list, guid_match_t options,
-			       QueryOp op);
+void qof_query_add_guid_match (QofQuery *q, GSList *param_list,
+			   const GUID *guid, QofQueryOp op);
+void qof_query_add_guid_list_match (QofQuery *q, GSList *param_list,
+			       GList *guid_list, QofGuidMatch options,
+			       QofQueryOp op);
 
-void gncQueryAddBooleanMatch (QueryNew *q, GSList *param_list, gboolean value,
-			      QueryOp op);
+void qof_query_add_boolean_match (QofQuery *q, GSList *param_list, gboolean value,
+			      QofQueryOp op);
 
 /** Run the query: */
-GList * gncQueryRun (QueryNew *query);
+GList * qof_query_run (QofQuery *query);
 
 /** Return the results of the last query, without re-running */
-GList * gncQueryLastRun (QueryNew *query);
+GList * qof_query_last_run (QofQuery *query);
 
-void gncQueryClear (QueryNew *query);
-void gncQueryPurgeTerms (QueryNew *q, GSList *param_list);
-int gncQueryHasTerms (QueryNew *q);
-int gncQueryNumTerms (QueryNew *q);
+void qof_query_clear (QofQuery *query);
+void qof_query_purge_terms (QofQuery *q, GSList *param_list);
+int qof_query_has_terms (QofQuery *q);
+int qof_query_num_terms (QofQuery *q);
 
-gboolean gncQueryHasTermType (QueryNew *q, GSList *term_param);
+gboolean qof_query_has_term_type (QofQuery *q, GSList *term_param);
 
-QueryNew * gncQueryCopy (QueryNew *q);
-QueryNew * gncQueryInvert(QueryNew *q);
+QofQuery * qof_query_copy (QofQuery *q);
+QofQuery * qof_query_invert(QofQuery *q);
 
 /** Merges two queries together.  Both queries must be compatible
  * search-types.  If both queries are set, they must search for the
@@ -125,44 +127,44 @@ QueryNew * gncQueryInvert(QueryNew *q);
  * search for the set type.  If neither query has the search-type set,
  * the result will be unset as well.
  */
-QueryNew * gncQueryMerge(QueryNew *q1, QueryNew *q2, QueryOp op);
+QofQuery * qof_query_merge(QofQuery *q1, QofQuery *q2, QofQueryOp op);
 
-/** Like gncQueryMerge, but this will merge q2 into q1.  q2 remains
+/** Like qof_query_merge, but this will merge q2 into q1.  q2 remains
  * unchanged.
  */
-void gncQueryMergeInPlace(QueryNew *q1, QueryNew *q2, QueryOp op);
+void qof_query_merge_in_place(QofQuery *q1, QofQuery *q2, QofQueryOp op);
 
 /** The lists become the property of the Query and will be freed
  * by the query when it is destroyed.
  */
-void gncQuerySetSortOrder (QueryNew *q,
+void qof_query_set_sort_order (QofQuery *q,
 			   GSList *primary_sort_params,
 			   GSList *secondary_sort_params,
 			   GSList *tertiary_sort_params);
 
-void gncQuerySetSortOptions (QueryNew *q, gint prim_op, gint sec_op,
+void qof_query_set_sort_options (QofQuery *q, gint prim_op, gint sec_op,
 			     gint tert_op);
 
-void gncQuerySetSortIncreasing (QueryNew *q, gboolean prim_inc,
+void qof_query_set_sort_increasing (QofQuery *q, gboolean prim_inc,
 				gboolean sec_inc, gboolean tert_inc);
 
 
-void gncQuerySetMaxResults (QueryNew *q, int n);
+void qof_query_set_max_results (QofQuery *q, int n);
 
 /** Compare two queries for equality. This is a simplistic
  * implementation -- logical equivalences between different
  * and/or trees are ignored. */
-gboolean gncQueryEqual (QueryNew *q1, QueryNew *q2);
+gboolean qof_query_equal (QofQuery *q1, QofQuery *q2);
 
 /* Print the Query in human-readable format.
  * Useful for debugging and development.
  */
-void gncQueryPrint (QueryNew *query);
+void qof_query_print (QofQuery *query);
 
 /* Return the type of data we're querying for */
-GNCIdType gncQueryGetSearchFor (QueryNew *q);
+QofIdType qof_query_get_search_for (QofQuery *q);
 
 /* Return the list of books we're using */
-GList * gncQueryGetBooks (QueryNew *q);
+GList * qof_query_get_books (QofQuery *q);
 
-#endif /* GNC_QUERYNEW_H */
+#endif /* QOF_QUERYNEW_H */

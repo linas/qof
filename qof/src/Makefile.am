@@ -2,49 +2,54 @@
 pkglib_LTLIBRARIES = libqof.la
 
 libqof_la_SOURCES = 		\
-	gncObject.c		\
-	gnc-book.c		\
 	gnc-date.c		\
 	gnc-engine-util.c		\
 	gnc-numeric.c		\
 	gnc-event.c		\
-	gnc-session.c		\
 	gnc-trace.c		\
 	guid.c			\
 	kvp_frame.c     \
 	md5.c           \
-	Backend.c       \
-	GNCId.c         \
-	QueryCore.c     \
-	QueryNew.c      \
-	QueryObject.c 
+	qofbackend.c    \
+	qofid.c         \
+	qofquery.c      \
+	qofqueryobject.c \
+	qofbook.c        \
+	qofobject.c      \
+	qofquerycore.c   \
+	qofsession.c
 
-noinst_HEADERS = 	\
-	gncObject.h      \
-	gncObjectP.h     \
-	gnc-book.h       \
-	gnc-book-p.h     \
+qofincludedir = ${INCLUDE_DIR}
+qofinclude_HEADERS = \
 	gnc-date.h       \
 	gnc-engine-util.h	\
 	gnc-numeric.h		\
 	gnc-event.h		  \
-	gnc-event-p.h    \
-	gnc-session.h	  \
-	gnc-session-p.h  \
 	gnc-trace.h		  \
 	guid.h			  \
 	kvp_frame.h		  \
 	md5.h            \
-	Backend.h        \
-	BackendP.h       \
-	GNCId.h          \
-	GNCIdP.h         \
-	QueryCore.h      \
-	QueryCoreP.h     \
-	QueryNew.h       \
-	QueryNewP.h      \
-	QueryObject.h    \
-	QueryObjectP.h
+	qofbackend.h    \
+	qofid.h         \
+	qofquery.h      \
+	qofqueryobject.h \
+	qofbook.h        \
+	qofobject.h      \
+	qofquerycore.h   \
+	qofsession.h
+
+
+noinst_HEADERS = 	\
+	gnc-event-p.h    \
+	qofbackend-p.h    \
+	qofid-p.h         \
+	qofquery-p.h      \
+	qofqueryobject-p.h \
+	qofbook-p.h        \
+	qofobject-p.h      \
+	qofquerycore-p.h   \
+	qofsession-p.h
+
 	
 EXTRA_DIST =                   \
    .cvsignore

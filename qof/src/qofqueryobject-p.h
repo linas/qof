@@ -1,5 +1,7 @@
 /********************************************************************\
- * gncObjectP.h -- the Core Object Registration/Lookup Interface    *
+ * qofqueryobject-p.h -- Private API for registering queriable objects  *
+ * Copyright (C) 2002 Derek Atkins <warlord@MIT.EDU>                *
+ *                                                                  *
  * This program is free software; you can redistribute it and/or    *
  * modify it under the terms of the GNU General Public License as   *
  * published by the Free Software Foundation; either version 2 of   *
@@ -18,31 +20,15 @@
  * Boston, MA  02111-1307,  USA       gnu@gnu.org                   *
  *                                                                  *
 \********************************************************************/
-/** @addtogroup Engine
-    @{ */
-/** @file gncObject.h
- * @breif the Core Object Registration/Lookup Private Interface
- *
- * @author Copyright (c) 2001,2002, Derek Atkins <warlord@MIT.EDU>
- */
 
-#ifndef GNC_OBJECTP_H_
-#define GNC_OBJECTP_H_
+#ifndef QOF_QUERYOBJECTP_H
+#define QOF_QUERYOBJECTP_H
 
-#include "gncObject.h"
+#include "qofqueryobject.h"
 
-/* Initialize the object registration subsystem */
-/* XXX A better name would be 'ObjectClassInitialize ... */
-void gncObjectInitialize (void);
-void gncObjectShutdown (void);
+void qof_query_object_init(void);
+void qof_query_object_shutdown (void);
 
-/* Note that the following are per-class and not per-instance */
-/* To be called from within the book */
-void gncObjectBookBegin (GNCBook *book);
-void gncObjectBookEnd (GNCBook *book);
+QofSortFunc qof_query_object_default_sort (QofIdTypeConst obj_name);
 
-gboolean gncObjectIsDirty (GNCBook *book);
-void gncObjectMarkClean (GNCBook *book);
-
-#endif /* GNC_OBJECTP_H_ */
-/** @} */
+#endif /* QOF_QUERYOBJECTP_H */

@@ -1,5 +1,5 @@
 /********************************************************************\
- * gnc-session.h -- session access (connection to backend)          *
+ * qofsession.h -- session access (connection to backend)           *
  *                                                                  *
  * This program is free software; you can redistribute it and/or    *
  * modify it under the terms of the GNU General Public License as   *
@@ -20,11 +20,15 @@
  *                                                                  *
 \********************************************************************/
 
-/** @file gnc-session.h
+/** @addtogroup Engine
+ *     @{ */
+/** @file qofsession.h
  * @brief Encapsulates a connection to a backednd (persistent store)
+ * @author Copyright (c) 1998, 1999, 2001, 2002 Linas Vepstas <linas@linas.org>
+ * @author Copyright (c) 2000 Dave Peticolas
  *
  * FUNCTION:
- * Encapsulates a connection to a GnuCash backend.  That is, it
+ * Encapsulates a connection to a storage backend.  That is, it
  * manages the connection to a persistant data store; whereas
  * the backend is the thing that performs the actual datastore 
  * access.
@@ -76,34 +80,29 @@
  * make that assumption, in order to store the different accounting
  * periods in a clump so that one can be found, given another.
  *
- *
- * HISTORY:
- * Created by Linas Vepstas December 1998
- * Copyright (c) 1998, 1999, 2001, 2002 Linas Vepstas <linas@linas.org>
- * Copyright (c) 2000 Dave Peticolas
  */
 
-#ifndef GNC_SESSION_H
-#define GNC_SESSION_H
+#ifndef QOF_SESSION_H
+#define QOF_SESSION_H
 
-#include "Backend.h"
-#include "gnc-book.h"
+#include "qofbackend.h"
+#include "qofbook.h"
 
 /* PROTOTYPES ******************************************************/
 
-typedef struct gnc_session_struct    GNCSession;
+typedef struct _QofSession    QofSession;
 
-GNCSession * gnc_session_new (void);
-void         gnc_session_destroy (GNCSession *session);
-GNCSession * gnc_get_current_session (void);
-void	     gnc_set_current_session (GNCSession *session);
+QofSession * qof_session_new (void);
+void         qof_session_destroy (QofSession *session);
+QofSession * qof_session_get_current_session (void);
+void	       qof_session_set_current_session (QofSession *session);
 
-/** The gnc_session_swap_data () method swaps the book of
+/** The qof_session_swap_data () method swaps the book of
  *    the two given sessions. It is useful
  *    for 'Save As' type functionality. */
-void gnc_session_swap_data (GNCSession *session_1, GNCSession *session_2);
+void qof_session_swap_data (QofSession *session_1, QofSession *session_2);
 
-/** The gnc_session_begin () method begins a new session.
+/** The qof_session_begin () method begins a new session.
  *    It takes as an argument the book id. The book id must be a string
  *    in the form of a URI/URL.
  *    In the current implementation, the following URL's are supported
@@ -139,46 +138,46 @@ void gnc_session_swap_data (GNCSession *session_1, GNCSession *session_2);
  *    If an error occurs, it will be pushed onto the session error
  *    stack, and that is where it should be examined.
  */
-void gnc_session_begin (GNCSession *session, const char * book_id,
+void qof_session_begin (QofSession *session, const char * book_id,
                          gboolean ignore_lock, gboolean create_if_nonexistent);
 
 
 /**
- * The gnc_session_load() method causes the GNCBook to be made ready to 
+ * The qof_session_load() method causes the QofBook to be made ready to 
  *    to use with this URL/datastore.   When the URL points at a file, 
  *    then this routine would load the data from the file.  With remote
  *    backends, e.g. network or SQL, this would load only enough data
  *    to make the book actually usable; it would not cause *all* of the
  *    data to be loaded.
  */
-typedef void (*GNCPercentageFunc) (const char *message, double percent);
-void gnc_session_load (GNCSession *session,
-		       GNCPercentageFunc percentage_func);
-gboolean gnc_session_export (GNCSession *tmp_session,
-			     GNCSession *real_session,
-			     GNCPercentageFunc percentage_func);
+typedef void (*QofPercentageFunc) (const char *message, double percent);
+void qof_session_load (QofSession *session,
+		       QofPercentageFunc percentage_func);
+gboolean qof_session_export (QofSession *tmp_session,
+			     QofSession *real_session,
+			     QofPercentageFunc percentage_func);
 
-/** The gnc_session_get_error() routine can be used to obtain the reason
+/** The qof_session_get_error() routine can be used to obtain the reason
  *    for any failure.  Calling this routine returns the current error.
  *
- * The gnc_session_pop_error() routine can be used to obtain the reason
+ * The qof_session_pop_error() routine can be used to obtain the reason
  *    for any failure.  Calling this routine resets the error value.  
  *
  *    This routine allows an implementation of multiple error values, 
  *    e.g. in a stack, where this routine pops the top value. The current 
  *    implementation has a stack that is one-deep.
  *
- *    See Backend.h for a listing of returned errors.
+ *    See qofbackend.h for a listing of returned errors.
  */
-GNCBackendError gnc_session_get_error (GNCSession *session);
-const char * gnc_session_get_error_message(GNCSession *session);
-GNCBackendError gnc_session_pop_error (GNCSession *session);
+QofBackendError qof_session_get_error (QofSession *session);
+const char * qof_session_get_error_message(QofSession *session);
+QofBackendError qof_session_pop_error (QofSession *session);
 
 
-GNCBook * gnc_session_get_book (GNCSession *session);
-void gnc_session_set_book (GNCSession *session, GNCBook *book);
+QofBook * qof_session_get_book (QofSession *session);
+void qof_session_set_book (QofSession *session, QofBook *book);
 
-/** The gnc_session_get_file_path() routine returns the fully-qualified file
+/** The qof_session_get_file_path() routine returns the fully-qualified file
  *    path for the session. That is, if a relative or partial filename
  *    was for the session, then it had to have been fully resolved to
  *    open the session. This routine returns the result of this resolution.
@@ -187,49 +186,49 @@ void gnc_session_set_book (GNCSession *session, GNCBook *book);
  *    filepath is derived from the url by substituting commas for
  *    slashes).
  *
- * The gnc_session_get_url() routine returns the url that was opened.
+ * The qof_session_get_url() routine returns the url that was opened.
  *    URL's for local files take the form of 
  *    file:/some/where/some/file.gml
  */
-const char * gnc_session_get_file_path (GNCSession *session);
-const char * gnc_session_get_url (GNCSession *session);
+const char * qof_session_get_file_path (QofSession *session);
+const char * qof_session_get_url (QofSession *session);
 
 /**
- * The gnc_session_not_saved() subroutine will return TRUE
+ * The qof_session_not_saved() subroutine will return TRUE
  *    if any data in the session hasn't been saved to long-term storage.
  */
-gboolean gnc_session_not_saved(GNCSession *session);
+gboolean qof_session_not_saved(QofSession *session);
 
 /** FIXME: This isn't as thorough as we might want it to be... */
-gboolean gnc_session_save_may_clobber_data (GNCSession *session);
+gboolean qof_session_save_may_clobber_data (QofSession *session);
 
-/** The gnc_session_save() method will commit all changes that have been
+/** The qof_session_save() method will commit all changes that have been
  *    made to the session. For the file backend, this is nothing
  *    more than a write to the file of the current AccountGroup & etc.
  *    For the SQL backend, this is typically a no-op (since all data
  *    has already been written out to the database.
  *
- * The gnc_session_end() method will release the session lock. For the
+ * The qof_session_end() method will release the session lock. For the
  *    file backend, it will *not* save the account group to a file. Thus, 
  *    this method acts as an "abort" or "rollback" primitive.  However,
  *    for other backends, such as the sql backend, the data would have
  *    been written out before this, and so this routines wouldn't 
  *    roll-back anything; it would just shut the connection.
  */
-void     gnc_session_save (GNCSession *session,
-			   GNCPercentageFunc percentage_func);
-void     gnc_session_end  (GNCSession *session);
+void     qof_session_save (QofSession *session,
+			   QofPercentageFunc percentage_func);
+void     qof_session_end  (QofSession *session);
 
-/** The gnc_session_events_pending() method will return TRUE if the backend
+/** The qof_session_events_pending() method will return TRUE if the backend
  *    has pending events which must be processed to bring the engine
  *    up to date with the backend.
  *
- * The gnc_session_process_events() method will process any events indicated
- *    by the gnc_session_events_pending() method. It returns TRUE if the
+ * The qof_session_process_events() method will process any events indicated
+ *    by the qof_session_events_pending() method. It returns TRUE if the
  *    engine was modified while engine events were suspended.
  */
-gboolean gnc_session_events_pending (GNCSession *session);
-gboolean gnc_session_process_events (GNCSession *session);
+gboolean qof_session_events_pending (QofSession *session);
+gboolean qof_session_process_events (QofSession *session);
 
 /** The xaccResolveFilePath() routine is a utility that will accept
  *    a fragmentary filename as input, and resolve it into a fully
@@ -247,4 +246,5 @@ char * xaccResolveURL (const char * pathfrag);
 /** Run the RPC Server */
 void gnc_run_rpc_server (void);
 
-#endif /* GNC_SESSION_H */
+#endif /* QOF_SESSION_H */
+/** @} */
