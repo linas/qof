@@ -1,5 +1,5 @@
 /********************************************************************\
- * QofQuery.c -- API for finding Gnucash objects                    *
+ * qof_query.c -- Implement predicate API for searching for objects *
  * Copyright (C) 2002 Derek Atkins <warlord@MIT.EDU>                *
  *                                                                  *
  * This program is free software; you can redistribute it and/or    *
@@ -1214,6 +1214,12 @@ void qof_query_set_book (QofQuery *q, QofBook *book)
                         qof_book_get_guid(book), QOF_QUERY_AND);
 }
 
+GList * qof_query_get_books (QofQuery *q)
+{
+  if (!q) return NULL;
+  return q->books;
+}
+
 void qof_query_add_boolean_match (QofQuery *q, GSList *param_list, gboolean value,
                               QofQueryOp op)
 {
@@ -1373,6 +1379,7 @@ gboolean qof_query_equal (QofQuery *q1, QofQuery *q2)
   return TRUE;
 }
 
+/***************************************************************************/
 /***************************************************************************/
 /* Query Print functions.  qof_query_print is public; everthing else supports
  * that.
@@ -1817,8 +1824,4 @@ qof_query_printCharMatch (QofCharMatch c)
   return "UNKNOWN MATCH TYPE";
 }                               /* qof_query_printGuidMatch */
 
-GList * qof_query_get_books (QofQuery *q)
-{
-  if (!q) return NULL;
-  return q->books;
-}
+/* ======================== END OF FILE =================== */
