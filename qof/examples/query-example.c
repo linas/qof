@@ -63,7 +63,7 @@ my_obj_get_memo (MyObj *m)
 /* Loop over every instance of MyObj, and apply the callback to it.
  * This routine must be defined for queries to be possible. */
 void
-my_obj_foreach (QofBook *book, QofEntityForeachCB cb, gpointer ud)
+my_obj_foreach (QofCollection *coll, QofEntityForeachCB cb, gpointer ud)
 {
    GList *n;
    
@@ -98,7 +98,7 @@ my_obj_order (MyObj *a, MyObj *b)
 static QofObject myobj_object_def = 
 {
    interface_version: QOF_OBJECT_VERSION,
-   name:              MYOBJ_ID,
+   e_type:            MYOBJ_ID,
    type_label:        "My Blinking Object",
    book_begin:        NULL,
    book_end:          NULL,
