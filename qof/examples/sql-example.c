@@ -75,11 +75,42 @@ my_app_create_data (QofBook *book)
 /* cheap hack to keep the demo simple */
 extern GList *all_my_objs;
 
+void 
+my_app_run_query (QofSqlQuery *q, char *sql_str)
+{
+   GList *results, *n;
+
+   /* Run the query */
+   results = qof_sql_query_run (q, sql_str);
+
+	printf ("------------------------------------------\n");
+   printf ("Query string is: %s\n", sql_str);
+   printf ("Query returned %d results:\n", g_list_length(results));
+   for (n=results; n; n=n->next)
+   {
+      MyObj *m = n->data;
+      printf ("Found a matching object, a=%d b=%d memo=\"%s\"\n", 
+          m->a, m->b, m->memo);
+   }
+	printf ("\n");
+}
+
 void
-my_app_run_query (QofBook *book)
+my_app_do_some_queries (QofBook *book)
 {
    QofSqlQuery *q;
-   GList *results, *n;
+   GList *n;
+
+   /* Print out the baseline: all of the instances in the system */
+	printf ("\n");
+   printf ("My Object collection contains the following objects:\n");
+   for (n=all_my_objs; n; n=n->next)
+   {
+      MyObj *m = n->data;
+      printf ("    a=%d b=%d memo=\"%s\"\n", 
+          m->a, m->b, m->memo);
+   }
+	printf ("\n");
 
    /* Create a new query */
    q =  qof_sql_query_new ();
@@ -95,28 +126,18 @@ my_app_run_query (QofBook *book)
 	        " WHERE (" MYOBJ_MEMO " = 'M M M My Sharona') OR "
 			  "       (" MYOBJ_B " = 42);";
 
-   /* Run the query */
-   results = qof_sql_query_run (q, str);
+   my_app_run_query (q, str);
 
-   /* Print out the results */
-	printf ("\n");
-   printf ("My Object collection contains the following objects:\n");
-   for (n=all_my_objs; n; n=n->next)
-   {
-      MyObj *m = n->data;
-      printf ("    a=%d b=%d memo=\"%s\"\n", 
-          m->a, m->b, m->memo);
-   }
-	printf ("\n");
+   /* Do some more */
+   my_app_run_query (q, "SELECT * FROM MyObj WHERE MyObj_a = 1;");
+   my_app_run_query (q, "SELECT * FROM MyObj WHERE (MyObj_a = 1) AND (MyObj_b=42);");
+   my_app_run_query (q, "SELECT * FROM MyObj WHERE (MyObj_a = 3);");
+   my_app_run_query (q, "SELECT * FROM MyObj;");
+   my_app_run_query (q, "SELECT * FROM MyObj ORDER BY MyObj_a DESC;");
+   my_app_run_query (q, "SELECT * FROM MyObj ORDER BY MyObj_b DESC;");
+   my_app_run_query (q, "SELECT * FROM MyObj WHERE MyObj_a = 1 ORDER BY MyObj_b DESC;");
+   
 
-   printf ("Query returned %d results:\n", g_list_length(results));
-   for (n=results; n; n=n->next)
-   {
-      MyObj *m = n->data;
-      printf ("Found a matching object, a=%d b=%d memo=\"%s\"\n", 
-          m->a, m->b, m->memo);
-   }
-	printf ("\n");
    
    /* The query isn't needed any more; discard it */
    qof_sql_query_destroy (q);
@@ -139,7 +160,7 @@ main (int argc, char *argv[])
    /* Do application-specific things */
    book = my_app_init();
    my_app_create_data(book);
-   my_app_run_query (book);
+   my_app_do_some_queries (book);
    my_app_shutdown (book);
 
    /* Perform a clean shutdown */
