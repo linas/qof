@@ -143,6 +143,24 @@ void qsf_destroy_backend (QofBackend *be)
 	g_free(be);
 }
 
+QofBackendError 
+qof_session_load_our_qsf_object(QofSession *first_session, const char *path)
+{
+	QofSession *qsf_session;
+		
+	first_session = qof_session_get_current_session();
+	qsf_session = qof_session_new();
+	qof_session_begin(qsf_session, path, FALSE, FALSE);
+	qof_session_load(qsf_session, NULL);
+	return qof_session_get_error(qsf_session);
+}
+
+QofBackendError 
+qof_session_load_qsf_object(QofSession *first_session, const char *path)
+{
+	return ERR_QSF_NO_MAP;
+}
+
 void
 qsf_file_type(QofBackend *be, QofBook *book)
 {
@@ -243,10 +261,6 @@ static void
 qsf_supported_parameters(gpointer type, gpointer user_data)
 {
 	qsf_param *params;
-	GHashTable *references;
-	QofEntity *remote_ent;
-	GUID *reference_guid;
-	QofIdType reference_type;
 
 	g_return_if_fail(user_data != NULL);
 	params = (qsf_param*) user_data;
@@ -316,7 +330,6 @@ qsf_entity_foreach(QofEntity *ent, gpointer data)
 	gchar *string_buffer, qsf_guid[GUID_ENCODING_LENGTH + 1];
 	GString *buffer;
 	QofParam *qof_param;
-	QofEntity *referenceEnt;
 	QofEntityReference *reference;
 	KvpFrame 	*qsf_kvp;
 	GHashTable *kvp_hash;
@@ -532,7 +545,6 @@ load_our_qsf_object(QofBook *book, const char *fullpath, qsf_param *params)
 KvpValue*
 string_to_kvp_value(const char *content, KvpValueType type)
 {
-	KvpValue    *value;
 	char        *tail;
 	gint64 	    cm_i64;
 	double      cm_double;
@@ -601,7 +613,7 @@ qsf_object_commitCB(gpointer key, gpointer value, gpointer data)
 	qsf_objects		*object_set;
 	xmlNodePtr		node;
 	QofEntityReference 	*reference;
-	QofEntity		*referenceEnt, *qsf_ent;
+	QofEntity		*qsf_ent;
 	GSList			*linkedEntList;
 	QofBook			*targetBook;
 	const char		*qof_type, *parameter_name;
@@ -621,8 +633,8 @@ qsf_object_commitCB(gpointer key, gpointer value, gpointer data)
 	gchar 			*cm_char;
 	GUID 			*cm_guid;
 	const GUID      *cm_const_guid;
-	KvpFrame 		*cm_kvp;
-	KvpValue        *cm_value;
+//	KvpFrame 		*cm_kvp;
+//	KvpValue        *cm_value;
 	QofSetterFunc 	cm_setter;
 	void	(*string_setter)	(QofEntity*, const char*);
 	void	(*date_setter)		(QofEntity*, Timespec);
@@ -632,8 +644,7 @@ qsf_object_commitCB(gpointer key, gpointer value, gpointer data)
 	void	(*i32_setter)		(QofEntity*, gint32);
 	void	(*i64_setter)		(QofEntity*, gint64);
 	void	(*char_setter)		(QofEntity*, char*);
-	void	(*kvp_frame_setter)	(QofEntity*, KvpFrame*);
-	void	(*reference_setter)	(QofEntity*, QofEntity*);
+//	void	(*kvp_frame_setter)	(QofEntity*, KvpFrame*);
 	
 	g_return_if_fail(data != NULL);
 	g_return_if_fail(value != NULL);
@@ -798,6 +809,7 @@ qsf_provider_init(void)
 	prov = g_new0 (QofBackendProvider, 1);
 	prov->provider_name = "QSF Backend Version 0.1";
 	prov->access_method = "file";
+	prov->partial_book_supported = TRUE;
 	prov->backend_new = qsf_backend_new;
 	prov->provider_free = qsf_provider_free;
 	qof_backend_register_provider (prov);

@@ -133,6 +133,7 @@ QSF is in three sections:
 #include "kvp_frame.h"
 #include "qofbackend-p.h"
 #include "qofsession-p.h"
+#include "qofbook-p.h"
 
 /* KVP XML
  *
@@ -697,11 +698,6 @@ value.
 KvpValue*
 string_to_kvp_value(const char *content, KvpValueType type);
 
-#define QSF_XSD_TIME	"%Y-%m-%dT%H:%M:%SZ" /**< xsd:dateTime format in coordinated universal time, UTC. 
-
-See \ref QSF for more information, ::QSF_XSD_TIME
-*/
-
 /** \brief Backend init routine.
 
 Sets the sequence of parameters to match the schema and provide a reliable
@@ -809,8 +805,6 @@ gboolean is_qsf_map(const char *path);
 
 /** \brief Determine the type of QSF and load it into the QofBook
 
-@param	qsf_doc Pointer to the QSF object in memory, xmlDocPtr.
-
 - is_our_qsf_object, OUR_QSF_OBJ, QSF object file using only QOF objects known to the calling process.
 	No map is required.
 - is_qsf_object, IS_QSF_OBJ, QSF object file that may or may not have a QSF map
@@ -843,6 +837,34 @@ qsf_valid_foreach(xmlNodePtr parent, qsf_validCB cb,
 void
 qsf_node_foreach(xmlNodePtr parent, qsf_nodeCB cb,
 	struct qsf_node_iterate *iter, qsf_param *params);
+
+/** \brief Loads the QSF into a QofSession, ready to merge.
+ 
+Loads a QSF object file containing only GnuCash objects
+into a second QofSession.
+ 
+@param first_session A QofSession pointer to the original session. This
+will become the target of the subsequent qof_book_merge.
+
+@param path	Absolute or relative path to the file to be loaded
+ 
+@return ERR_BACKEND_NO_ERR == 0 on success, otherwise the QofBackendError
+	set by the QSFBackend.
+  			
+\todo Build the qof_book_merge code onto this function if session loads
+  properly.  	
+*/
+QofBackendError 
+qof_session_load_our_qsf_object(QofSession *first_session, const char *path);
+
+/** \brief Placeholder so far.
+
+\todo Determine the map to use and convert the QOF objects
+ 
+ Much of the map code is written but there is still work to do.
+*/
+QofBackendError 
+qof_session_load_qsf_object(QofSession *first_session, const char *path);
 
 void qsf_destroy_backend (QofBackend *be);
 
