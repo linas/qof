@@ -1517,7 +1517,7 @@ qof_query_printTerms (QofQuery * query, GList * output)
 static GList *
 qof_query_printSorts (QofQuerySort *s[], const gint numSorts, GList * output)
 {
-  GSList *gsl = NULL;
+  GSList *gsl, *n = NULL;
   gint curSort;
   GString *gs = g_string_new ("  Sort Parameters:\n");
 
@@ -1530,13 +1530,19 @@ qof_query_printSorts (QofQuerySort *s[], const gint numSorts, GList * output)
     }
     increasing = qof_query_sort_get_increasing (s[curSort]);
 
-    for (gsl = qof_query_sort_get_param_path (s[curSort]); gsl; gsl = gsl->next)
+    gsl = qof_query_sort_get_param_path (s[curSort]); 
+    if (gsl) g_string_sprintfa (gs, "    Param: ");
+    for (n=gsl; n; n = n->next)
     {
-      QofIdType param_name = gsl->data;
-      g_string_sprintfa (gs, "    Param: %s %s\n", param_name,
-                         increasing ? "DESC" : "ASC");
+      QofIdType param_name = n->data;
+      if (gsl != n)g_string_sprintfa (gs, "\n           ");
+      g_string_sprintfa (gs, "%s", param_name);
     }
-    g_string_sprintfa (gs, "    Options: 0x%x\n", s[curSort]->options);
+    if (gsl) 
+    {
+      g_string_sprintfa (gs, " %s\n", increasing ? "DESC" : "ASC");
+      g_string_sprintfa (gs, "    Options: 0x%x\n", s[curSort]->options);
+    }
   }
 
   output = g_list_append (output, gs);
