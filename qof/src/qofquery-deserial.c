@@ -21,7 +21,18 @@
  *                                                                  *
 \********************************************************************/
 
+#ifndef QOF_QUERY_DESERIAL_H
+#define QOF_QUERY_DESERIAL_H
+
 #include <qof/qofquery.h>
+#include <libxml/tree.h>
+
+/** Given an XML tree, reconstruct and return the 
+ *  equivalent query. */
+QofQuery *qof_query_from_xml (xmlNodePtr);
+
+#endif /* QOF_QUERY_DESERIAL_H */
+
 
 // #include "config.h"
 
@@ -31,6 +42,12 @@
 #include "qofquery-serialize.h"
 #include "qofquery-p.h"
 #include "qofquerycore-p.h"
+#include "gnc-engine-util.h"
+
+#define CACHE_INSERT(str)  \
+    g_cache_insert(gnc_engine_get_string_cache(), (gpointer)(str))
+#define CACHE_REMOVE(str)  \
+    g_cache_remove(gnc_engine_get_string_cache(), (gpointer)(str))
 
 /* =========================================================== */
 
@@ -51,7 +68,6 @@
       FN (SELF, str);                                        \
    }                                                         \
    else
-
 
 #define GET_DBL(SELF,FN,TOK)                                 \
    if (0 == strcmp (TOK, node->name))                        \
@@ -143,7 +159,80 @@
 
 /* =============================================================== */
 
-void 
+static QofQueryPredData *
+qof_query_predicate_from_xml (xmlNodePtr root)
+{
+printf ("duude hunt predicate %s\n", root->name);
+	return NULL;
+}
+
+/* =============================================================== */
+
+static GSList * 
+qof_query_param_path_from_xml (xmlNodePtr root)
+{
+	xmlNodePtr pterms = root->xmlChildrenNode;
+	GSList *plist = NULL;
+	xmlNodePtr node;
+	for (node=pterms; node; node = node->next)
+	{
+		if (node->type != XML_ELEMENT_NODE) continue;
+
+		if (0 == strcmp (node->name, "qofquery:param"))
+		{
+			const char *str = GET_TEXT (node);
+			plist = g_slist_append (plist, CACHE_INSERT(str));
+printf ("duude found param %s\n", str);
+		}
+	}
+	return plist;
+}
+
+/* =============================================================== */
+
+static void 
+qof_query_term_from_xml (QofQuery *q, xmlNodePtr root)
+{
+	xmlNodePtr node;
+	xmlNodePtr term = root->xmlChildrenNode;
+
+	for (node=term; node; node = node->next)
+	{
+		QofQueryPredData *pred = NULL;
+		GSList *path = NULL;
+
+		if (node->type != XML_ELEMENT_NODE) continue;
+		if (0 == strcmp (node->name, "qofquery:invert"))
+		{
+			QofQuery *qt = qof_query_create();
+printf ("duude invert\n");
+			qof_query_term_from_xml (qt, node);
+			QofQuery *qinv = qof_query_invert (qt);
+			qof_query_merge_in_place (q, qinv, QOF_QUERY_AND);
+			qof_query_destroy (qinv);
+			qof_query_destroy (qt);
+			continue;
+		}
+		else
+		if (0 == strcmp (node->name, "qofquery:param-path"))
+		{
+			path = qof_query_param_path_from_xml (node);
+		}
+		else
+		if (0 == strcmp (node->name, "qofquery:pred-data"))
+		{
+			pred = qof_query_predicate_from_xml (node);
+printf ("duude pred=%p\n", pred);
+		}
+	
+		/* At this level, the terms should always be anded */
+		qof_query_add_term (q, path, pred, QOF_QUERY_AND);
+	}
+}
+
+/* =============================================================== */
+
+static void 
 qof_query_and_terms_from_xml (QofQuery *q, xmlNodePtr root)
 {
 	xmlNodePtr andterms = root->xmlChildrenNode;
@@ -154,25 +243,29 @@ qof_query_and_terms_from_xml (QofQuery *q, xmlNodePtr root)
 
 		if (0 == strcmp (node->name, "qofquery:term"))
 		{
-printf ("duude term\n");
+			qof_query_term_from_xml (q, node);
 		}
 	}
 }
 
 /* =============================================================== */
 
-void 
+static void 
 qof_query_or_terms_from_xml (QofQuery *q, xmlNodePtr root)
 {
 	xmlNodePtr andterms = root->xmlChildrenNode;
 	xmlNodePtr node;
+
 	for (node=andterms; node; node = node->next)
 	{
 		if (node->type != XML_ELEMENT_NODE) continue;
 
 		if (0 == strcmp (node->name, "qofquery:and-terms"))
 		{
-			qof_query_and_terms_from_xml (q, node);
+			QofQuery *qand = qof_query_create ();
+			qof_query_and_terms_from_xml (qand, node);
+			qof_query_merge_in_place (q, qand, QOF_QUERY_OR);
+			qof_query_destroy (qand);
 		}
 	}
 }
@@ -258,6 +351,9 @@ int main (int argc, char * argv[])
 
 	qnew = qof_query_from_xml (topnode);
 	qof_query_print (qnew);
+
+	gboolean eq = qof_query_equal (q, qnew);
+	printf ("Are the two equal? answer=%d\n", eq);
 
 #define DOPRINT 1
 #ifdef DOPRINT
