@@ -22,6 +22,7 @@
  ********************************************************************/
 
 #include "qof_book_merge.h"
+static short module = MOD_IMPORT; 
 
 /* all qof_book_merge data is held in mergeData. */
 static qof_book_mergeData* mergeData = NULL;
@@ -44,14 +45,16 @@ qof_book_mergeInit( QofBook *importBook, QofBook *targetBook)
 	
 	g_return_val_if_fail((importBook != NULL)&&(targetBook != NULL), -1);
 	mergeData = g_new(qof_book_mergeData, 1);
+	mergeData->abort = FALSE;
+	mergeData->mergeList = NULL;
 	mergeData->mergeBook = importBook;
 	mergeData->targetBook = targetBook;
+	mergeData->mergeObjectParams = NULL;
 	currentRule = g_new(qof_book_mergeRule, 1);
 	qof_object_foreach_type(qof_book_mergeForeachType, NULL);
-	currentRule = mergeData->mergeList->data;
 	check = g_slist_copy(mergeData->mergeList);
 	while(check != NULL) {
-		currentRule = mergeData->mergeList->data;
+		currentRule = check->data;
 		if(currentRule->mergeResult == MERGE_INVALID) {
 			g_slist_free(currentRule->linkedEntList);
 			g_slist_free(currentRule->mergeParam);
@@ -168,6 +171,9 @@ qof_book_mergeUpdateResult(qof_book_mergeRule *resolved, qof_book_mergeResult ta
 	if(currentRule->updated == FALSE) { currentRule->mergeResult = tag;	}
 	currentRule->updated = TRUE;
 	mergeData->mergeList = g_slist_prepend(mergeData->mergeList,currentRule);
+	if(tag == MERGE_INVALID) {
+		mergeData->abort = TRUE;
+	}
 	return 0;
 }
 
@@ -177,10 +183,12 @@ qof_book_mergeCommit( void )
 	GSList *check;
 	
 	g_return_val_if_fail(mergeData != NULL, -1);
+	g_return_val_if_fail(mergeData->mergeList != NULL, -1);
+	ENTER (" ");
 	currentRule = mergeData->mergeList->data;
 	check = g_slist_copy(mergeData->mergeList);
 	while(check != NULL) {
-		currentRule = mergeData->mergeList->data;
+		currentRule = check->data;
 		if(currentRule->mergeResult == MERGE_INVALID) {
 			g_slist_free(currentRule->linkedEntList);
 			g_slist_free(currentRule->mergeParam);
@@ -227,6 +235,8 @@ void qof_book_mergeRuleForeach( qof_book_mergeRuleForeachCB cb, qof_book_mergeRe
 	g_return_if_fail(mergeData != NULL);
 	g_return_if_fail(mergeResult > 0);
 	g_return_if_fail(mergeResult != MERGE_INVALID);
+	g_return_if_fail(mergeData->abort == FALSE);
+	ENTER (" selected result for RuleForeach: %u", mergeResult);
 	iter.fcn = cb;
 	matching_rules = NULL;
 	iter.ruleList = g_slist_copy(mergeData->mergeList);
@@ -242,6 +252,7 @@ void qof_book_mergeRuleForeach( qof_book_mergeRuleForeachCB cb, qof_book_mergeRe
 	g_slist_free(iter.ruleList);
 	g_slist_foreach (matching_rules, qof_book_mergeRuleCB, &iter);
 	g_slist_free(matching_rules);
+	LEAVE (" remainder : %u", iter.remainder);
 }
 
 
@@ -250,6 +261,7 @@ qof_book_mergeUpdateRule(gboolean match)
 {
 	gboolean absolute;
 
+	ENTER (" ");
 	absolute = currentRule->mergeAbsolute;
 	if(absolute && match) {
 		/* set MERGE_ABSOLUTE - GUID matches AND data matches */
@@ -277,6 +289,7 @@ qof_book_mergeUpdateRule(gboolean match)
 			currentRule->mergeResult = MERGE_REPORT;
 		}
 	}
+	LEAVE (" ");
 }
 
 int 
@@ -304,6 +317,7 @@ qof_book_mergeCompare( void )
 	gint64 		i64Import, i64Target, 			(*int64_getter)		(QofEntity*, QofParam*);
 
 	g_return_val_if_fail((mergeData != NULL)||(currentRule != NULL), -1);
+	ENTER (" ");
 	absolute = currentRule->mergeAbsolute;
 	mergeEnt = currentRule->importEnt;
 	targetEnt = currentRule->targetEnt;
@@ -325,6 +339,8 @@ qof_book_mergeCompare( void )
 		if(safe_strcmp(mergeType, QOF_TYPE_STRING) == 0)  { 
 			stringImport = qtparam->param_getfcn(mergeEnt,qtparam);
 			stringTarget = qtparam->param_getfcn(targetEnt,qtparam);
+			if(stringImport == NULL) { stringImport = ""; }
+			if(stringTarget == NULL) { stringTarget = ""; }
 			/* very strict string matches may need to be relaxed. */
 			if(safe_strcmp(stringImport,stringTarget) == 0) { mergeMatch = TRUE; }
 			qof_book_mergeUpdateRule(mergeMatch);
@@ -425,6 +441,7 @@ qof_book_mergeCompare( void )
 	}
 	g_free(kvpImport);
 	g_free(kvpTarget);
+	LEAVE (" ");
 	return 0;
 }
 
@@ -438,9 +455,11 @@ qof_book_mergeCommitForeach (qof_book_mergeRuleForeachCB cb, qof_book_mergeResul
 	g_return_if_fail(mergeData != NULL);
 	g_return_if_fail(mergeResult > 0);
 	g_return_if_fail((mergeResult != MERGE_INVALID)||(mergeResult != MERGE_UNDEF)||(mergeResult != MERGE_REPORT));
+
+	ENTER (" ");
 	iter.fcn = cb;
 	subList = NULL;
-	iter.ruleList	= mergeData->mergeList;
+	iter.ruleList	= g_slist_copy(mergeData->mergeList);
 	while(iter.ruleList!=NULL) {
 		currentRule = iter.ruleList->data;
 		if(currentRule->mergeResult == mergeResult) {
@@ -450,6 +469,7 @@ qof_book_mergeCommitForeach (qof_book_mergeRuleForeachCB cb, qof_book_mergeResul
 	}
 	iter.remainder = g_slist_length(subList);
 	g_slist_foreach (subList, qof_book_mergeCommitForeachCB, &iter);
+	LEAVE (" ");
 }
 
 void qof_book_mergeCommitForeachCB(gpointer lister, gpointer arg)
@@ -458,6 +478,7 @@ void qof_book_mergeCommitForeachCB(gpointer lister, gpointer arg)
 	
 	iter = arg;
 	iter->fcn ((qof_book_mergeRule*)lister, iter->remainder);
+	iter->remainder--;
 }
 
 
@@ -471,6 +492,9 @@ qof_book_mergeForeach ( QofEntity* mergeEnt, gpointer user_data)
 	GSList *c;
 	
 	g_return_if_fail(mergeEnt != NULL);
+	
+	ENTER (" Entity type: %s", mergeEnt->e_type);
+	
 	g = guid_malloc();
 	*g = mergeEnt->guid;
 	mergeRule = g_new(qof_book_mergeRule,1);
@@ -534,11 +558,13 @@ qof_book_mergeForeach ( QofEntity* mergeEnt, gpointer user_data)
 	mergeData->mergeList = g_slist_prepend(mergeData->mergeList,mergeRule);
 	guid_free(g);
 	/* return to qof_book_mergeInit */
+	LEAVE (" Entity type: %s", mergeEnt->e_type);
 }
 
 void qof_book_mergeForeachTarget (QofEntity* targetEnt, gpointer user_data)
 {
 	g_return_if_fail(targetEnt != NULL);
+
 	qof_book_merge_target_check(targetEnt);
 }
 
@@ -551,55 +577,74 @@ void qof_book_merge_target_check (QofEntity* targetEnt)
 	gboolean exists;
 	
 	exists = FALSE;
-	guid_ent = &targetEnt->guid;
+	checklist = NULL;
+	if(mergeData->mergeList == NULL) { return; }
+	ENTER (" ");
+	guid_ent = qof_entity_get_guid(targetEnt);
 	checklist = g_slist_copy(mergeData->mergeList);
 	while(checklist != NULL) {
 		destination = checklist->data;
-		guid_dest = &destination->targetEnt->guid;
+		guid_dest = qof_entity_get_guid(destination->targetEnt);
 		if(guid_compare(guid_ent,guid_dest) == 0) { exists = TRUE; }
 		checklist = g_slist_next(checklist);
 	}
 	if(exists == FALSE ) {
 		mergeData->targetList = g_slist_prepend(mergeData->targetList,targetEnt);
 	}
+	LEAVE (" ");
 }
 
 void 
 qof_book_mergeForeachTypeTarget ( QofObject* merge_obj, gpointer user_data) 
 {
 	g_return_if_fail(merge_obj != NULL);
+	ENTER (" merge_obj %s", merge_obj->e_type);
 	if(safe_strcmp(merge_obj->e_type, currentRule->importEnt->e_type) == 0) {
 		qof_object_foreach(currentRule->importEnt->e_type, mergeData->targetBook, 
 			qof_book_mergeForeachTarget, NULL);
 	}
+	LEAVE (" merge_obj %s", merge_obj->e_type);
 }
 
 void 
 qof_book_mergeForeachType ( QofObject* merge_obj, gpointer user_data) 
 {
 	g_return_if_fail((merge_obj != NULL));
+	ENTER (" object type: %s ", merge_obj->e_type);
+	/* Skip unsupported objects */
+	if((merge_obj->create == NULL)||(merge_obj->foreach == NULL)){
+		LEAVE (" merge_obj QOF support failed %s", merge_obj->e_type);
+		return;
+	}
+
 	if(mergeData->mergeObjectParams != NULL) g_slist_free(mergeData->mergeObjectParams);
 	mergeData->mergeObjectParams = NULL;
 	qof_class_param_foreach(merge_obj->e_type, qof_book_mergeForeachParam , NULL);
 	qof_object_foreach(merge_obj->e_type, mergeData->mergeBook, qof_book_mergeForeach, NULL);
+	LEAVE (" object type: %s ", merge_obj->e_type);
 }
 
 void 
 qof_book_mergeForeachParam( QofParam* param, gpointer user_data) 
 {
 	g_return_if_fail(param != NULL);
+	
+	ENTER (" Parameter Name: %s", param->param_name);
 	if((param->param_getfcn != NULL)&&(param->param_setfcn != NULL)) {
 		mergeData->mergeObjectParams = g_slist_append(mergeData->mergeObjectParams, param);
 	}
+	LEAVE (" Parameter Name: %s", param->param_name);
 }
 
 void
 qof_book_mergeRuleCB(gpointer lister, gpointer arg)
 {
 	struct qof_book_mergeRuleIterate *iter;
-	
+
+	g_return_if_fail(mergeData->abort == FALSE);
 	iter = arg;
 	iter->fcn ((qof_book_mergeRule*)lister, iter->remainder);
+	iter->remainder--;
 }
 
 void qof_book_mergeCommitRuleLoop(qof_book_mergeRule *rule, guint remainder) 
@@ -632,7 +677,8 @@ void qof_book_mergeCommitRuleLoop(qof_book_mergeRule *rule, guint remainder)
 
 	g_return_if_fail(rule != NULL);
 	g_return_if_fail((rule->mergeResult != MERGE_NEW)||(rule->mergeResult != MERGE_UPDATE));
-	
+
+	ENTER (" ");
 	/* create a new object for MERGE_NEW */ 
 	if(rule->mergeResult == MERGE_NEW) {
 		inst = (QofInstance*)qof_object_new_instance(rule->importEnt->e_type, mergeData->targetBook);
@@ -739,4 +785,5 @@ void qof_book_mergeCommitRuleLoop(qof_book_mergeRule *rule, guint remainder)
 		}
 		rule->mergeParam = g_slist_next(rule->mergeParam);
 	}
+	LEAVE (" ");
 }

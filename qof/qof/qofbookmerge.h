@@ -74,6 +74,7 @@ any error values to the calling process.
 #include <glib.h>
 #include "qof.h"
 #include "qofinstance-p.h"
+#include "gnc-trace.h"
 
 /** \brief Results of collisions and user resolution.
 
@@ -146,6 +147,7 @@ typedef struct
 	GSList 	*targetList;		/**< GSList of ::QofEntity * for each object of this type in the target book */
 	QofBook *mergeBook;			/**< pointer to the import book for this merge operation. */
 	QofBook *targetBook;		/**< pointer to the target book for this merge operation. */
+	gboolean abort;				/**< set to TRUE if MERGE_INVALID is set. */
 }qof_book_mergeData;
 
 
