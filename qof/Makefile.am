@@ -1,5 +1,5 @@
 
-SUBDIRS = po src examples
+SUBDIRS = src examples
 
 EXTRA_DIST =                   \
 	AUTHORS                     \
