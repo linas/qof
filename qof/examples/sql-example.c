@@ -83,7 +83,7 @@ my_app_run_query (QofSqlQuery *q, char *sql_str)
    /* Run the query */
    results = qof_sql_query_run (q, sql_str);
 
-	printf ("------------------------------------------\n");
+   printf ("------------------------------------------\n");
    printf ("Query string is: %s\n", sql_str);
    printf ("Query returned %d results:\n", g_list_length(results));
    for (n=results; n; n=n->next)
@@ -92,7 +92,7 @@ my_app_run_query (QofSqlQuery *q, char *sql_str)
       printf ("Found a matching object, a=%d b=%d memo=\"%s\"\n", 
           m->a, m->b, m->memo);
    }
-	printf ("\n");
+   printf ("\n");
 }
 
 void
@@ -102,7 +102,7 @@ my_app_do_some_queries (QofBook *book)
    GList *n;
 
    /* Print out the baseline: all of the instances in the system */
-	printf ("\n");
+   printf ("\n");
    printf ("My Object collection contains the following objects:\n");
    for (n=all_my_objs; n; n=n->next)
    {
@@ -110,7 +110,7 @@ my_app_do_some_queries (QofBook *book)
       printf ("    a=%d b=%d memo=\"%s\"\n", 
           m->a, m->b, m->memo);
    }
-	printf ("\n");
+   printf ("\n");
 
    /* Create a new query */
    q =  qof_sql_query_new ();
@@ -122,9 +122,9 @@ my_app_do_some_queries (QofBook *book)
     * We want to find all objects whose "memo" field matches
     * a particular string, or all objects whose "b" field is 42.
     */
-	char * str = "SELECT * FROM " MYOBJ_ID 
-	        " WHERE (" MYOBJ_MEMO " = 'M M M My Sharona') OR "
-			  "       (" MYOBJ_B " = 42);";
+   char * str = "SELECT * FROM " MYOBJ_ID 
+           " WHERE (" MYOBJ_MEMO " = 'M M M My Sharona') OR "
+   		  "       (" MYOBJ_B " = 42);";
 
    my_app_run_query (q, str);
 

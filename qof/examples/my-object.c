@@ -22,7 +22,7 @@ my_obj_new (QofBook *book)
 {
    MyObj *m = g_new0 (MyObj,1);
 
-   /* Make sure we keep track of ever object; otherwise we won't
+   /* Make sure we keep track of every object; otherwise we won't
     * be able to search over them.  */
    all_my_objs = g_list_prepend (all_my_objs, m);
 
@@ -54,7 +54,6 @@ void
 my_obj_foreach (QofCollection *coll, QofEntityForeachCB cb, gpointer ud)
 {
    GList *n;
-   
    for (n=all_my_objs; n; n=n->next)
    {
       cb (n->data, ud);
