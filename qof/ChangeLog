@@ -1,4 +1,9 @@
 
+2004-04-17 Linas Vepstas <linas@linas.org>
+	* Add SQL client support
+	* Add gobject support
+	* Modernize autogen infrastructure
+
 2003-09-27 Linas Vepstas <linas@linas.org>
 	* src/*: sync with GnuCash CVS HEAD; includes misc cleanup, a whole
 	  class of new KVP functions, and and important cleanup of the trace 

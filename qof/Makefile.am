@@ -1,5 +1,10 @@
-
+#
+# Makefile.am for libqof
+#
 SUBDIRS = lib src examples
+
+pkgconfigdir = $(libdir)/pkgconfig
+pkgconfig_DATA = qof-0.pc
 
 EXTRA_DIST =                   \
 	.cvsignore                  \

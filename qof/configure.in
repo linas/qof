@@ -1,5 +1,16 @@
+dnl
+dnl configure.in for the QOF package
+dnl
+dnl Linas Vepstas April 2004
+dnl ***************************************************
+
 AC_INIT(src)
-AM_INIT_AUTOMAKE(qof, 0.4.1)
+AM_INIT_AUTOMAKE(qof,0.4.1)
+
+LIBQOF_LIBRARY_VERSION=1:0:0
+LIBQOFSQL_LIBRARY_VERSION=1:0:0
+AC_SUBST(LIBQOF_LIBRARY_VERSION)
+AC_SUBST(LIBQOFSQL_LIBRARY_VERSION)
 
 AC_PROG_INTLTOOL
 
@@ -83,6 +94,7 @@ examples/gobject/Makefile
 lib/Makefile
 lib/libsql/Makefile
 src/Makefile
+qof-0.pc
 ])
 
 dnl <= Configuration summary =>
@@ -100,8 +112,8 @@ echo ""
 dnl <= Prefixes =>
 echo "prefix : $prefix"
 # echo "sysconf dir : "`eval echo $sysconfdir`
-echo "bin dir : "`eval echo $bindir`
-echo "data dir : "`eval echo $datadir`
+# echo "bin dir : "`eval echo $bindir`
+# echo "data dir : "`eval echo $pkgdatadir`
 echo "include dir : "`eval echo $includedir`
 echo "lib dir : "`eval echo $libdir`
 echo ""

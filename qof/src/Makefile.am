@@ -1,7 +1,14 @@
+#
+# Makefile.am for the libqof sources
+#
+
 
 # pkglib_LTLIBRARIES = libqof.la
 
 lib_LTLIBRARIES = libqof.la
+
+libqof_la_LDFLAGS= -version-info $(LIBQOF_LIBRARY_VERSION) -release $(VERSION)
+
 
 libqof_la_SOURCES =  \
    gnc-date.c        \
@@ -24,6 +31,9 @@ libqof_la_SOURCES =  \
    qofquerycore.c    \
    qofsession.c      \
    qofsql.c
+
+# qofconfigdir = ${pkgincludedir}
+# qofconfig_DATA = config.h
 
 qofincludedir = ${pkgincludedir}
 qofinclude_HEADERS = \

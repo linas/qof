@@ -1,5 +1,7 @@
 
                 QOF - Query Object Framework
+                ----------------------------
+                        April 2004
 
 Breif Description:
 ------------------
@@ -42,4 +44,16 @@ Examples:
 --------
 Example programs showing usage can be found in the "examples" subdirectory
 
+
+Linking/Building
+----------------
+This version of QOF uses the 'pkg' system of managing include files
+and libraries.  To compile and link your program against QOF, include
+the following directives in your Makefile:
+
+INCLUDES += `pkg-config qof-0 --cflags`
+LIBS += `pkg-config qof-0 --libs`
+
+This will automatically supply the correct paths to include files and 
+libraries for your application.
 
