@@ -1,0 +1,8 @@
+
+                            QOF Backends
+                            ------------
+
+This directory contains code that implements storage backends for QOF.
+Although GnuCash has five sotrage backends, QOF only has one, 'dwi' and
+that backend is under development.
+
