@@ -1,0 +1,85 @@
+<html>
+<head>
+<title>QOF - Query Object Fraemwork</title>
+</head>
+<body fgcolor=#000000 bgcolor=#ffffff>
+<h1>Query Object Framework</h1>
+<A href="http://sourceforge.net"> 
+<IMG src="http://sourceforge.net/sflogo.php?group_id=83302&amp;type=5" 
+align=right width="210" height="62" border="0" alt="SourceForge Logo"></A>
+<br>
+
+(description)
+
+<h2>Project Goals</h2>
+<ul>
+<li><p>
+    Provide an object framework that allows programmers to create
+    expressive queries that will search through a collection of 
+    objects, returning the desired set of objects.
+    </p>
+<li><p>
+    Provide integration with database backends.  In particular, the
+    programmer should be able to use QOF to create a local 'cache'
+    of objects that mirrors a subset of the contents in a remote
+    database.  The idea is that applications, by working with a local
+    copy, can be highly responsive and have good performance.  On
+    the other hand, by working with only a subset of the remote data,
+    the application can avoid having a huge memory footprint.  
+    This is a very unique feature: most applications take an
+    all-or-nothing approach, where either all of the data is sucked
+    into the application, or none is.  Applications that pull in
+    all of the data have terrible startup times, since they need to
+    load either a huge file or make a huge database query. They also
+    use a huge amount of memory.  Applications that pull in none of
+    thier data, and instead issue SQL queries as needed, tend to have
+    terrible performance profiles, since the user must wait for the 
+    query to complete and return data.  In otherwords, QOF provides 
+    scalability: instead of the all-or-nothing approach, it provides
+    a middle ground, allowing small fast apps to access huge databases.
+    </p>
+    <p>
+    Status: The GnuCash backend provides access to file and to SQL
+    storage.  However, none of this code has been abstracted out in 
+    a generic way, and hasn't been brought back into QOF.
+    </p>
+<li><p>
+    Provide for off-line operation.  Because the object data is cached
+    locally, users should be able to continue doing useful work even
+    if they are not attached to the net.  When they regain net access, 
+    QOF should be able to resynchronize with the remote servers.
+    </p>
+    <p>
+    Status: just an idea, not started.
+    </p>
+<li><p>
+    Provide memory-mangement facilities. If objects in the local 
+    object cache haven't been used in a while, and the application
+    memory usage is getting too large, the unused objects should 
+    be "reaped" or garbage-collected.  Of course, this can be done
+    only if the object is fully in sync with the persistant storage
+    backend.
+    </p>
+    <p>
+    Status: just an idea, not started.
+    </p>
+</ul>
+
+
+<h2>Project Status</h2>
+This code is in active, daily use in 
+<a href="http://www.gnucash.org">GnuCash</a>, and when used there, it is
+'stable' code.  However, the code in this CVS tree is under development, 
+is lacking in certain desired features, and might not compile. It lacks
+adequate documentation.  It lacks examples.  It lacks a snazzy webpage.
+<p>
+The only other project currently using QOF is 
+<a href="http://gnotime.sourceforge.net">GnoTime</a>.
+
+<hr>
+Last modified by Linas Vepstas &lt;linas@linas.org&gt;
+Sun Jun 15 CDT 2003
+<br>
+</body>
+</html>
+
