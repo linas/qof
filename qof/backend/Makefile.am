@@ -1,6 +1,7 @@
 
 SUBDIRS =  dwi
  
-EXTRA_DIST =                   \
-        README
+EXTRA_DIST =             \
+	.cvsignore            \
+	README
 
