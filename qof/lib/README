@@ -1,12 +1,20 @@
 
+          Pre-Requeist Libraries
+          ----------------------
+
 This directory contains code that is needed by QOF,
 code that is normally 'external' to QOF, but
-is not generally available as a library.  Thus, the
-code has been copied into QOF until such time 
-that this is no longer needed.
+is not generally available as a library or installable
+package.  Thus, the code has been copied here so as to
+simplify the build and installation of QOF.  If/when 
+such libraries become commonly available through 'well-known'
+installable packages, then it should be removed from here.
 
-In particular:
+Contents:
+---------
 The libsql directory contains code copied from the
 libgda (http://www.gnome-db.org/) Gnome database system.
 
+The dwi directory contains code copied from the DWI
+project (http://dwi.sourceforge.net)
 
