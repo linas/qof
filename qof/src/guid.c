@@ -58,6 +58,13 @@ static gboolean guid_initialized = FALSE;
 static struct md5_ctx guid_context;
 static GMemChunk *guid_memchunk = NULL;
 
+#if USING_THREADS
+/* guid_to_string uses a thread local buffer. These are used to set it up */
+#include <pthread.h>
+static pthread_key_t guid_buffer_key;
+static pthread_once_t guid_buffer_key_once = PTHREAD_ONCE_INIT;
+#endif
+
 /* This static indicates the debugging module that this .o belongs to.  */
 static short module = MOD_ENGINE;
 
@@ -469,7 +476,7 @@ guid_new(GUID *guid)
   counter--;
 }
 
-GUID
+const GUID
 guid_new_return(void)
 {
   GUID guid;
@@ -535,17 +542,28 @@ badstring:
   return FALSE;
 }
 
-char *
+/* Allocate the key */
+#if USING_THREADS
+static void guid_buffer_key_alloc(void)
+{
+  pthread_key_create(&guid_buffer_key, NULL /* Never freed */);
+  pthread_setspecific(guid_buffer_key, malloc(GUID_ENCODING_LENGTH+1));
+}
+#endif
+
+const char *
 guid_to_string(const GUID * guid)
 {
+#if USING_THREADS
   char *string;
 
-  if(!guid) return(NULL);
-
-  string = g_malloc(GUID_ENCODING_LENGTH+1);
+  pthread_once(&guid_buffer_key_once, guid_buffer_key_alloc);
+  string = pthread_getspecific(guid_buffer_key);
+#else
+  static char string[64];
+#endif
 
   encode_md5_data(guid->data, string);
-
   string[GUID_ENCODING_LENGTH] = '\0';
 
   return string;
