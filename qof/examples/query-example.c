@@ -15,9 +15,7 @@
  */
 
 #include <glib.h>
-
-#include "qofobject.h"
-#include "qofqueryobject.h"
+#include <qof/qof.h>
 
 /* ===================================================== */
 
@@ -242,6 +240,7 @@ my_app_run_query (QofBook *book)
       printf ("Found a matching object, a=%d b=%d memo=\"%s\"\n", 
           m->a, m->b, m->memo);
    }
+	printf ("\n");
    
    /* The query isn't needed any more; discard it */
    qof_query_destroy (q);
