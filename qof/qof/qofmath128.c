@@ -24,22 +24,15 @@
 #define _GNU_SOURCE
 
 #include "config.h"
+#include "qofmath128.h"
 
 #include <glib.h>
 
 /* =============================================================== */
-/** @addtogroup Math128
+/*
  *  Quick-n-dirty 128-bit integer math lib.   Things seem to mostly
  *  work, and have been tested, but not comprehensively tested.
- * @{
  */
-
-typedef struct {
-  guint64 hi;
-  guint64 lo;
-  short isneg;    /**< sign-bit -- T if number is negative */
-  short isbig;    /**< sizeflag -- T if number won't fit in signed 64-bit */
-} qofint128;
 
 /** Multiply a pair of signed 64-bit numbers, 
  *  returning a signed 128-bit number.
@@ -344,6 +337,5 @@ int main ()
 }
 
 #endif /* TEST_128_BIT_MULT */
-/** @} */
 
 /* ======================== END OF FILE =================== */
