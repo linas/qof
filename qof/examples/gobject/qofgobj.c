@@ -1,50 +1,34 @@
 
-#if 0
-* Provide infrastructure to register my object with QOF */
- 
-static QofObject myobj_object_def =
-{
-   interface_version: QOF_OBJECT_VERSION,
-   e_type:            MYOBJ_ID,
-   type_label:        "My Blinking Object",
-   book_begin:        NULL,
-   book_end:          NULL,
-   is_dirty:          NULL,
-   mark_clean:        NULL,
-   foreach:           my_obj_foreach,
-   printable:         NULL,
-};
- 
-gboolean myObjRegister (void)
-{
-   /* Associate an ASCII name to each getter, as well as the return type
-*/
-   static QofParam params[] = {
-     { MYOBJ_A,     QOF_TYPE_INT32, (QofAccessFunc)my_obj_get_a, NULL },
-     { MYOBJ_B,     QOF_TYPE_INT32, (QofAccessFunc)my_obj_get_b, NULL },
-     { MYOBJ_MEMO,  QOF_TYPE_STRING, (QofAccessFunc)my_obj_get_memo,
-NULL },
-     { NULL },
-   };
- 
-   qof_class_register (MYOBJ_ID, (QofSortFunc)my_obj_order, params);
-   return qof_object_register (&myobj_object_def);
-}
-                                                                                
-#endif
-
 #include <glib-object.h>
 #include <qof/qof.h>
 #include <stdio.h>
 
+void 
+qof_gobject_register_instance (GType type, GObject *gob)
+{
+}
+
 static gpointer
-gobject_int_getter (gpointer data)
+qof_gobject_getter (gpointer data, QofParam *getter)
 {
 	GObject *gob = data;
 
+printf ("duude trying to get type %s\n", getter->param_type);
 	// damn I need lambda .... 
 	return NULL;
 }
+
+/* Loop over every instance of th
+xxxxxxxxxxxxxxxxxxxxxx
+MyObj, and apply the callback to it.
+ * This routine must be defined for queries to be possible. */
+static void
+qof_gobject_foreach (QofCollection *coll, QofEntityForeachCB cb, gpointer ud)
+{
+	printf ("duude foreach caled \n");
+}
+                                                                                
+
 
 void
 qof_gobject_register (GObjectClass *obclass)
@@ -59,7 +43,7 @@ qof_gobject_register (GObjectClass *obclass)
 	int n_props;
 	prop_list = g_object_class_list_properties (obclass, &n_props);
 
-	// XXX memory leak 
+	// XXX memory leak  need to free this someday
 	QofParam * qof_param_list = g_new0 (QofParam, n_props);
 
 	printf ("got %d props\n", n_props);
@@ -72,17 +56,36 @@ qof_gobject_register (GObjectClass *obclass)
 		printf ("%d %s\n", i, gparam->name);
 
 		qpar->param_name = g_param_spec_get_name (gparam);
+		qpar->param_getfcn = qof_gobject_getter;
+		qpar->param_setfcn = NULL;
 		if (G_IS_PARAM_SPEC_INT(gparam))
 		{
 			qpar->param_type = QOF_TYPE_INT32;
-			qpar->param_getfcn = gobject_int_getter;
-			qpar->param_setfcn = NULL;
 printf ("its an int!! %s \n", qpar->param_name);
 			j++;
 		}
 	}
+	/* NULL-terminaed list !! */
+	qof_param_list[j].param_type = NULL;
 
-   // qof_class_register (qof_e_type, (QofSortFunc)my_obj_order, qof_param_list);
+   qof_class_register (qof_e_type, NULL, qof_param_list);
+
+	/* ------------------------------------------------------ */
+   /* Now do the class itself */
+	// XXX memory leak,////  fixme
+	QofObject *class_def = g_new0 (QofObject, 1);
+
+	class_def->interface_version = QOF_OBJECT_VERSION;
+	class_def->e_type = qof_e_type;
+	class_def->type_label = qof_e_type; // XXX we want nickname, actually
+	class_def->book_begin = NULL;
+	class_def->book_end = NULL;
+	class_def->is_dirty = NULL;
+	class_def->mark_clean = NULL;
+	class_def->foreach = qof_gobject_foreach;
+	class_def->printable = NULL;
+ 
+   qof_object_register (&myobj_object_def);
 }
 
 #include <gtk/gtk.h>
@@ -100,6 +103,7 @@ main(int argc, char *argv[])
 
 	GObjectClass *goc = G_OBJECT_CLASS(wc);
 
+	qof_query_init ();
 	qof_gobject_register (goc);
 
 	return 0;
