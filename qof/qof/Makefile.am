@@ -48,6 +48,7 @@ qofinclude_HEADERS = \
    kvp_frame.h       \
    kvp-util.h        \
    qof.h             \
+   qof-be-utils.h    \
    qofbackend.h      \
    qofclass.h        \
    qofgobj.h         \
