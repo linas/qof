@@ -1,6 +1,17 @@
 
-/* XXX This example is under construction
- * and doesn't do anything interesting yet.
+/** @file query-example.c
+ *  @breif Example program showing query object usage. 
+ *  @author Copyright (c) 2003 Linas Vepstas <linas@linas.org>
+ *
+ *  This example program shows how to configure an arbitrary
+ *  programmer-defined oject "MyObj" so that the Query routines
+ *  can be used on it.  It consists of four basic peices:
+ *  -- The object definition, showing how to hook into the query system.
+ *  -- Generic application intialization, including the creation of
+ *     a number of instances of MyObj.
+ *  -- QOF intialization, required before QOF can be used.
+ *  -- The definition and running of a query, and a printout of the
+ *     results.
  */
 
 #include <glib.h>
@@ -10,12 +21,12 @@
 
 /* ===================================================== */
 
-/* Define my object */
+/* Define "my" object.  Replace by your object. */
 typedef struct myobj_s 
 {
-   int a;
-   int b;
-   char *memo;
+   int a;          /* Some value */
+   int b;          /* Some other value */
+   char *memo;     /* Some string value */
 } MyObj;
 
 GSList *all_my_objs = NULL;
@@ -25,11 +36,14 @@ my_obj_new (GNCBook *book)
 {
    MyObj *m = g_new0 (MyObj,1);
 
+   /* Make sure we keep track of ever object; otherwise we won't
+    * be able to search over them.  */
    all_my_objs = g_slist_prepend (all_my_objs, m);
 
    return m;
 }
 
+/* Generic object getters */
 int
 my_obj_get_a (MyObj *m)
 {
@@ -48,7 +62,8 @@ my_obj_get_memo (MyObj *m)
    return m->memo;
 }
 
-/* Loop over every instance of MyObj, and apply the callback to it */
+/* Loop over every instance of MyObj, and apply the callback to it.
+ * This routine must be defined for queries to be possible. */
 void
 my_obj_foreach (GNCBook *book, foreachObjectCB cb, gpointer ud)
 {
@@ -84,8 +99,8 @@ my_obj_order (MyObj *a, MyObj *b)
 static GncObject_t myobj_object_def = 
 {
    interface_version: GNC_OBJECT_VERSION,
-   name:              "MyObj",
-   type_label:        MYOBJ_ID,
+   name:              MYOBJ_ID,
+   type_label:        "My Blinking Object",
    book_begin:        NULL,
    book_end:          NULL,
    is_dirty:          NULL,
@@ -94,14 +109,16 @@ static GncObject_t myobj_object_def =
    printable:         NULL,
 };
 
+/* Some arbitrary names for data getters that the query will employ */
 #define MYOBJ_A    "MyObj_a"
 #define MYOBJ_B    "MyObj_b"
 #define MYOBJ_MEMO "MyObj_memo"
 gboolean myObjRegister (void)
 {
+   /* Associate an ASCII name to each getter, as well as the return type */
    static QueryObjectDef params[] = {
-     { MYOBJ_A,  QUERYCORE_INT32, (QueryAccess)my_obj_get_a },
-     { MYOBJ_B,  QUERYCORE_INT32, (QueryAccess)my_obj_get_b },
+     { MYOBJ_A,     QUERYCORE_INT32, (QueryAccess)my_obj_get_a },
+     { MYOBJ_B,     QUERYCORE_INT32, (QueryAccess)my_obj_get_b },
      { MYOBJ_MEMO,  QUERYCORE_STRING, (QueryAccess)my_obj_get_memo },
      { NULL },
    };
@@ -158,6 +175,11 @@ my_app_create_data (GNCBook *book)
    m->memo = "M M M My Sharona";
 }
    
+/* ===================================================== */
+/* A routine that will build an actual query, run it, and
+ * print the results.
+ */
+
 void
 my_app_run_query (GNCBook *book)
 {
@@ -203,10 +225,12 @@ my_app_run_query (GNCBook *book)
    results = gncQueryRun (q);
 
    /* Print out the results */
+   printf ("Query returned %d results:\n", g_list_length(results));
    for (n=results; n; n=n->next)
    {
       MyObj *m = n->data;
-      printf ("Found a match %d %d %s\n", m->a, m->b, m->memo);
+      printf ("Found a matching object, a=%d b=%d memo=\"%s\"\n", 
+          m->a, m->b, m->memo);
    }
    
    /* The query isn't needed any more; discard it */
@@ -214,6 +238,7 @@ my_app_run_query (GNCBook *book)
 
 }
 
+/* ===================================================== */
  
 int
 main (int argc, char *argv[]) 
@@ -239,3 +264,5 @@ main (int argc, char *argv[])
    gncObjectShutdown ();
    xaccGUIDShutdown ();
 }
+
+/* =================== END OF FILE ===================== */
