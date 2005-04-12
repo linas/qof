@@ -8,7 +8,7 @@ EXTRA_DIST = \
   backend-errors.txt 
 
 
-docdir = $datadir
+docdir = ${datadir}
 
 all:
 

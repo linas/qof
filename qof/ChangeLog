@@ -1,3 +1,53 @@
+2005-04-12 Neil Williams <linux@codehelp.co.uk>
+	* backend/file/.cvsignore: New file.
+	* backend/file/qsf-backend.c :
+	Reference handling and KVP support.
+	* backend/file/qsf-object.xsd.xml :
+	Tightening up the validation of attributes
+	and namespaces.
+	* backend/file/qsf-xml.h : Documentation
+	tweaks.
+	* doc/Makefile.am : Correcting error in
+	datadir.
+	* examples/.cvsignore : Tweaked.
+	* qof/Makefile.am : Building with SQL.
+	* qof/gnc-date.c :
+	* qof/gnc-date.h :UTC date and time
+	handling added. Documentation tweaks.
+	* qof/gnc-engine-util.h : ENUM as string
+	support macro.
+	* qof/gnc-trace.c : Using our own trace
+	file instead of overwriting GnuCash.
+	* qof/qof-be-utils.h :
+	* qof/qof.h :Documentation and directory fixes.
+	* qof/qof_book_merge.c : CHAR handling
+	* qof/qof_book_merge.h : Make tweak.
+	* qof/qofbackend.h : Adding QSF error code
+	and documentation tweaks.
+	* qof/qofclass.c : Reference handling.
+	qof_class_get_referenceList()
+	* qof/qofclass.h : Prototype for
+	qof_class_get_referenceList().
+	* qof/qofgobj.c :
+	* qof/qofgobj.h : Directory tweaks.
+	* qof/qofquery-deserial.c : Remove
+	deprecated code.
+	* qof/qofquery-deserial.h : Add warning
+	about unfinished status.
+	* qof/qofquery-serialize.c : Remove
+	deprecated code.
+	* qof/qofquery-serialize.h : Directory tweaks.
+	* qof/qofquery.c : Remove deprecated code.
+	* qof/qofquery.h : Typo.
+	* qof/qofquerycore.c :
+	* qof/qofquerycore.h : Remove deprecated code.
+	* qof/qofsession.c : Reference handling.
+	* qof/qofsql.c : Directory changes,
+	typos, handling UTC time in queries,
+	handling INSERT commands.
+	* qof/qofsql.h : Documentation of INSERT,
+	fixes and prototypes of insert handlers.
+
 2005-03-21 Neil Williams <linux@codehelp.co.uk>
 	* backend/file/qsf-backend.c:
 	* backend/file/qsf-xml.c:
@@ -15,7 +65,7 @@
 	* qof/qofsession.c: Reference support changing
 	from hashtable to list.
 	* qof/qofsession.h: Reference support.
-	
+
 2004-05-01 Linas Vepstas <linas@linas.org>
 	* Add query to XML serialization
 	* Add doxygen automatic document generation
@@ -27,7 +77,7 @@
 
 2003-09-27 Linas Vepstas <linas@linas.org>
 	* src/*: sync with GnuCash CVS HEAD; includes misc cleanup, a whole
-	  class of new KVP functions, and and important cleanup of the trace 
+	  class of new KVP functions, and and important cleanup of the trace
 	  facility
 
 2003-06-25 Linas Vepstas <linas@linas.org>

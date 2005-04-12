@@ -20,9 +20,9 @@
  *                                                                  *
 \********************************************************************/
 
-#include <qof/gnc-trace.h>
-#include <qof/qof.h>
-#include <qof/qofgobj.h>
+#include "gnc-trace.h"
+#include "qof.h"
+#include "qofgobj.h"
 
 static short module = MOD_QUERY;
 

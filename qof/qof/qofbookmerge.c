@@ -42,8 +42,7 @@ struct qof_book_mergeRuleIterate {
 */
 #define DEFAULT_MERGE_WEIGHT	1
 #define QOF_STRING_WEIGHT		3
-#define QOF_DATE_STRING_LENGTH	31
-#define QOF_UTC_DATE_FORMAT		"%Y-%m-%dT%H:%M:%SZ"
+#define QOF_DATE_STRING_LENGTH  MAX_DATE_LENGTH
 
 /* ================================================================ */
 /* API functions. */

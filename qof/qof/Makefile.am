@@ -89,7 +89,7 @@ AM_CFLAGS = -g        \
    ${GLIB_CFLAGS}
 
 INCLUDES =                     \
-   -I../lib                    \
+   -I../lib/libsql             \
    -I$(includedir)             \
    -DPREFIX=\""$(prefix)"\"    \
    -DDATADIR=\""$(datadir)"\" 

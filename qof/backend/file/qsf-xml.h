@@ -311,7 +311,7 @@ of the same object in the same originating QOF application.
 /** \todo enum is an attempt to make enumerator values descriptive in the maps
 and QSF (possibly). Not working yet. */
 #define MAP_ENUM_TYPE "enum"
-#define QSF_XSD_TIME	"%Y-%m-%dT%H:%M:%SZ" /**< xsd:dateTime format in coordinated universal time, UTC.
+#define QSF_XSD_TIME  QOF_UTC_DATE_FORMAT /**< xsd:dateTime format in coordinated universal time, UTC.
 
 You can reproduce the string from the GNU/Linux command line using the date utility: 
 

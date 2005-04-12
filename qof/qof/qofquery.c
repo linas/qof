@@ -1789,8 +1789,8 @@ qof_query_printDateMatch (QofDateMatch d)
   {
     case QOF_DATE_MATCH_NORMAL:
       return "QOF_DATE_MATCH_NORMAL";
-    case QOF_DATE_MATCH_ROUNDED:
-      return "QOF_DATE_MATCH_ROUNDED";
+    case QOF_DATE_MATCH_DAY:
+      return "QOF_DATE_MATCH_DAY";
   }
   return "UNKNOWN MATCH TYPE";
 }                               /* qof_query_printDateMatch */
