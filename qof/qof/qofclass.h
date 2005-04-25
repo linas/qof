@@ -82,7 +82,7 @@
 
 /** Type of Paramters (String, Date, Numeric, GUID, etc.) */
 typedef const char * QofType;
-
+/** Type of QofParam */
 typedef struct _QofParam QofParam;
 
 /** The QofAccessFunc defines an arbitrary function pointer
@@ -219,6 +219,7 @@ of this object type that are not known QOF data types.
 Used for partial QofBook support, see ::QofEntityReference
 */
 GList* qof_class_get_referenceList(QofIdTypeConst type);
+
 
 #endif /* QOF_CLASS_H */
 /* @} */

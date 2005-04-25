@@ -70,7 +70,7 @@ typedef enum {
 /** Comparisons for QOF_TYPE_DATE	
  * The QOF_DATE_MATCH_DAY comparison rounds the two time
  *     values to mid-day and then compares these rounded values.
- * The QOF_DATE_MATCH_TIME comparison matches the time values,
+ * The QOF_DATE_MATCH_NORMAL comparison matches the time values,
  *     down to the second.
  */
 /* XXX remove these deprecated old names .. */
@@ -181,6 +181,8 @@ QofQueryPredData *qof_query_core_predicate_copy (QofQueryPredData *pdata);
 /** Destroy a predicate. */
 void qof_query_core_predicate_free (QofQueryPredData *pdata);
 
+/** Retrieve a predicate. */
+gboolean qof_query_date_predicate_get_date (QofQueryPredData *pd, Timespec *date);
 /** Return a printable string for a core data object.  Caller needs
  *  to g_free() the returned string.
  */

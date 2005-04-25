@@ -1,3 +1,35 @@
+2005-04-25 Neil Williams <linux@codehelp.co.uk>
+	* backend/file/pilot-qsf-GnuCashInvoice.xml:
+	Tweaked the map in preparation for changes in
+	pilotqof.
+	* backend/file/qsf-xml-map.c: planning
+	* backend/file/qsf-xml.h: Documentation
+	* qof/gnc-engine-util.c: GnuCash changes
+	* qof/gnc-engine-util.h: enum as string
+	macro improved.
+	* qof/gnc-event.c: 
+	* qof/gnc-event.h: 
+	* qof/gnc-numeric.c:
+	* qof/gnc-numeric.h:  
+	* qof/gnc-trace.c:
+	* qof/gnc-trace.h:
+	* qof/guid.h: GnuCash changes.
+	* qof/kvp_frame.c: New names for deprecated 
+	functions.
+	* qof/kvp_frame.h: Doxygen improvements and
+	defines to replace deprecated functions.
+	* qof/qof_book_merge.c: Change to unsigned
+	integers.
+	* qof/qofclass.c: Reference handling.
+	* qof/qofclass.h: Doxygen tweak.
+	* qof/qofid.h: Removing FreqSpec.
+	* qof/qofquery.c:
+	* qof/qofquery.h: GnuCash changes.
+	* qof/qofquerycore.c: Date query handling.
+	* qof/qofquerycore.h: Replacing deprecated value.
+	* qof/qofsql.c: UTC date handling.
+	* qof/qofsql.h: Doxygen.
+
 2005-04-12 Neil Williams <linux@codehelp.co.uk>
 	* backend/file/.cvsignore: New file.
 	* backend/file/qsf-backend.c :

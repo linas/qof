@@ -564,7 +564,6 @@ static void check_item_cb (gpointer object, gpointer user_data)
     ql->list = g_list_prepend (ql->list, object);
     ql->count++;
   }
-
   return;
 }
 
@@ -893,6 +892,26 @@ gboolean qof_query_has_term_type (QofQuery *q, GSList *term_param)
   }
 
   return FALSE;
+}
+
+GSList * qof_query_get_term_type (QofQuery *q, GSList *term_param)
+{
+  GList *or;
+  GList *and;
+  GSList *results = NULL;
+
+  if (!q || !term_param)
+    return FALSE;
+
+  for(or = q->terms; or; or = or->next) {
+    for(and = or->data; and; and = and->next) {
+      QofQueryTerm *qt = and->data;
+      if (!param_list_cmp (term_param, qt->param_list))
+        results = g_slist_append(results, qt->pdata);
+    }
+  }
+
+  return results;
 }
 
 void qof_query_destroy (QofQuery *q)

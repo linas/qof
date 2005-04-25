@@ -78,7 +78,6 @@ typedef const char * QofIdTypeConst;
 #define QOF_ID_NULL           "null"
 
 #define QOF_ID_BOOK           "Book"
-#define QOF_ID_FREQSPEC       "FreqSpec"
 #define QOF_ID_SESSION        "Session"
 
 /** simple,cheesy cast but holds water for now */
@@ -121,7 +120,7 @@ typedef struct QofEntity_s QofEntity;
 @param e_type QofIdType
 @param is_dirty gboolean
 @param hash_of_entities GHashTable
-@param data gpointer, place where object class can hang arbitrari data
+@param data gpointer, place where object class can hang arbitrary data
 
 */
 typedef struct QofCollection_s QofCollection;

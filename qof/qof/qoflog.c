@@ -26,6 +26,11 @@
 #include "config.h"
 
 #include <glib.h>
+#ifdef HAVE_UNISTD_H
+#  include <unistd.h>
+#else
+  /* What to do? */
+#endif
 #include <stdarg.h>
 #include <string.h>
 #include <sys/time.h>
@@ -43,7 +48,7 @@ gncLogLevel gnc_log_modules[MOD_LAST + 1] =
   GNC_LOG_WARNING,      /* REGISTER */
   GNC_LOG_WARNING,      /* LEDGER */
   GNC_LOG_WARNING,      /* HTML */
-  GNC_LOG_WARNING,      /* GUI */
+  GNC_LOG_DEBUG,      /* GUI */
   GNC_LOG_WARNING,      /* SCRUB */
   GNC_LOG_WARNING,      /* GTK_REG */
   GNC_LOG_WARNING,      /* GUILE */
@@ -62,9 +67,17 @@ gncLogLevel gnc_log_modules[MOD_LAST + 1] =
   GNC_LOG_WARNING,      /* BUSINESS */
   GNC_LOG_WARNING,      /* DRUID */
   GNC_LOG_WARNING,      /* COMMODITY */
+  GNC_LOG_WARNING,      /* HBCI */
 };
 
 static FILE *fout = NULL;
+static const int MAX_TRACE_FILENAME = 100;
+
+/* Don't be fooled: gnc_trace_num_spaces has external linkage and
+   static storage, but can't be defined with 'extern' because it has
+   an initializer, and can't be declared with 'static' because that
+   would give it internal linkage. */
+gint __attribute__ ((unused)) gnc_trace_num_spaces = 0;
 
 static void
 fh_printer (const gchar   *log_domain,
@@ -72,16 +85,29 @@ fh_printer (const gchar   *log_domain,
             const gchar   *message,
             gpointer    user_data)
 {
+  extern gint gnc_trace_num_spaces;
   FILE *fh = user_data;
-  fprintf (fh, "%s\n", message);
+  fprintf (fh, "%*s%s\n", gnc_trace_num_spaces, "", message);
+  fflush(fh);
 }
 
 void 
 gnc_log_init (void)
 {
+   char *filename;
+
+   fout = fopen ("/tmp/gnucash.trace", "w");
+
+   if(!fout && (filename = (char *)g_malloc(MAX_TRACE_FILENAME))) {
+      snprintf(filename, MAX_TRACE_FILENAME-1, "/tmp/gnucash.trace.%d", 
+	       getpid());
+      fout = fopen (filename, "w");
+      g_free(filename);
+   }
+
+   if(!fout)
    fout = stderr;
-   fout = stdout;
-   fout = fopen ("/tmp/qof.trace", "w");
+
    g_log_set_handler (G_LOG_DOMAIN, G_LOG_LEVEL_MASK, fh_printer, fout);
 }
 
@@ -111,6 +137,7 @@ gnc_set_logfile (FILE *outfile)
    fout = outfile;
 }
 
+#define MAX_CHARS 50
 /* gnc_log_prettify() cleans up subroutine names. AIX/xlC has the habit
  * of printing signatures not names; clean this up. On other operating
  * systems, truncate name to 30 chars. Note this routine is not thread
@@ -125,7 +152,7 @@ gnc_log_prettify (const char *name)
   if (!name)
     return "";
 
-  strncpy (bf, name, 29); bf[28] = 0;
+  strncpy (bf, name, MAX_CHARS-1); bf[MAX_CHARS-2] = 0;
   p = strchr (bf, '(');
 
   if (p)
@@ -134,7 +161,7 @@ gnc_log_prettify (const char *name)
     *(p+2) = 0x0;
   }
   else
-    strcpy (&bf[26], "...()");
+    strcpy (&bf[MAX_CHARS-4], "...()");
 
   return bf;
 }

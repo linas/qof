@@ -110,6 +110,20 @@ ObjC_set_b(value_k) etc. What's needed is for the SELECT to return
 a complete object that only contains the parameters selected.
 
  Also unsupported:  UPDATE. 
+ 
+Certain SQL commands can have no QOF equivalent and will
+generate a runtime parser error:
+ - ALTER
+ - CREATE
+ - DROP
+ - FLUSH
+ - GRANT
+ - KILL
+ - LOCK
+ - OPTIMIZE
+ - REVOKE
+ - USE
+
   @{ */
 typedef struct _QofSqlQuery QofSqlQuery;
 

@@ -251,6 +251,7 @@ int qof_query_num_terms (QofQuery *q);
 
 /** DOCUMENT ME !! */
 gboolean qof_query_has_term_type (QofQuery *q, GSList *term_param);
+GSList * qof_query_get_term_type (QofQuery *q, GSList *term_param);
 
 /** Make a copy of the indicated query */
 QofQuery * qof_query_copy (QofQuery *q);

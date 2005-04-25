@@ -38,6 +38,12 @@
 
 /** Macros *****************************************************/
 
+/* CAS: Notice that this macro does nothing if pointer args are equal.
+   Otherwise, it returns an integer.  Actually, perhaps these macro
+   should be private.  They are NOT good substitutes for the function
+   versions like safe_strcmp().  Maybe external users of these 3
+   macros should be converted to use safe_strcmp().  Actually, THESE
+   MACROS AFFECT CONTROL FLOW.  YUCK!  */
 #define SAFE_STRCMP_REAL(fcn,da,db) {    \
   if ((da) && (db)) {                    \
     if ((da) != (db)) {                  \
@@ -58,7 +64,7 @@
 #define SAFE_STRCASECMP(da,db) SAFE_STRCMP_REAL(strcasecmp,(da),(db))
 
 #define ENUM_BODY(name, value)           \
-    name value ,   
+    name value,
 #define AS_STRING_CASE(name, value)      \
     case name: return #name;
 #define FROM_STRING_CASE(name, value)    \
@@ -68,18 +74,23 @@
 #define DEFINE_ENUM(name, list)          \
     typedef enum {                       \
         list(ENUM_BODY)                  \
-    }name;                               \
-    const char* asString(name n) {       \
+    }name;
+#define AS_STRING_DEC(name, list)        \
+    const char* name##asString(name n);
+#define AS_STRING_FUNC(name, list)       \
+    const char* name##asString(name n) {       \
         switch (n) {                     \
             list(AS_STRING_CASE)         \
             default: return "";          \
         }                                \
-    }                                    \
-    name fromString(const char* str) {   \
+    }
+#define FROM_STRING_DEC(name, list)      \
+    name name##fromString(const char* str);
+#define FROM_STRING_FUNC(name, list)     \
+    name name##fromString(const char* str) {   \
         list(FROM_STRING_CASE)           \
         return 0;                        \
     }
-
 
 /* Define the long long int conversion for scanf */
 #if HAVE_SCANF_LLD
@@ -158,6 +169,16 @@ int qof_util_bool_to_int (const char * val);
 GCache* gnc_engine_get_string_cache(void);
 
 void gnc_engine_string_cache_destroy (void);
+
+/* TODO: hide the gcache as a static */
+
+/* You can use this function as a destroy notifier for a GHashTable
+   that uses common strings as keys (or values, for that matter.) */
+void gnc_string_cache_remove(gpointer key);
+
+/* You can use this function with g_hash_table_insert(), or the key
+  (or value), as long as you use the destroy notifier above. */
+gpointer gnc_string_cache_insert(gpointer key);
 
 #endif /* QOF_UTIL_H */
 /** @} */

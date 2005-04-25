@@ -353,14 +353,12 @@ handle_single_condition (QofSqlQuery *query, sql_condition * cond)
 		/* Use a timezone independent setting */
 		qof_date_format_set(QOF_DATE_FORMAT_UTC);
 		rc = 0;
-		if(strptime(qvalue_name, QOF_UTC_DATE_FORMAT, &utc)) {
-			exact = mktime(&utc);
-			rc = qof_scan_date_secs (qvalue_name, &exact);
-		}
-		if (0 == rc) 
+		if(FALSE == qof_scan_date_secs (qvalue_name, &exact))
 		{
-			PWARN ("unable to parse date: %s", qvalue_name);
-			return NULL;
+			char *tail;
+			exact = strtoll(qvalue_name, &tail, 0);
+//			PWARN ("unable to parse date: %s", qvalue_name);
+//			return NULL;
 		}
 		ts.tv_sec = exact;
 		ts.tv_nsec = 0;
