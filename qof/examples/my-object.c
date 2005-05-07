@@ -80,6 +80,7 @@ my_obj_get_memo (MyObj *m)
 /* Loop over every instance of MyObj, and apply the callback to it.
  * This routine must be defined for queries to be possible. 
  */
+void my_obj_foreach (QofCollection *coll, QofEntityForeachCB cb, gpointer ud);
 void
 my_obj_foreach (QofCollection *coll, QofEntityForeachCB cb, gpointer ud)
 {
@@ -97,6 +98,7 @@ my_obj_foreach (QofCollection *coll, QofEntityForeachCB cb, gpointer ud)
  * some 'reasonable' order.  If you don't want to sort,
  * just have this function always return 0.
  */ 
+int my_obj_order (MyObj *a, MyObj *b);
 int
 my_obj_order (MyObj *a, MyObj *b)
 {
@@ -117,7 +119,7 @@ static QofObject myobj_object_def =
    interface_version: QOF_OBJECT_VERSION,
    e_type:            MYOBJ_ID,
    type_label:        "My Blinking Object",
-   create:            my_obj_new,
+   create:            (gpointer)my_obj_new,
    book_begin:        NULL,
    book_end:          NULL,
    is_dirty:          NULL,

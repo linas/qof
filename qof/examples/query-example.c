@@ -20,7 +20,7 @@
 #include "my-object.h"
 
 /* ===================================================== */
-
+QofBook* my_app_init (void);
 QofBook *
 my_app_init (void)
 {
@@ -35,6 +35,7 @@ my_app_init (void)
    return book;
 }
 
+void my_app_shutdown (QofBook *book);
 void
 my_app_shutdown (QofBook *book)
 {
@@ -43,6 +44,7 @@ my_app_shutdown (QofBook *book)
    qof_book_destroy (book);
 }
 
+void my_app_create_data (QofBook *book);
 void
 my_app_create_data (QofBook *book)
 {
@@ -71,7 +73,7 @@ my_app_create_data (QofBook *book)
 /* A routine that will build an actual query, run it, and
  * print the results.
  */
-
+void my_app_run_query (QofBook *book);
 void
 my_app_run_query (QofBook *book)
 {

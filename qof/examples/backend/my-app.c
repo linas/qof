@@ -6,14 +6,14 @@
  * Basic parsing works basic, copyin, copyout works.
  */
 
-#include <qof/qof.h>
-#include <qof/qofbook-p.h>
+#include <qof.h>
+#include <qofbook-p.h>
 
 #include "my-instance.h"
 
 /* ============================================================== */
 /* Perform various bits of system initialization */
-
+void init (void);
 void 
 init (void)
 {
@@ -22,6 +22,7 @@ init (void)
 	my_inst_register ();
 }
 
+void shutdown(void);
 void 
 shutdown(void)
 {
@@ -37,6 +38,7 @@ print_one (QofEntity *myent, gpointer data)
 	printf ("%s", str);
 }
 
+void print_all (QofBook *book);
 void
 print_all (QofBook *book)
 {
@@ -46,7 +48,7 @@ print_all (QofBook *book)
 
 /* ============================================================== */
 /* Run a query, print the results */
-
+void my_app_run_query (QofSqlQuery *q, char *sql_str);
 void 
 my_app_run_query (QofSqlQuery *q, char *sql_str)
 {
@@ -68,7 +70,7 @@ my_app_run_query (QofSqlQuery *q, char *sql_str)
 }
 
 /* ============================================================== */
-
+MyInst* add_entity (QofBook *book);
 MyInst *
 add_entity (QofBook *book)
 {

@@ -67,6 +67,7 @@ my_inst_set_memo (MyInst *m, const char * str)
  * some 'reasonable' order.  If you don't want to sort,
  * just have this function always return 0.
  */ 
+int my_inst_order (MyInst *left, MyInst *right);
 int
 my_inst_order (MyInst *left, MyInst *right)
 {
@@ -78,7 +79,7 @@ my_inst_order (MyInst *left, MyInst *right)
 	if ((left)->a == (right)->a) return 0;
 	return -1;
 }
-
+const char * my_inst_print (MyInst *m);
 const char * 
 my_inst_print (MyInst *m)
 {

@@ -32,7 +32,8 @@ qsfschema_DATA = \
 
 EXTRA_DIST = \
   $(qsfschema_DATA) \
-  qsf-dir.h.in
+  qsf-dir.h.in    \
+  qsf-dir.h
 
 qsf-dir.h: qsf-dir.h.in
 	rm -f $@.tmp

@@ -13,32 +13,22 @@ docdir = ${datadir}
 all:
 
 doc: doxygen.cfg
-	echo "doc: " && pwd && 	echo "distdir: " && echo $(distdir)
-	rm -rf html refman.pdf
+	echo "doc: " && pwd
+	rm -rf html
 	$(DOXYGEN) doxygen.cfg
+
 #	$(MAKE) -C latex/ 
 #	mv latex/refman.pdf ./refman.pdf
 
-dist-hook: doc
-	echo "dist-hook: " && pwd
-	cp -rp html ${distdir}
+#dist-hook:
 
-distclean-local:
-	echo "distclean-local: " && pwd
-	rm -f doxygen.cfg doxygen.log
+#distclean-local:
 
-maintainer-clean-local:
-	echo "maintainer-clean-local: " && pwd
-	rm -rf html latex
-	rm -f refman.pdf
+#maintainer-clean-local:
 
-install-data-hook:
-	$(mkinstalldirs) $(docdir)/html
-	mkdir -p html  
-	cp -rp html $(docdir)/html
+#install-data-hook:
 
-uninstall-hook:
-	rm -rf ${docdir}/html
+#uninstall-hook:
 
 ## We borrow guile's convention and use @-...-@ as the substitution
 ## brackets here, instead of the usual @...@.  This prevents autoconf
@@ -47,6 +37,5 @@ uninstall-hook:
 doxygen.cfg: doxygen.cfg.in Makefile
 	rm -f $@.tmp
 	sed < $< > $@.tmp \
-            -e 's:@-VERSION-@:${VERSION}:g'
+            -e 's:@-VERSION-@:${QOF_VERSION}:g'
 	mv $@.tmp $@
-

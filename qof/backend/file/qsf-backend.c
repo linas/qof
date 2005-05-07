@@ -79,6 +79,7 @@ qsf_param_init(qsf_param *params)
 	params->supported_types = g_slist_append(params->supported_types, QOF_TYPE_DOUBLE);
 	params->supported_types = g_slist_append(params->supported_types, QOF_TYPE_CHAR);
 	params->supported_types = g_slist_append(params->supported_types, QOF_TYPE_KVP);
+	params->supported_types = g_slist_append(params->supported_types, QOF_TYPE_COLLECT);
 	qsf_time_precision = "%j";
 	qsf_time_now_t = time(NULL);
 	qsf_ts = g_new(Timespec, 1);
@@ -384,6 +385,24 @@ qsf_from_kvp_helper(const char *path, KvpValue *content, gpointer data)
 	}
 }
 
+static void
+qsf_from_coll_cb (QofEntity *ent, gpointer user_data)
+{
+	qsf_param *params;
+	QofParam *qof_param;
+	xmlNodePtr node;
+
+	params = (qsf_param*)user_data;
+	qof_param = params->qof_param;
+/*			node = xmlAddChild(params->output_node, xmlNewNode(params->qsf_ns, qof_param->param_type));
+			xmlNodeAddContent(node, kvp_value_to_bare_string(content));
+			xmlNewProp(node, QSF_OBJECT_TYPE ,qof_param->param_name);
+			xmlNewProp(node, QSF_OBJECT_KVP, path);
+			xmlNewProp(node, QSF_OBJECT_VALUE, QOF_TYPE_NUMERIC);
+	*/
+}
+
+
 /******* reference handling ***********/
 
 static gint
@@ -462,7 +481,6 @@ reference_list_lookup(gpointer data, gpointer user_data)
 	}
 }
 
-
 /*=====================================
 	Convert QofEntity to QSF XML node
 qof_param holds the parameter sequence.
@@ -479,6 +497,7 @@ qsf_entity_foreach(QofEntity *ent, gpointer data)
 	GString *buffer;
 	QofParam *qof_param;
 	KvpFrame 	*qsf_kvp;
+	QofCollection *qsf_coll;
 	int param_count;
 	gboolean own_guid;
 	const GUID *cm_guid;
@@ -516,6 +535,13 @@ qsf_entity_foreach(QofEntity *ent, gpointer data)
 			if(ref != NULL) {
 				g_list_foreach(ref, reference_list_lookup, params);
 			}
+		}
+		if(0 == safe_strcmp(qof_param->param_type, QOF_TYPE_COLLECT))
+		{
+			qsf_coll = qof_param->param_getfcn(ent, qof_param);
+			params->qof_param = qof_param;
+			params->output_node = object_node;
+			qof_collection_foreach(qsf_coll, qsf_from_coll_cb, params);
 		}
 		if(0 == safe_strcmp(qof_param->param_type, QOF_TYPE_KVP))
 		{

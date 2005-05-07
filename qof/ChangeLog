@@ -1,3 +1,30 @@
+2005-05-07  Neil Williams <linux@codehelp.co.uk>
+	* README: Documenting newest features.
+	* backend/file/Makefile.am: Fixing dist build
+	* backend/file/qsf-backend.c: QOF_TYPE_COLLECT
+	* backend/file/qsf-object.xsd.xml: Validation typo
+	* configure.in: 
+	* doc/Makefile.am:
+	* doc/doxygen.cfg.in:
+	* examples/Makefile.am:
+	* examples/backend/Makefile.am:
+	* examples/backend/my-app.c:
+	* examples/backend/my-instance.c:
+	* examples/my-object.c:
+	* examples/query-example.c:
+	* examples/sql-example.c:
+	* examples/test-qsf.c:
+	* lib/libsql/Makefile.am:
+	* qof/Makefile.am: Fixing build errors.
+	* qof/kvp_frame.h: Doxygen fix
+	* qof/qof_book_merge.c: 
+	* qof/qofclass.h:
+	* qof/qofid.c:
+	* qof/qofid.h: QOF_TYPE_COLLECT
+	* qof/qofsession.c: Recursive copying
+	* qof/qofsession.h: Recursive declarations.
+	* qof/qofsql.c: Fixing dist build.
+
 2005-04-25 Neil Williams <linux@codehelp.co.uk>
 	* backend/file/pilot-qsf-GnuCashInvoice.xml:
 	Tweaked the map in preparation for changes in

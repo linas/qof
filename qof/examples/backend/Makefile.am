@@ -18,7 +18,8 @@ EXTRA_DIST =       \
 
 
 AM_CFLAGS =           \
-  -I. -I../../ -I../../qof \
+  -I. -I../..        \
+  -I${top_srcdir}/qof \
   ${GLIB_CFLAGS}
 
 
@@ -28,4 +29,3 @@ LDADD =                                   \
   ${LIBXML2_LIBS}                         \
   ${GLIB_LIBS}                            \
   -lltdl -lm
-

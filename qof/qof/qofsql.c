@@ -30,7 +30,7 @@
 #include <stdlib.h>   /* for working atoll */
 #include <errno.h>
 #include <glib.h>
-#include "sql_parser.h"
+#include <sql_parser.h>
 #include "kvp_frame.h"
 #include "gnc-date.h"
 #include "gnc-numeric.h"
@@ -159,7 +159,6 @@ handle_single_condition (QofSqlQuery *query, sql_condition * cond)
 	KvpValueType kvt;
 	QofQueryCompare qop;
 	time_t exact;
-	struct tm utc;
 	int rc, len;
 	Timespec ts;
 	QofType param_type;
@@ -281,7 +280,7 @@ handle_single_condition (QofSqlQuery *query, sql_condition * cond)
 		default:
 			/* XXX for string-type queries, we should be able to
 			 * support 'IN' for substring search.  Also regex. */
-			PWARN ("Unsupported compare op (parsed as %s)", cond->op);
+			PWARN ("Unsupported compare op (parsed as %u)", cond->op);
 			return NULL;
 	}
 
@@ -634,7 +633,7 @@ qof_sql_get_param(QofIdTypeConst type, sql_insert_statement *insert)
 static void
 qof_sql_insertCB( gpointer value, gpointer data)
 {
-	GList *param_list, *walk;
+	GList *param_list;
 	QofSqlQuery *q;
 	QofIdTypeConst type;
 	sql_insert_statement *sis;
@@ -653,9 +652,9 @@ qof_sql_insertCB( gpointer value, gpointer data)
 	Timespec       cm_date;
 	char           cm_char, *tail;
 	GUID           *cm_guid;
-	KvpFrame       *cm_kvp;
+/*	KvpFrame       *cm_kvp;
 	KvpValue       *cm_value;
-	KvpValueType   cm_type;
+	KvpValueType   cm_type;*/
 	QofSetterFunc  cm_setter;
 	const QofParam *cm_param;
 	void (*string_setter)    (QofEntity*, const char*);
@@ -666,7 +665,7 @@ qof_sql_insertCB( gpointer value, gpointer data)
 	void (*i32_setter)       (QofEntity*, gint32);
 	void (*i64_setter)       (QofEntity*, gint64);
 	void (*char_setter)      (QofEntity*, char);
-	void (*kvp_frame_setter) (QofEntity*, KvpFrame*);
+/*	void (*kvp_frame_setter) (QofEntity*, KvpFrame*);*/
 
 	q = (QofSqlQuery*)data;
 	ent = q->inserted_entity;
@@ -749,13 +748,7 @@ qof_sql_insertCB( gpointer value, gpointer data)
 			if(boolean_setter != NULL) { boolean_setter(ent, cm_boolean); }
 		}
 			if(safe_strcmp(cm_param->param_type, QOF_TYPE_KVP) == 0) { 
-/*				cm_type = qsf_to_kvp_helper(xmlGetProp(node, QSF_OBJECT_VALUE));
-				if(!cm_type) { return; }
-				cm_value = string_to_kvp_value(xmlNodeGetContent(node), cm_type);
-				cm_kvp = kvp_frame_copy(cm_param->param_getfcn(qsf_ent, cm_param));
-				cm_kvp = kvp_frame_set_value(cm_kvp, xmlGetProp(node, QSF_OBJECT_KVP), cm_value);
-				kvp_frame_setter = (void(*)(QofEntity*, KvpFrame*))cm_setter;
-				if(kvp_frame_setter != NULL) { kvp_frame_setter(qsf_ent, cm_kvp); }*/
+				
 			}
 		if(safe_strcmp(cm_param->param_type, QOF_TYPE_CHAR) == 0) { 
 			cm_char = *insert_string;
@@ -873,7 +866,7 @@ qof_sql_query_parse (QofSqlQuery *query, const char *str)
 GList * 
 qof_sql_query_run (QofSqlQuery *query, const char *str)
 {
-	GList *node, *results;
+	GList *results;
 	
 	if (!query) return NULL;
 
@@ -895,7 +888,7 @@ qof_sql_query_run (QofSqlQuery *query, const char *str)
 GList * 
 qof_sql_query_rerun (QofSqlQuery *query)
 {
-	GList *node, *results;
+	GList *results;
 
 	if (!query) return NULL;
 

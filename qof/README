@@ -32,6 +32,10 @@ QOF also includes other utilities from GnuCash:
  o Program tracing infrastructure; handing for tracing/debugging
    complex applications.
  o QofBook merge support with collision handling.
+ o Support for partial books with references to linked objects.
+ o XML backend available to all programs using QOF. A generic format
+   to describe any object in XML.
+ o Methods to convert objects between applications.
 
 The system consists of 15 KLOC of C code that has been ported to many
 Unixes, including Mac OS X.  Although this code is in production use
@@ -43,6 +47,12 @@ subroutine naming convention is highly inconsistent.
 Examples:
 --------
 Example programs showing usage can be found in the "examples" subdirectory
+
+
+Generating objects:
+------------------
+To generate your own QOF objects, including Makefiles and an outline
+test application, see http://qof-gen.sourceforge.net/
 
 
 Documentation:

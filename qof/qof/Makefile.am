@@ -29,11 +29,12 @@ libqof_la_SOURCES =  \
    qofbook.c         \
    qofobject.c       \
    qofquerycore.c    \
-   qofquery-deserial.c     \
-   qofquery-serialize.c    \
    qofsession.c      \
    qofsql.c          \
    qof_book_merge.c
+
+#   qofquery-deserial.c     \
+#   qofquery-serialize.c    \
 
 
 qofincludedir = ${pkgincludedir}
@@ -89,8 +90,7 @@ AM_CFLAGS = -g        \
    ${GLIB_CFLAGS}
 
 INCLUDES =                     \
-   -I../lib/libsql             \
+   -I${top_srcdir}/lib/libsql             \
    -I$(includedir)             \
    -DPREFIX=\""$(prefix)"\"    \
    -DDATADIR=\""$(datadir)"\" 
-                   

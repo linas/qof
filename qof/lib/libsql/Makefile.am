@@ -33,7 +33,7 @@ AM_CFLAGS = -g     \
 	@GLIB_CFLAGS@
 
 INCLUDES = \
-	-I$(inclduedir) 
+	-I$(includedir) 
 
 parser.c: parser.y
 	$(YACC) -v -d -o parser.c -p sql parser.y
@@ -47,4 +47,3 @@ sql_parse_test_DEPENDENCIES =
 sql_parse_test_LDADD = ./libqofsql.la @GLIB_LIBS@
 
 tests: sql_parse_test
-

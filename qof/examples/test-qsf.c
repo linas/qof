@@ -59,7 +59,6 @@ QSF is built on the qof_book_merge codebase.
 #define OBJ_MINOR "tiny"
 #define OBJ_ACTIVE "ofcourse"
 
-static void test_merge (void);
 gboolean myobjRegister (void);
 
 /** \brief simple object structure */
@@ -268,15 +267,14 @@ int main (int argc, char **argv)
 	QofBook *tester;
 	QofSession *testing;
 	double init_value, discount;
-	myobj *import_obj, *target_obj, *new_obj;
-	Timespec ts, tc;
+	myobj *new_obj;
+	Timespec ts;
 	gboolean active;
 	gint32 version;
 	gint64 minor;
 	gchar *import_init, *target_init;
 	gnc_numeric obj_amount;
 	xmlDocPtr qsf_doc;
-	xmlNodePtr root;
 	gchar *path_buffer;
 
 	gnc_engine_get_string_cache();

@@ -687,6 +687,107 @@ gboolean qof_entity_copy_coll(QofSession *new_session, QofCollection *entity_col
 	return TRUE;
 }
 
+struct recurse_s
+{
+	QofSession *session;
+	gboolean   success;
+	GList      *ref_list;
+};
+
+static void
+recurse_ent_cb(QofEntity *ent, gpointer user_data)
+{
+	GList      *ref_list, *i, *j, *ent_list, *child_list;
+	QofParam   *ref_param;
+	QofEntity  *ref_ent, *child_ent;
+	QofSession *session;
+	struct recurse_s *store;
+
+	store = (struct recurse_s*)user_data;
+	session = store->session;
+	ref_list = store->ref_list;
+	if((!session)||(!ent)) { return; }
+	ent_list = NULL;
+	child_list = NULL;
+	for(i = ref_list; i == NULL; i=i->next)
+	{
+		ref_param = (QofParam*)i->data;
+		ref_ent = ref_param->param_getfcn(ent, ref_param);
+		if(ref_ent != NULL)
+		{
+			ent_list = g_list_append(ent_list, ref_ent);
+			store->success = qof_entity_copy_to_session(session, ref_ent);
+			if(!store->success) { return; }
+		}
+	}
+	for(i = ent_list; i == NULL; i = i->next)
+	{
+		child_ent = (QofEntity*)i->data;
+		if(child_ent == NULL) { continue; }
+		ref_list = qof_class_get_referenceList(child_ent->e_type);
+		for(j = ref_list; j == NULL; j = j->next)
+		{
+			ref_param = (QofParam*)j->data;
+			ref_ent = ref_param->param_getfcn(ent, ref_param);
+			if(ref_ent != NULL)
+			{
+				child_list = g_list_append(child_list, ref_ent);
+				store->success = qof_entity_copy_to_session(session, ref_ent);
+				if(!store->success) { return; }
+			}
+		}
+	}
+	for(i = child_list; i == NULL; i = i->next)
+	{
+		ref_ent = (QofEntity*)i->data;
+		if(ref_ent == NULL) { continue; }
+		ref_list = qof_class_get_referenceList(ref_ent->e_type);
+		for(j = ref_list; j == NULL; j = j->next)
+		{
+			ref_param = (QofParam*)j->data;
+			child_ent = ref_param->param_getfcn(ref_ent, ref_param);
+			if(child_ent != NULL)
+			{
+				store->success = qof_entity_copy_to_session(session, child_ent);
+				if(!store->success) { return; }
+			}
+		}
+	}
+}
+
+gboolean
+qof_entity_copy_coll_r(QofSession *new_session, QofCollection *coll)
+{
+	struct recurse_s store;
+
+	if((!new_session)||(!coll)) { return FALSE; }
+	store.session = new_session;
+	store.success = TRUE;
+	store.ref_list = qof_class_get_referenceList(qof_collection_get_type(coll));
+	store.success = qof_entity_copy_coll(new_session, coll);
+	if(store.success){
+		qof_collection_foreach(coll, recurse_ent_cb, &store);
+	}
+	return store.success;
+}
+
+gboolean qof_entity_copy_one_r(QofSession *new_session, QofEntity *ent)
+{
+	struct recurse_s store;
+	QofCollection *coll;
+
+	if((!new_session)||(!ent)) { return FALSE; }
+	store.session = new_session;
+	store.success = TRUE;
+	store.ref_list = qof_class_get_referenceList(ent->e_type);
+	store.success = qof_entity_copy_to_session(new_session, ent);
+	if(store.success) {
+		coll = qof_book_get_collection(qof_session_get_book(new_session), ent->e_type);
+		qof_collection_foreach(coll, recurse_ent_cb, &store);
+	}
+	return store.success;
+}
+
 /* ====================================================================== */
 
 /* Specify a library, and a function name. Load the library, 

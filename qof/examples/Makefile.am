@@ -39,28 +39,32 @@ EXTRA_DIST =     \
 
 
 AM_CFLAGS =  \
-  -I.. -I../.. \
+  -I.. -I../.. -I../../.. \
   -I${top_srcdir}/qof \
   -I${top_srcdir}/backend/file \
   ${LIBXML2_CFLAGS} \
   ${GLIB_CFLAGS}
 
 test_qsf_LDADD = \
-  ${top_srcdir}/backend/file/libqof-backend-qsf.la \
-  ${top_srcdir}/qof/libqof.la           \
-  ${top_srcdir}/lib/libsql/libqofsql.la \
+  ${top_builddir}/backend/file/libqof-backend-qsf.la \
+  ${top_builddir}/qof/libqof.la           \
+  ${top_builddir}/lib/libsql/libqofsql.la \
   ${LIBXML2_LIBS}                         \
   ${GLIB_LIBS}                            \
   -lltdl
 
-#test_book_merge_LDADD = \
-#  ${top_builddir}/qof/qof_book_merge.lo
-
+test_book_merge_LDADD = \
+  ${top_builddir}/qof/qof_book_merge.lo    \
+  ${top_builddir}/backend/file/libqof-backend-qsf.la \
+  ${top_builddir}/qof/libqof.la           \
+  ${top_builddir}/lib/libsql/libqofsql.la \
+  ${LIBXML2_LIBS}                         \
+  ${GLIB_LIBS}                            \
+  -lltdl
 
 LDADD =                                   \
-  ${top_srcdir}/qof/libqof.la           \
-  ${top_srcdir}/lib/libsql/libqofsql.la \
+  ${top_builddir}/qof/libqof.la           \
+  ${top_builddir}/lib/libsql/libqofsql.la \
   ${LIBXML2_LIBS}                         \
   ${GLIB_LIBS}                            \
   -lltdl -lm
-
