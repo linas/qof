@@ -231,6 +231,7 @@ qof_collection_merge (QofCollection *target, QofCollection *merge)
 	if(!target || !merge) { return FALSE; }
 	g_return_val_if_fail (target->e_type == merge->e_type, FALSE);
 	qof_collection_foreach(merge, collection_merge_cb, target);
+	return TRUE;
 }
 
 static void

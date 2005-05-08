@@ -136,7 +136,6 @@ qsf_session_end( QofBackend *be)
 	
 	qsf_be = (QSFBackend*)be;
 	g_return_if_fail(qsf_be != NULL);
-
 	qsf_free_params(qsf_be->params);
 	g_free(qsf_be->fullpath);
 	qsf_be->fullpath = NULL;
@@ -226,7 +225,6 @@ qsfdoc_to_qofbook(xmlDocPtr doc, qsf_param *params)
 	g_return_val_if_fail(doc != NULL, FALSE);
 	g_return_val_if_fail(params->book != NULL, FALSE);
 	g_return_val_if_fail(params->file_type == OUR_QSF_OBJ, FALSE);
-
 	qsf_root = xmlDocGetRootElement(doc);
 	qsf_ns = qsf_root->ns;
 	iter.ns = qsf_ns;
@@ -391,17 +389,16 @@ qsf_from_coll_cb (QofEntity *ent, gpointer user_data)
 	qsf_param *params;
 	QofParam *qof_param;
 	xmlNodePtr node;
+	gchar qsf_guid[GUID_ENCODING_LENGTH + 1];
 
 	params = (qsf_param*)user_data;
+	if(!ent || !params) { return; }
 	qof_param = params->qof_param;
-/*			node = xmlAddChild(params->output_node, xmlNewNode(params->qsf_ns, qof_param->param_type));
-			xmlNodeAddContent(node, kvp_value_to_bare_string(content));
+	node = xmlAddChild(params->output_node, xmlNewNode(params->qsf_ns, qof_param->param_type));
+	guid_to_string_buff(qof_entity_get_guid(ent), qsf_guid);
+	xmlNodeAddContent(node, qsf_guid);
 			xmlNewProp(node, QSF_OBJECT_TYPE ,qof_param->param_name);
-			xmlNewProp(node, QSF_OBJECT_KVP, path);
-			xmlNewProp(node, QSF_OBJECT_VALUE, QOF_TYPE_NUMERIC);
-	*/
 }
-
 
 /******* reference handling ***********/
 
@@ -914,6 +911,35 @@ qsf_object_commitCB(gpointer key, gpointer value, gpointer data)
 			kvp_frame_setter = (void(*)(QofEntity*, KvpFrame*))cm_setter;
 			if(kvp_frame_setter != NULL) { kvp_frame_setter(qsf_ent, cm_kvp); }
 		}
+	if(safe_strcmp(qof_type, QOF_TYPE_COLLECT) == 0) {
+		QofCollection *qsf_coll;
+		QofIdType type;
+		QofEntityReference *reference;
+		QofParam *copy_param;
+		/* retrieve the *type* of the collection, ignore any contents. */
+		qsf_coll = cm_param->param_getfcn(qsf_ent, cm_param);
+		type = qof_collection_get_type(qsf_coll);
+		cm_guid = g_new(GUID, 1);
+		if(TRUE != string_to_guid(xmlNodeGetContent(node), cm_guid))
+		{
+			qof_backend_set_error(params->be, ERR_QSF_BAD_OBJ_GUID);
+			LEAVE (" string to guid failed for %s", xmlNodeGetContent(node));
+			return;
+		}
+		// create a QofEntityReference with this type and GUID.
+		// there is only one entity each time.
+		// cm_guid contains the GUID of the reference.
+		// type is the type of the reference.
+		reference = g_new0(QofEntityReference, 1);
+		reference->type = g_strdup(qsf_ent->e_type);
+		reference->ref_guid = cm_guid;
+		reference->ent_guid = &qsf_ent->guid;
+		copy_param = g_new0(QofParam, 1);
+		copy_param->param_name = g_strdup(cm_param->param_name);
+		copy_param->param_type = g_strdup(cm_param->param_type);
+		reference->param = copy_param;
+		params->referenceList = g_list_append(params->referenceList, reference);
+	}
 	if(safe_strcmp(qof_type, QOF_TYPE_CHAR) == 0) { 
 		char_getter = (char (*)(xmlNodePtr))xmlNodeGetContent;
 		cm_char = char_getter(node);

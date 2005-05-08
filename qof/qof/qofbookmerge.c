@@ -346,6 +346,21 @@ qof_book_mergeUpdateRule(qof_book_mergeRule *currentRule, gboolean match, gint w
 	return currentRule;
 }
 
+struct collect_list_s
+{
+	GSList *linkedEntList;
+};
+
+static void
+collect_reference_cb (QofEntity *ent, gpointer user_data)
+{
+	struct collect_list_s *s;
+
+	s = (struct collect_list_s*)user_data;
+	if(!ent || !s) { return; }
+	s->linkedEntList = g_slist_prepend(s->linkedEntList, ent);
+}
+
 int 
 qof_book_mergeCompare( qof_book_mergeData *mergeData ) 
 {
@@ -477,20 +492,22 @@ qof_book_mergeCompare( qof_book_mergeData *mergeData )
 		/* No object should have QofSetterFunc defined for the book, but just to be safe, do nothing. */
 		if(safe_strcmp(mergeType, QOF_ID_BOOK) == 0) { knowntype= TRUE;	}
 		if(safe_strcmp(mergeType, QOF_TYPE_COLLECT) == 0) {
+			struct collect_list_s s;
+			s.linkedEntList = NULL;
 			mergeColl = qtparam->param_getfcn(mergeEnt, qtparam);
 			targetColl = qtparam->param_getfcn(targetEnt, qtparam);
+			s.linkedEntList = g_slist_copy(currentRule->linkedEntList);
+			qof_collection_foreach(mergeColl, collect_reference_cb, &s);
+			currentRule->linkedEntList = g_slist_copy(s.linkedEntList);
 			if(0 == qof_collection_compare(mergeColl, targetColl)) { mergeMatch = TRUE; }
 			currentRule = qof_book_mergeUpdateRule(currentRule, mergeMatch, DEFAULT_MERGE_WEIGHT);
 			knowntype = TRUE;
 		}
-		/* deal with custom type parameters : 
-		 using references to other registered QOF objects. */
 		if(knowntype == FALSE) {
 			referenceEnt = qtparam->param_getfcn(mergeEnt, qtparam);
 			if((referenceEnt != NULL)
 				&&(safe_strcmp(referenceEnt->e_type, mergeType) == 0)) {
 					currentRule->linkedEntList = g_slist_prepend(currentRule->linkedEntList, referenceEnt);
-					/* Compare the mergeEnt reference with targetEnt reference */
 					if(referenceEnt == qtparam->param_getfcn(targetEnt, qtparam)) { mergeMatch = TRUE; }
 					currentRule = qof_book_mergeUpdateRule(currentRule, mergeMatch, DEFAULT_MERGE_WEIGHT);
 			}
@@ -950,7 +967,6 @@ void qof_book_mergeCommitRuleLoop(
 		if(registered_type == FALSE) {
 			linkage = g_slist_copy(rule->linkedEntList);
 			referenceEnt = NULL;
-//			currentRule = NULL;
 			reference_setter = (void(*)(QofEntity*, QofEntity*))cm_param->param_setfcn;
 			if((linkage == NULL)&&(rule->mergeResult == MERGE_NEW)) {
 				referenceEnt = cm_param->param_getfcn(rule->importEnt, cm_param);

@@ -1,3 +1,10 @@
+2005-05-08  Neil Williams <linux@codehelp.co.uk>
+	* backend/file/qsf-backend.c: QOF_TYPE_COLLECT
+	reference handling.
+	* qof/qof_book_merge.c: Merging collections.
+	* qof/qofid.c: Compiler warning fix.
+	* qof/qofsession.c: recursing collections.
+
 2005-05-07  Neil Williams <linux@codehelp.co.uk>
 	* README: Documenting newest features.
 	* backend/file/Makefile.am: Fixing dist build
