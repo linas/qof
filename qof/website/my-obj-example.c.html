@@ -1,41 +1,62 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<html>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html lang="en_gb">
 <head>
 <title>QOF Query Usage Example</title>
+<link rel="shortcut icon" href="favicon.png">
+<link rel="stylesheet" type="text/css" href="qof.css">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 </head>
-<body fgcolor=#000000 bgcolor=#ffffff>
-<h1>How to Use QOF to Perform a Query Over a Set of Objects</h1>
-
-The example below shows how to perform an SQL query over 
-a collection of generic, programmer-defined objects.
-The example comes in two parts:  first, the definition
-of a generic object, and second, the actual 'application
-program' that queries over the set of objects.
-
-
+<body>
+<h1>QOF Queries Over a Set of Objects</h1>
+<div id="resource">
+<ul>
+<li><a href="index.html">Home</a></li>
+<li><a href="http://sourceforge.net/projects/qof/">SourceForge</a></li>
+<li><a href="index.html#docs">Documentation</a></li>
+<li><a href="http://qof-gen.sourceforge.net/">QOF-Generator</a></li>
+<li><a href="gobj-example.c.html">GObject queries</a></li>
+<li><a href="why-qof.html">Why QOF?</a></li>
+<li><a href="http://www.data-freedom.org/">Data Freedom</a></li>
+<li><a href="index.html#support">Support</a></li>
+</ul>
+</div>
+<div><p><a href="http://qof-gen.sourceforge.net/">Generate your own</a>
+examples using your own data and build a test application.</p>
+</div>
+<div><p>The example below shows how to perform an SQL query over 
+a collection of generic, programmer-defined objects. The example 
+comes in two parts:  first, the definition of a generic object, and 
+second, the actual 'application program' that queries over the set of 
+objects.</p>
+</div>
+<div class="clear">&nbsp;</div>
 <h2>Defining a Queriable Object</h2>
-QOF provides a loose run-time typed object system.  To make
-an object queriable, you must use that system.  However, it 
-is our hope that the system is sufficiently loose that it
-doesn't impose any undesired, forced structure on your 
-particular programming style.  We are trying to provide 
-mechanism, not policy.  Note that this example is in C not C++.
-<p>
-QOF has only one dependency, and that is 
-<a href="http://developer.gnome.org/doc/API/glib/">GLib</a>.
-GLib is a collection of basic algorithms and structures 
+<div><p>QOF provides a loose run-time typed object system.  To make
+an object queriable, you must use that system.  However, it is our 
+hope that the system is sufficiently loose that it doesn't impose 
+any undesired, forced structure on your particular programming style.  
+We are trying to provide mechanism, not policy.  Note that this 
+example is in C not C++.</p>
+</div>
+
+<div><p>
+QOF has only two dependencies, and those are 
+<a href="http://developer.gnome.org/doc/API/glib/">GLib</a> and
+libxml2.</p>
+<p>GLib is a collection of basic algorithms and structures 
 for C programmers, such as linked lists, hash tables, 
 and more.  Glib is a fairly small, fast and simple system, 
 and should not present difficulties to the experienced
 programmer.  In the example below, the list of results
 from the query are returned as a linked list of GLib 
 objects.  Please note that this example neither uses
-nor requires GObjects in any way.  
+nor requires GObjects or Gtk+ in any way.</p>
+</div>
 
 <pre>
 
 /** @file my-object.c
- *  @breif Example definition of a queriable object. 
+ *   @brief Example definition of a queriable object. 
  *  @author Copyright (c) 2003,2004 Linas Vepstas &lt;linas@linas.org&gt;
  *
  *  This example program shows how to configure an arbitrary

@@ -1,21 +1,38 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<html>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html lang="en_gb">
 <head>
 <title>QOF GObject Usage Example</title>
+<link rel="shortcut icon" href="favicon.png">
+<link rel="stylesheet" type="text/css" href="qof.css">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 </head>
-<body fgcolor=#000000 bgcolor=#ffffff>
-<h1>How to Query Over a Collection of GObjects</h1>
-The example below shows how to perform an SQL query over 
+<body>
+<h1>Query Over a Collection of GObjects</h1>
+<div id="resource">
+<ul>
+<li><a href="index.html">Home</a></li>
+<li><a href="http://sourceforge.net/projects/qof/">SourceForge</a></li>
+<li><a href="index.html#docs">Documentation</a></li>
+<li><a href="http://qof-gen.sourceforge.net/">QOF-Generator</a></li>
+<li><a href="my-obj-example.c.html">Object queries</a></li>
+<li><a href="why-qof.html">Why QOF?</a></li>
+<li><a href="http://www.data-freedom.org/">Data Freedom</a></li>
+<li><a href="index.html#support">Support</a></li>
+</ul>
+</div>
+
+<div><p>The example below shows how to perform an SQL query over 
 a collection of Glib GObjects.  Three 
 <b><tt>GtkButton</tt></b> objects are created, each with
 a different label.  Then the SQL statement
 <b><tt>SELECT * FROM GtkButton WHERE (label='asdfasdf');</tt></b>
 is performed on this collection.  The one button with the
-matching label is returned.
-
+matching label is returned.</p>
+</div>
+<div class="clear">&nbsp;</div>
 <pre>
 /** @file gobj-example.c
- *  @breif Example usage of QOF to query a set of GObjects.
+ *  @brief Example usage of QOF to query a set of GObjects.
  *  @author Copyright (c) 2004 Linas Vepstas &lt;linas@linas.org&gt;
  *
  * This example program shows how to use QOF to query over a set

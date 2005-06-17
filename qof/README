@@ -1,7 +1,7 @@
-
                 QOF - Query Object Framework
                 ----------------------------
                         April 2004
+Updated May 2005.
 
 Brief Description:
 ------------------
@@ -41,27 +41,30 @@ The system consists of 15 KLOC of C code that has been ported to many
 Unixes, including Mac OS X.  Although this code is in production use
 in stable versions of GnuCash, the split-off into QOF is recent and
 still under some flux in order to flesh it out.  In particular, the
-subroutine naming convention is highly inconsistent.
-
+subroutine naming convention is being resolved but is still inconsistent.
 
 Examples:
 --------
 Example programs showing usage can be found in the "examples" subdirectory
-
+but are becoming obsolete. Instead, generate your own objects:
 
 Generating objects:
 ------------------
 To generate your own QOF objects, including Makefiles and an outline
 test application, see http://qof-gen.sourceforge.net/
 
+Other applications:
+-------------------
+Pilot-QOF implements a QOF application conduit for pilot-link,
+supporting Expenses, ToDo, Calendar and Contacts databases. Support
+can be extended to FreeCoins and other Palm databases in time.
 
 Documentation:
 --------------
-The QOF documentation is embedded mostly in the header files.  You
+The QOF documentation is entirely embedded in the source code. You
 can build an html version of the documentation by installing the
 'doxygen' package, and then 'cd doc; make doc'.  Skim the doc/README
 file for more info.
-
 
 Linking/Building
 ----------------
@@ -69,11 +72,12 @@ This version of QOF uses the 'pkg' system of managing include files
 and libraries.  To compile and link your program against QOF, include
 the following directives in your Makefile:
 
-INCLUDES += `pkg-config qof-0 --cflags`
-LIBS += `pkg-config qof-0 --libs`
+QOF_CFLAGS = `pkg-config qof-1 --cflags`
+QOF_LIBS = `pkg-config qof-1 --libs`
+ACSUBST(QOF_CFLAGS)
+ACSUBST(QOF_LIBS)
 
 This will automatically supply the correct paths to include files and 
 libraries for your application.
-
 
 ------------------------- END OF DOCUMENT -------------------------

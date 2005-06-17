@@ -6,9 +6,8 @@ includedir=@includedir@
 
 Name: QOF
 Description: QOF Query Object Framework Library.
-Requires: glib-2.0 
+Requires: glib-2.0 xml2 >= 2-2.5.10
 Version: @VERSION@
-# The libqof.a isn't supposed to have aversion number 
-# Libs: -L${libdir} -lqof-@VERSION@ -lqofsql-@VERSION@
 Libs: -L${libdir} -lqof -lqofsql
-Cflags: -I${includedir} 
+Cflags: -I${includedir}/qof
+

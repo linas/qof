@@ -1,0 +1,94 @@
+P {
+	text-align:justify;
+}
+a:link    { text-decoration:none; color:blue;}
+a:visited { text-decoration:none; color:maroon;}
+a:hover   { text-decoration:underline; color:green;}
+H1 {
+	background:#4541AD;
+	color:white;
+	text-align:center;
+	padding-top:0.25em;
+	padding-bottom:0.25em;
+}
+H2 {
+	background: white;
+	text-align:left;
+	color: #272C80;
+}
+H3 {
+	background: silver;
+	text-align:left;
+	color: #122D8F;
+	padding:0.25em;
+}
+HR {
+	border-style:groove;
+	border-width: 2px 0 0 0;
+}
+BODY {
+	color:black;
+	background:white;
+	font-size:1em;
+	color:black;
+	text-align:justify;
+	font-family:helvetica,verdana,arial,sans-serif;
+	text-decoration:none;
+}
+#sflogo {
+	width:210px;
+	height:62px;
+	border-style:none;
+	float:right;
+	margin-left:2em;
+}
+#sflogosm {
+	height:31px;
+	width:88px;
+	border-style:none;
+	float:left;
+	margin-right:0.5em;
+	margin-bottom:0.5em;
+}
+#qoflogo {
+	height:150px;
+	width:100px;
+	border-width:5px;
+	border-style:groove;
+	float:right;
+	margin-left:2em;
+	margin-bottom:2em;
+}
+UL {
+	margin-left:0.5em;
+	padding-left:0;
+}
+LI {
+	margin-left:0.5em;
+	padding-left:0;
+}
+DT {
+	font-weight:700;
+}
+.clear {
+	float:none;
+	clear:both;
+}
+#licence {
+	font-size: 0.7em;
+	text-align:justify;
+	color: #49494B;
+}
+#resource {
+	color:black;
+	background: #99CCFF;
+	float:left;
+	margin-right:2em;
+	padding-right:1em;
+	padding-left:0.5em;
+}
+.back {
+	color:#122D8F;
+	background: silver;
+	padding:0.25em;
+}

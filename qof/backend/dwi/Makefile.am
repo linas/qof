@@ -19,12 +19,10 @@ qof_backend_dwiinclude_HEADERS = \
 	qofmap.h
 
 EXTRA_DIST =       \
-	.cvsignore      \
 	README
 
 AM_CFLAGS = -g     \
 	@CFLAGS@        \
 	@GLIB_CFLAGS@
-
 
 

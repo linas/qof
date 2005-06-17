@@ -25,3 +25,9 @@ intltool-extract
 intltool-merge
 intltool-update
 stamp-h
+qof-1.pc
+.DS_Store
+.tm_project.cache
+bin
+qof.prj
+qof.pws

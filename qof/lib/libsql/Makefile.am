@@ -2,8 +2,7 @@
 
 lib_LTLIBRARIES = libqofsql.la
 
-# libqofsql_la_LDFLAGS= -version-info $(LIBQOF_LIBRARY_VERSION) -release $(VERSION) 
-libqofsql_la_LDFLAGS= -version-info $(LIBQOF_LIBRARY_VERSION) 
+libqofsql_la_LDFLAGS= -version-info $(LIBQOFSQL_LIBRARY_VERSION) 
 
 libqofsql_la_SOURCES = \
 	parser.c \
@@ -23,7 +22,6 @@ qofsqlinclude_HEADERS = sql_parser.h
 noinst_PROGRAMS = sql_parse_test
 
 EXTRA_DIST =       \
-	.cvsignore      \
 	README          \
 	lexer.l         \
 	parser.y  
@@ -47,3 +45,4 @@ sql_parse_test_DEPENDENCIES =
 sql_parse_test_LDADD = ./libqofsql.la @GLIB_LIBS@
 
 tests: sql_parse_test
+

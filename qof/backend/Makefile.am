@@ -20,6 +20,5 @@ SUBDIRS = $(DWIBE) file
 DIST_SUBDIRS =  dwi file
  
 EXTRA_DIST =             \
-	.cvsignore            \
 	README
 

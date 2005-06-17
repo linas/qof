@@ -9,15 +9,18 @@ dnl Process this file with autoconf to produce a configure script.
 # implements checks for a variety of system-specific functions
 #
 
-AC_INIT(qof,0.5.2)
+AC_INIT(qof,0.6.0)
 AM_INIT_AUTOMAKE
 
-LIBQOF_LIBRARY_VERSION=1:0:0
-LIBQOFSQL_LIBRARY_VERSION=1:0:0
+dnl QOF library version needs to be incremented for 0.6 ?
+LIBQOF_LIBRARY_VERSION=2:0:0
+LIBQOFSQL_LIBRARY_VERSION=1:1:0
+LIBQOF_BACKEND_QSF_LIBRARY_VERSION=0:0:0
 AC_SUBST(LIBQOF_LIBRARY_VERSION)
 AC_SUBST(LIBQOFSQL_LIBRARY_VERSION)
+AC_SUBST(LIBQOF_BACKEND_QSF_LIBRARY_VERSION)
 
-VERSION=0.5.2
+VERSION=0.6.0
 AC_SUBST(VERSION)
 PACKAGE=qof
 AC_SUBST(PACKAGE)
@@ -46,15 +49,22 @@ dnl *****************************************
 dnl pkg-config check time
 dnl *****************************************
 
-dnl LIBGNOMEVFS_REQUIRED=2.0.0
 LIBXML2_REQUIRED=2.5.10
-
 AM_PATH_GLIB_2_0("2.0.0", , ,gobject)
+
+AC_PATH_PROG(PKG_CONFIG,pkg-config)
+if test "x$PKG_CONFIG" != x; then
+	GLIB_VERSION=`$PKG_CONFIG --exists 'glib >= 2.0.0'`
+	if test x$GLIB_VERSION != x; then
+	GLIB_LIBS=`$PKG_CONFIG --libs glib`
+	GLIB_CFLAGS=`$PKG_CONFIG --cflags glib`
+	AC_SUBST(GLIB_CFLAGS)
+	AC_SUBST(GLIB_LIBS)
+	fi
+fi
 
 dnl **************************************************************
 dnl libxml2
-dnl The libxml2 library is required only if the serializer/xml
-dnl backend is used. Should probably dynamic-load this thing?
 dnl libxml2 v2.5.10 is required for QSF (backend/file)
 dnl **************************************************************
 
@@ -63,10 +73,32 @@ LIBXML_VERSION=`xml2-config --version`
 AC_SUBST(LIBXML2_CFLAGS)
 AC_SUBST(LIBXML2_LIBS)
 
-dnl **************************************************************
+AC_MSG_CHECKING(for darwin)
+case $host_os in
+	rhapsody* | darwin1*)
+		AC_MSG_RESULT([yes, but too old])
+		AC_MSG_ERROR([This platform is too old, please update to the latest darwin])
+		;;
+	darwin*)
+		AC_MSG_RESULT([yes, patching libtool to always build dylibs])
+		mv libtool libtool.old
+		sed -e 's/^deplibs_check_method.*/deplibs_check_method=pass_all/g' \
+			-e 's|^archive_cmds.*|archive_cmds="$CC -dynamiclib \\$allow_undefined_flag -o \\$lib \\$libobjs \\$deplibs\\$linker_flags -install_name \\$rpath/\\$soname \\$verstring"|g' \
+			-e 's|^library_names_spec.*|library_names_spec="\\$libname\\$release\\$versuffix.dylib \\$libname\\$release\\${major}.dylib \\$libname.dylib"|g' \
+			-e 's|^soname_spec.*|soname_spec="\\$libname\\$release\\$major.dylib"|g' \
+			< libtool.old > libtool
+		rm libtool.old
+		AC_DEFINE(DARWIN,,Found Mac OSX Darwin)
+		DARWIN="dylib"
+		AC_SUBST(DARWIN)
+		;;
+	*)
+		AC_MSG_RESULT(no)
+		;;
+esac
+
 dnl Stuff needed to build the example progs only ... 
-dnl XXX should fix this so that not required if not building examples.
-dnl NW: Trying to fix this for pilot-link to build without Gtk.
+dnl NW: Fixed this for pilot-link to build without Gtk.
 dnl **************************************************************
 
 GTK_CFLAGS=`$PKG_CONFIG --cflags gtk+-2.0`
@@ -82,7 +114,7 @@ if test x$GTK_LIBS = x; then
 fi
 
 AM_CONDITIONAL(BUILD_GTK, [test x$HAVE_GTK != x])
-AM_CONDITIONAL(BUILD_GTK, [test "$USE_GTK" = use_gtk])
+AM_CONDITIONAL(BUILD_GTK, [test $HAVE_GTK = "use_gtk"])
 
 dnl **************************************************************
 dnl Checks for typedefs, structures, and compiler characteristics.
@@ -106,16 +138,14 @@ AC_FUNC_STRFTIME
 AC_CHECK_FUNCS(getcwd gettimeofday getwd stpcpy strdup strtoul)
 AC_REPLACE_FUNCS(strptime localtime_r)
 
-
 dnl *******************************
 dnl Internationalization
 dnl ******************************* 
 
 ALL_LINGUAS=" "
-GETTEXT_PACKAGE=qof-0.4
+GETTEXT_PACKAGE=qof-0.6
 AC_SUBST(GETTEXT_PACKAGE)
 AM_GLIB_GNU_GETTEXT
-
 
 AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$GETTEXT_PACKAGE",
 		[Define the gettext package.])
@@ -138,7 +168,8 @@ else
 fi
 
 AM_CONDITIONAL(BUILD_DWI, [test x$HAVE_DWI != x])
-AM_CONDITIONAL(BUILD_DWI, [test "$USE_DWI" = use_dwi])
+AM_CONDITIONAL(BUILD_DWI, [test $HAVE_DWI = "use_dwi"])
+AC_SUBST(HAVE_DWI)
 
 # check for doxygen, mostly stolen from http://log4cpp.sourceforge.net/
 # ----------------------------------------------------------------------------
@@ -190,12 +221,12 @@ QSF_SCHEMA_DIR=`eval echo $datadir`"/xml/qof/qsf"
 AC_SUBST(QSF_SCHEMA_DIR)
 
 QOF_CFLAGS="-I$includedir"
-QOF_LIBS="-lqof"
+QOF_LIBS="-lqof -lqofsql"
 QOF_LIBDEPS="$LDFLAGS"
 QOF_VERSION="$VERSION"
 
-AC_CONFIG_LIBCONFIG_IN([qof], [bin])
-AC_CONFIG_LIBCONFIG_IN_PKGCONFIG
+dnl AC_CONFIG_LIBCONFIG_IN([qof], [bin])
+dnl AC_CONFIG_LIBCONFIG_IN_PKGCONFIG
 
 AC_OUTPUT([
 Makefile
@@ -209,8 +240,7 @@ examples/gobject/Makefile
 lib/Makefile
 lib/libsql/Makefile
 qof/Makefile
-qof-0.pc
-qof-config
+qof-1.pc
 ])
 
 dnl <= Configuration summary =>
@@ -223,15 +253,13 @@ echo ""
 dnl <= CFLAGS and LDFLAGS =>
 echo "CFLAGS : $CFLAGS"
 echo "LDFLAGS : $LDFLAGS"
+echo "QOF_CFLAGS  :   $QOF_CFLAGS"
+echo "QOF_LIBS    :   $QOF_LIBS"
 echo "DWI_LIBS : $DWI_LIBS"
-echo "LIBXML2 :"`eval echo $LIBXML_VERSION`
-echo "QSF DIR : "`eval echo $QSF_SCHEMA_DIR`
-
-dnl <= Prefixes =>
+echo "LIBXML2     :   "`eval echo $LIBXML_VERSION`
 echo "prefix : $prefix"
-# echo "sysconf dir : "`eval echo $sysconfdir`
-# echo "bin dir : "`eval echo $bindir`
 echo "data dir : "`eval echo $datadir`
+echo "QSF DIR     :   "`eval echo $QSF_SCHEMA_DIR`
 echo "include dir : "`eval echo $includedir`
 echo "lib dir : "`eval echo $libdir`
 echo ""

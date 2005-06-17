@@ -16,6 +16,7 @@ doc: doxygen.cfg
 	echo "doc: " && pwd
 	rm -rf html
 	$(DOXYGEN) doxygen.cfg
+	ln -s ../doc/html/ ../website/doxy
 
 #	$(MAKE) -C latex/ 
 #	mv latex/refman.pdf ./refman.pdf
@@ -37,5 +38,5 @@ doc: doxygen.cfg
 doxygen.cfg: doxygen.cfg.in Makefile
 	rm -f $@.tmp
 	sed < $< > $@.tmp \
-            -e 's:@-VERSION-@:${QOF_VERSION}:g'
+            -e 's:@-VERSION-@:${VERSION}:g'
 	mv $@.tmp $@

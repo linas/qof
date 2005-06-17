@@ -9,7 +9,7 @@ Owen Taylor.
    from CVS you should ALWAYS pass your configure options directly to
    autogen.sh.  For example:
 
-	./autogen.sh --enable-doxygen --enable-opt-style-install --prefix=/opt/qof
+	./autogen.sh --enable-doxygen --prefix=/opt/qof
 
    Autogen will automatically generate the configure script and then
    run it WITH SPECIAL ARGUMENTS to make sure certain files get built.

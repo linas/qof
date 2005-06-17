@@ -1,3 +1,50 @@
+2005-06-17  Neil Williams <linux@codehelp.co.uk>
+
+	* .cvsignore: Distribution preparation.5
+	* ./ChangeLog:
+	* ./Makefile.am: Removing unused config rules.
+	* ./NEWS:
+	* ./README:
+	* ./README.cvs:
+	* ./TODO: Documentation update.
+	* ./autogen.sh: Removing unused m4 macro.
+	* ./backend/.cvsignore: 
+	* ./backend/Makefile.am: 
+	* ./backend/dwi/Makefile.am: 
+	* ./backend/file/.cvsignore: 
+	* ./backend/file/Makefile.am: API freeze.
+	* ./backend/file/qof-backend-qsf.h: Freezing the API 
+	* ./backend/file/qsf-backend.c: API freeze.
+	* ./backend/file/qsf-object.xsd.xml: QOF_TYPE_COLLECT
+	* ./backend/file/qsf-xml.h: Now a private header.
+	* ./configure.in: Pre-release version increments.
+	* ./doc/.cvsignore: 
+	* ./doc/Makefile.am:
+	* ./doc/backend-api.txt:
+	* ./doc/backend-errors.txt:
+	* ./doc/doxygen.cfg.in:
+	* ./doc/doxygen_main_page.c: Folding txt files into doxygen.
+	* ./examples/Makefile.am:
+	* ./examples/README:
+	* ./examples/backend/Makefile.am:
+	* ./examples/gobject/Makefile.am:
+	* ./examples/gobject/gobj-example.c:
+	* ./examples/test-qsf.c:
+	* ./lib/libsql/Makefile.am:
+	* ./qof-1.pc.in: New pkg-config info.
+	* ./qof/.cvsignore:
+	* ./qof/Makefile.am:
+	* ./qof/gnc-date.h:
+	* ./qof/qof_book_merge.c: API freeze.
+	* ./qof/qof_book_merge.h:
+	* ./qof/qofclass.h:
+	* ./qof/qofsession.c: Handling .so + .dylib
+	* ./website/gobj-example.c.html:
+	* ./website/index.html:
+	* ./website/my-obj-example.c.html:
+	* ./website/qof.css:
+	* ./website/why-qof.html: Website overhaul.
+
 2005-05-08  Neil Williams <linux@codehelp.co.uk>
 	* backend/file/qsf-backend.c: QOF_TYPE_COLLECT
 	reference handling.

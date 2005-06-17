@@ -1,3 +1,11 @@
+May 2005 : Tidying up calls to create a usable distribution 
+     for packaging.
+
+March 2005 : Partial book support to make import/export
+     a lot easier.
+
+January 2005 : Add support for a generic XML backend - QSF.
+
 August 2004 : add support for merging QofBook structures with
      collision handling.
 

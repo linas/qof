@@ -1,10 +1,29 @@
-
                         QOF Examples
                         ------------
                         May 2004
 
-There are fivee examples in this directory, showing how to use
-QOF for queries.  One example shows how to use the raw, c-language
+QOF-generator: http://qof-gen.sourceforge.net/
+
+Updated June 2005 Neil Williams <linux@codehelp.co.uk>
+
+These examples are becoming obsolete. The QOF-generator
+project will replace each one. Also, letting the gobject
+examples build automatically introduced a spurious build
+dependency on Gtk+ when QOF has no inherent GUI requirements.
+
+The GObject example will be retained as an optional component. 
+If you have the Gtk+-2.0 development libraries installed, the 
+GObject example will be built. If not, the build continues without
+the GObject examples.
+
+QOF-generator builds real examples based on your own parameters,
+structures and requirements. Please use QOF-generator for future
+examples, test code and as a base for production code using QOF.
+
+------------
+
+There are four examples in this directory, showing how to use
+QOF for queries.  One example shows how to use the raw, C-language
 query-construction programming interface, the other shows how to
 use an SQL-like language that is parsed and executed on the client 
 side.  The two programs are both nearly identical; they both perform
@@ -22,4 +41,12 @@ QOF to perform a query over GObjects.
 The "backend" subdirectory contains example code showing how a QOF
 object can use the DWI backend to save and restore itself from
 an SQL database.
+
+There are also two test programs that also serve as examples:
+
+"test-book-merge" simulates creating and merging two books.
+
+"test-qsf" populates, saves and loads data using the QSF XML backend.
+
+------end------
 

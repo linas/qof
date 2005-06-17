@@ -4,11 +4,9 @@
 SUBDIRS = lib backend qof doc examples
 
 pkgconfigdir = $(libdir)/pkgconfig
-pkgconfig_DATA = qof-0.pc
-bin_SCRIPTS = qof-config
+pkgconfig_DATA = qof-1.pc
 
 EXTRA_DIST =                   \
-	.cvsignore                  \
 	AUTHORS                     \
 	COPYING                     \
 	ChangeLog                   \
@@ -20,6 +18,9 @@ EXTRA_DIST =                   \
 	intltool-extract.in         \
 	intltool-merge.in           \
 	intltool-update.in          \
-	qof-0.pc.in		    \
-	qof-config.in		    \
-	m4/ac_config_libconfig_in.m4
+	qof-1.pc.in
+
+DISTCLEANFILES = \
+	intltool-update \
+	intltool-merge    \
+	intltool-extract

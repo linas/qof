@@ -3,3 +3,6 @@ Makefile.in
 doxygen.cfg
 doxygen.log
 html
+latex
+.DS_Store
+

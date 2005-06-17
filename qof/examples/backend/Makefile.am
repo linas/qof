@@ -13,15 +13,12 @@ noinst_HEADERS = \
 	my-instance.h
 
 EXTRA_DIST =       \
-	my-instance.sql \
-	.cvsignore
-
+	my-instance.sql
 
 AM_CFLAGS =           \
   -I. -I../..        \
   -I${top_srcdir}/qof \
   ${GLIB_CFLAGS}
-
 
 LDADD =                                   \
   ${top_builddir}/qof/libqof.la           \
@@ -29,3 +26,4 @@ LDADD =                                   \
   ${LIBXML2_LIBS}                         \
   ${GLIB_LIBS}                            \
   -lltdl -lm
+

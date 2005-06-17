@@ -255,6 +255,8 @@ time_t xaccDMYToSec (int day, int month, int year);
  * of UTC represented by the tm argument, adjusted for daylight
  * savings time.
  *
+\todo line 1278 converts a pointer to an integer without a cast.
+
  * This function requires a tm argument returned by localtime or set
  * by mktime. This is a strange function! It requires that localtime
  * or mktime be called before use. Subsequent calls to localtime or

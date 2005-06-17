@@ -826,6 +826,9 @@ gboolean qof_entity_copy_one_r(QofSession *new_session, QofEntity *ent)
 
 /* Specify a library, and a function name. Load the library, 
  * call the function name in the library.  */
+/* Use duplicate calls to cover 
+ * the name of the shared library that is .so on
+ * GNU/Linux but .dylib on Mac OSX etc. */
 static void
 load_backend_library (const char * libso, const char * loadfn)
 {
@@ -954,10 +957,14 @@ qof_session_load_backend(QofSession * session, char * access_method)
 	if (NULL == provider_list)
 	{
 		/* hack alert: If you change this, change qof_session_save as well. */
-#ifdef BUILD_DWI
+#ifdef HAVE_DWI
 		load_backend_library ("libqof_backend_dwi.so", "dwiend_provider_init");
 #endif
+#ifdef DARWIN 
+		load_backend_library ("libqof-backend-qsf.dylib", "qsf_provider_init" );
+#else
 		load_backend_library ("libqof-backend-qsf.so", "qsf_provider_init" );
+#endif 
 	}
 	p = g_slist_copy(provider_list);
 	while(p != NULL)
@@ -1262,7 +1269,11 @@ qof_session_save (QofSession *session,
 		qof_session_destroy_backend(session);
 		if (NULL == provider_list)
 		{
+#ifdef DARWIN
+			load_backend_library ("libqsf-backend-file.dylib", "qsf_provider_init" );
+#else
 			load_backend_library ("libqof-backend-qsf.so", "qsf_provider_init" );
+#endif
 		}
 		p = g_slist_copy(provider_list);
 		while(p != NULL)

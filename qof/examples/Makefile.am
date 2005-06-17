@@ -23,7 +23,6 @@ sql_example_SOURCES = \
 
 test_qsf_SOURCES = test-qsf.c
 
-
 noinst_PROGRAMS = \
 	test-book-merge \
 	query-example  \
@@ -34,9 +33,7 @@ noinst_HEADERS = \
 	my-object.h
 
 EXTRA_DIST =     \
-	README        \
-	.cvsignore
-
+	README
 
 AM_CFLAGS =  \
   -I.. -I../.. -I../../.. \
@@ -68,3 +65,4 @@ LDADD =                                   \
   ${LIBXML2_LIBS}                         \
   ${GLIB_LIBS}                            \
   -lltdl -lm
+

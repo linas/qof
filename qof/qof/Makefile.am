@@ -2,11 +2,7 @@
 # Makefile.am for the libqof sources
 #
 
-# pkglib_LTLIBRARIES = libqof.la
-
 lib_LTLIBRARIES = libqof.la
-
-# libqof_la_LDFLAGS= -version-info $(LIBQOF_LIBRARY_VERSION) -release $(VERSION)
 
 libqof_la_LDFLAGS= -version-info $(LIBQOF_LIBRARY_VERSION) 
 
@@ -32,10 +28,6 @@ libqof_la_SOURCES =  \
    qofsession.c      \
    qofsql.c          \
    qof_book_merge.c
-
-#   qofquery-deserial.c     \
-#   qofquery-serialize.c    \
-
 
 qofincludedir = ${pkgincludedir}
 
@@ -63,8 +55,6 @@ qofinclude_HEADERS = \
    qofmath128.h      \
    qofobject.h       \
    qofquerycore.h    \
-   qofquery-deserial.h     \
-   qofquery-serialize.h    \
    qofsession.h      \
    qofsql.h	     \
    qof_book_merge.h
@@ -76,13 +66,14 @@ noinst_HEADERS =      \
    qofbackend-p.h     \
    qofclass-p.h       \
    qofquery-p.h       \
+   qofquery-deserial.h     \
+   qofquery-serialize.h    \
    qofbook-p.h        \
    qofobject-p.h      \
    qofquerycore-p.h   \
    qofsession-p.h
 
-EXTRA_DIST =          \
-   .cvsignore
+EXTRA_DIST =
 
 AM_CFLAGS = -g        \
    @CFLAGS@           \
@@ -94,3 +85,4 @@ INCLUDES =                     \
    -I$(includedir)             \
    -DPREFIX=\""$(prefix)"\"    \
    -DDATADIR=\""$(datadir)"\" 
+

@@ -1,14 +1,25 @@
-/** \mainpage QOF design and developer's reference
+/*! \mainpage QOF design and developer's reference
 
 This is the new developer and design manual for the Query Object Framework.
-Previous documentation will slowly be integrated into this, and
-eventually it should always be up to date since it is generated
-directly from the source files using Doxygen.
+Previous documentation has been integrated into this and it should always be
+up to date since it is generated directly from the source files using Doxygen.
+
+\section general General design documents.
+
+\ref backendapi
+
+\ref backenderrors
+
+General information on merging QofBooks:\n
+http://code.neil.williamsleesmill.me.uk/
+
+General information on the QSF XML backend for QOF:\n
+http://code.neil.williamsleesmill.me.uk/qsf.html
 
 \section hacking Hacking on this documentation
 
 There is the beginning of a style guide for documenting under
-\ref tips_hints.
+\ref tipshints.
 
 The Book Merge files are an attempt to document "by the book". 
 \ref BookMerge\n
@@ -17,21 +28,20 @@ This main page can be found in src/doc/doxygen_main_page.c .
 
 Each doxygen section must be within a single comment block although 
 large comment blocks can be split into separate pages:
-\ref style_discussion.
+\ref stylediscussion.
 
 This main page is just an introduction to doxygen markup, see the
 Doxygen manual for the full command set.
 
-- \ref tips_hints Tips and hints for using doxygen
-- \ref style_discussion Long comments, pages, editors
+- \ref tipshints Tips and hints for using doxygen
+- \ref stylediscussion Long comments, pages, editors
 - \ref reference Links to the Doxygen manual
 
 */
-/**
-\page tips_hints Useful tips for doxygen in C files
+/** \page tipshints Useful tips for doxygen in C files
 
  - \ref index Introduction
- - \ref style_discussion Long comments, pages, editors
+ - \ref stylediscussion Long comments, pages, editors
  - \ref reference The Doxygen manual
  
 \section tips An introduction to doxygen markup
@@ -54,14 +64,14 @@ If your declarations are in separate files, like private header files,
 a simple block can still be linked into doxygen as long as the file is
 identified to doxygen using a '\\file' section:
 
-/** \\file filename.h\n
+ \\file filename.h\n
 	\\brief one-liner summary of the file purpose\n
 	\\author the usual copyright statement
 
 \subsection Methods How to document
 
 Every doxygen comment block starts with an adapted comment marker. 
-You can use an extra slash /// or an extra asterisk /** . Blocks end
+You can use an extra slash /// or an extra asterisk. Blocks end
 in the usual way. Doxygen accepts commands using a backslash.
 
 To put a description with each function or structure, use '\\brief' 
@@ -86,7 +96,7 @@ Use the param command to describe function parameters in the text.
 
 Use the 'back reference' to document enumerator values:\n
 enum testenum {\n
-	enum_one /**< less than marker tells doxygen to use this line
+	enum_one **&lt; less than marker tells doxygen to use this line
 		to document enum_one.
 
 \subsection config Editing Doxygen configuration
@@ -99,19 +109,20 @@ doxywizard doxygen.cfg &
 
 */
 
-/** \page style_discussion Style discussion
+/** \page stylediscussion Style discussion
 
 - \ref index Introduction
-- \ref tips_hints Tips and hints for using doxygen
+- \ref tipshints Tips and hints for using doxygen
 - \ref reference Links to the Doxygen manual
 
 [codehelpgpg 2004-07-25] Doxygen now copes with addgroup and this page
-can be handled more easily by splitting the old single comment into repeated
-comments, split into pages. I've worked on doxygen files in Kate, KWrite and XCode (MacOSX) and
-the comment higlighting works fine. If you do have problems, particularly when
-you start a new line within an existing comment, enter a character at the end of 
-the last highlighted line to refresh the highlighting. Some editors have a specific
-refresh option.
+can be handled more easily by splitting the old single comment into
+repeated comments, split into pages. I've worked on doxygen files in
+Kate, KWrite and XCode (MacOSX) and the comment higlighting works fine.
+If you do have problems, particularly when you start a new line within
+an existing comment, enter a character at the end of the last
+highlighted line to refresh the highlighting. Some editors have a
+specific refresh option.
 
 [cstim 2003-03-25] The "Data Structures" page of doxygen doesn't show
 anything useful for gnucash. Obviously doxygen only accepts "real" C
@@ -121,18 +132,21 @@ typedefs are publically visible. Isn't there a way to have doxygen
 show the documentation for the <i>typedefs</i> on the "Data
 Structures" page? Unfortunately I don't know how.
 
-[codehelpgpg 2004-07-25] Yes, there is a way of linking to these data structures.
-Make sure that the private header is included in the documentation by including a 
-\\file command in the private header file. Then include a short doxygen comment above
-the declaration. Doxygen will accept both valid C struct definition formats.
+[codehelpgpg 2004-07-25] Yes, there is a way of linking to these data
+structures.
+Make sure that the private header is included in the documentation by
+including a
+\\file command in the private header file. Then include a short doxygen
+comment above the declaration. Doxygen will accept both valid C struct
+definition formats.
 
 */
 
-/** \page reference Doxygen reference documentation
+/*! \page reference Doxygen reference documentation
 
 - \ref index Introduction
-- \ref tips_hints Tips and hints for using doxygen
-- \ref style_discussion Long comments, pages, editors
+- \ref tipshints Tips and hints for using doxygen
+- \ref stylediscussion Long comments, pages, editors
 	
 The Doxygen web site (http://www.stack.nl/~dimitri/doxygen/) has a
 complete user manual.  For the impatient, here are the most
@@ -150,10 +164,14 @@ blocks: http://www.stack.nl/~dimitri/doxygen/commands.html
 \section contact Contacts
 
 \subsection web Web Site
-News about GnuCash as well as the latest version can always be found at http://www.gnucash.org/
+News about GnuCash as well as the latest version can always be found at
+http://www.gnucash.org/
 
 \subsection email Email
-If you have any suggestions concerning this documentation, do not hesitate to send suggestions to gnucash-devel (see http://www.gnucash.org/en/lists.phtml for details)
+If you have any suggestions concerning this documentation, do not hesitate to
+send suggestions to gnucash-devel (see http://www.gnucash.org/en/lists.phtml
+for details)
 
 Benoit Grégoire mailto:bock@step.polymtl.ca
  */
+

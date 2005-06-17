@@ -5,12 +5,11 @@ gobj_example_SOURCES = \
 noinst_PROGRAMS =     \
 	gobj-example 
 
-EXTRA_DIST =          \
-    .cvsignore
+EXTRA_DIST =
 
-#   -I${top_srcdir}/qof 
 
 AM_CFLAGS =           \
+	-I${top_srcdir}/qof \
   ${GTK_CFLAGS}       \
   ${GLIB_CFLAGS}
 

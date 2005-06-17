@@ -1,6 +1,6 @@
 
 /** @file gobj-example.c
- *  @breif Example usage of QOF to query a set of GObjects.
+ *  @brief Example usage of QOF to query a set of GObjects.
  *  @author Copyright (c) 2004 Linas Vepstas <linas@linas.org>
  *
  * This example program shows how to use QOF to query over a set
@@ -16,7 +16,7 @@
  */
 
 
-#include <qof/qof.h>
+#include <qof.h>
 #include <gtk/gtk.h>
 
 int

@@ -5,7 +5,6 @@
  *  Copyright  2004-2005  Neil Williams
  *  linux@codehelp.co.uk
  ****************************************************************************/
-
 /*
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -21,31 +20,21 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
-/** @addtogroup Backend
-    @{ */
-/** @addtogroup QSF QOF Serialisation Format
- */
+
 #include <libxml/xmlmemory.h>
 #include <libxml/tree.h>
 #include <libxml/parser.h>
 #include <libxml/xmlschemas.h>
 #include "qsf-xml.h"
-#include "qsf-dir.h"
 #include "qofinstance-p.h"
 #include "qofquery.h"
-/** @{ */
-/** @file test-qsf.c
-    @brief  QSF Object and Map test routines.
-    @author Copyright (C) 2004-2005 Neil Williams <linux@codehelp.co.uk>
-*/
 
-/** Test file. In time this will grow to be a proper test routine.
+/* Test file. In time this will grow to be a proper test routine.
 	For now, it is a simple console app that implements the QSF test 
 	code from libqsf-backend-file.la
 
 A lot of the code is borrowed from test_book_merge - reflecting how
 QSF is built on the qof_book_merge codebase.
-
 */
 
 #define TEST_MODULE_NAME "book_merge_test"
@@ -61,7 +50,7 @@ QSF is built on the qof_book_merge codebase.
 
 gboolean myobjRegister (void);
 
-/** \brief simple object structure */
+/* \brief simple object structure */
 typedef struct obj_s
 {
 	QofInstance inst;
@@ -77,9 +66,6 @@ typedef struct obj_s
 
 myobj* obj_create(QofBook*);
 
-/** \section  obvious setter functions 
-
-@{ */
 void obj_setName(myobj*,	char*);
 void obj_setAmount(myobj*,  gnc_numeric);
 void obj_setDate(myobj*,	Timespec h);
@@ -87,10 +73,7 @@ void obj_setDiscount(myobj*, double);
 void obj_setActive(myobj*,  gboolean);
 void obj_setVersion(myobj*, gint32);
 void obj_setMinor(myobj*,   gint64);
-/** @} */
-/** \section obvious getter functions 
 
-@{ */
 char*		obj_getName(myobj*);
 gnc_numeric obj_getAmount(myobj*);
 Timespec   	obj_getDate(myobj*);
@@ -98,9 +81,8 @@ double		obj_getDiscount(myobj*);
 gboolean	obj_getActive(myobj*);
 gint32		obj_getVersion(myobj*);
 gint64		obj_getMinor(myobj*);
-/** @} */
 
-/** \brief Create a QOF object */
+/* \brief Create a QOF object */
 myobj*
 obj_create(QofBook *book)
 {
@@ -224,7 +206,7 @@ obj_getAmount(myobj *g)
 	return g->Amount;
 }
 
-/** \brief Test object QOF definition */
+/* \brief Test object QOF definition */
 static QofObject obj_object_def = {
   interface_version:     QOF_OBJECT_VERSION,
   e_type:                TEST_MODULE_NAME,
@@ -239,7 +221,7 @@ static QofObject obj_object_def = {
   version_cmp:           (int (*)(gpointer,gpointer)) qof_instance_version_cmp,
 };
 
-/** \brief Test object Parameter registration */
+/* \brief Test object Parameter registration */
 gboolean myobjRegister (void)
 {
   static QofParam params[] = {
@@ -323,6 +305,7 @@ int main (int argc, char **argv)
 	qof_session_begin(testing, path_buffer, TRUE, FALSE);
 	qof_session_load(testing, NULL);
 	tester = qof_session_get_book(testing);
-
+	fprintf(stdout, "\nSuccess!\n");
+	fprintf(stdout, "Check for a QSF XML file at /tmp/qsf-test.xml\n\n");
 	return 0;
 }

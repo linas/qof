@@ -13,6 +13,8 @@ libqof_backend_qsf_la_SOURCES = \
 	qsf-xml-map.c \
 	qsf-xml.c
 
+libqof_backend_qsf_la_LDFLAGS = -version-info $(LIBQOF_BACKEND_QSF_LIBRARY_VERSION)
+	
 libqof_backend_qsf_la_LIBADD = \
 	${LIBXML2_LIBS} \
 	${GLIB_LIBS}
@@ -20,20 +22,20 @@ libqof_backend_qsf_la_LIBADD = \
 qofincludedir = ${pkgincludedir}
 
 qofinclude_HEADERS = \
-	qsf-xml.h
+	qof-backend-qsf.h
 
 qsfschemadir = $(QSF_SCHEMA_DIR)
 qsfschema_DATA = \
         qsf-object.xsd.xml \
         qsf-map.xsd.xml \
-        pilot-qsf-GnuCashInvoice.xml \
-	qof-qsf.xml
-# qof-qsf.xml is here for testing reasons ONLY!
+        pilot-qsf-GnuCashInvoice.xml
 
 EXTRA_DIST = \
   $(qsfschema_DATA) \
   qsf-dir.h.in    \
-  qsf-dir.h
+  qsf-xml.h
+
+CONFIG_CLEAN_FILES = qsf-dir.h
 
 qsf-dir.h: qsf-dir.h.in
 	rm -f $@.tmp
@@ -42,3 +44,4 @@ qsf-dir.h: qsf-dir.h.in
 	mv $@.tmp $@
 
 BUILT_SOURCES = qsf-dir.h
+

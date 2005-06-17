@@ -42,7 +42,7 @@
   declaring a new QOF Class.
 
   Because a QOF Class associates getters and setters with
-  a type, one can then ask, at run time, what paramters
+  a type, one can then ask, at run time, what parameters
   are associated with a given type, even if those paramters
   were not known at compile time.  Thus, a QOF Class is 
   sort-of like a DynAny implementation.  QOF classes can
@@ -52,6 +52,11 @@
   The QOF Query subsystem depends on QOF classes having been
   declared; the Query uses the getters to get values associated
   with particular instances.
+  
+  A QofAccessFunc or QofSetterFunc do not need to be public 
+  functions, if you need to add functions to an object with an
+  established API, define the additional QOF routines as static.
+  Only the register routine needs to be public.
 @{ */
 
 /** @file qofclass.h
@@ -86,6 +91,8 @@ single reference between two known objects.
 #define QOF_TYPE_BOOLEAN   "boolean"
 #define QOF_TYPE_KVP       "kvp"
 #define QOF_TYPE_CHAR      "character"
+#define QOF_TYPE_COLLECT   "collection"
+
 #define QOF_TYPE_COLLECT   "collection" /**< secondary collections
 are used for one-to-many references between entities and are
 implemented using ::QofCollection.

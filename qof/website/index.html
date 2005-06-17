@@ -1,0 +1,250 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html lang="en_gb">
+<head>
+<title>QOF - Query Object Framework</title>
+<link rel="shortcut icon" href="favicon.png">
+<link rel="stylesheet" type="text/css" href="qof.css">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+</head>
+<body>
+<h1>Query Object Framework</h1>
+<div id="resource">
+<ul>
+<li><a href="#intro">Introduction</a></li>
+<li><a href="http://sourceforge.net/projects/qof/">SourceForge</a></li>
+<li><a href="#docs">Documentation</a></li>
+<li><a href="#example">Examples</a><ul>
+<li><a href="#generate">Generating</a></li>
+<li><a href="#online">Online</a></li></ul>
+</li>
+<li><a href="#origins">Origins</a></li>
+<li><a href="#functions">Function</a></li>
+<li><a href="#goals">Goals</a></li>
+<li><a href="#status">Status</a></li>
+<li><a href="why-qof.html">Why QOF?</a></li>
+<li><a href="http://www.data-freedom.org/">Data Freedom</a></li>
+<li><a href="#support">Support</a></li>
+</ul>
+</div>
+<div><img src="qof-logo.jpg" id="qoflogo" alt="image based on the hebrew
+symbol of the same name"></div>
+<h2 id="intro">Introduction</h2>
+<div><p>QOF, the Query Object Framework, provides a set of C Language utilities 
+for performing generic structured complex queries on a set of data held by a set of
+C/C++ objects. This framework is unique in that it does NOT require SQL or any
+database at all to perform the query. Thus, it allows programmers to add query
+support to their applications without having to hook into an SQL Database.</p>
+<p>Typically, if you have an app, and you want to add the ability to show a set of
+reports, you will need the ability to perform queries in order to get the data
+you need to show a report.  Of course, you can always write a set of ad-hoc
+subroutines to return the data that you need. But this kind of a programming
+style is not extensible: just wait till you get a user who wants a slightly
+different report.</p>
+<p>The idea behind QOF is to provide a generic framework so that
+any query can be executed, including queries designed by the end-user.
+Normally, this is possible only if you use a database that supports SQL, and
+then only if you deeply embed the database into your application. QOF provides
+simpler, more natural way to work with objects.</p>
+</div>
+<div class="clear">&nbsp;</div>
+<hr>
+<h2 id="example">Examples</h2>
+<h3 id="generate">Generating examples of your own</h3>
+<div><a href="http://qof-gen.sourceforge.net/">
+<img src="sflogosm.png" alt="qof-gen at SourceForge" id="sflogosm">
+</a></div>
+<div>Writing new QOF objects and examples can be a tad repetitive so
+<a href="http://qof-gen.sourceforge.net/">QOF generator</a>
+automates the process using HTML forms and PHP. The generator is still new but
+it does create usable C code and an example program that can be compiled against
+current QOF CVS.
+</div>
+<h3 id="online">Online examples</h3>
+<div><p>Several usage examples are also provided with the source code.  Most
+notable are:</p>
+<ul>
+<li>An <a href="my-obj-example.c.html">example of using QOF
+to perform a query over some user-defined objects</a>. This example shows 
+how to define an object in QOF, and then perform a half-dozen different SQL 
+queries on it.</li>
+<li>An <a href="gobj-example.c.html">example of using QOF to query a set 
+of GLib GObjects</a>.  This particular example creates three GtkButton widgets, 
+sets their labels to different values, and then uses the statement
+<code>"SELECT * FROM GtkButton WHERE (label = 'asdfasdf');"</code></li>
+</ul>
+</div>
+<hr><h2 id="docs">Documentation</h2>
+<div><p>The API documentation is embedded in the header files and
+<a href="doxy/index.html">can be viewed as HMTL</a>
+once built using doxygen:
+<br/><code>cd doc/<br/>make doc<br/></code></p>
+<p>There is also documentation of the
+<a href="http://code.neil.williamsleesmill.me.uk/">book merge</a>
+and the <a href="http://code.neil.williamsleesmill.me.uk/qsf.html">XML
+backend</a> designs.</p>
+</div>
+<hr><h2 id="support">Support</h2>
+<div><p>Support should be obtained by subscribing to the mailing list:
+<a href="http://lists.sourceforge.net/lists/listinfo/qof-devel">
+http://lists.sourceforge.net/lists/listinfo/qof-devel</a>.</p>
+</div>
+<hr><h2 id="origins">Origins</h2>
+<div><p>QOF is an offshoot from the <a href="http://www.gnucash.org/">GnuCash
+Project</a>, where this framework is a deep, central component. QOF is basically
+the GnuCash "engine" with all of the financial objects removed. As such, QOF is
+"tried and true", and has proven its worth. However, this SourceForge project is
+listed as "alpha" because much work remains to be done, including the expanded
+support for SQL backends, scheme wrappers, and many other features. Currently,
+the QOF code is kept manually in sync with the GnuCash code; at some future
+date, the QOF core will be removed from GnuCash.</p>
+</div>
+<hr><h2 id="functions">Function</h2>
+<div><p>Besides the query framework, QOF also provides a number of other
+base functions from GnuCash:</p>
+<ul>
+<li><b>Universally-Unique 128-bit identifiers</b>.
+These can be used to reference an object without having to have a pointer to it:
+references can be stored in files, passed over the net, etc.</li>
+<li><b>Persistent-Storage backend</b>.
+A collection of objects can be associated with a particular data store. Besides
+just reading from and writing to the backend, queries can be passed to the
+backend, so that if a particular object does not exist locally, it can be
+fetched from the backend.</li>
+<li><b>Key-Value Pair trees</b> (also known as "frames and slots").
+KVP trees provide a generic, extensible way to hang additional data onto an
+object.  The trees store the data hierarchically, in a set of hash tables, and
+can be accessed using a URL-like path name. KVP trees are a great way to allow
+objects to be extensible.</li>
+<li><b>Trace Utilities</b>
+Allow warning, error and debugging messages to be enabled or disabled at
+run-time, thus allowing individual components of an application to be
+individually traced.</li>
+<li><b>Numeric support</b>
+Provides a set of exact-math functions for quantities that can be expressed as
+ratios.  In particular, this is handy for working with money and prices, where
+round-off errors need to be eliminated and/or precisely controlled.</li>
+<li><b>Date and time utilities</b>.
+A variety of different utilities for parsing and printing dates and time.</li>
+<li><b>Generic XML format</b>
+For data interchange. QOF objects can be translated and mapped between
+applications, liberating the user's data from the original application.</li>
+<li><b>Book merging</b>
+Allows easy import / export of QOF data and handles collisions and user
+intervention.</li>
+</ul>
+</div>
+<hr>
+<h2 id="goals">Project Goals</h2>
+<div><p>Below are some concrete project goals.
+See <a href="why-qof.html">"Why QOF?"</a> for the more abstract ideas behind
+QOF, including the relationships between "database-driven", "program-driven"
+and "data-centric" programming explored at
+<a href="http://www.data-freedom.org/explain.html">Data-Freedom.org</a>.</p>
+<ul><li><p> Provide an object framework that allows programmers to create expressive
+queries that will search through a collection of objects, returning the desired
+set of objects.</p>
+<p><b>Status:</b> Completed, in that queries can be built and run.  Queries can be
+built with either a low-level C API, or by writing in an SQL-like language (for
+example, <tt>SELECT memo FROM gncTransaction WHERE
+gncTransaction.date='15.06.2003';</tt>).  This is done with a "client-side"
+parser, that parses this SQL locally, because, of course, it has to be run
+locally.  See the <tt>sql-example.c</tt> file for a usage example. </p>
+</li>
+<li><p> Provide integration with database backends.  In particular, the programmer
+should be able to use QOF to create a local 'cache' of objects that mirrors a
+subset of the contents in a remote database.  The idea is that applications, by
+working with a local copy, can be highly responsive and have good performance.
+On the other hand, by working with only a subset of the remote data, the
+application can avoid having a huge memory footprint. This is a very unique
+feature: most applications take an all-or-nothing approach, where either all of
+the data is sucked into the application, or none is.  Applications that pull in
+all of the data have terrible startup times, since they need to load either a
+huge file or make a huge database query. They also use a huge amount of memory.
+Applications that pull in none of their data, and instead issue SQL queries as
+needed, tend to have terrible performance profiles, since the user must wait for
+the query to complete and return data.  In other words, QOF provides
+scalability: instead of the all-or-nothing approach, it provides a middle
+ground, allowing small fast apps to access huge databases. </p>
+<p> <b>Status:</b> The GnuCash backend provides access to file and to SQL
+storage.  However, not all of this code has been abstracted out in a generic way
+to be brought back into QOF.  Linas has got the major pieces ready to go, in the
+DWI project, but they're not integrated yet. Neil has added support for partial
+books that make this cache possible and merging that makes the data in the
+partial books accessible. Partial books also make it simple to export an
+arbitrary selection of objects and entities.
+</p></li>
+<li><p> The current 'client-side' SQL engine is rather basic in its features and
+performance.  For example, the current search over object fields is O(N),
+because each object instance is checked for a match.  It would be nice to add
+support for 'primary keys' and/or indexes as the first step towards a query
+optimizer.  Alternately (or in addition), a different query engine might be
+wedged into place. For example, sqllite might make for an excellent client-side
+sql engine: its small fast and optimized. </p></li>
+<li><p> Provide for off-line operation.  Because the object data is cached locally,
+users should be able to continue doing useful work even if they are not attached
+to the net.  When they regain net access, QOF should be able to resynchronize
+with the remote servers. </p>
+<p><b>Status:</b> Implemented as XML. Any book (partial or complete) can be 
+written out to XML and read back in to <b>any</b> QOF application.
+</p></li>
+<li><p> Provide memory-management facilities. If objects in the local object 
+cache haven't been used in a while, and the application memory usage is getting 
+too large, the unused objects should be "reaped" or garbage-collected.  Of course,
+this can be done only if the object is fully in sync with the persistent storage
+backend. </p>
+<p>Status: just an idea, not started.</p></li>
+</ul>
+</div>
+<hr>
+<h2 id="status">Project Status</h2>
+<div>
+<p>This code is in active, daily use in
+<a href="http://www.gnucash.org">GnuCash</a>, and when used there, it is
+'stable' code.  However, the code in this CVS tree is under development,
+is lacking in certain desired features, and might not compile. Neil is adding
+documentation wherever and whenever possible and QOF generator will provide
+all the examples. The subroutine naming convention is being resolved by
+deprecating older GnuCash-specific naming conventions.</p>
+<p>The other projects currently using QOF are:</p>
+<ul>
+<li><a href="http://gttr.sourceforge.net">GnoTime</a>.</li>
+<li><a href="http://pilot-qof.sourceforge.net/">Pilot-QOF</a>.</li>
+<li><a href="http://dwi.sourceforge.net/">DWI</a></li>
+</ul>
+<p>Packages are available for QOF v0.5.0 for:</p>
+<ul>
+<li>GNU/Linux Debian<ul><li>
+<a href="http://packages.debian.org/testing/libs/libqof-0.5.0-1">Testing</a>
+</li><li>
+<a href="http://packages.debian.org/unstable/libs/libqof-0.5.0-1">Unstable</a>
+</li></ul></li>
+<li><a
+href="http://rpm.pbone.net/index.php3?stat=3&amp;search=qof&amp;srodzaj=3">
+Fedora</a></li>
+</ul>
+<p>Packages are also planned for Fink and DarwinPorts (Mac OSX) and a <a 
+href="http://sourceforge.net/docman/display_doc.php?docid=28363&amp;group_id=83302">
+sample .spec file</a> exists for RPM-based distributions.</p>
+<p>You can download code and find out more about the project at the
+<a href="http://sourceforge.net/projects/qof/">QOF SourceForge Project
+Site</a>.</p></div>
+<hr>
+<div><p>Written by Linas Vepstas &lt;linas@linas.org&gt; April 2004<br/>
+Updated by Neil Williams &lt;linux@codehelp.co.uk&gt; May 2005.</p></div>
+<hr>
+<div><a href="http://sourceforge.net">
+<img src="http://sourceforge.net/sflogo.php?group_id=83302&amp;type=5"
+id="sflogo" alt="SourceForge Logo"></a></div>
+<div id="licence">
+<p>The copyright licensing notice below applies to this text.</p>
+<p>Copyright &copy; 2004 Linas Vepstas</p>
+<p>Copyright &copy; 2005 Neil Williams</p>
+<p>Permission is granted to copy, distribute, and/or modify this document under
+the terms of the GNU Free Documentation License, Version 1.1 or any later
+version published by the Free Software Foundation; with no Invariant Sections, 
+with no Front-Cover Texts, and with no Back-Cover Texts. A copy of this license is
+included in the file <a href="copying.txt">copying.txt</a></p>
+</div>
+</body>
+</html>
+

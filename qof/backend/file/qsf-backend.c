@@ -142,7 +142,8 @@ qsf_session_end( QofBackend *be)
 	xmlCleanupParser();
 }
 
-void qsf_destroy_backend (QofBackend *be)
+static void 
+qsf_destroy_backend (QofBackend *be)
 {
 	g_free(be);
 }
