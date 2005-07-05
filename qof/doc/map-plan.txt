@@ -1,0 +1,44 @@
+/** \page qsfmaps QOF, applications and the use of QSF maps.
+
+\section mapprinciples Principles
+
+For "GnuCash" substitute any other application using
+QOF.
+
+-# QOF cannot dictate the location of other maps.
+-# GnuCash can pass a path to the appropriate map to QSF.
+	- (Add this to the API! - new func: is_qsf_object_with_map)
+-# QOF can have default maps. GnuCash would use these 
+	in addition to any of it's own or any user's maps.
+-# Users can modify maps and store in other directories to
+	modify defaults or reference lookup strings. Calculations
+	themselves should probably be left untouched by users!
+-# GnuCash is free to provide a means to edit user-modifiable
+	sections of any map or simply advise on editing the XML
+	directly.
+-# GnuCash can provide the interface for the user to select 
+	the most suitable map. This can include describing the map
+	instead of a simple list of filenames. The description should
+	be user-editable and stored between sessions as a user
+	configuration parameter.
+-# GnuCash is free to decide where it's maps can be stored,
+	although ~/.gnucash/xml/qsf would perhaps be intuitive.
+
+\section mapalternatives Alternatives
+
+Any QSF file can be used in xsltproc or Perl, PHP, Python etc. to
+transform one set of objects to another. Maps are just one option
+and are intended to be useful where XSL or other tools may be
+insufficient, e.g. due to a lack of conditionals, calculations,
+defaults or reference lookups.
+
+It should be possible for QOF to receive a map on STDIN, providing
+a hook for pipes or scripting. Similarly, QOF will be able to accept
+a QSF file on STDIN.
+
+\verbatim
+Created by Neil Williams <linux@codehelp.co.uk> 18th June 2005
+\endverbatim
+
+*/
+
