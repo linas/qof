@@ -209,6 +209,7 @@ qof_session_init (QofSession *session)
 {
   if (!session) return;
 
+  session->entity.e_type = QOF_ID_SESSION;
   session->books = g_list_append (NULL, qof_book_new ());
   session->book_id = NULL;
   session->backend = NULL;
@@ -382,7 +383,7 @@ qof_entity_get_reference_from(QofEntity *ent, const QofParam *param)
 	char         cm_sa[GUID_ENCODING_LENGTH + 1];
 	gchar        *cm_string;
 
-	ref_ent = param->param_getfcn(ent, param);
+	ref_ent = (QofEntity*)param->param_getfcn(ent, param);
 	if(ref_ent != NULL) {
 		reference = g_new0(QofEntityReference, 1);
 		reference->type = g_strdup(ent->e_type);
@@ -446,7 +447,7 @@ qof_entity_foreach_copy(gpointer data, gpointer user_data)
 	cm_param = (QofParam*) data;
 	g_return_if_fail(cm_param != NULL);
 	if(safe_strcmp(cm_param->param_type, QOF_TYPE_STRING) == 0)  { 
-		cm_string = g_strdup(cm_param->param_getfcn(importEnt, cm_param));
+		cm_string = g_strdup((gchar*)cm_param->param_getfcn(importEnt, cm_param));
 		string_setter = (void(*)(QofEntity*, const char*))cm_param->param_setfcn;
 		if(string_setter != NULL) {	string_setter(targetEnt, cm_string); }
 		registered_type = TRUE;
@@ -470,7 +471,7 @@ qof_entity_foreach_copy(gpointer data, gpointer user_data)
 		context->error = FALSE;
 	}
 	if(safe_strcmp(cm_param->param_type, QOF_TYPE_GUID) == 0) { 
-		cm_guid = cm_param->param_getfcn(importEnt, cm_param);
+		cm_guid = (const GUID*)cm_param->param_getfcn(importEnt, cm_param);
 		guid_setter = (void(*)(QofEntity*, const GUID*))cm_param->param_setfcn;
 		if(guid_setter != NULL) { guid_setter(targetEnt, cm_guid); }
 		registered_type = TRUE;
@@ -509,21 +510,22 @@ qof_entity_foreach_copy(gpointer data, gpointer user_data)
 		context->error = FALSE;
 	}
 	if(safe_strcmp(cm_param->param_type, QOF_TYPE_KVP) == 0) { 
-		cm_kvp = kvp_frame_copy(cm_param->param_getfcn(importEnt,cm_param));
+		cm_kvp = kvp_frame_copy((KvpFrame*)cm_param->param_getfcn(importEnt,cm_param));
 		kvp_frame_setter = (void(*)(QofEntity*, KvpFrame*))cm_param->param_setfcn;
 		if(kvp_frame_setter != NULL) { kvp_frame_setter(targetEnt, cm_kvp); }
 		registered_type = TRUE;
 		context->error = FALSE;
 	}
 	if(safe_strcmp(cm_param->param_type, QOF_TYPE_CHAR) == 0) { 
-		cm_char = cm_param->param_getfcn(importEnt,cm_param);
+		cm_char = (gchar*)cm_param->param_getfcn(importEnt,cm_param);
 		char_setter = (void(*)(QofEntity*, char*))cm_param->param_setfcn;
 		if(char_setter != NULL) { char_setter(targetEnt, cm_char); }
 		registered_type = TRUE;
 		context->error = FALSE;
 	}
 	if(registered_type == FALSE) {
-		referenceEnt = cm_param->param_getfcn(importEnt, cm_param);
+		referenceEnt = (QofEntity*)cm_param->param_getfcn(importEnt, cm_param);
+		if(!referenceEnt || !referenceEnt->e_type) { return; }
 		reference = qof_entity_get_reference_from(importEnt, cm_param);
 		if(reference) {
 			qof_session_update_reference_list(context->new_session, reference);
@@ -623,8 +625,8 @@ gboolean qof_entity_copy_to_session(QofSession* new_session, QofEntity* original
 	QofEntityCopyData qecd;
 	QofInstance *inst;
 	QofBook *book;
-	const GUID *g;
 
+	if(!new_session || !original) { return FALSE; }
 	if(qof_entity_guid_match(new_session, original)) { return FALSE; }
 	gnc_engine_suspend_events();
 	qecd.param_list = NULL;
@@ -635,8 +637,7 @@ gboolean qof_entity_copy_to_session(QofSession* new_session, QofEntity* original
 	inst = (QofInstance*)qof_object_new_instance(original->e_type, book);
 	qecd.to = &inst->entity;
 	qecd.from = original;
-	g = qof_entity_get_guid(original);
-	qof_entity_set_guid(qecd.to, g);
+	qof_entity_set_guid(qecd.to, qof_entity_get_guid(original));
 	qof_class_param_foreach(original->e_type, qof_entity_param_cb, &qecd);
 	if(g_slist_length(qecd.param_list) == 0) { return FALSE; }
 	g_slist_foreach(qecd.param_list, qof_entity_foreach_copy, &qecd);
@@ -704,7 +705,10 @@ recurse_collection_cb (QofEntity *ent, gpointer user_data)
 	if(user_data == NULL) { return; }
 	store = (struct recurse_s*)user_data;
 	if(!ent || !store) { return; }
+	store->success = qof_entity_copy_to_session(store->session, ent);
+	if(store->success) {
 	store->ent_list = g_list_append(store->ent_list, ent);
+	}
 }
 
 static void

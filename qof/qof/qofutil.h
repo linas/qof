@@ -63,10 +63,13 @@
 #define SAFE_STRCMP(da,db) SAFE_STRCMP_REAL(strcmp,(da),(db))
 #define SAFE_STRCASECMP(da,db) SAFE_STRCMP_REAL(strcasecmp,(da),(db))
 
+/** \name typedef enum as string macros
+@{
+*/
 #define ENUM_BODY(name, value)           \
     name value,
 #define AS_STRING_CASE(name, value)      \
-    case name: return #name;
+    case name: { return #name; }
 #define FROM_STRING_CASE(name, value)    \
     if (strcmp(str, #name) == 0) {       \
         return name;                     \
@@ -91,6 +94,42 @@
         list(FROM_STRING_CASE)           \
         return 0;                        \
     }
+/** @} */
+
+/** \name enum as string with no typedef
+@{
+
+  Similar but used when the enum is NOT a typedef 
+ note the LACK of a define_enum macro - don't use one! 
+ 
+ ENUM_BODY is used in both types.
+ */
+
+#define FROM_STRING_DEC_NON_TYPEDEF(name, list)      \
+    void ##name##fromString                          \
+	(const char* str, enum name *type);
+
+#define FROM_STRING_CASE_NON_TYPEDEF(name, value)    \
+    if (strcmp(str, #name) == 0) { *type = name; }
+
+#define FROM_STRING_FUNC_NON_TYPEDEF(name, list)     \
+    void ##name##fromString                          \
+	(const char* str, enum name *type) {         \
+    list(FROM_STRING_CASE_NON_TYPEDEF) }
+
+#define AS_STRING_DEC_NON_TYPEDEF(name, list)        \
+    const char* name##asString(enum name n);
+#define AS_STRING_FUNC_NON_TYPEDEF(name, list)       \
+    const char* name##asString(enum name n) {        \
+        switch (n) {                     \
+            list(AS_STRING_CASE_NON_TYPEDEF)         \
+            default: return "";          \
+        }                                \
+    }
+#define AS_STRING_CASE_NON_TYPEDEF(name, value)      \
+    case name: { return #name; }
+
+/** @} */
 
 /* Define the long long int conversion for scanf */
 #if HAVE_SCANF_LLD

@@ -43,7 +43,7 @@
 
   Because a QOF Class associates getters and setters with
   a type, one can then ask, at run time, what parameters
-  are associated with a given type, even if those paramters
+  are associated with a given type, even if those parameters
   were not known at compile time.  Thus, a QOF Class is 
   sort-of like a DynAny implementation.  QOF classes can
   be used to provide "object introspection", i.e. asking 
@@ -91,8 +91,6 @@ single reference between two known objects.
 #define QOF_TYPE_BOOLEAN   "boolean"
 #define QOF_TYPE_KVP       "kvp"
 #define QOF_TYPE_CHAR      "character"
-#define QOF_TYPE_COLLECT   "collection"
-
 #define QOF_TYPE_COLLECT   "collection" /**< secondary collections
 are used for one-to-many references between entities and are
 implemented using ::QofCollection.

@@ -34,8 +34,14 @@
 
 struct _QofSession
 {
-  /* A book holds pointers to the various types of datasets used
-   * by GnuCash.  A session may have open multiple books.  */
+  /* This is just a "fake" entry point to allow me to pass a Session as
+   * an Entity.  NOTE:  THIS IS NOT AN ENTITY!  THE ONLY PART OF ENTITY
+   * THAT IS VALID IS E_TYPE!
+   */
+  QofEntity entity;
+
+  /* A book holds pointers to the various types of datasets.
+   * A session may have multiple books. */
   GList *books;
 
   /* The requested book id, in the form or a URI, such as
@@ -68,4 +74,3 @@ void qof_session_push_error (QofSession *session, QofBackendError err,
 QofBackend* gncBackendInit_file(const char *book_id, void *data);
 
 #endif
-

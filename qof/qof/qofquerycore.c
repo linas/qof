@@ -292,7 +292,6 @@ date_match_predicate (gpointer object, QofParam *getter,
 
   objtime = ((query_date_getter)getter->param_getfcn) (object, getter);
   compare = date_compare (objtime, pdata->date, pdata->options);
-  PINFO ( " compare=%d", compare);
 
   switch (pd->how) {
   case QOF_COMPARE_LT:
@@ -318,7 +317,6 @@ date_compare_func (gpointer a, gpointer b, gint options, QofParam *getter)
 {
   Timespec ta, tb;
 
-  ENTER (" ");
   g_return_val_if_fail (a && b && getter && getter->param_getfcn, COMPARE_ERROR);
 
   ta = ((query_date_getter)getter->param_getfcn) (a, getter);
@@ -352,7 +350,7 @@ date_predicate_equal (QofQueryPredData *p1, QofQueryPredData *p2)
 {
   query_date_t pd1 = (query_date_t) p1;
   query_date_t pd2 = (query_date_t) p2;
-ENTER (" ");
+
   if (pd1->options != pd2->options) return FALSE;
   return timespec_equal (&(pd1->date), &(pd2->date));
 }

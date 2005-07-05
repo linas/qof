@@ -1,3 +1,23 @@
+2005-07-05  Neil Williams <linux@codehelp.co.uk>
+
+	* backend/file/qsf-backend.c: Tweak.
+	* configure.in: Improved GLIB detection.
+	* doc/Makefile.am: website link.
+	* doc/doxygen_main_page.c: related page links.
+	* doc/map-plan.txt: Ideas
+	* qof/Makefile.am: Linking Glib properly.
+	* qof/gnc-engine-util.h: New enum as string macros.
+	* qof/guid.c: Sync with GnuCash.
+	* qof/guid.h: Tweak documentation.
+	* qof/qofbook.c: GnuCash sync.
+	* qof/qofclass.h: Adding QOF_TYPE_COLLECT.
+	* qof/qofid.c: Collection from a list.
+	* qof/qofid.h: Count a collection.
+	* qof/qofobject.h: Link to QOF-generator.
+	* qof/qofquerycore.c: Remove debug code.
+	* qof/qofsession-p.h: GnuCash hack.
+	* qof/qofsession.c: GnuCash tweaks.
+
 2005-06-17  Neil Williams <linux@codehelp.co.uk>
 
 	* .cvsignore: Distribution preparation.5

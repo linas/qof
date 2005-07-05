@@ -44,4 +44,3 @@ qsf-dir.h: qsf-dir.h.in
 	mv $@.tmp $@
 
 BUILT_SOURCES = qsf-dir.h
-

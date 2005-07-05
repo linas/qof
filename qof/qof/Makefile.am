@@ -86,3 +86,6 @@ INCLUDES =                     \
    -DPREFIX=\""$(prefix)"\"    \
    -DDATADIR=\""$(datadir)"\" 
 
+LDADD = \
+   ${GLIB_LIBS}
+

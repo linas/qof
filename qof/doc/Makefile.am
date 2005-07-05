@@ -16,6 +16,7 @@ doc: doxygen.cfg
 	echo "doc: " && pwd
 	rm -rf html
 	$(DOXYGEN) doxygen.cfg
+	rm ../website/doxy
 	ln -s ../doc/html/ ../website/doxy
 
 #	$(MAKE) -C latex/ 

@@ -6,14 +6,14 @@ up to date since it is generated directly from the source files using Doxygen.
 
 \section general General design documents.
 
-\ref backendapi
-
-\ref backenderrors
+- \ref backendapi
+- \ref backenderrors
+- \ref qsfmaps
 
 General information on merging QofBooks:\n
 http://code.neil.williamsleesmill.me.uk/
 
-General information on the QSF XML backend for QOF:\n
+General information on the QSF XML backend for QOF and maps:\n
 http://code.neil.williamsleesmill.me.uk/qsf.html
 
 \section hacking Hacking on this documentation

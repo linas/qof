@@ -170,7 +170,6 @@ handle_single_condition (QofSqlQuery *query, sql_condition * cond)
 		PWARN("missing condition");
 		return NULL;
 	}
-			
 	/* -------------------------------- */
 	/* field to match, assumed, for now to be on the left */
 	/* XXX fix this so it can be either left or right */
@@ -292,7 +291,6 @@ handle_single_condition (QofSqlQuery *query, sql_condition * cond)
 	{
 		table_name = query->single_global_tablename;
 	}
-		
 	if (NULL == table_name)
 	{
 		PWARN ("Need to specify an object class to query");

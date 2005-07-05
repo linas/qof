@@ -56,8 +56,8 @@ AC_PATH_PROG(PKG_CONFIG,pkg-config)
 if test "x$PKG_CONFIG" != x; then
 	GLIB_VERSION=`$PKG_CONFIG --exists 'glib >= 2.0.0'`
 	if test x$GLIB_VERSION != x; then
-	GLIB_LIBS=`$PKG_CONFIG --libs glib`
-	GLIB_CFLAGS=`$PKG_CONFIG --cflags glib`
+	GLIB_LIBS=`$PKG_CONFIG --libs glib-2.0`
+	GLIB_CFLAGS=`$PKG_CONFIG --cflags glib-2.0`
 	AC_SUBST(GLIB_CFLAGS)
 	AC_SUBST(GLIB_LIBS)
 	fi
