@@ -129,4 +129,11 @@ typedef struct {
   KvpValue *	value;
 } query_kvp_def, *query_kvp_t;
 
+typedef struct {
+	QofQueryPredData pd;
+	QofGuidMatch  options;
+	QofCollection *coll;
+	GList *guids;
+} query_coll_def, *query_coll_t;
+
 #endif /* QOF_QUERYCOREP_H */

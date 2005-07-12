@@ -26,7 +26,7 @@
     @{ */
 
 /** @file gnc-trace.h 
- *  @brief GnuCash error loging and tracing facility */
+ *  @brief QOF error logging and tracing facility */
 
 #ifndef GNC_TRACE_H
 #define GNC_TRACE_H
@@ -85,7 +85,10 @@ typedef enum
 
 #define GNC_TRACE_INDENT_WIDTH 4
 
-/** Initialize the error logging subsystem */
+/** Initialize the error logging subsystem
+
+\todo When QOF is spun out, who keeps the trace setting?
+*/
 void gnc_log_init (void);
 
 /** Set the logging level of the given module. */

@@ -1,12 +1,9 @@
-# Makefile for documentation
-
 EXTRA_DIST = \
   README \
   doxygen_main_page.c \
   doxygen.cfg.in \
   backend-api.txt \
   backend-errors.txt 
-
 
 docdir = ${datadir}
 
@@ -18,26 +15,3 @@ doc: doxygen.cfg
 	$(DOXYGEN) doxygen.cfg
 	rm ../website/doxy
 	ln -s ../doc/html/ ../website/doxy
-
-#	$(MAKE) -C latex/ 
-#	mv latex/refman.pdf ./refman.pdf
-
-#dist-hook:
-
-#distclean-local:
-
-#maintainer-clean-local:
-
-#install-data-hook:
-
-#uninstall-hook:
-
-## We borrow guile's convention and use @-...-@ as the substitution
-## brackets here, instead of the usual @...@.  This prevents autoconf
-## from substituting the values directly into the left-hand sides of
-## the sed substitutions.
-doxygen.cfg: doxygen.cfg.in Makefile
-	rm -f $@.tmp
-	sed < $< > $@.tmp \
-            -e 's:@-VERSION-@:${VERSION}:g'
-	mv $@.tmp $@

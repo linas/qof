@@ -138,4 +138,30 @@ qof_backend_init(QofBackend *be)
 #endif
 }
 
+void
+qof_backend_run_begin(QofBackend *be, QofInstance *inst)
+{
+	(be->begin) (be, inst);
+}
+
+gboolean
+qof_backend_begin_exists(QofBackend *be)
+{
+	if(be->begin) { return TRUE; }
+	else { return FALSE; }
+}
+
+void
+qof_backend_run_commit(QofBackend *be, QofInstance *inst)
+{
+	(be->commit) (be, inst);
+}
+
+gboolean
+qof_backend_commit_exists(QofBackend *be)
+{
+	if(be->commit) { return TRUE; }
+	else { return FALSE; }
+}
+
 /************************* END OF FILE ********************************/

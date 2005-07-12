@@ -490,7 +490,7 @@ guid_new(GUID *guid)
 	* is just hiding the problem, not fixing it.
 	*/
   init_from_int (433781*counter);
-  init_from_buff (guid->data, 16);
+  init_from_buff ((char*)guid->data, 16);
 
   if (counter == 0)
   {
@@ -510,7 +510,7 @@ guid_new(GUID *guid)
   counter--;
 }
 
-const GUID
+GUID
 guid_new_return(void)
 {
   GUID guid;

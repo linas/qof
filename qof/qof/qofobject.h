@@ -50,6 +50,7 @@
 
 #include "qofbook.h"
 #include "qofid.h"
+#include "qofchoice.h"
 
 /** Defines the version of the core object object registration
  * interface.  Only object modules compiled against this version

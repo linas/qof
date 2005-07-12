@@ -1,6 +1,6 @@
 /*********************************************************************
  * test-book-merge.c -- test implementation api for QoFBook merge    *
- * Copyright (C) 2004 Neil Williams <linux@codehelp.co.uk>           *
+ * Copyright (C) 2004-2005 Neil Williams <linux@codehelp.co.uk>      *
  *                                                                   *
  * This program is free software; you can redistribute it and/or     *
  * modify it under the terms of the GNU General Public License as    *
@@ -20,34 +20,32 @@
  * Boston, MA  02111-1307,  USA       gnu@gnu.org                    *
  *                                                                   *
  ********************************************************************/
-/*
- * Test the gncBookMerge infrastructure.
- */
+ /* Test the qof_book_merge infrastructure. */
+ 
 #include <glib.h>
-
+#include <libguile.h>
 #define _GNU_SOURCE
 
-#include "qof/qofinstance-p.h"
-#include "qof/qof.h"
-#include "qof/qof_book_merge.h"
+#include "qofinstance-p.h"
+#include "gnc-event-p.h"
+#include "qof.h"
+#include "qof_book_merge.h"
+#include "test-stuff.h"
 
-#define TEST_MODULE_NAME 	"book-merge-test"
-#define TEST_MODULE_DESC 	"Test Book Merge"
-#define OBJ_NAME 			"somename"
-#define OBJ_AMOUNT 			"anamount"
-#define OBJ_DATE 			"nottoday"
-#define OBJ_GUID 			"unique"
-#define OBJ_DISCOUNT 		"hefty"
-#define OBJ_VERSION 		"early"
-#define OBJ_MINOR 			"tiny"
-#define OBJ_ACTIVE 			"ofcourse"
+#define TEST_MODULE_NAME "book-merge-test"
+#define TEST_MODULE_DESC "Test Book Merge"
+#define OBJ_NAME "somename"
+#define OBJ_AMOUNT "anamount"
+#define OBJ_DATE "nottoday"
+#define OBJ_GUID "unique"
+#define OBJ_DISCOUNT "hefty"
+#define OBJ_VERSION "early"
+#define OBJ_MINOR "tiny"
+#define OBJ_ACTIVE "ofcourse"
 
-static void test_rule_loop 	(qof_book_mergeData *mergeData, qof_book_mergeRule*, guint);
-static void test_merge 		(void);
-gboolean 	myobjRegister 	(void);
-void 		test_ForeachParam	( QofParam*, 	gpointer );
-void 		test_ForeachType  	( QofObject*, 	gpointer );
-void 		test_Foreach 	  	( QofEntity*, 	gpointer );
+static void test_rule_loop (qof_book_mergeData*, qof_book_mergeRule*, guint);
+static void test_merge (void);
+gboolean myobjRegister (void);
 
 /* simple object structure */
 typedef struct obj_s
@@ -99,6 +97,7 @@ obj_create(QofBook *book)
 	g->active = TRUE;
 	g->version = 1;
 	g->minor = 1;
+	gnc_engine_gen_event(&g->inst.entity, GNC_EVENT_CREATE);
 	return g;
 }
 
@@ -214,7 +213,7 @@ obj_setAmount(myobj *g, gnc_numeric h)
 gnc_numeric
 obj_getAmount(myobj *g)
 {
-	if(!g) return double_to_gnc_numeric(0,0,GNC_HOW_DENOM_EXACT);
+	if(!g) return gnc_numeric_zero();
 	return g->Amount;
 }
 
@@ -236,7 +235,7 @@ gboolean myobjRegister (void)
 {
   static QofParam params[] = {
 	{ OBJ_NAME,		QOF_TYPE_STRING,	(QofAccessFunc)obj_getName,		(QofSetterFunc)obj_setName		},
-	{ OBJ_AMOUNT, QOF_TYPE_NUMERIC, (QofAccessFunc)obj_getAmount,(QofSetterFunc)obj_setAmount },
+	{ OBJ_AMOUNT,   QOF_TYPE_NUMERIC,   (QofAccessFunc)obj_getAmount,   (QofSetterFunc)obj_setAmount	},
 	{ OBJ_GUID,		QOF_TYPE_GUID,		(QofAccessFunc)obj_getGUID,		(QofSetterFunc)obj_setGUID		},
 	{ OBJ_DATE,		QOF_TYPE_DATE,		(QofAccessFunc)obj_getDate,		(QofSetterFunc)obj_setDate		},
 	{ OBJ_DISCOUNT, QOF_TYPE_DOUBLE,	(QofAccessFunc)obj_getDiscount, (QofSetterFunc)obj_setDiscount  },
@@ -280,27 +279,46 @@ test_merge (void)
 	target_init = "testing";
 	qof_date_format_set(QOF_DATE_FORMAT_UK);
 	timespecFromTime_t(&ts,time(NULL));
+
+	do_test ((NULL != target), "#1 target book is NULL");
+
+	/* import book objects - tests used */
+	do_test ((NULL != import), "#2 import book is NULL");
 	import_obj = g_new(myobj, 1);
+	do_test ((NULL != import_obj), "#3 new object create");
 	qof_instance_init (&import_obj->inst, TEST_MODULE_NAME, import);
+	do_test ((NULL != &import_obj->inst), "#4 instance init");
 	obj_setGUID(import_obj,qof_instance_get_guid(&import_obj->inst));
+	do_test ((NULL != &import_obj->obj_guid), "#5 guid set");
+	gnc_engine_gen_event(&import_obj->inst.entity, GNC_EVENT_CREATE);
+	do_test ((NULL != &import_obj->inst.entity), "#6 gnc event create");
 	obj_setName(import_obj, import_init);
+	do_test ((NULL != &import_obj->Name), "#7 string set");
 	obj_amount = double_to_gnc_numeric(init_value,1, GNC_HOW_DENOM_EXACT);
 	obj_setAmount(import_obj, obj_amount);
+	do_test ((gnc_numeric_check(obj_getAmount(import_obj)) == GNC_ERROR_OK), "#8 gnc_numeric set");
 	obj_setActive(import_obj, active);
+	do_test ((FALSE != &import_obj->active), "#9 gboolean set");
 	obj_setDiscount(import_obj, discount);
+	do_test ((discount == import_obj->discount), "#10 double set");
 	obj_setVersion(import_obj, version);
+	do_test ((version == import_obj->version), "#11 gint32 set");
 	obj_setMinor(import_obj, minor);
+	do_test ((minor == import_obj->minor), "#12 gint64 set");
 	obj_setDate(import_obj, ts );
 	tc = import_obj->date;
+	do_test ((timespec_cmp(&ts, &tc) == 0), "#13 date set");
 
 	obj_amount = gnc_numeric_add(obj_amount, obj_amount, 1, GNC_HOW_DENOM_EXACT);
 	discount = 0.25;
 	version = 2;
 	minor = 3;
 
+	/* second import object - test results would be the same, so not tested. */
 	new_obj = g_new(myobj, 1);
 	qof_instance_init (&new_obj->inst, TEST_MODULE_NAME, import);
 	obj_setGUID(new_obj,qof_instance_get_guid(&new_obj->inst));
+	gnc_engine_gen_event (&new_obj->inst.entity, GNC_EVENT_CREATE);
 	obj_setName(new_obj, import_init);
 	obj_setAmount(new_obj, obj_amount);
 	obj_setActive(new_obj, active);
@@ -311,14 +329,16 @@ test_merge (void)
 
 	obj_amount = gnc_numeric_add(obj_amount, obj_amount, 1, GNC_HOW_DENOM_EXACT);
 	discount = 0.35;
-	version = 3;
-	minor = 6;
+	version = 2;
+	minor = 3;
 	tc.tv_sec = ts.tv_sec -1;
 	tc.tv_nsec = 0;
 
+	/* target object - test results would be the same, so not tested. */
 	target_obj = g_new(myobj, 1);
 	qof_instance_init (&target_obj->inst, TEST_MODULE_NAME, target);
 	obj_setGUID(target_obj,qof_instance_get_guid(&target_obj->inst));
+	gnc_engine_gen_event (&target_obj->inst.entity, GNC_EVENT_CREATE);
 	obj_setName(target_obj, target_init);
 	obj_setAmount(target_obj, obj_amount);
 	obj_setActive(target_obj, active);
@@ -326,160 +346,121 @@ test_merge (void)
 	obj_setVersion(target_obj, version);
 	obj_setMinor(target_obj, minor);
 	obj_setDate(target_obj, tc );
-	
+
 	mergeData = qof_book_mergeInit(import, target);
+	do_test ( mergeData != NULL, "FATAL: Merge could not be initialised!\t aborting . . ");
 	g_return_if_fail(mergeData != NULL);
  	qof_book_mergeRuleForeach(mergeData, test_rule_loop, MERGE_REPORT);
+	qof_book_mergeRuleForeach(mergeData, test_rule_loop, MERGE_UPDATE);
+	qof_book_mergeRuleForeach(mergeData, test_rule_loop, MERGE_NEW);
+ 	/* reserved calls - test only */
+ 	qof_book_mergeRuleForeach(mergeData, test_rule_loop, MERGE_ABSOLUTE);
+ 	qof_book_mergeRuleForeach(mergeData, test_rule_loop, MERGE_DUPLICATE);
 
- 	result = qof_book_mergeCommit(mergeData);
-	g_return_if_fail(result == 0);
-	qof_object_foreach_type(test_ForeachType, target);
+	/* import should not be in the target - pass if import_init fails match with target */
+	do_test (((safe_strcmp(obj_getName(import_obj),obj_getName(target_obj))) != 0), "Init value test #1");
+	
+	/* a good commit returns zero */
+ 	do_test (qof_book_mergeCommit(mergeData) == 0, "Commit failed");
 
+	/* import should be in the target - pass if import_init matches target */
+	do_test (((safe_strcmp(import_init,obj_getName(target_obj))) == 0), "Merged value test #1");
+
+	/* import should be the same as target - pass if values are the same */
+	do_test (((safe_strcmp(obj_getName(target_obj),obj_getName(import_obj))) == 0), "Merged value test #2");
+
+	/* check that the Amount really is a gnc_numeric */
+	do_test ((gnc_numeric_check(obj_getAmount(import_obj)) == GNC_ERROR_OK), "import gnc_numeric check");
+	do_test ((gnc_numeric_check(obj_getAmount(target_obj)) == GNC_ERROR_OK), "target gnc_numeric check");
+
+	/* obj_amount was changed after the import object was set, so expect a difference. */
+	do_test ((gnc_numeric_compare(obj_getAmount(import_obj), obj_amount) != GNC_ERROR_OK),
+			"gnc_numeric value check #1");
+
+	/* obj_amount is in the target object with the import value, expect a difference/ */
+	do_test ((gnc_numeric_compare(obj_getAmount(target_obj), obj_amount) != GNC_ERROR_OK),
+			"gnc_numeric value check #2");
+
+	/* target had a different date, so import date should now be set */
+	tc = target_obj->date;
+	do_test ((timespec_cmp(&ts, &tc) == 0), "date value check: 1");
+	tc = import_obj->date;
+	do_test ((timespec_cmp(&tc, &ts) == 0), "date value check: 2");
+	do_test ((timespec_cmp(&import_obj->date, &target_obj->date) == 0), "date value check: 3");
 }
 
 static void
 test_rule_loop (qof_book_mergeData *mergeData, qof_book_mergeRule *rule, guint remainder)
 {
-	GSList *user_reports;
-	QofParam *one_param;
-	gchar *importstring, *targetstring;
-	gint resolution, count;
-	gboolean input_ok;
-	gchar y;
-
-	resolution = 0;
-	count = 1;
-	importstring = targetstring = NULL;
-	input_ok = FALSE;
-	g_return_if_fail(rule != NULL);
-	user_reports = rule->mergeParam;
-	if(remainder == 1) {
-		printf("\n\t\t%i conflict needs to be resolved.\n", remainder);
-	}
-	else {
-		printf("\n\t\t%i conflicts need to be resolved.\n", remainder);
-	}
-	printf("\n%i parameter values for this \"%s\" object.\n", 
-		   g_slist_length(user_reports), rule->targetEnt->e_type);
-	while(user_reports != NULL) {
-		one_param = user_reports->data;
-		printf("%i:\tParameter name:\t\t%s\n", count, one_param->param_name);
-		importstring = qof_book_merge_param_as_string(one_param, rule->importEnt);
-		printf("\tImport data :\t\t%s\n", importstring);
-		targetstring = qof_book_merge_param_as_string(one_param, rule->targetEnt);
-		printf("\tOriginal data :\t\t%s\n", targetstring);
-		user_reports = g_slist_next(user_reports);
-		count++;
-	}
-	while(!input_ok) {
-		resolution = 0;
-		printf("\nPlease resolve this conflict. Enter\n\t1 to use the import data or ");
-		printf("\n\t2 to keep the original data or");
-		/* if rule->mergeAbsolute is TRUE, the GUID matches and a NEW object would corrupt
-			the target book. The user must be forced to try again if it is selected in error. */
-		if(rule->mergeAbsolute == FALSE) {
-			printf("\n\t3 to import the data as a NEW object or");
-		}
-		printf("\n\t9 to abort the entire merge operation.");
-		printf("\nDecision? (1, 2");
-		if(rule->mergeAbsolute == FALSE) {
-			printf(", 3 ");
-		}
-		printf("or 9) : "); 
-		scanf("%i", &resolution);
-		/* example of generic collision resolution handling 
-			note that all possible changes are shown. */
-		
-		switch(resolution) {
-			case 1 : { 
-				mergeData = qof_book_mergeUpdateResult(mergeData, MERGE_UPDATE); 
-				input_ok = TRUE; 
-				break; 
-				}
-			case 2 : { 
-				if(rule->mergeAbsolute == FALSE) { 
-					mergeData = qof_book_mergeUpdateResult(mergeData, MERGE_DUPLICATE); 
-				}
-				if(rule->mergeAbsolute == TRUE) { 
-					mergeData = qof_book_mergeUpdateResult(mergeData, MERGE_ABSOLUTE); 
-				}
-				input_ok = TRUE; 
-				break; 
-			}
-			case 3 : { 
-				if(rule->mergeAbsolute == FALSE) { 
-					mergeData = qof_book_mergeUpdateResult(mergeData, MERGE_NEW); 
-					input_ok = TRUE; 
-				}
-				/* if rule->mergeAbsolute is TRUE, the GUID matches and a NEW object would corrupt
-					the target book. By not setting a result, the user is forced to try again. */
-				break; 
-			}
-			case 9 : {
-				printf("Are you sure you want to abort the entire merge operation?\n");
-				printf("The rest of the import data will not be processed.\n");
-				printf("Your original data will not be modified. Abort? y/n : ");
-				scanf("%s", &y);
-				
-				if((safe_strcmp("y",&y) == 0)||(safe_strcmp("",&y) == 0)) {
-					printf("Aborting . . \n\n");
-					mergeData = qof_book_mergeUpdateResult(mergeData, MERGE_INVALID);
-					input_ok = TRUE;
-				}
-				break;
-			}
-			default : break;
-		}
-	}
-}
-
-void 
-test_ForeachParam( QofParam* param, gpointer user_data) 
-{
-	QofEntity *ent;
+	GSList *testing;
+	QofParam *eachParam;
 	char *importstring;
-
-	ent = (QofEntity*)user_data;
-	importstring = NULL;
-	importstring = qof_book_merge_param_as_string(param, ent);
-	printf("%-20s\t\t%s\t\t%s\n", param->param_name, param->param_type, importstring);
-}
-
-void
-test_Foreach ( QofEntity* ent, gpointer user_data) 
-{
-	qof_class_param_foreach(ent->e_type, test_ForeachParam , ent);
-}
-
-void 
-test_ForeachType ( QofObject* obj, gpointer user_data) 
-{
-	QofBook *book;
+	char *targetstring;
+	gboolean skip_target;
 	
-	book = (QofBook*)user_data;
-	printf("\n%s\n", obj->e_type);
-	printf("Parameter name\t\t\tData type\t\tValue\n");
-	qof_object_foreach(obj->e_type, book, test_Foreach, NULL);
+	importstring = NULL;
+	targetstring = NULL;
+	skip_target = FALSE;
+	mergeData->currentRule = rule;
+	do_test ((rule != NULL), "loop:#1 Rule is NULL");
+	do_test (remainder > 0, "loop:#2 remainder error.");
+	do_test ((safe_strcmp(NULL, rule->mergeLabel) != 0), "loop:#3 object label\n");
+	do_test ((rule->importEnt != NULL), "loop:#4 empty import entity");
+	/* targetEnt is always NULL at this stage if MERGE_NEW is set */
+	if(rule->targetEnt == NULL) { skip_target = TRUE; }
+	if(!skip_target) {
+		do_test ((safe_strcmp(rule->importEnt->e_type, rule->targetEnt->e_type) == 0),
+			"loop: entity type mismatch");
+	}
+	do_test ((rule->mergeParam != NULL), "loop: empty parameter list");
+	testing = rule->mergeParam;
 
+	while(testing != NULL) { // start of param loop
+		eachParam = testing->data;
+		do_test ((eachParam != NULL), "loop:#8 no QofParam data");
+		do_test ((eachParam->param_name != NULL), "loop:#9 no parameter name");
+		do_test ((eachParam->param_getfcn != NULL), "loop:#10 no get function");
+		do_test ((eachParam->param_setfcn != NULL), "loop:#11 no set function");
+		/* non-generic - test routines only! */
+		if(safe_strcmp(eachParam->param_type, QOF_TYPE_STRING) == 0) {
+			importstring = g_strdup(eachParam->param_getfcn(rule->importEnt, eachParam));
+			do_test ((importstring != NULL), "loop:#12 direct get_fcn import");
+			do_test ((safe_strcmp(importstring, "test") == 0), "loop:#13 direct import comparison");
+			if(!skip_target) {
+			targetstring = eachParam->param_getfcn(rule->targetEnt, eachParam);		
+			do_test ((targetstring != NULL), "loop:#14 direct get_fcn target");
+			do_test ((safe_strcmp(targetstring, "testing") == 0), "loop:#15 direct target comparison");
+		}
+		}
+		/* param_as_string does the conversion for display purposes only */
+		/* do NOT use as_string for calculations or set_fcn */
+		importstring = qof_book_merge_param_as_string(eachParam, rule->importEnt);
+		do_test ((importstring != NULL), "loop:#16 import param_as_string is null");
+		if(!skip_target) {
+		targetstring = qof_book_merge_param_as_string(eachParam, rule->targetEnt);
+		do_test ((targetstring != NULL), "loop:#17 target param_as_string is null");
+			}
+		testing = g_slist_next(testing);
+	} // end param loop
+	/* set each rule dependent on the user involvement response above. */
+	/* test routine just sets all MERGE_REPORT to MERGE_UPDATE */
+	mergeData = qof_book_mergeUpdateResult(mergeData, MERGE_UPDATE);
+	do_test ((rule->mergeResult != MERGE_REPORT), "update result fail");
 }
 
 int
-main (int argc, char **argv)
+main ()
 {
-	/* Initialize the QOF framework */
-	gnc_engine_get_string_cache();
-	guid_init();
+	gnc_engine_get_string_cache ();
+	guid_init ();
 	qof_object_initialize ();
 	qof_query_init ();
 	qof_book_register ();
-	
 	myobjRegister();
 	test_merge();
-	
-	/* Perform a clean shutdown */
-	qof_query_shutdown ();
-	qof_object_shutdown ();
-	guid_shutdown ();
-	gnc_engine_string_cache_destroy ();
+	print_test_results();
+	qof_query_shutdown();
+	guid_shutdown();
+	gnc_engine_string_cache_destroy();
 	return 0;
 }

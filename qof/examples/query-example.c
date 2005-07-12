@@ -174,6 +174,7 @@ main (int argc, char *argv[])
    qof_object_shutdown ();
    guid_shutdown ();
    gnc_engine_string_cache_destroy ();
+   return 0;
 }
 
 /* =================== END OF FILE ===================== */

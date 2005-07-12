@@ -31,3 +31,5 @@ qof-1.pc
 bin
 qof.prj
 qof.pws
+*.tar.gz
+

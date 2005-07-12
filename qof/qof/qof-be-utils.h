@@ -25,6 +25,7 @@
 /**  @file qof-be-utils.h 
    @brief QOF Backend Utilities
    @author Derek Atkins <derek@ihtfp.com>
+   @author Neil Williams <linux@codehelp.co.uk>
 
   Common code used by objects to define begin_edit() and
   commit_edit() functions.
@@ -35,7 +36,7 @@
 #define QOF_BE_UTILS_H
 
 #include "gnc-engine-util.h"
-#include "qofbackend-p.h"
+#include "qofbackend.h"
 #include "qofbook.h"
 
 /** begin_edit helper
@@ -44,6 +45,9 @@
  *        inst: an instance of QofInstance
  *
  * The caller should use this macro first and then perform any other operations.
+ 
+ Uses newly created functions to allow the macro to be used
+ when QOF is linked as a library. qofbackend-p.h is a private header.
  */
 
 #define QOF_BEGIN_EDIT(inst)                                        \
@@ -62,8 +66,8 @@
                                                                     \
   /* See if there's a backend.  If there is, invoke it. */          \
   be = qof_book_get_backend ((inst)->book);                         \
-  if (be && be->begin) {                                            \
-     (be->begin) (be, (inst));                                      \
+    if (be && qof_backend_begin_exists((be))) {                     \
+     qof_backend_run_begin((be), (inst));                           \
   } else {                                                          \
      /* We tried and failed to start transaction! */                \
      (inst)->dirty = TRUE;                                          \
@@ -98,8 +102,8 @@
   {                                                              \
     QofBackend * be;                                             \
     be = qof_book_get_backend ((inst)->book);                    \
-    if (be && be->begin) {                                       \
-     (be->begin) (be, (inst));                                   \
+    if (be && qof_backend_begin_exists((be))) {                  \
+     qof_backend_run_begin((be), (inst));                        \
     }                                                            \
     (inst)->editlevel = 0;                                       \
   }                                                              \
@@ -131,7 +135,7 @@
                                                                  \
   /* See if there's a backend.  If there is, invoke it. */       \
   be = qof_book_get_backend ((inst)->book);                      \
-  if (be && be->commit)                                          \
+  if (be && qof_backend_commit_exists((be)))                     \
   {                                                              \
     QofBackendError errcode;                                     \
                                                                  \
@@ -140,7 +144,7 @@
       errcode = qof_backend_get_error (be);                      \
     } while (ERR_BACKEND_NO_ERR != errcode);                     \
                                                                  \
-    (be->commit) (be, (inst));                                   \
+    qof_backend_run_commit((be), (inst));                        \
     errcode = qof_backend_get_error (be);                        \
     if (ERR_BACKEND_NO_ERR != errcode)                           \
     {                                                            \

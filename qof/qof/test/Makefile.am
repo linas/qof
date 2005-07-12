@@ -1,0 +1,63 @@
+AM_CFLAGS = \
+  -I.. -I../.. -I../../.. \
+  -I${top_srcdir}/qof \
+  -I${top_srcdir}/backend/file \
+   ${LIBXML2_CFLAGS} \
+   ${GLIB_CFLAGS}
+
+INCLUDES = \
+   -I. -I../ -I${top_builddir}/qof \
+   -I${top_srcdir}/lib/libsql
+
+LDADD = \
+   ${top_builddir}/qof/libqof.la \
+   ${top_builddir}/lib/libsql/libqofsql.la \
+   ${LIBXML2_LIBS} \
+   ${GLIB_LIBS} \
+   -lltdl \
+   -lm
+
+test_book_merge_SOURCES = \
+  test-stuff.c \
+  test-book-merge.c
+
+test_date_SOURCES = \
+  test-date.c \
+  test-stuff.c \
+  test-engine-stuff.c
+
+test_guid_SOURCES = \
+  test-stuff.c \
+  test-guid.c
+
+test_numeric_SOURCES = \
+  test-stuff.c \
+  test-numeric.c
+
+test_object_SOURCES = \
+  test-stuff.c \
+  test-object.c
+
+test_querynew_SOURCES = \
+  test-stuff.c \
+  test-querynew.c
+
+noinst_PROGRAMS = \
+  test-book-merge \
+  test-date \
+  test-guid \
+  test-numeric \
+  test-object \
+  test-querynew
+
+TESTS = \
+  test-book-merge \
+  test-date \
+  test-guid \
+  test-numeric \
+  test-object \
+  test-querynew
+
+EXTRA_DIST = \
+  test-stuff.h \
+  test-engine-stuff.h

@@ -1,0 +1,11 @@
+Makefile
+Makefile.in
+test-book-merge
+test-date
+test-querynew
+test-object
+test-numeric
+test-guid
+*.o
+.libs
+.deps

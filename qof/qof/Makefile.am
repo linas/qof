@@ -2,6 +2,8 @@
 # Makefile.am for the libqof sources
 #
 
+SUBDIRS = . test
+
 lib_LTLIBRARIES = libqof.la
 
 libqof_la_LDFLAGS= -version-info $(LIBQOF_LIBRARY_VERSION) 
@@ -18,6 +20,7 @@ libqof_la_SOURCES =  \
    md5.c             \
    qofbackend.c      \
    qofclass.c        \
+   qofchoice.c       \
    qofgobj.c         \
    qofid.c           \
    qofinstance.c     \
@@ -44,6 +47,7 @@ qofinclude_HEADERS = \
    qof-be-utils.h    \
    qofbackend.h      \
    qofclass.h        \
+   qofchoice.h       \
    qofgobj.h         \
    qofid.h           \
    qofid-p.h         \
@@ -88,4 +92,3 @@ INCLUDES =                     \
 
 LDADD = \
    ${GLIB_LIBS}
-

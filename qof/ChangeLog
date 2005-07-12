@@ -1,5 +1,67 @@
 2005-07-05  Neil Williams <linux@codehelp.co.uk>
 
+	* .cvsignore: ignore dist tarball
+	* backend/file/qsf-backend.c: QOF_TYPE_CHOICE,
+	QOF_TYPE_COLLECT reference handling. Correcting
+	casts (gcc 4).
+	* backend/file/qsf-xml-map.c:
+	* backend/file/qsf-xml.c: Correcting
+	casts (gcc 4).
+	* configure.in: Removing INTLTOOL - no
+	translatable text in the library.
+	* doc/Makefile.am: Tweak.
+	* doc/doxygen.cfg.in: Tweak.
+	* examples/backend/my-instance.c:
+	* examples/gobject/gobj-example.c:
+	* examples/query-example.c:
+	* examples/sql-example.c:
+	* examples/test-book-merge.c:
+	* examples/test-qsf.c: Correcting
+	casts (gcc 4).
+	* qof/Makefile.am: Test case support.
+	* qof/gnc-engine-util.h: Fixing macro.
+	* qof/gnc-trace.h: Typo.
+	* qof/guid.c: GnuCash changes and correcting
+	casts (gcc 4).
+	* qof/guid.h: GnuCash sync.
+	* qof/qof-be-utils.h: New functions to allow
+	macros to be used from the library.
+	* qof/qof.h: QOF_TYPE_CHOICE
+	* qof/qof_book_merge.c: QOF_TYPE_CHOICE
+	* qof/qofbackend.c: New functions for qof-be-utils.h
+	macros.
+	* qof/qofbackend.h: Docs for new functions.
+	* qof/qofbook.h: Moving functions to get macros to
+	work.
+	* qof/qofchoice.c: QOF_TYPE_CHOICE
+	* qof/qofchoice.h: QOF_TYPE_CHOICE
+	* qof/qofclass.c: downgrading error reporting.
+	* qof/qofgobj.c: Correcting
+	casts (gcc 4).
+	* qof/qofid.h: QOF_TYPE_CHOICE
+	* qof/qofobject.h: QOF_TYPE_CHOICE
+	* qof/qofquery.c: typo.
+	* qof/qofquerycore-p.h: QOF_TYPE_COLLECT
+	* qof/qofquerycore.c: QOF_TYPE_COLLECT
+	* qof/qofquerycore.h: QOF_TYPE_COLLECT
+	* qof/qofsession.c: Using a genuine QofParam.
+	* qof/qofsession.h: QOF_TYPE_CHOICE
+	* qof/qofsql.c: remove cm_setter
+	* qof/test/.cvsignore:
+	* qof/test/Makefile.am: New test cases
+	* qof/test/test-book-merge.c:
+	* qof/test/test-date.c:
+	* qof/test/test-engine-stuff.c:
+	* qof/test/test-engine-stuff.h:
+	* qof/test/test-guid.c:
+	* qof/test/test-numeric.c:
+	* qof/test/test-object.c:
+	* qof/test/test-querynew.c:
+	* qof/test/test-stuff.c:
+	* qof/test/test-stuff.h:
+
+2005-07-05  Neil Williams <linux@codehelp.co.uk>
+
 	* backend/file/qsf-backend.c: Tweak.
 	* configure.in: Improved GLIB detection.
 	* doc/Makefile.am: website link.

@@ -378,7 +378,6 @@ qof_entity_get_reference_from(QofEntity *ent, const QofParam *param)
 {
 	QofEntityReference *reference;
 	QofEntity    *ref_ent;
-	QofParam     *copy_param;
 	const GUID   *cm_guid;
 	char         cm_sa[GUID_ENCODING_LENGTH + 1];
 	gchar        *cm_string;
@@ -386,13 +385,10 @@ qof_entity_get_reference_from(QofEntity *ent, const QofParam *param)
 	ref_ent = (QofEntity*)param->param_getfcn(ent, param);
 	if(ref_ent != NULL) {
 		reference = g_new0(QofEntityReference, 1);
-		reference->type = g_strdup(ent->e_type);
+		reference->type = ent->e_type;
 		reference->ref_guid = g_new(GUID, 1);
 		reference->ent_guid = &ent->guid;
-		copy_param = g_new0(QofParam, 1);
-		copy_param->param_name = g_strdup(param->param_name);
-		copy_param->param_type = g_strdup(param->param_type);
-		reference->param = copy_param;
+		reference->param = qof_class_get_parameter(ent->e_type, param->param_name);
 		cm_guid = qof_entity_get_guid(ref_ent);
 		guid_to_string_buff(cm_guid, cm_sa);
 		cm_string = g_strdup(cm_sa);

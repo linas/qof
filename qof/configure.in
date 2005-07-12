@@ -25,8 +25,6 @@ AC_SUBST(VERSION)
 PACKAGE=qof
 AC_SUBST(PACKAGE)
 
-AC_PROG_INTLTOOL
-
 AC_PROG_LIBTOOL
 
 AM_CONFIG_HEADER(config.h)
@@ -44,6 +42,20 @@ AC_PROG_LN_S
 AC_PROG_MAKE_SET
 
 AC_PATH_XTRA
+
+AC_DEFUN(AS_SCRUB_INCLUDE,
+[
+  GIVEN_CFLAGS=$[$1]
+  INCLUDE_DIRS=`echo | cpp -v 2>&1`
+
+  dnl remove everything from this output between the "starts here" and "End of"
+  dnl line
+  INCLUDE_DIRS=`echo $INCLUDE_DIRS | sed -e 's/.*<...> search starts here://' | sed -e 's/End of search list.*//'`
+  for dir in $INCLUDE_DIRS; do
+    GIVEN_CFLAGS=$(echo $GIVEN_CFLAGS | sed -e "s;-I$dir ;;" | sed -e "s;-I$dir$;;")
+  done
+  [$1]=$GIVEN_CFLAGS
+])
 
 dnl *****************************************
 dnl pkg-config check time
@@ -98,11 +110,12 @@ case $host_os in
 esac
 
 dnl Stuff needed to build the example progs only ... 
-dnl NW: Fixed this for pilot-link to build without Gtk.
 dnl **************************************************************
 
 GTK_CFLAGS=`$PKG_CONFIG --cflags gtk+-2.0`
 GTK_LIBS=`$PKG_CONFIG --libs gtk+-2.0`
+AS_SCRUB_INCLUDE(GTK_CFLAGS)
+AS_SCRUB_INCLUDE(GTK_LIBS)
 AC_SUBST(GTK_CFLAGS)
 AC_SUBST(GTK_LIBS)
 
@@ -142,10 +155,10 @@ dnl *******************************
 dnl Internationalization
 dnl ******************************* 
 
-ALL_LINGUAS=" "
-GETTEXT_PACKAGE=qof-0.6
-AC_SUBST(GETTEXT_PACKAGE)
-AM_GLIB_GNU_GETTEXT
+dnl ALL_LINGUAS=" "
+dnl GETTEXT_PACKAGE=qof-0.6
+dnl AC_SUBST(GETTEXT_PACKAGE)
+dnl AM_GLIB_GNU_GETTEXT
 
 AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$GETTEXT_PACKAGE",
 		[Define the gettext package.])
@@ -213,6 +226,7 @@ AC_SUBST(enable_latex_docs)
 BB_ENABLE_DOXYGEN
 # ----------------------------------------------------------------------------
 
+CFLAGS="${CFLAGS} -Wall"
 AC_SUBST(CFLAGS)
 AC_SUBST(CPPFLAGS)
 AC_SUBST(LDFLAGS)
@@ -234,12 +248,14 @@ backend/Makefile
 backend/dwi/Makefile
 backend/file/Makefile
 doc/Makefile
+doc/doxygen.cfg
 examples/Makefile
 examples/backend/Makefile
 examples/gobject/Makefile
 lib/Makefile
 lib/libsql/Makefile
 qof/Makefile
+qof/test/Makefile
 qof-1.pc
 ])
 

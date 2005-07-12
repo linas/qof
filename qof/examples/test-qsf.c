@@ -173,7 +173,9 @@ Timespec
 obj_getDate(myobj *g)
 {
 	Timespec ts;
-	if(!g) return ts;
+	ts.tv_sec = 0;
+	ts.tv_nsec = 0;
+	if(!g) { return ts; }
 	ts = g->date;
 	return ts;
 }
