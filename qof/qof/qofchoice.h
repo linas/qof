@@ -135,5 +135,17 @@ gboolean qof_choice_add_class(char* choice, char* add, char* param_name);
 */
 GList* qof_object_get_choices(QofIdType type, QofParam *param);
 
+/** \brief Is the choice valid for this param_name?
+
+@param choice_obj The object containing the QOF_TYPE_CHOICE parameter.
+@param param_name The name of a QOF_TYPE_CHOICE parameter in this object.
+@param choice The QofIdType to look for in the list of choices.
+
+@return TRUE if choice is found in the list of allowed choices for
+this parameter of this object. Otherwise, FALSE
+*/
+gboolean qof_choice_check(char* choice_obj, char *param_name, char* choice);
+
+
 /** @} */
 #endif /* _QOFCHOICE_H */

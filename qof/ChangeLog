@@ -1,3 +1,18 @@
+2005-07-18  Neil Williams <linux@codehelp.co.uk>
+
+	* backend/file/qof-backend-qsf.h: tweak
+	* backend/file/qsf-backend.c: Using editlevels
+	* backend/file/qsf-xml.h: New types added to doxygen.
+	* qof/gnc-engine-util.h: Correcting build to use known
+	config instead of guessing.
+	* qof/qof-be-utils.h: Macros as functions for use when
+	the call must not call return.
+	* qof/qofbackend.c: Macros as functions.
+	* qof/qofchoice.c: Fixing hash table lookup.
+	* qof/qofchoice.h: Check choice selections.
+	* qof/qofsession.c: Using editlevels.
+	* qof/qofsql.c: Fixing warnings.	
+
 2005-07-05  Neil Williams <linux@codehelp.co.uk>
 
 	* .cvsignore: ignore dist tarball

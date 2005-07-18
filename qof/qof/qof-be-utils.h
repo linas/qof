@@ -73,6 +73,12 @@
      (inst)->dirty = TRUE;                                          \
   }
 
+/** \brief function version of QOF_BEGIN_EDIT
+
+The macro cannot be used in a function that returns a value,
+this function can be used instead.
+*/
+void qof_begin_edit(QofInstance *inst);
 
 /**
  * commit_edit helpers
@@ -115,6 +121,13 @@
   ENTER ("(inst=%p) dirty=%d do-free=%d",                        \
             (inst), (inst)->dirty, (inst)->do_free);             \
 }
+
+/** \brief function version of QOF_COMMIT_EDIT_PART1
+
+The macro cannot be used in a function that returns a value,
+this function can be used instead. Only Part1 is implemented.
+*/
+void qof_commit_edit(QofInstance *inst);
 
 /**
  * part2 -- deal with the backend

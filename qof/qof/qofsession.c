@@ -56,6 +56,7 @@
 #include "gnc-trace.h"
 #include "qofsession.h"
 #include "qofbackend-p.h"
+#include "qof-be-utils.h"
 #include "qofbook.h"
 #include "qofbook-p.h"
 #include "qofobject.h"
@@ -382,6 +383,7 @@ qof_entity_get_reference_from(QofEntity *ent, const QofParam *param)
 	char         cm_sa[GUID_ENCODING_LENGTH + 1];
 	gchar        *cm_string;
 
+	g_return_val_if_fail(param, NULL);
 	ref_ent = (QofEntity*)param->param_getfcn(ent, param);
 	if(ref_ent != NULL) {
 		reference = g_new0(QofEntityReference, 1);
@@ -571,7 +573,9 @@ qof_entity_list_foreach(gpointer data, gpointer user_data)
 	g = qof_entity_get_guid(original);
 	qof_entity_set_guid(qecd->to, g);
 //	if(qecd->param_list != NULL) { g_slist_free(qecd->param_list); }
+	qof_begin_edit(inst);
 	qof_class_param_foreach(original->e_type, qof_entity_param_cb, qecd);
+	qof_commit_edit(inst);
 	if(qsf_check_error(qecd)) { return; }
 	g_slist_foreach(qecd->param_list, qof_entity_foreach_copy, qecd);
 	qsf_check_error(qecd);
@@ -612,7 +616,9 @@ qof_entity_coll_copy(QofEntity *original, gpointer user_data)
 	qecd->from = original;
 	g = qof_entity_get_guid(original);
 	qof_entity_set_guid(qecd->to, g);
+	qof_begin_edit(inst);
 	g_slist_foreach(qecd->param_list, qof_entity_foreach_copy, qecd);
+	qof_commit_edit(inst);
 	qsf_check_error(qecd);
 }
 
@@ -634,7 +640,9 @@ gboolean qof_entity_copy_to_session(QofSession* new_session, QofEntity* original
 	qecd.to = &inst->entity;
 	qecd.from = original;
 	qof_entity_set_guid(qecd.to, qof_entity_get_guid(original));
+	qof_begin_edit(inst);
 	qof_class_param_foreach(original->e_type, qof_entity_param_cb, &qecd);
+	qof_commit_edit(inst);
 	if(g_slist_length(qecd.param_list) == 0) { return FALSE; }
 	g_slist_foreach(qecd.param_list, qof_entity_foreach_copy, &qecd);
 	if(qsf_check_error(&qecd)) { return FALSE; }

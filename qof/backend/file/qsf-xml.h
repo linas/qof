@@ -608,7 +608,9 @@ Filters the parameter list to set each type in this order:
 - QOF_TYPE_INT64
 - QOF_TYPE_DOUBLE
 - QOF_TYPE_CHAR
-- QOF_TYPE_KVP (pending.)
+- QOF_TYPE_KVP
+- QOF_TYPE_COLLECT
+- QOF_TYPE_CHOICE
 
 */
 void qsf_param_init(qsf_param *params);

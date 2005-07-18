@@ -33,7 +33,7 @@
 
 #include <glib.h>
 #include <stddef.h>
-
+#include "config.h"
 #include "gnc-trace.h"  // XXX eliminate me eventually
 
 /** Macros *****************************************************/

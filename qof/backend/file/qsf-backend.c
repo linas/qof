@@ -232,7 +232,11 @@ ent_ref_cb (QofEntity* ent, gpointer user_data)
 		reference_setter = (void(*)(QofEntity*, QofEntity*))ref->param->param_setfcn;
 		if(reference_setter != NULL) 
 		{ 
+			qof_begin_edit((QofInstance*)ent);
+			qof_begin_edit((QofInstance*)reference);
 			reference_setter(ent, reference);
+			qof_commit_edit((QofInstance*)ent);
+			qof_commit_edit((QofInstance*)reference);
 		}
 		params->referenceList = g_list_next(params->referenceList);
 	}
@@ -280,7 +284,9 @@ qsfdoc_to_qofbook(xmlDocPtr doc, qsf_param *params)
 		inst = (QofInstance*)qof_object_new_instance(params->object_set->object_type, book);
 		g_return_val_if_fail(inst != NULL, FALSE);
 		params->qsf_ent = &inst->entity;
+		qof_begin_edit(inst);
 		g_hash_table_foreach(params->qsf_parameter_hash, qsf_object_commitCB, params);
+		qof_commit_edit(inst);
 		object_list = g_list_next(object_list);
 	}
 	qof_object_foreach_type(insert_ref_cb, params);
@@ -555,6 +561,7 @@ qsf_entity_foreach(QofEntity *ent, gpointer data)
 	params = (qsf_param*)data;
 	param_count = ++params->count;
 	ns = params->qsf_ns;
+	qsf_kvp = kvp_frame_new();
 	own_guid = FALSE;
 	object_node = xmlNewChild(params->book_node, params->qsf_ns, 
 		(xmlChar*)QSF_OBJECT_TAG, NULL);

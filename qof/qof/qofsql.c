@@ -26,12 +26,13 @@
     @author Copyright (C) 2004 Linas Vepstas <linas@linas.org>
 
 */
+#define _GNU_SOURCE
 
 #include <stdlib.h>   /* for working atoll */
-#include <time.h>
 #include <errno.h>
-#include <glib.h>
+#include "glib.h"
 #include <sql_parser.h>
+#include <time.h>
 #include "kvp_frame.h"
 #include "gnc-date.h"
 #include "gnc-numeric.h"
@@ -766,13 +767,15 @@ qof_query_insert(QofSqlQuery *query)
 	QofIdType type;
 	QofInstance *inst;
 	sql_insert_statement *sis;
+	sql_table *sis_t;
 
 	query->param_list = NULL;
 	type = NULL;
 	sis = query->parse_result->statement;
 	switch(sis->table->type) {
 		case SQL_simple: {
-			query->single_global_tablename = g_strdup_printf("%s", sis->table->d);
+			sis_t = sis->table;
+			query->single_global_tablename = g_strdup_printf("%s", sis_t->d.simple);
 			type = g_strdup(query->single_global_tablename);
 			break;
 		}
