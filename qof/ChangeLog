@@ -1,3 +1,28 @@
+2005-07-24  Neil Williams <linux@codehelp.co.uk>
+
+	* backend/file/pilot-qsf-GnuCashInvoice.xml: Using real
+	pilot-link data.
+	* backend/file/qsf-backend.c: Removing debug code, loading
+	maps alongside objects, QOF_TYPE_CHOICE.
+	* backend/file/qsf-object.xsd.xml: QOF_TYPE_CHOICE
+	* backend/file/qsf-xml-map.c: Loading maps alonside objects.
+	Outline of conversion loader.
+	* backend/file/qsf-xml.c: Accurately reporting map
+	validation counts.
+	* backend/file/qsf-xml.h: Doxygen.
+	* configure.in: Support for STRUCT_TM_GMTOFF check.
+	* qof/gnc-numeric.h: Doxygen fixes.
+	* qof/qof_book_merge.c: Removing unused header.
+	* qof/qof_book_merge.h: 
+	* qof/qofbackend-p.h: 
+	* qof/qofbackend.h: Don't need the private header here.
+	* qof/qofinstance.c: Change in API to make collection
+	dirty when instance is dirty. API to handle do_free.
+	* qof/qofinstance.h: Doxygen
+	* qof/qofsession.c: Fixing qof_entity_copy_list after
+	tests under CashUtil.
+	* qof/test/test-date.c: Mac OSX fix.
+
 2005-07-18  Neil Williams <linux@codehelp.co.uk>
 
 	* backend/file/qof-backend-qsf.h: tweak

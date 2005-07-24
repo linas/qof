@@ -41,7 +41,7 @@
 #ifndef QOF_BACKEND_H
 #define QOF_BACKEND_H
 
-#include "qofinstance-p.h"
+#include "qofinstance.h"
 
 /** \brief The errors that can be reported to the GUI & other front-end users
  *  \warning (GnuCash) If you modify QofBackendError, please update 

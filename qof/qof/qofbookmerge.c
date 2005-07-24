@@ -22,6 +22,7 @@
  ********************************************************************/
 
 #include "qof_book_merge.h"
+#include "qofinstance-p.h"
 #include "qofchoice.h"
 #include "qofid-p.h"
 static short module = MOD_ENGINE;

@@ -145,12 +145,13 @@ gboolean is_qsf_object_with_map_be(char *map_file, qsf_param *params)
 	map_root = xmlDocGetRootElement(map_doc);
 	valid.map_calculated_count = 0;
 	valid.valid_object_count = 0;
+	valid.qof_registered_count = 0;
 	valid.error_state = ERR_BACKEND_NO_ERR;
 	map_ns = map_root->ns;
-	iter.ns = map_ns;
-	qsf_valid_foreach(map_root, qsf_map_validation_handler, &iter, &valid);
 	iter.ns = object_root->ns;
 	qsf_valid_foreach(object_root, qsf_object_validation_handler, &iter, &valid);
+	iter.ns = map_ns;
+	qsf_valid_foreach(map_root, qsf_map_validation_handler, &iter, &valid);
 	if (valid.error_state != ERR_BACKEND_NO_ERR) {
 		qof_backend_set_error(params->be, valid.error_state);
 		g_hash_table_destroy(valid.validation_table);
@@ -165,6 +166,63 @@ gboolean is_qsf_object_with_map_be(char *map_file, qsf_param *params)
 		return TRUE;
 	}
 	qof_backend_set_error(params->be, ERR_QSF_WRONG_MAP);
+	/* the object is OK, only the map is wrong. */
+	return TRUE;
+}
+
+gboolean is_qsf_object_with_map(const char *path, char *map_file)
+{
+	xmlDocPtr doc, map_doc;
+	int valid_count;
+	struct qsf_node_iterate iter;
+	xmlNodePtr map_root, object_root;
+	xmlNsPtr map_ns;
+	qsf_validator valid;
+	gchar *map_path;
+
+	map_path = g_strdup_printf("%s/%s", QSF_SCHEMA_DIR, map_file);
+	if(path == NULL) {
+		return FALSE; 
+	}
+	doc = xmlParseFile(path);
+	if(doc == NULL) {
+		return FALSE;
+	}
+	if(TRUE != qsf_is_valid(QSF_SCHEMA_DIR, QSF_OBJECT_SCHEMA, doc)) { 
+		return FALSE; 
+	}
+	object_root = xmlDocGetRootElement(doc);
+	if(map_path == NULL) {
+		return FALSE; 
+	}
+	valid.validation_table = g_hash_table_new(g_str_hash, g_str_equal);
+	map_doc = xmlParseFile(map_path);
+	if(map_doc == NULL) {
+		return FALSE;
+	}
+	if(TRUE != qsf_is_valid(QSF_SCHEMA_DIR, QSF_MAP_SCHEMA, map_doc)) { 
+		return FALSE; 
+	}
+	map_root = xmlDocGetRootElement(map_doc);
+	valid.map_calculated_count = 0;
+	valid.valid_object_count = 0;
+	valid.error_state = ERR_BACKEND_NO_ERR;
+	map_ns = map_root->ns;
+	iter.ns = map_ns;
+	qsf_valid_foreach(map_root, qsf_map_validation_handler, &iter, &valid);
+	iter.ns = object_root->ns;
+	qsf_valid_foreach(object_root, qsf_object_validation_handler, &iter, &valid);
+	if (valid.error_state != ERR_BACKEND_NO_ERR) {
+		g_hash_table_destroy(valid.validation_table);
+		return FALSE;
+	}
+	valid_count = 0 - g_hash_table_size(valid.validation_table);
+	valid_count += valid.map_calculated_count;
+	valid_count += valid.valid_object_count;
+	g_hash_table_destroy(valid.validation_table);
+	if(valid_count == 0) {
+		return TRUE;
+	}
 	return FALSE;
 }
 
@@ -613,4 +671,40 @@ qsf_map_object_handler(xmlNodePtr child, xmlNsPtr ns, qsf_param *params)
 		is_qsf_object_with_map(path, map_path);
 */
 	}
+}
+xmlDocPtr
+qsf_object_convert(xmlDocPtr mapDoc, xmlNodePtr qsf_root, qsf_param *params)
+{
+	struct qsf_node_iterate iter;
+	xmlDocPtr output_doc;
+	xmlNode *cur_node;
+	xmlNode *map_root, *output_root, *output_node;
+
+	output_doc = xmlNewDoc((xmlChar*)QSF_XML_VERSION);
+	output_root = xmlDocCopyNode(qsf_root,output_doc,2);
+	xmlSetNs(output_root, params->qsf_ns);
+	output_node = NULL;
+
+	qsf_node_foreach(qsf_root, qsf_object_node_handler, &iter, params);
+	map_root = xmlDocGetRootElement(mapDoc);
+
+	iter.ns = params->map_ns;
+	qsf_node_foreach(map_root, qsf_map_top_node_handler, &iter, params);
+
+//	iter.ns = qsf_ns;
+//	qsf_node_foreach(qsf_root, qsf_map_object_handler, &iter, params);
+	for(cur_node = map_root->children; cur_node != NULL; cur_node = cur_node->next)
+	{
+		params->cur_node = cur_node;
+		params->count = 0;
+		if(qsf_is_element(cur_node, params->map_ns, MAP_OBJECT_TAG))
+		{
+			params->lister = NULL;
+			params->count++;
+			iter.ns = params->map_ns;
+			qsf_node_foreach(cur_node, qsf_map_object_handler, &iter, params);
+		}
+	}
+	params->file_type = OUR_QSF_OBJ;
+	return output_doc;
 }

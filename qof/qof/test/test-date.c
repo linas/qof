@@ -25,6 +25,7 @@
 /*
  * -- fix broken timezone test -- linas May 2004
  */
+#define _GNU_SOURCE
 
 #include <stdio.h>
 #include <ctype.h>
@@ -60,7 +61,7 @@ check_time (Timespec ts, gboolean always_print)
   if (!ok || always_print)
   {
     fprintf (stderr,
-             "\n%lld:%lld -> %s ->\n\t%lld:%lld "
+             "\n%lld:%lld -> %s ->\n%lld:%lld "
              "(diff of %lld secs %lld nsecs)\n",
              (long long int) ts.tv_sec,
              (long long int) ts.tv_nsec,
@@ -281,7 +282,6 @@ run_test (void)
   check_conversion ("2004-12-31 15:23:00.000000 -0837", ts);
   check_conversion ("2004-12-31 15:45:00.000000 -0815", ts);
 
-
   /* Various leap-year days and near-leap times. */
   ts = gnc_iso8601_to_timespec_gmt ("1980-02-29 00:00:00.000000 -0000");
   check_time (ts, do_print);
@@ -311,6 +311,7 @@ run_test (void)
   check_time (ts, do_print);
 
   /* Various 'special' times. What makes these so special? */
+
   ts.tv_sec = 152098136;
   ts.tv_nsec = 0;
   check_time (ts, do_print);
@@ -355,6 +356,8 @@ run_test (void)
   ts.tv_nsec = 0;
   check_time (ts, do_print);
 
+  srand(time(0));
+
   ts = *get_random_timespec ();
 
   for (i = 0; i < 10000; i++)
@@ -372,8 +375,8 @@ run_test (void)
     ts.tv_nsec /= 1000;
     ts.tv_nsec *= 1000;
 
-    if (!check_time (ts, FALSE))
-      return;
+    if (!check_time (ts, FALSE)) { printf("%d : %ld\n", i, ts.tv_nsec); }
+//      return;
   }
 }
 

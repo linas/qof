@@ -41,6 +41,16 @@ static short module = MOD_ENGINE;
 
 /* ========================================================== */
 
+QofInstance*
+qof_instance_create (QofIdType type, QofBook *book)
+{
+	QofInstance *inst;
+
+	inst = g_new0(QofInstance, 1);
+	qof_instance_init(inst, type, book);
+	return inst;
+}
+
 void 
 qof_instance_init (QofInstance *inst, QofIdType type, QofBook *book)
 {
@@ -116,8 +126,50 @@ qof_instance_version_cmp (QofInstance *left, QofInstance *right)
 gboolean
 qof_instance_is_dirty (QofInstance *inst)
 {
-	if (!inst) return FALSE;
-	return inst->dirty;
+	QofBook *book;
+	QofCollection *coll;
+	QofEntity *ent;
+
+	if (!inst) { return FALSE; }
+	ent = &inst->entity;
+	book = qof_instance_get_book(inst);
+	coll = qof_book_get_collection(book, ent->e_type);
+	if(qof_collection_is_dirty(coll)) { return inst->dirty; }
+	inst->dirty = FALSE;
+	return FALSE;
+}
+
+void 
+qof_instance_set_dirty(QofInstance* inst)
+{
+	QofBook *book;
+	QofCollection *coll;
+	QofEntity *ent;
+
+	inst->dirty = TRUE;
+	ent = &inst->entity;
+	book = qof_instance_get_book(inst);
+	coll = qof_book_get_collection(book, ent->e_type);
+	qof_collection_mark_dirty(coll);
+}
+
+gboolean
+qof_instance_check_edit(QofInstance *inst)
+{
+	if(inst->editlevel > 0) { return TRUE; }
+	return FALSE;
+}
+
+gboolean
+qof_instance_do_free(QofInstance *inst)
+{
+	return inst->do_free;
+}
+
+void
+qof_instance_mark_free(QofInstance *inst)
+{
+	inst->do_free = TRUE;
 }
 
 /* ========================================================== */
