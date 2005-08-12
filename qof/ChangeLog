@@ -1,5 +1,9 @@
 2005-08-12  Neil Williams <linux@codehelp.co.uk>
 
+	* qof/qofinstance.c: Improved dirty entity handling.
+
+2005-08-12  Neil Williams <linux@codehelp.co.uk>
+
 	* backend/file/qsf-backend.c: Cast fixes
 	* backend/file/qsf-object.xsd.xml: QOF_TYPE_CHOICE attribute
 	* backend/file/qsf-xml-map.c: Cast changes.
