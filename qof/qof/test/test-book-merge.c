@@ -20,10 +20,14 @@
  * Boston, MA  02111-1307,  USA       gnu@gnu.org                    *
  *                                                                   *
  ********************************************************************/
- /* Test the qof_book_merge infrastructure. */
+ /* Test the qof_book_merge infrastructure.
+
+ This is an external QOF test routine that cannot use
+ Gtk, Guile, Scheme or gnc-module handlers. The only
+ libraries that can be used here are Glib and QOF itself.
+ */
  
 #include <glib.h>
-#include <libguile.h>
 #define _GNU_SOURCE
 
 #include "qofinstance-p.h"

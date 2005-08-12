@@ -142,6 +142,7 @@ attributeFormDefault="unqualified">
    <xsd:simpleContent>
      <xsd:extension base="xsd:hexBinary">
        <xsd:attribute name="type" type="xsd:string" use="required"/>
+     <xsd:attribute name="name" type="xsd:string" use="required"/>
      </xsd:extension>
   </xsd:simpleContent>
   </xsd:complexType>

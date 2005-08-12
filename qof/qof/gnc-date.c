@@ -1102,7 +1102,6 @@ gnc_iso8601_to_timespec_gmt(const char *str)
      * be set. Note that we must use the accurate date, since the
      * value of 'gnc_timezone' includes daylight savings corrections
      * for that date. */
-
     tm = localtime (&secs);
 
     tz = gnc_timezone (tm);

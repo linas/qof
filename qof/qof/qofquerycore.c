@@ -89,6 +89,9 @@ static const char * query_kvp_type = QOF_TYPE_KVP;
 typedef QofCollection * (*query_collect_getter) (gpointer, QofParam*);
 static const char * query_collect_type = QOF_TYPE_COLLECT;
 
+typedef const GUID * (*query_choice_getter) (gpointer, QofParam *);
+static const char * query_choice_type = QOF_TYPE_CHOICE;
+
 /* Tables for predicate storage and lookup */
 static gboolean initialized = FALSE;
 static GHashTable *predTable = NULL;
@@ -1440,6 +1443,167 @@ qof_query_collect_predicate (QofGuidMatch options, QofCollection *coll)
 
 /* QOF_TYPE_CHOICE */
 
+static int
+choice_match_predicate (gpointer object, QofParam *getter,
+                      QofQueryPredData *pd)
+{
+  query_choice_t pdata = (query_choice_t)pd;
+  GList *node, *o_list;
+  const GUID *guid = NULL;
+
+  VERIFY_PREDICATE (query_choice_type);
+
+  switch (pdata->options) {
+
+  case QOF_GUID_MATCH_ALL:
+    /* object is a GList of objects; param_getfcn must be called on each one.
+     * See if every guid in the predicate is accounted-for in the
+     * object list
+     */
+
+    for (node = pdata->guids; node; node = node->next)
+    {
+      /* See if this GUID matches the object's guid */
+      for (o_list = object; o_list; o_list = o_list->next)
+      {
+        guid = ((query_choice_getter)getter->param_getfcn) (o_list->data, getter);
+        if (guid_equal (node->data, guid))
+          break;
+      }
+
+      /*
+       * If o_list is NULL, we've walked the whole list without finding
+       * a match.  Therefore break out now, the match has failed.
+       */
+      if (o_list == NULL)
+        break;
+    }
+
+    /*
+     * The match is complete.  If node == NULL then we've succesfully
+     * found a match for all the guids in the predicate.  Return
+     * appropriately below.
+     */
+
+    break;
+
+  case QOF_GUID_MATCH_LIST_ANY:
+
+    o_list = ((query_glist_getter)getter->param_getfcn) (object, getter);
+
+    for (node = o_list; node; node = node->next)
+    {
+      GList *node2;
+
+      for (node2 = pdata->guids; node2; node2 = node2->next)
+      {
+        if (guid_equal (node->data, node2->data))
+          break;
+      }
+
+      if (node2 != NULL)
+        break;
+    }
+
+    g_list_free(o_list);
+
+    break;
+
+  default:
+    /* object is a single object, getter returns a GUID*
+     *
+     * See if the guid is in the list
+     */
+
+    guid = ((query_choice_getter)getter->param_getfcn) (object, getter);
+    for (node = pdata->guids; node; node = node->next)
+    {
+      if (guid_equal (node->data, guid))
+        break;
+    }
+  }
+
+  switch (pdata->options) {
+  case QOF_GUID_MATCH_ANY:
+  case QOF_GUID_MATCH_LIST_ANY:
+    return (node != NULL);
+    break;
+  case QOF_GUID_MATCH_NONE:
+  case QOF_GUID_MATCH_ALL:
+    return (node == NULL);
+    break;
+  case QOF_GUID_MATCH_NULL:
+    return (guid == NULL);
+    break;
+  default:
+    PWARN ("bad match type");
+    return 0;
+  }
+}
+
+static void
+choice_free_pdata (QofQueryPredData *pd)
+{
+  query_choice_t pdata = (query_choice_t)pd;
+  GList *node;
+  VERIFY_PDATA (query_choice_type);
+  for (node = pdata->guids; node; node = node->next)
+  {
+    guid_free (node->data);
+  }
+  g_list_free (pdata->guids);
+  g_free (pdata);
+}
+
+static QofQueryPredData *
+choice_copy_predicate (QofQueryPredData *pd)
+{
+  query_choice_t pdata = (query_choice_t)pd;
+  VERIFY_PDATA_R (query_choice_type);
+  return qof_query_choice_predicate (pdata->options, pdata->guids);
+}
+
+static gboolean
+choice_predicate_equal (QofQueryPredData *p1, QofQueryPredData *p2)
+{
+  query_choice_t pd1 = (query_choice_t) p1;
+  query_choice_t pd2 = (query_choice_t) p2;
+  GList *l1 = pd1->guids, *l2 = pd2->guids;
+
+  if (pd1->options != pd2->options) return FALSE;
+  if (g_list_length (l1) != g_list_length (l2)) return FALSE;
+  for ( ; l1 ; l1 = l1->next, l2 = l2->next)
+  {
+    if (!guid_equal (l1->data, l2->data))
+      return FALSE;
+  }
+  return TRUE;
+}
+
+QofQueryPredData *
+qof_query_choice_predicate (QofGuidMatch options, GList *guid_list)
+{
+  query_choice_t pdata;
+  GList *node;
+
+  if (NULL == guid_list) return NULL;
+
+  pdata = g_new0 (query_choice_def, 1);
+  pdata->pd.how = QOF_COMPARE_EQUAL;
+  pdata->pd.type_name = query_choice_type;
+  pdata->options = options;
+
+  pdata->guids = g_list_copy (guid_list);
+  for (node = pdata->guids; node; node = node->next)
+  {
+    GUID *guid = guid_malloc ();
+    *guid = *((GUID *)node->data);
+    node->data = guid;
+  }
+  return ((QofQueryPredData*)pdata);
+}
+
+
 /* initialization ================================================== */
 /** This function registers a new Core Object with the QofQuery
  * subsystem.  It maps the "core_name" object to the given
@@ -1532,6 +1696,8 @@ static void init_tables (void)
     { QOF_TYPE_COLLECT, collect_match_predicate, collect_compare_func, 
       collect_copy_predicate, collect_free_pdata, NULL, 
       collect_predicate_equal },
+    { QOF_TYPE_CHOICE, choice_match_predicate, NULL,
+      choice_copy_predicate, choice_free_pdata, NULL, choice_predicate_equal },
   };
 
   /* Register the known data types */

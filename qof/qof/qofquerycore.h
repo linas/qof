@@ -162,6 +162,7 @@ QofQueryPredData *qof_query_char_predicate (QofCharMatch options,
                                             const char *chars);
 QofQueryPredData *qof_query_collect_predicate (QofGuidMatch options, 
                                             QofCollection *coll);
+QofQueryPredData *qof_query_choice_predicate  (QofGuidMatch options, GList *guids);
 
 /** The qof_query_kvp_predicate() matches the object that has
  *  the value 'value' located at the path 'path'.  In a certain

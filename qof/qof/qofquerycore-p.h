@@ -136,4 +136,11 @@ typedef struct {
 	GList *guids;
 } query_coll_def, *query_coll_t;
 
+typedef struct {
+	QofQueryPredData pd;
+	QofGuidMatch options;
+	const GUID *guid;
+	GList * guids;
+} query_choice_def, *query_choice_t;
+
 #endif /* QOF_QUERYCOREP_H */

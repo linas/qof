@@ -229,7 +229,7 @@ get_random_binary_data(void)
 
     for(len--; len >= 0; len--)
     {
-        ret->data[len] = (char)get_random_int_in_range(0,255);
+        ret->data[len] = (guchar)get_random_int_in_range(0,255);
     }
 
     return ret;
