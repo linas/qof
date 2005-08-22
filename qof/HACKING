@@ -1,0 +1,17 @@
+Replacement of lib/libsql
+-------------------------
+
+The code in lib/libsql came from the libgda package
+at about v1.0.3 and is now commonly available, including
+on Mac OSX via fink - albeit at only v1.0.4-3.
+
+Fedora Core 3 has 1.0.4, Fedora Core 4 has 1.2.0 and Debian
+has 1.2.1-2.
+
+Therefore, libgda will be used wherever possible and lib/libsql
+will eventually be dropped.
+
+This also helps complete the CashUtil project that will need the
+SQL handling in QOF and GnuCash itself which is likely to use more
+SQL directly in the future.
+

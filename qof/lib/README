@@ -1,5 +1,5 @@
 
-          Pre-Requeist Libraries
+          Pre-Requesit Libraries
           ----------------------
 
 This directory contains code that is needed by QOF,
@@ -18,3 +18,7 @@ libgda (http://www.gnome-db.org/) Gnome database system.
 The dwi directory contains code copied from the DWI
 project (http://dwi.sourceforge.net)
 
+LibGDA support
+--------------
+The libsql directory is not built if libgda >= 1.2.0 can be
+found on the build system. (August 2005).

@@ -50,7 +50,7 @@
 #include <unistd.h>
 
 #include <glib.h>
-
+#include "qofla-dir.h"
 #include "gnc-engine-util.h"
 #include "gnc-event.h"
 #include "gnc-trace.h"
@@ -67,6 +67,7 @@
 #include "gnc-module.h"
 #endif /* GNUCASH */
 
+/** \todo FIXME: should not be static */
 static QofSession * current_session = NULL;
 static GHookList * session_closed_hooks = NULL;
 static short module = MOD_BACKEND;
@@ -226,6 +227,8 @@ qof_session_new (void)
   return session;
 }
 
+/** \todo FIXME: if there are two applications,
+there would be two current_sessions and this will break!*/
 QofSession *
 qof_session_get_current_session (void)
 {
@@ -331,7 +334,8 @@ qof_book_set_partial(QofBook *book)
 {
 	gboolean partial;
 
-	partial = (gboolean)qof_book_get_data(book, PARTIAL_QOFBOOK);
+	partial =
+         (gboolean)GPOINTER_TO_INT(qof_book_get_data(book, PARTIAL_QOFBOOK));
 	if(!partial) {
 		qof_book_set_data(book, PARTIAL_QOFBOOK, (gboolean*)TRUE);
 	}
@@ -1220,7 +1224,7 @@ qof_session_save (QofSession *session,
 		 session, session->book_id ? session->book_id : "(null)");
 	/* Partial book handling. */
 	book = qof_session_get_book(session);
-	partial = (gboolean)qof_book_get_data(book, PARTIAL_QOFBOOK);
+	partial = (gboolean)GPOINTER_TO_INT(qof_book_get_data(book, PARTIAL_QOFBOOK));
 	change_backend = FALSE;
 	msg = g_strdup_printf(" ");
 	book_id = g_strdup(session->book_id);
@@ -1248,6 +1252,8 @@ qof_session_save (QofSession *session,
 #else
 			load_backend_library ("libqof-backend-qsf.so", "qsf_provider_init" );
 #endif
+			qof_load_backend_library (QOF_LIB_DIR "libqof-backend-qsf.la",
+				"qsf_provider_init");
 		}
 		p = g_slist_copy(provider_list);
 		while(p != NULL)

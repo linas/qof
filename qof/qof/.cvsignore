@@ -5,4 +5,5 @@
 Makefile
 Makefile.in
 .DS_Store
+qofla-dir.h
 

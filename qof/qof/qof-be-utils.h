@@ -36,8 +36,9 @@
 #define QOF_BE_UTILS_H
 
 #include "gnc-engine-util.h"
-#include "qofbackend.h"
+#include "qofbackend-p.h"
 #include "qofbook.h"
+#include "qofinstance.h"
 
 /** begin_edit helper
  *

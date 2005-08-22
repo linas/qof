@@ -18,12 +18,24 @@ EXTRA_DIST =       \
 AM_CFLAGS =           \
   -I. -I../..        \
   -I${top_srcdir}/qof \
+  ${LIBGDA_CFLAGS} \
   ${GLIB_CFLAGS}
 
+CFLAGS += -Werror
+
+if USE_LIBGDA
+LDADD =   \
+  ${top_builddir}/qof/libqof.la  \
+  ${LIBXML2_LIBS}  \
+  ${LIBGDA_LIBS} \
+  ${GLIB_LIBS}   \
+  -lltdl -lm
+else
 LDADD =                                   \
   ${top_builddir}/qof/libqof.la           \
   ${top_builddir}/lib/libsql/libqofsql.la \
   ${LIBXML2_LIBS}                         \
   ${GLIB_LIBS}                            \
   -lltdl -lm
+endif
 

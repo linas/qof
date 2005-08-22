@@ -43,9 +43,11 @@ qofinclude_HEADERS = \
    guid.h            \
    kvp_frame.h       \
    kvp-util.h        \
+   kvp-util-p.h      \
    qof.h             \
    qof-be-utils.h    \
    qofbackend.h      \
+   qofbackend-p.h    \
    qofclass.h        \
    qofchoice.h       \
    qofgobj.h         \
@@ -53,10 +55,9 @@ qofinclude_HEADERS = \
    qofid-p.h         \
    qofinstance-p.h   \
    qofinstance.h     \
+   qofla-dir.h  \
    qofquery.h        \
    qofbook.h         \
-   qofmath128.c      \
-   qofmath128.h      \
    qofobject.h       \
    qofquerycore.h    \
    qofsession.h      \
@@ -65,10 +66,9 @@ qofinclude_HEADERS = \
 
 noinst_HEADERS =      \
    gnc-event-p.h      \
-   kvp-util-p.h       \
    md5.h              \
-   qofbackend-p.h     \
    qofclass-p.h       \
+   qofmath128.h  \
    qofquery-p.h       \
    qofquery-deserial.h     \
    qofquery-serialize.h    \
@@ -77,18 +77,44 @@ noinst_HEADERS =      \
    qofquerycore-p.h   \
    qofsession-p.h
 
-EXTRA_DIST =
-
 AM_CFLAGS = -g        \
    @CFLAGS@           \
 	${LIBXML2_CFLAGS}  \
+  ${LIBGDA_CFLAGS} \
    ${GLIB_CFLAGS}
 
+CFLAGS += -Werror
+
+if USE_LIBGDA
+INCLUDES = \
+  -I$(includedir) \
+  -DPREFIX=\""$(prefix)"\"  \
+  -DDATADIR=\""$(datadir)"\"
+else
 INCLUDES =                     \
    -I${top_srcdir}/lib/libsql             \
    -I$(includedir)             \
    -DPREFIX=\""$(prefix)"\"    \
    -DDATADIR=\""$(datadir)"\" 
+endif
 
 LDADD = \
+  ${LIBGDA_LIBS} \
    ${GLIB_LIBS}
+
+QOFLIBdir = $(libdir)
+
+EXTRA_DIST = \
+  qofla-dir.h.in \
+  qofmath128.c
+
+CONFIG_CLEAN_FILES = qofla-dir.h
+
+qofla-dir.h: qofla-dir.h.in
+	rm -f $@.tmp
+	sed < $< > $@.tmp \
+                -e 's:@-libdir-@:${QOFLIBdir}:g'
+	mv $@.tmp $@
+
+BUILT_SOURCES = qofla-dir.h
+

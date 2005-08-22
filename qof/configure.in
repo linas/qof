@@ -9,15 +9,12 @@ dnl Process this file with autoconf to produce a configure script.
 # implements checks for a variety of system-specific functions
 #
 
-AC_INIT(qof,0.6.0)
+AC_INIT(qof, 0.6.0, http://lists.sourceforge.net/lists/listinfo/qof-devel)
 AM_INIT_AUTOMAKE
 
-dnl QOF library version needs to be incremented for 0.6 ?
 LIBQOF_LIBRARY_VERSION=1:1:0
-LIBQOFSQL_LIBRARY_VERSION=1:1:0
 LIBQOF_BACKEND_QSF_LIBRARY_VERSION=0:0:0
 AC_SUBST(LIBQOF_LIBRARY_VERSION)
-AC_SUBST(LIBQOFSQL_LIBRARY_VERSION)
 AC_SUBST(LIBQOF_BACKEND_QSF_LIBRARY_VERSION)
 
 VERSION=0.6.0
@@ -109,9 +106,36 @@ case $host_os in
 		;;
 esac
 
+dnl **************************************************************
+dnl  GNOME Data Access library for GNOME2 libgda
+dnl **************************************************************
+
+GDA_REQUIRED=1.2.0
+AC_MSG_CHECKING(for GDA)
+LIBGDA_CFLAGS=`$PKG_CONFIG --silence-errors --cflags "libgda >= $GDA_REQUIRED"`
+LIBGDA_LIBS=`$PKG_CONFIG --silence-errors --libs "libgda >= $GDA_REQUIRED"`
+AC_SUBST(LIBGDA_CFLAGS)
+AC_SUBST(LIBGDA_LIBS)
+if test "x$LIBGDA_LIBS" = x; then
+    AC_MSG_RESULT([No, GDA not found; will build using internal SQL library.])
+	LIBQOFSQL_LIBRARY_VERSION=1:1:0
+	AC_SUBST(LIBQOFSQL_LIBRARY_VERSION)
+else
+    GDA_VERSION=`$PKG_CONFIG --modversion libgda`
+    AC_MSG_RESULT([yes, using GDA: ${GDA_VERSION}])
+    AC_DEFINE(HAVE_GDA,,[We have found GDA])
+    HAVE_GDA="use_gda"
+	AC_SUBST(GDA_VERSION)
+fi
+
+AM_CONDITIONAL(USE_LIBGDA, [ test x$HAVE_GDA != x])
+AM_CONDITIONAL(USE_LIBGDA, [ test $HAVE_GDA = "use_gda"])
+AC_SUBST(USE_LIBGDA)
+
 dnl Stuff needed to build the example progs only ... 
 dnl **************************************************************
 
+AC_MSG_CHECKING([if we should build examples that use Gtk])
 GTK_CFLAGS=`$PKG_CONFIG --cflags gtk+-2.0`
 GTK_LIBS=`$PKG_CONFIG --libs gtk+-2.0`
 AS_SCRUB_INCLUDE(GTK_CFLAGS)
@@ -119,15 +143,17 @@ AS_SCRUB_INCLUDE(GTK_LIBS)
 AC_SUBST(GTK_CFLAGS)
 AC_SUBST(GTK_LIBS)
 
-if test x$GTK_LIBS = x; then
-   AC_MSG_WARN([****** GTK libs not found; build without GTK.])
-   else
+if test "x$GTK_LIBS" = x; then
+     AC_MSG_RESULT([No, build without GTK.])
+else
+     AC_MSG_RESULT([Yes, will build Gtk examples.])
       AC_DEFINE(HAVE_GTK,,We Have Found GTK)
       HAVE_GTK="use_gtk"
 fi
 
 AM_CONDITIONAL(BUILD_GTK, [test x$HAVE_GTK != x])
 AM_CONDITIONAL(BUILD_GTK, [test $HAVE_GTK = "use_gtk"])
+AC_SUBST(BUILD_GTK)
 
 dnl **************************************************************
 dnl Checks for typedefs, structures, and compiler characteristics.
@@ -148,7 +174,7 @@ dnl Checks for library functions.
 dnl *****************************
 
 AC_FUNC_STRFTIME
-AC_CHECK_FUNCS(getcwd gettimeofday getwd stpcpy strdup strtoul)
+AC_CHECK_FUNCS(getcwd gettimeofday getline getwd stpcpy strdup strtoul)
 AC_REPLACE_FUNCS(strptime localtime_r)
 
 dnl *******************************
@@ -160,29 +186,31 @@ dnl GETTEXT_PACKAGE=qof-0.6
 dnl AC_SUBST(GETTEXT_PACKAGE)
 dnl AM_GLIB_GNU_GETTEXT
 
-AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$GETTEXT_PACKAGE",
-		[Define the gettext package.])
+dnl AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$GETTEXT_PACKAGE",
+dnl		[Define the gettext package.])
 
 dnl **************************************************************
 dnl If DWI is found on the build system, then build with it.
 dnl Need to check for libdwi-qof too .... 
 dnl **************************************************************
 
+AC_MSG_CHECKING([for DWI])
 DWI_CFLAGS=`$PKG_CONFIG --cflags dwi-0`
 DWI_LIBS=`$PKG_CONFIG --libs dwi-0`
 AC_SUBST(DWI_CFLAGS)
 AC_SUBST(DWI_LIBS)
                                                                                 
 if test x$DWI_LIBS = x; then
-   AC_MSG_WARN([****** DWI libs not found; build without DWI.])
+   AC_MSG_RESULT([No, DWI was not found; build without DWI.])
 else
+   AC_MSG_RESULT([Yes, we have DWI.])
    AC_DEFINE(HAVE_DWI,,We Have Found DWI)
    HAVE_DWI="use_dwi"
 fi
 
-AM_CONDITIONAL(BUILD_DWI, [test x$HAVE_DWI != x])
-AM_CONDITIONAL(BUILD_DWI, [test $HAVE_DWI = "use_dwi"])
-AC_SUBST(HAVE_DWI)
+AM_CONDITIONAL(BUILD_DWI, [test "x$HAVE_DWI" != x])
+AM_CONDITIONAL(BUILD_DWI, [test "$HAVE_DWI" = "use_dwi"])
+AC_SUBST(BUILD_DWI)
 
 # check for doxygen, mostly stolen from http://log4cpp.sourceforge.net/
 # ----------------------------------------------------------------------------
@@ -292,6 +320,7 @@ echo "QOF_CFLAGS  :   $QOF_CFLAGS"
 echo "QOF_LIBS    :   $QOF_LIBS"
 echo "DWI_LIBS : $DWI_LIBS"
 echo "LIBXML2     :   "`eval echo $LIBXML_VERSION`
+echo "LIBGDA      :   $GDA_VERSION"
 echo "prefix : $prefix"
 echo "data dir : "`eval echo $datadir`
 echo "QSF DIR     :   "`eval echo $QSF_SCHEMA_DIR`

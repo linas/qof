@@ -31,7 +31,12 @@
 #include <stdlib.h>   /* for working atoll */
 #include <errno.h>
 #include "glib.h"
-#include <sql_parser.h>
+#include "config.h"
+#ifdef HAVE_GDA
+#include <sql/sql_parser.h>
+#else
+#include "sql_parser.h"
+#endif
 #include <time.h>
 #include "kvp_frame.h"
 #include "gnc-date.h"
@@ -240,7 +245,7 @@ handle_single_condition (QofSqlQuery *query, sql_condition * cond)
 			case KVP_TYPE_GINT64:
 			{
 				gint64 ival = kvp_value_get_gint64(kv);
-				sprintf (tmpbuff, "%lld\n", ival);
+				sprintf (tmpbuff, "%" G_GINT64_FORMAT "\n", ival);
 				break;
 			}
 			case KVP_TYPE_DOUBLE:

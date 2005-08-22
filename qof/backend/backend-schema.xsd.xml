@@ -1,0 +1,51 @@
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+targetNamespace="http://qof.sourceforge.net/"
+xmlns:qofconfig="http://qof.sourceforge.net/"
+elementFormDefault="qualified"
+attributeFormDefault="unqualified" xml:lang="en-GB">
+<xsd:import namespace="http://www.w3.org/XML/1998/namespace"
+schemaLocation="http://www.w3.org/2001/xml.xsd"/>
+ <xsd:annotation>
+    <xsd:documentation xml:lang="en">
+	Query Object Framework (QOF)
+	Copyright 2004-5 Neil Williams linux@codehelp.co.uk
+	QOF is free software; you can redistribute it and/or modify it
+	under the terms of the GNU General Public License as published by the
+	Free Software Foundation; either version 2 of the License, or (at your
+	option) any later version.
+	This program is distributed in the hope that it will be useful, but
+	WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+	General Public License for more details.
+	You should have received a copy of the GNU General Public License along
+	with this program; if not, write to the Free Software Foundation, Inc., 59
+	Temple	Place, Suite 330, Boston, MA 02111-1307 USA
+    </xsd:documentation>
+  </xsd:annotation>
+<xsd:element name="qofconfig" type="qofconfig:config"/>
+<xsd:complexType name="config">
+  <xsd:sequence>
+    <xsd:element name="backend" type="qofconfig:qofbackend" minOccurs="1" maxOccurs="1"/>
+  </xsd:sequence>
+</xsd:complexType>
+<xsd:complexType name="qofbackend">
+  <xsd:sequence>
+    <xsd:element name="provider" type="qofconfig:qofprovider" minOccurs="1" maxOccurs="unbounded"/>
+    </xsd:sequence>
+   <xsd:attribute name="name" type="xsd:string" use="required"/>
+</xsd:complexType>
+<xsd:complexType name="qofprovider">
+  <xsd:sequence>
+    <xsd:element name="option" type="qofconfig:qofoption" minOccurs="0" maxOccurs="unbounded"/>
+  </xsd:sequence>
+  <xsd:attribute ref="xml:lang" use="required"/>
+</xsd:complexType>
+<xsd:complexType name="qofoption">
+  <xsd:simpleContent>
+  <xsd:extension base="xsd:string">
+  <xsd:attribute name="type" type="xsd:string" use="required"/>
+  <xsd:attribute name="name" type="xsd:string" use="required"/>
+  </xsd:extension>
+  </xsd:simpleContent>
+</xsd:complexType>
+</xsd:schema>

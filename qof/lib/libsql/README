@@ -23,3 +23,7 @@ available and readily installed, then maybe we can remove this code.
 In the meanwhile, this copy will stop "dependency hell".
 
 --Linas  Vepstas 7 April 2004
+
+LibGDA conditional build support was added in August 2005 - this
+directory is no longer built if libgda >= 1.2.0 is found on the 
+build system.

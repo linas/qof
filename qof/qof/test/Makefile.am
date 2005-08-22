@@ -3,12 +3,22 @@ AM_CFLAGS = \
   -I${top_srcdir}/qof \
   -I${top_srcdir}/backend/file \
    ${LIBXML2_CFLAGS} \
+   ${LIBGDA_CFLAGS} \
    ${GLIB_CFLAGS}
 
 INCLUDES = \
    -I. -I../ -I${top_builddir}/qof \
    -I${top_srcdir}/lib/libsql
 
+if USE_LIBGDA
+LDADD = \
+   ${top_builddir}/qof/libqof.la \
+   ${LIBXML2_LIBS} \
+   ${GLIB_LIBS} \
+   ${LIBGDA_LIBS} \
+   -lltdl \
+   -lm
+else
 LDADD = \
    ${top_builddir}/qof/libqof.la \
    ${top_builddir}/lib/libsql/libqofsql.la \
@@ -16,6 +26,7 @@ LDADD = \
    ${GLIB_LIBS} \
    -lltdl \
    -lm
+endif
 
 test_book_merge_SOURCES = \
   test-stuff.c \
@@ -61,3 +72,4 @@ TESTS = \
 EXTRA_DIST = \
   test-stuff.h \
   test-engine-stuff.h
+
