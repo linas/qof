@@ -18,8 +18,6 @@
  * Boston, MA  02111-1307,  USA       gnu@gnu.org                   *
  *                                                                  *
 \********************************************************************/
-/** @addtogroup Object
-    @{ */
 /** @addtogroup Backend
 
     The QOF Backend is a pseudo-object providing an interface between the
@@ -32,7 +30,8 @@
     the GUI & other front-end users.  This file defines these errors.
    
     Backends are used to save and restore Entities in a Book.
-    @{ */
+    @{ 
+*/
 /** @file qofbackend.h
     @brief API for data storage Backend
     @author Copyright (C) 2000-2001 Linas Vepstas <linas@linas.org>
@@ -152,15 +151,15 @@ typedef struct QofBackend_s QofBackend;
 /** \brief DOCUMENT ME! */
 typedef void (*QofBePercentageFunc) (const char *message, double percent);
 
-/** \name Allow access to the begin routine for this backend.
+/** @name Allow access to the begin routine for this backend.
 
 QOF_BEGIN_EDIT and QOF_COMMIT_EDIT_PART1 and part2 rely on 
 calling QofBackend *be->begin and be->commit. This means the
 QofBackend struct becomes part of the public API.
 These function replaces those calls to allow the macros to be
-used when QOF is built as a library.
-@{
-*/
+used when QOF is built as a library. */
+//@{
+
 
 /** \brief Load configuration options specific to this backend.
 
@@ -184,15 +183,25 @@ void qof_backend_run_commit(QofBackend *be, QofInstance *inst);
 
 gboolean qof_backend_commit_exists(QofBackend *be);
 
-gboolean
-qof_load_backend_library (const char* filename, const char* init_fcn);
+/** \brief Load a QOF-compatible backend shared library.
 
-/** @} */
+\param directory Can be NULL if filename is a complete path.
+\param filename  Name of the .la file that describes the
+	shared library. This provides platform independence,
+	courtesy of libtool.
+\param init_fcn  The QofBackendProvider init function.
+
+\return FALSE in case or error, otherwise TRUE.
+*/
+gboolean
+qof_load_backend_library (const char *directory, 
+			const char* filename, const char* init_fcn);
+
+// @}
 /** \brief Retrieve the backend used by this book */
 QofBackend* qof_book_get_backend (QofBook *book);
 
 void qof_book_set_backend (QofBook *book, QofBackend *);
 
 #endif /* QOF_BACKEND_H */
-/**@}*/
-/**@}*/
+/** @} */

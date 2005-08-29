@@ -148,7 +148,7 @@ qof_backend_init(QofBackend *be)
 void
 qof_backend_run_begin(QofBackend *be, QofInstance *inst)
 {
-	if(!be | !inst) { return; }
+	if(!be || !inst) { return; }
 	if(!be->begin) { return; }
 	(be->begin) (be, inst);
 }
@@ -163,7 +163,7 @@ qof_backend_begin_exists(QofBackend *be)
 void
 qof_backend_run_commit(QofBackend *be, QofInstance *inst)
 {
-	if(!be | !inst) { return; }
+	if(!be || !inst) { return; }
 	if(!be->commit) { return; }
 	(be->commit) (be, inst);
 }
@@ -171,7 +171,7 @@ qof_backend_run_commit(QofBackend *be, QofInstance *inst)
 void
 qof_backend_load_config(QofBackend *be, KvpFrame *config)
 {
-	if(!be | !config) { return; }
+	if(!be || !config) { return; }
 	if(!be->load_config) { return; }
 	(be->load_config) (be, config);
 }
@@ -237,7 +237,8 @@ void qof_commit_edit(QofInstance *inst)
 #define STR_LIBDIR     "libdir="
 
 gboolean
-qof_load_backend_library (const char* filename, const char* init_fcn)
+qof_load_backend_library (const char *directory, 
+				const char* filename, const char* init_fcn)
 {
 	FILE *filehandle;
 	void (*initfn) (void);
@@ -258,10 +259,20 @@ qof_load_backend_library (const char* filename, const char* init_fcn)
 	tempstr = NULL;
 	libdirpath = NULL;
 	g_return_val_if_fail((filename || init_fcn), FALSE); 
+  if(directory)
+	{
+		if(!g_str_has_suffix(directory, "/")) {
+			tempstr = g_strconcat(directory, "/", filename, NULL);
+		}
+		else {
+			tempstr = g_strconcat(directory, filename, NULL);
+		}
+		filename = tempstr;
+	}
 	g_return_val_if_fail(g_str_has_suffix (filename, ".la"), FALSE);
 	/* now we have a filename ending in .la, see if we can open it. */
 	n = (guint)strlen(STR_DLNAME);
-	g_return_val_if_fail((stat(filename, &sbuf) <0), FALSE);
+	g_return_val_if_fail((stat(filename, &sbuf) == 0), FALSE);
 	filehandle = fopen(filename, "r");
 	g_return_val_if_fail((filehandle), FALSE);
 #ifndef HAVE_GETLINE
@@ -271,6 +282,7 @@ qof_load_backend_library (const char* filename, const char* init_fcn)
 	while (0 < getline(&lineptr, &n, filehandle))
 #endif
 	{
+		n = (guint)strlen(STR_DLNAME);
 		if (strncmp (lineptr, STR_DLNAME, n - 1) == 0)
 		{
 			/* obtain substring from dlname='.*'\n
@@ -299,7 +311,6 @@ qof_load_backend_library (const char* filename, const char* init_fcn)
 				tempstr = g_strndup(libdirpath, end - 1);
 				libdirpath = tempstr;
 			}
-			break;
 		}
 	}
 	fclose(filehandle);

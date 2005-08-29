@@ -183,7 +183,7 @@ const char * qof_session_get_error_message(QofSession *session);
  *    See qofbackend.h for a listing of returned errors.
  */
 QofBackendError qof_session_pop_error (QofSession *session);
-/* @} */
+/** @} */
 
 /** The qof_session_add_book() allows additional books to be added to
  *    a session. 
@@ -348,7 +348,7 @@ entities in the top level collection. It can take some time.
 @param coll A QofCollection of entities that may or may not have 
 references.
 
-@param session The QofSession to receive the copied entities.
+@param new_session The QofSession to receive the copied entities.
 
 @return TRUE on success; if any individual copy fails, returns FALSE.
 <b>Note</b> : Some entities may have been copied successfully even if
@@ -371,7 +371,7 @@ the top level entity has no references, this is identical to
 
 @param ent A single entity that may or may not have references.
 
-@param session The QofSession to receive the copied entities.
+@param new_session The QofSession to receive the copied entities.
 
 @return TRUE on success; if any individual copy fails, returns FALSE.
 <b>Note</b> : Some entities may have been copied successfully even if
@@ -513,7 +513,7 @@ gboolean qof_session_events_pending (QofSession *session);
  *    engine was modified while engine events were suspended.
  */
 gboolean qof_session_process_events (QofSession *session);
-/* @} */
+/** @} */
 
 #ifdef GNUCASH_MAJOR_VERSION
 /** Run the RPC Server 
