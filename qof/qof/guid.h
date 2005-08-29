@@ -129,9 +129,6 @@ void guid_new(GUID *guid);
 /** Generate a new id. If no initialization function has been called,
  *  guid_init() will be called before the id is created.
  *
- * @param guid A pointer to an existing guid data structure.  The
- *  existing value will be replaced with a new value.
- *
  * @return guid A data structure containing a newly allocated GUID.
  *  Caller is responsible for calling guid_free().
  */

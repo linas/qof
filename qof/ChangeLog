@@ -1,3 +1,24 @@
+2005-08-2i9  Neil Williams <linux@codehelp.co.uk>
+
+	* backend/file/qsf-xml.h: Doxygen tweaks.
+	* qof/gnc-event.h: Adding to Doxygen output.
+	* qof/guid.h: Doxygen correction.
+	* qof/qof-be-utils.h: Doxygen correction.
+	* qof/qof.h: Doxygen handling and making the
+	library directory public.
+	* qof/qof_book_merge.h: Doxygen correction.
+	* qof/qofbackend.c: New backend library load
+	function, using .la files for portability.
+	* qof/qofbackend.h: qof_load_backend_library.
+	* qof/qofchoice.h: Tweak.
+	* qof/qofid.h: Doxygen correction.
+	* qof/qofla-dir.h.in: Licence correction. 
+	* qof/qofquery-deserial.h: Removing from doxygen.
+	* qof/qofquery-serialize.h: Removing from doxygen.
+	* qof/qofsession.c: Deprecating current_session and
+	using new backend load calls.
+	* qof/qofsession.h: Doxygen correction.
+
 2005-08-12  Neil Williams <linux@codehelp.co.uk>
 
 	* qof/qofinstance.c: Improved dirty entity handling.

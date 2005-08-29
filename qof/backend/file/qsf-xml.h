@@ -95,13 +95,13 @@ The map namespace is not included as maps are not currently written out by QOF.
 /** @} */
 /** @name Representing KVP as XML
 
-<kvp type="kvp" path="/from-sched-xaction" value="guid">c858b9a3235723b55bc1179f0e8c1322</kvp>
+&lt;kvp type="kvp" path="/from-sched-xaction" value="guid"&gt;c858b9a3235723b55bc1179f0e8c1322&lt;/kvp&gt;
 A kvp type KVP parameter located at $path containing a GUID $value.
 
 The relevance of type="kvp" won't be evident in GnuCash, they all use "kvp".
 
 A non-GnuCash example helps:
-<kvp type="pilot_addr_kvp" path="/user/name" value="guid">c858b9a3235723b55bc1179f0e8c1322</kvp>
+&lt;kvp type="pilot_addr_kvp" path="/user/name" value="guid"&gt;c858b9a3235723b55bc1179f0e8c1322&lt;/kvp&gt;
 A pilot_addr_kvp type KVP parameter located at /user/name containing a guid value.
 @{ */
 
@@ -446,9 +446,9 @@ qsf_map_object_handler(xmlNodePtr child, xmlNsPtr ns, qsf_param *params);
 
 /** \brief Compares an xmlDoc in memory against the schema file.
 
-@params	schema_dir  set at compile time to $prefix/share/qsf/
-@params schema_filename Either the QSF Object Schema or the QSF Map Schema.
-@params doc 	The xmlDoc read from the file using libxml2.
+@param	schema_dir  set at compile time to $prefix/share/qsf/
+@param schema_filename Either the QSF Object Schema or the QSF Map Schema.
+@param doc 	The xmlDoc read from the file using libxml2.
 
 Ensure that you call the right schema_filename for the doc in question!
 
