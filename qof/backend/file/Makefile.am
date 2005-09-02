@@ -5,6 +5,7 @@ lib_LTLIBRARIES=libqof-backend-qsf.la
 AM_CFLAGS = \
 	-I.. -I../.. \
 	-I${top_srcdir}/qof \
+  -DLOCALE_DIR=\""$(datadir)/locale"\" \
 	${LIBXML2_CFLAGS} \
 	${GLIB_CFLAGS}
 
@@ -34,12 +35,10 @@ qsfschema_DATA = \
 EXTRA_DIST = \
   $(qsfschema_DATA) \
   qsf-dir.h.in    \
-  backend-config.pl \
   qsf-xml.h
 
 CONFIG_CLEAN_FILES = \
-  qsf-dir.h \
-  qsf-backend-v0.1.xml
+  qsf-dir.h
 
 qsf-dir.h: qsf-dir.h.in
 	rm -f $@.tmp
@@ -47,10 +46,5 @@ qsf-dir.h: qsf-dir.h.in
 		-e 's:@-QSF_SCHEMA_DIR-@:${QSF_SCHEMA_DIR}:g'
 	mv $@.tmp $@
 
-qsf-backend-v0.1.xml: backend-config.pl
-	perl backend-config.pl > qsf-backend-v0.1.xml
-
 BUILT_SOURCES = \
-  qsf-dir.h \
-  qsf-backend-v0.1.xml
-
+  qsf-dir.h

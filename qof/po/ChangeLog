@@ -1,0 +1,4 @@
+2005-08-29  Neil Williams <linux@codehelp.co.uk>
+
+	* po/: First gettext addition for backend configuration.
+

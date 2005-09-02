@@ -22,8 +22,11 @@ SUBDIRS = $(DWIBE) file
 
 DIST_SUBDIRS =  dwi file
  
-EXTRA_DIST =             \
-	README
-
 CFLAGS += -Werror
+
+backendschemadir = $(BACKEND_SCHEMA_DIR)
+backendschema_DATA = backend-schema.xsd.xml
+
+EXTRA_DIST = \
+ $(backendschema_DATA)
 

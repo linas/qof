@@ -19,25 +19,16 @@
  * Boston, MA  02111-1307,  USA       gnu@gnu.org                   *
 \********************************************************************/
 
-/*
- * FILE:
- * qofsession.c
- *
- * FUNCTION:
- * Encapsulate a connection to a storage backend.
+/**
+ * @file qofsession.c
+ * @brief Encapsulate a connection to a storage backend.
  *
  * HISTORY:
  * Created by Linas Vepstas December 1998
- * Copyright (c) 1998-2004 Linas Vepstas <linas@linas.org>
- * Copyright (c) 2000 Dave Peticolas
- * Copyright (c) 2005 Neil Williams <linux@codehelp.co.uk>
- */
 
-  /* TODO: XXX we should probably move this resolve function to the
-   * file backend.  I think the idea would be to open the backend
-   * and then ask it if it can contact it's storage media (disk,
-   * network, server, etc.) and abort if it can't.  Mal-formed
-   * file URL's would be handled the same way!
+ @author Copyright (c) 1998-2004 Linas Vepstas <linas@linas.org>
+ @author Copyright (c) 2000 Dave Peticolas
+ @author Copyright (c) 2005 Neil Williams <linux@codehelp.co.uk>
    */
 
 #include "config.h"
@@ -801,6 +792,28 @@ gboolean qof_entity_copy_one_r(QofSession *new_session, QofEntity *ent)
 
 /* ====================================================================== */
 
+/* Programs that use their own backends also need to call
+the default QOF ones. The backends specified here are
+loaded only by applications that do not have their own. */
+struct backend_providers
+{
+	const char *libdir;
+	const char *filename;
+	const char *init_fcn;
+};
+
+/* All available QOF backends need to be described here
+and the last entry must be three NULL's.
+Remember: Use the libdir from the current build environment
+and use the .la NOT the .so - .so is not portable! */
+struct backend_providers backend_list[] = {
+	{ QOF_LIB_DIR, "libqof-backend-qsf.la", "qsf_provider_init" },
+#ifdef HAVE_DWI
+	{ QOF_LIB_DIR, "libqof_backend_dwi.la", "dwiend_provider_init" },
+#endif
+	{ NULL, NULL, NULL }
+};
+
 #ifdef GNUCASH_MAJOR_VERSION 
 
 static void
@@ -881,28 +894,6 @@ qof_session_load_backend(QofSession * session, char * backend_name)
 
 #else /* GNUCASH */
 
-/* Programs that use their own backends also need to call
-the default QOF ones. The backends specified here are
-loaded only by applications that do not have their own. */
-struct backend_providers
-{
-	const char *libdir;
-	const char *filename;
-	const char *init_fcn;
-};
-
-/* All available QOF backends need to be described here
-and the last entry must be three NULL's.
-Remember: Use the libdir from the current build environment
-and use the .la NOT the .so - .so is not portable! */
-struct backend_providers backend_list[] = {
-	{ QOF_LIB_DIR, "libqof-backend-qsf.la", "qsf_provider_init" },
-#ifdef HAVE_DWI
-	{ QOF_LIB_DIR, "libqof_backend_dwi.la", "dwiend_provider_init" },
-#endif
-	{ NULL, NULL, NULL }
-};
-
 static void
 qof_session_load_backend(QofSession * session, char * access_method)
 {
@@ -928,6 +919,10 @@ qof_session_load_backend(QofSession * session, char * access_method)
 		/* Does this provider handle the desired access method? */
 		if (0 == strcasecmp (access_method, prov->access_method))
 		{
+			/* More than one backend could provide this
+			access method, check file type compatibility. */
+			if(!prov->check_data_type(session->book_id)) continue;
+
 			if (NULL == prov->backend_new) continue;
 			/* Use the providers creation callback */
       	    session->backend = (*(prov->backend_new))();

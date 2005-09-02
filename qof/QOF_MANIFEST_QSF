@@ -9,3 +9,4 @@ qsf-object.xsd.xml
 qsf-xml.c
 qsf-xml.h
 pilot-qsf-GnuCashInvoice.xml
+qsf-backend-v0.1.xml

@@ -75,7 +75,15 @@
  * make that assumption, in order to store the different accounting
  * periods in a clump so that one can be found, given another.
  *
- *  @{ 
+
+   The session now calls QofBackendProvider->check_data_type
+   to check that the incoming path contains data that the
+   backend provider can open. The backend provider should
+   also check if it can contact it's storage media (disk,
+   network, server, etc.) and abort if it can't.  Malformed
+   file URL's would be handled the same way.
+  
+ @{ 
  */
 
 /** @file qofsession.h
@@ -189,7 +197,7 @@ QofBackendError qof_session_pop_error (QofSession *session);
  *    a session. 
  * XXX Under construction, clarify the following when done:
  * XXX There must already be an open book in the session already!?
- * XXX Only one open bok at a time per session is alowed!?
+ * XXX Only one open book at a time per session is allowed!?
  * XXX each book gets its own unique backend ???
  */
 void qof_session_add_book (QofSession *session, QofBook *book);

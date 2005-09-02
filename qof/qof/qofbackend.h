@@ -160,21 +160,6 @@ These function replaces those calls to allow the macros to be
 used when QOF is built as a library. */
 //@{
 
-
-/** \brief Load configuration options specific to this backend.
-
-@param be The backend to configure.
-@param config A hash table with specific keys that this backend
-will recognise. Each backend needs to document their own config
-keys and acceptable values.
-
-The hash table remains the property of the caller and should
-be freed / destroyed once loaded in the backend.
-*/
-void qof_backend_load_config (QofBackend *be, KvpFrame *config);
-
-KvpFrame* qof_backend_get_config(QofBackend *be);
-
 void qof_backend_run_begin(QofBackend *be, QofInstance *inst);
 
 gboolean qof_backend_begin_exists(QofBackend *be);
@@ -182,6 +167,87 @@ gboolean qof_backend_begin_exists(QofBackend *be);
 void qof_backend_run_commit(QofBackend *be, QofInstance *inst);
 
 gboolean qof_backend_commit_exists(QofBackend *be);
+//@}
+
+/** @name Backend Configuration using XML
+
+Backends need to use automake to generate a header file that includes two paths,
+the path to the installed .la file to find the library itself and a path to the
+installed XML file to retrieve the config. The header will then be installed with
+all the others for configure to locate via pkg-config etc.
+
+The header file should also include the .la name of the library and the 
+QofBackendProvider init function name as #defines. Each header therefore includes
+all the information required to locate and load the backend and locate and load
+the backend XML configuration helper. (Do \b not use the .so name - it is not 
+portable!)
+
+QOF backends should add the name of this header to qof.h so that all QOF processes
+can find the macro definitions.
+
+Each backend developer is responsible for creating an XML file that describes the 
+configuration options supported by that backend.
+
+\verbatim
+<?xml version="1.0" encoding="UTF-8"?>
+<qofconfig xmlns="http://qof.sourceforge.net/" >
+  <backend name="GnuCash Backend Version 2">
+        <option type="gint64" name="file_retention_days" />
+        <option type="boolean" name="file_compression" />
+  </backend>
+</qofconfig>
+\endverbatim
+
+The backend then uses qof_backend_get_config to pass back a KvpFrame 
+that includes the \b translated strings that serve as description and
+tooltip for that option. i.e. backends need to run gettext in the init function.
+
+The translated strings are stored in the frame using the config suffixes,
+appended to the option name.
+
+e.g. The KvpValue file_compression is a boolean. file_compression/desc is
+a string containing the translated description of what the option does.
+file_compression/tip contains the translated tooltip explanation.
+
+@{
+*/
+
+/** Standard suffix to an option name for the description. */
+#define QOF_CONFIG_DESC "/desc"
+/** Standard suffix to an option name for the tooltip. */
+#define QOF_CONFIG_TIP  "/tip"
+
+/** \brief Load configuration options specific to this backend.
+
+@param be The backend to configure.
+@param config A KvpFrame with specific keys that this backend
+will recognise. Each backend needs to document their own config
+keys and acceptable values.
+
+The frame remains the property of the caller and should
+be freed / destroyed once loaded in the backend.
+*/
+void qof_backend_load_config (QofBackend *be, KvpFrame *config);
+
+/** \brief Get the available configuration options
+
+To retrieve the options from the returned KvpFrame, the caller
+needs to parse the XML file that documents the option names and
+data types. The XML file itself is part of the backend and is
+installed in a directory determined by the backend. Therefore,
+loading a new backend requires two paths: the path to the .la file
+and the path to the xml. Both paths are available by including a
+generated header file, e.g. gncla-dir.h defines GNC_LIB_DIR for
+the location of the .la file and GNC_XML_DIR for the xml.
+
+@param be The QofBackend to be configured.
+
+@return A new KvpFrame containing the available options or
+NULL on failure.
+
+*/
+KvpFrame* qof_backend_get_config(QofBackend *be);
+//@}
 
 /** \brief Load a QOF-compatible backend shared library.
 
@@ -197,7 +263,6 @@ gboolean
 qof_load_backend_library (const char *directory, 
 			const char* filename, const char* init_fcn);
 
-// @}
 /** \brief Retrieve the backend used by this book */
 QofBackend* qof_book_get_backend (QofBook *book);
 

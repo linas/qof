@@ -1,4 +1,33 @@
-2005-08-2i9  Neil Williams <linux@codehelp.co.uk>
+2005-09-02  Neil Williams <linux@codehelp.co.uk>
+
+	* .cvsignore: gettext support
+	* Makefile.am: make distcheck fix and gettext support.
+	* QOF_MANIFEST_QSF: New file.
+	* backend/Makefile.am: Where to install the backend config
+	XML file.
+	* backend/backend-schema.xsd.xml: Revised schema.
+	* backend/file/.cvsignore: new file.
+	* backend/file/Makefile.am: gettext support
+	* backend/file/qsf-backend-v0.1.xml: QSF backend config
+	* backend/file/qsf-backend.c: QOF backend config handlers
+	and gettext support.
+	* backend/file/qsf-xml.h: gettext defines.
+	* configure.in: intltoolize and gettext parameters.
+	* make-potfiles.in: new file.
+	* po/.cvsignore: new file.
+	* po/ChangeLog: translation support.
+	* po/Makevars: new file.
+	* po/POTFILES.in: gettext support.
+	* qof/gnc-date.c: Fix GnuCash bug #170444
+	* qof/qofbackend-p.h: Distinguish two providers with same access
+	method - check_data_type
+	* qof/qofbackend.c: check type now in QofBackendProvider, not
+	in the QofBackend.
+	* qof/qofbackend.h: Documenting the XML config handler.
+	* qof/qofsession.c: check_data_type, doxygen and gnucash fix.
+	* qof/qofsession.h: check_data_type
+
+2005-08-29  Neil Williams <linux@codehelp.co.uk>
 
 	* backend/file/qsf-xml.h: Doxygen tweaks.
 	* qof/gnc-event.h: Adding to Doxygen output.

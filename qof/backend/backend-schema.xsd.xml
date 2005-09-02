@@ -3,8 +3,6 @@ targetNamespace="http://qof.sourceforge.net/"
 xmlns:qofconfig="http://qof.sourceforge.net/"
 elementFormDefault="qualified"
 attributeFormDefault="unqualified" xml:lang="en-GB">
-<xsd:import namespace="http://www.w3.org/XML/1998/namespace"
-schemaLocation="http://www.w3.org/2001/xml.xsd"/>
  <xsd:annotation>
     <xsd:documentation xml:lang="en">
 	Query Object Framework (QOF)
@@ -30,15 +28,9 @@ schemaLocation="http://www.w3.org/2001/xml.xsd"/>
 </xsd:complexType>
 <xsd:complexType name="qofbackend">
   <xsd:sequence>
-    <xsd:element name="provider" type="qofconfig:qofprovider" minOccurs="1" maxOccurs="unbounded"/>
-    </xsd:sequence>
-   <xsd:attribute name="name" type="xsd:string" use="required"/>
-</xsd:complexType>
-<xsd:complexType name="qofprovider">
-  <xsd:sequence>
     <xsd:element name="option" type="qofconfig:qofoption" minOccurs="0" maxOccurs="unbounded"/>
   </xsd:sequence>
-  <xsd:attribute ref="xml:lang" use="required"/>
+   <xsd:attribute name="name" type="xsd:string" use="required"/>
 </xsd:complexType>
 <xsd:complexType name="qofoption">
   <xsd:simpleContent>

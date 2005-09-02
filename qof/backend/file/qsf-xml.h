@@ -48,6 +48,40 @@
 #include "qofsession-p.h"
 #include "qofbook-p.h"
 
+#if defined(HAVE_GETTEXT)             /* HAVE_GETTEXT */
+
+#include <libintl.h>
+#include <locale.h>
+
+#undef _
+#undef Q_
+
+#ifdef DISABLE_GETTEXT_UNDERSCORE
+#define _(String) (String)
+#define Q_(String) gnc_qualifier_prefix_noop(String)
+#else                                 /* ENABLE_GETTEXT_UNDERSCORE */
+#define _(String) gettext(String)
+#define Q_(String) gnc_qualifier_prefix_gettext(String)
+#endif                                /* End ENABLE_GETTEXT_UNDERSCORE */
+
+#else                                 /* Not HAVE_GETTEXT */
+#if !defined(__USE_GNU_GETTEXT)
+
+#undef _
+#undef Q_
+#define _(String)       (String)
+#define Q_(String) gnc_qualifier_prefix_noop(String)
+#define gettext(String) (String)
+#define ngettext(msgid, msgid_plural, n) (((n)==1) ? \
+                                            (msgid) : (msgid_plural))
+
+#endif                                /* End not__USE_GNU_GETTEXT */
+#endif                                /* End Not HAVE_GETTEXT */
+
+#undef  N_
+#define N_(String) (String)
+
+
 typedef enum  {
 	QSF_UNDEF = 0, /**< Initial undefined value. */
 	IS_QSF_MAP,   /**< A QSF map */

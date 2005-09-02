@@ -2,23 +2,27 @@
 # Makefile.am for libqof
 #
 if USE_LIBGDA
-SUBDIRS = backend qof doc examples
+SUBDIRS = backend qof examples . po doc
 else
-SUBDIRS = lib backend qof doc examples
+SUBDIRS = lib backend qof examples . po doc
 endif
+
+DIST_SUBDIRS = lib backend qof examples . po doc
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = qof-1.pc
 
+noinst_DATA = make-potfiles
+
+make-potfiles: make-potfiles.in Makefile
+	rm -f $@.tmp
+	sed < $< > $@.tmp \
+      -e 's:@-PERL-@:${PERL}:g'
+	chmod +x $@.tmp
+	mv $@.tmp $@
+
 EXTRA_DIST =                   \
-	AUTHORS                     \
-	COPYING                     \
-	ChangeLog                   \
-	INSTALL                     \
-	NEWS                        \
-	README                      \
-	TODO                        \
-	autogen.sh                  \
+  make-potfiles.in \
 	intltool-extract.in         \
 	intltool-merge.in           \
 	intltool-update.in          \
@@ -27,4 +31,7 @@ EXTRA_DIST =                   \
 DISTCLEANFILES = \
 	intltool-update \
 	intltool-merge    \
-	intltool-extract
+  intltool-extract \
+  make-potfiles \
+  po/.intltool-merge-cache
+

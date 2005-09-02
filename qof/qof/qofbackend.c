@@ -192,14 +192,6 @@ qof_backend_commit_exists(QofBackend *be)
 	else { return FALSE; }
 }
 
-gboolean
-qof_backend_check_type (QofBackend *be, const char *path)
-{
-	if(!be) { return FALSE; }
-	if(!be->check_data_type) { return FALSE; }
-	return (gboolean)(be->check_data_type) (be, path);
-}
-
 void 
 qof_begin_edit(QofInstance *inst)
 {

@@ -40,6 +40,9 @@ AC_PROG_MAKE_SET
 
 AC_PATH_XTRA
 
+AC_PROG_INTLTOOL
+INTLTOOLIZE=${INTLTOOLIZE:-intltoolize}
+
 AC_DEFUN(AS_SCRUB_INCLUDE,
 [
   GIVEN_CFLAGS=$[$1]
@@ -181,13 +184,12 @@ dnl *******************************
 dnl Internationalization
 dnl ******************************* 
 
-dnl ALL_LINGUAS=" "
-dnl GETTEXT_PACKAGE=qof-0.6
-dnl AC_SUBST(GETTEXT_PACKAGE)
-dnl AM_GLIB_GNU_GETTEXT
-
-dnl AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$GETTEXT_PACKAGE",
-dnl		[Define the gettext package.])
+ALL_LINGUAS=" "
+GETTEXT_PACKAGE=qof
+AC_SUBST(GETTEXT_PACKAGE)
+AM_GLIB_GNU_GETTEXT
+AC_SUBST(INTLTOOL_XGETTEXT)
+AC_DEFINE_UNQUOTED([GETTEXT_PACKAGE],["$GETTEXT_PACKAGE"], [gettext domain])
 
 dnl **************************************************************
 dnl If DWI is found on the build system, then build with it.
@@ -211,6 +213,34 @@ fi
 AM_CONDITIONAL(BUILD_DWI, [test "x$HAVE_DWI" != x])
 AM_CONDITIONAL(BUILD_DWI, [test "$HAVE_DWI" = "use_dwi"])
 AC_SUBST(BUILD_DWI)
+
+dnl =========================
+dnl Perl
+dnl =========================
+# Check for perl, force version 5
+AC_ARG_WITH(perl,
+  [  --with-perl=FILE        which perl executable to use ],
+  PERL="${with_perl}")
+
+# If the user didn't specify a perl, then go fetch.
+if test x"$PERL" = x;
+then
+  AC_PATH_PROG(PERL, perl)
+fi
+
+# Make sure Perl was found
+if test x"$PERL" = x; then
+    AC_MSG_ERROR([Cannot find Perl. Try using the --with-perl flag.])
+fi
+
+# Make sure it's version 5 or later
+if "$PERL" -e 'exit 1 if $] < 5.0'; then
+        :
+else
+    AC_MSG_ERROR([Found ${PERL} reports version ]
+                 [`${PERL} -e 'print $]'`, need version 5.*])
+fi
+AC_SUBST(PERL)
 
 # check for doxygen, mostly stolen from http://log4cpp.sourceforge.net/
 # ----------------------------------------------------------------------------
@@ -261,6 +291,8 @@ AC_SUBST(LDFLAGS)
 
 QSF_SCHEMA_DIR=`eval echo $datadir`"/xml/qof/qsf"
 AC_SUBST(QSF_SCHEMA_DIR)
+BACKEND_SCHEMA_DIR=`eval echo $datadir`"/xml/qof/"
+AC_SUBST(BACKEND_SCHEMA_DIR)
 
 QOF_CFLAGS="-I$includedir"
 QOF_LIBS="-lqof -lqofsql"
@@ -289,7 +321,7 @@ AC_DEFUN([STRUCT_TM_GMTOFF_CHECK],
 
 STRUCT_TM_GMTOFF_CHECK
 
-AC_OUTPUT([
+AC_OUTPUT([ po/Makefile.in
 Makefile
 backend/Makefile
 backend/dwi/Makefile

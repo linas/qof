@@ -28,10 +28,28 @@
 #include "qsf-dir.h"
 #include "qof-backend-qsf.h"
 #include <errno.h>
+#include <sys/stat.h>
 
 #define QSF_TYPE_BINARY "binary"
 #define QSF_TYPE_GLIST "glist"
 #define QSF_TYPE_FRAME "frame"
+
+static void
+qsf_load_config(QofBackend *be, KvpFrame *config)
+{
+
+}
+
+static KvpFrame*
+qsf_get_config(QofBackend *be)
+{
+	if(!be) { return NULL; }
+	if(!kvp_frame_is_empty(be->backend_configuration)) {
+		kvp_frame_delete(be->backend_configuration);
+		be->backend_configuration = kvp_frame_new();
+	}
+	return be->backend_configuration;
+}
 
 struct QSFBackend_s 
 {
@@ -94,8 +112,14 @@ qsf_param_init(qsf_param *params)
 }
 
 static gboolean 
-qsf_determine_file_type(QofBackend *be, const char *path)
+qsf_determine_file_type(const char *path)
 {
+	struct stat sbuf;
+
+	if (!path) { return TRUE; }
+	if (0 == safe_strcmp(path, QOF_STDOUT)) { return TRUE; }
+	if (stat(path, &sbuf) <0)    { return FALSE; }
+	if (sbuf.st_size == 0)       { return TRUE; }
 	if(is_our_qsf_object(path))  { return TRUE; }
 	else if(is_qsf_object(path)) { return TRUE; }
     else if(is_qsf_map(path))    { return TRUE; }
@@ -1023,7 +1047,7 @@ qsf_object_commitCB(gpointer key, gpointer value, gpointer data)
 		if(TRUE != string_to_guid((char*)xmlNodeGetContent(node), cm_guid))
 		{
 			qof_backend_set_error(params->be, ERR_QSF_BAD_OBJ_GUID);
-			g_message (" string to guid collect failed for %s", xmlNodeGetContent(node));
+			g_message (_(" string to guid collect failed for %s"), xmlNodeGetContent(node));
 			return;
 		}
 		// create a QofEntityReference with this type and GUID.
@@ -1081,9 +1105,8 @@ qsf_backend_new(void)
 	
 	be->sync = qsf_write_file;
 	/* use for maps, later. */
-	be->load_config = NULL;
-	be->get_config = NULL;
-	be->check_data_type = qsf_determine_file_type;
+	be->load_config = qsf_load_config;
+	be->get_config = qsf_get_config;
 
 	qsf_be->fullpath = NULL;
 	return be;
@@ -1105,12 +1128,19 @@ qsf_provider_free (QofBackendProvider *prov)
 void
 qsf_provider_init(void)
 {
+	#ifdef ENABLE_NLS
+	setlocale (LC_ALL, "");
+	bindtextdomain (GETTEXT_PACKAGE, LOCALE_DIR);
+	bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
+	textdomain (GETTEXT_PACKAGE);
+	#endif
 	QofBackendProvider *prov;
 	prov = g_new0 (QofBackendProvider, 1);
 	prov->provider_name = "QSF Backend Version 0.1";
 	prov->access_method = "file";
 	prov->partial_book_supported = TRUE;
 	prov->backend_new = qsf_backend_new;
+	prov->check_data_type = qsf_determine_file_type;
 	prov->provider_config = "qsf-backend-v0.1.xml";
 	prov->provider_free = qsf_provider_free;
 	qof_backend_register_provider (prov);

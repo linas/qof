@@ -8,5 +8,4 @@ Makefile
 .libs
 .deps
 .DS_Store
-qsf-backend-v0.1.xml
 
