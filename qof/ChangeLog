@@ -1,3 +1,18 @@
+2005-09-11  Neil Williams <linux@codehelp.co.uk>
+
+	* configure.in: libtool fix and wrong bracketing fix.
+	* qof-1.pc.in: Syntax fix.
+	* backend/Makefile.am: Moving Werror to prevent
+	FC3 raising a warning.
+	* backend/file/Makefile.am: Werror
+	* examples/Makefile.am: Werror
+	* examples/backend/Makefile.am: Werror
+	* examples/gobject/Makefile.am: Werror
+	* qof/Makefile.am: Werror
+	* qof/test/Makefile.am: Werror
+	* qof/test/test-object.c: Remove libguile
+	* qof/test/test-querynew.c: Remove libguile
+
 2005-09-02  Neil Williams <linux@codehelp.co.uk>
 
 	* .cvsignore: gettext support

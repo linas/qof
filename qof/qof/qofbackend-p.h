@@ -338,6 +338,7 @@ struct QofBackend_s
   char * error_msg;
 
   KvpFrame* backend_configuration;
+  gint config_count;
   /** Each backend resolves a fully-qualified file path.
    * This holds the filepath and communicates it to the frontends.
    */

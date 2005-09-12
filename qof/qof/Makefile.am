@@ -55,7 +55,6 @@ qofinclude_HEADERS = \
    qofid-p.h         \
    qofinstance-p.h   \
    qofinstance.h     \
-   qofla-dir.h  \
    qofquery.h        \
    qofbook.h         \
    qofobject.h       \
@@ -68,6 +67,7 @@ noinst_HEADERS =      \
    gnc-event-p.h      \
    md5.h              \
    qofclass-p.h       \
+   qofla-dir.h  \
    qofmath128.h  \
    qofquery-p.h       \
    qofquery-deserial.h     \
@@ -81,9 +81,8 @@ AM_CFLAGS = -g        \
    @CFLAGS@           \
 	${LIBXML2_CFLAGS}  \
   ${LIBGDA_CFLAGS} \
-   ${GLIB_CFLAGS}
-
-CFLAGS += -Werror
+  ${GLIB_CFLAGS} \
+  -Werror
 
 if USE_LIBGDA
 INCLUDES = \
@@ -100,6 +99,7 @@ endif
 
 LDADD = \
   ${LIBGDA_LIBS} \
+  ${GMODULE_LIBS} \
    ${GLIB_LIBS}
 
 QOFLIBdir = $(libdir)
@@ -117,4 +117,3 @@ qofla-dir.h: qofla-dir.h.in
 	mv $@.tmp $@
 
 BUILT_SOURCES = qofla-dir.h
-

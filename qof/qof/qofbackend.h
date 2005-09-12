@@ -169,63 +169,53 @@ void qof_backend_run_commit(QofBackend *be, QofInstance *inst);
 gboolean qof_backend_commit_exists(QofBackend *be);
 //@}
 
-/** @name Backend Configuration using XML
+/** @name Backend Configuration using KVP
 
-Backends need to use automake to generate a header file that includes two paths,
-the path to the installed .la file to find the library itself and a path to the
-installed XML file to retrieve the config. The header will then be installed with
-all the others for configure to locate via pkg-config etc.
-
-The header file should also include the .la name of the library and the 
-QofBackendProvider init function name as #defines. Each header therefore includes
-all the information required to locate and load the backend and locate and load
-the backend XML configuration helper. (Do \b not use the .so name - it is not 
-portable!)
-
-QOF backends should add the name of this header to qof.h so that all QOF processes
-can find the macro definitions.
-
-Each backend developer is responsible for creating an XML file that describes the 
-configuration options supported by that backend.
-
-\verbatim
-<?xml version="1.0" encoding="UTF-8"?>
-<qofconfig xmlns="http://qof.sourceforge.net/" >
-  <backend name="GnuCash Backend Version 2">
-        <option type="gint64" name="file_retention_days" />
-        <option type="boolean" name="file_compression" />
-  </backend>
-</qofconfig>
-\endverbatim
-
-The backend then uses qof_backend_get_config to pass back a KvpFrame 
+The backend uses qof_backend_get_config to pass back a KvpFrame of QofBackendOption
 that includes the \b translated strings that serve as description and
 tooltip for that option. i.e. backends need to run gettext in the init function.
 
-The translated strings are stored in the frame using the config suffixes,
-appended to the option name.
+qof_backend_prepare_frame, qof_backend_prepare_option and qof_backend_complete_frame
+are intended to be used by the backend itself to create the options.
 
-e.g. The KvpValue file_compression is a boolean. file_compression/desc is
-a string containing the translated description of what the option does.
-file_compression/tip contains the translated tooltip explanation.
+qof_backend_get_config, qof_backend_option_foreach and qof_backend_load_config
+are intended for either the backend or the frontend to retrieve the option data
+from the frame or set new data.
 
 @{
 */
 
-/** Standard suffix to an option name for the description. */
-#define QOF_CONFIG_DESC "/desc"
-/** Standard suffix to an option name for the tooltip. */
-#define QOF_CONFIG_TIP  "/tip"
+/** A single Backend Configuration Option. */
+typedef struct QofBackendOption_s {
+	KvpValueType type;        /**< Only GINT64, DOUBLE, NUMERIC, STRING and TIMESPEC supported. */
+	const char *option_name;  /**< non-translated, key. */
+	const char *description;  /**< translatable description. */
+	const char *tooltip;      /**< translatable tooltip */
+	gpointer value;           /**< The value of the option. */
+}QofBackendOption;
+
+/** Initialise the backend_configuration */
+void qof_backend_prepare_frame(QofBackend *be);
+
+/** Add an option to the backend_configuration. Repeat for more. */
+void qof_backend_prepare_option(QofBackend *be, QofBackendOption *option);
+
+/** Complete the backend_configuration and return the frame. */
+KvpFrame* qof_backend_complete_frame(QofBackend *be);
+
+/** Backend configuration option foreach callback prototype. */
+typedef void (*QofBackendOptionCB)(QofBackendOption*, gpointer data);
+
+/** Iterate over the frame and process each option. */
+void qof_backend_option_foreach(KvpFrame *config, QofBackendOptionCB cb, gpointer data);
 
 /** \brief Load configuration options specific to this backend.
 
 @param be The backend to configure.
-@param config A KvpFrame with specific keys that this backend
+@param config A KvpFrame of QofBackendOptions that this backend
 will recognise. Each backend needs to document their own config
-keys and acceptable values.
+types and acceptable values.
 
-The frame remains the property of the caller and should
-be freed / destroyed once loaded in the backend.
 */
 void qof_backend_load_config (QofBackend *be, KvpFrame *config);
 

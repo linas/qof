@@ -20,7 +20,6 @@
  */
  
 #include <glib.h>
-#include <libguile.h>
 #include <stdio.h>
 
 #include "guid.h"

@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<qofconfig xmlns="http://qof.sourceforge.net/" >
-  <backend name="QSF Backend Version 0.1">
-     <option type="boolean" name="defaults" />
-     <option type="string" name="map_file" />
-  </backend>
-</qofconfig>

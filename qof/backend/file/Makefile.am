@@ -7,7 +7,8 @@ AM_CFLAGS = \
 	-I${top_srcdir}/qof \
   -DLOCALE_DIR=\""$(datadir)/locale"\" \
 	${LIBXML2_CFLAGS} \
-	${GLIB_CFLAGS}
+  ${GLIB_CFLAGS} \
+  -Werror
 
 libqof_backend_qsf_la_SOURCES = \
 	qsf-backend.c \
@@ -29,22 +30,9 @@ qsfschemadir = $(QSF_SCHEMA_DIR)
 qsfschema_DATA = \
         qsf-object.xsd.xml \
         qsf-map.xsd.xml \
-  pilot-qsf-GnuCashInvoice.xml \
-  qsf-backend-v0.1.xml
+  pilot-qsf-GnuCashInvoice.xml
 
 EXTRA_DIST = \
   $(qsfschema_DATA) \
   qsf-dir.h.in    \
   qsf-xml.h
-
-CONFIG_CLEAN_FILES = \
-  qsf-dir.h
-
-qsf-dir.h: qsf-dir.h.in
-	rm -f $@.tmp
-	sed < $< > $@.tmp \
-		-e 's:@-QSF_SCHEMA_DIR-@:${QSF_SCHEMA_DIR}:g'
-	mv $@.tmp $@
-
-BUILT_SOURCES = \
-  qsf-dir.h

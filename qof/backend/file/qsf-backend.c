@@ -34,10 +34,15 @@
 #define QSF_TYPE_GLIST "glist"
 #define QSF_TYPE_FRAME "frame"
 
+static int module = MOD_BACKEND;
+
 static void
 qsf_load_config(QofBackend *be, KvpFrame *config)
 {
+  gchar *dummy;
 
+  dummy = g_strdup(_("test string only"));
+  g_free(dummy);
 }
 
 static KvpFrame*
@@ -116,6 +121,7 @@ qsf_determine_file_type(const char *path)
 {
 	struct stat sbuf;
 
+	PINFO (" %s", path);
 	if (!path) { return TRUE; }
 	if (0 == safe_strcmp(path, QOF_STDOUT)) { return TRUE; }
 	if (stat(path, &sbuf) <0)    { return FALSE; }
@@ -137,6 +143,7 @@ qsf_session_begin(QofBackend *be, QofSession *session, const char *book_path,
 	QSFBackend *qsf_be;
 	char *p, *path;
 	
+	PINFO (" ignore_lock=%d create_if_nonexistent=%d", ignore_lock, create_if_nonexistent);
 	g_return_if_fail(be != NULL);
 	qsf_be = (QSFBackend*)be;
 	g_return_if_fail(qsf_be->params != NULL);
@@ -196,7 +203,7 @@ qof_session_load_our_qsf_object(QofSession *first_session, const char *path)
 QofBackendError 
 qof_session_load_qsf_object(QofSession *first_session, const char *path)
 {
-	g_message ("%s = ERR_QSF_NO_MAP", path);
+	PINFO ("%s = ERR_QSF_NO_MAP", path);
 	return ERR_QSF_NO_MAP;
 }
 
@@ -687,7 +694,7 @@ qsf_foreach_obj_type(QofObject *qsf_obj, gpointer data)
 	params = (qsf_param*) data;
 	/* Skip unsupported objects */
 	if((qsf_obj->create == NULL)||(qsf_obj->foreach == NULL)){
-//		g_message (" qsf_obj QOF support failed %s", qsf_obj->e_type);
+		PINFO (" qsf_obj QOF support failed %s", qsf_obj->e_type);
 		return;
 	}
 	params->qof_obj_type = qsf_obj->e_type;
@@ -976,7 +983,7 @@ qsf_object_commitCB(gpointer key, gpointer value, gpointer data)
 		if(TRUE != string_to_guid((char*)xmlNodeGetContent(node), cm_guid))
 		{
 			qof_backend_set_error(params->be, ERR_QSF_BAD_OBJ_GUID);
-			g_message (" string to guid failed for %s:%s:%s",
+			PINFO (" string to guid conversion failed for %s:%s:%s",
 				xmlNodeGetContent(node), obj_type, qof_type);
 			return;
 		}
@@ -1047,7 +1054,7 @@ qsf_object_commitCB(gpointer key, gpointer value, gpointer data)
 		if(TRUE != string_to_guid((char*)xmlNodeGetContent(node), cm_guid))
 		{
 			qof_backend_set_error(params->be, ERR_QSF_BAD_OBJ_GUID);
-			g_message (_(" string to guid collect failed for %s"), xmlNodeGetContent(node));
+			PINFO (" string to guid collect failed for %s", xmlNodeGetContent(node));
 			return;
 		}
 		// create a QofEntityReference with this type and GUID.
@@ -1125,6 +1132,8 @@ qsf_provider_free (QofBackendProvider *prov)
 	g_free (prov);
 }
 
+/* although we call gettext here, none of the
+QofBackendProvider strings are translatable. */
 void
 qsf_provider_init(void)
 {

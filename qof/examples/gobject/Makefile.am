@@ -11,9 +11,8 @@ AM_CFLAGS =           \
 	-I${top_srcdir}/qof \
   ${GTK_CFLAGS}       \
   ${LIBGDA_CFLAGS} \
-  ${GLIB_CFLAGS}
-
-CFLAGS += -Werror
+  ${GLIB_CFLAGS} \
+   -Werror
 
 if USE_LIBGDA
 LDADD =  \

@@ -96,7 +96,10 @@ gnc_log_init (void)
 {
    char *filename;
 
+   if(!fout) //allow gnc_set_logfile
+   {
    fout = fopen ("/tmp/gnucash.trace", "w");
+   }
 
    if(!fout && (filename = (char *)g_malloc(MAX_TRACE_FILENAME))) {
       snprintf(filename, MAX_TRACE_FILENAME-1, "/tmp/gnucash.trace.%d", 

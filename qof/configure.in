@@ -9,21 +9,23 @@ dnl Process this file with autoconf to produce a configure script.
 # implements checks for a variety of system-specific functions
 #
 
-AC_INIT(qof, 0.6.0, http://lists.sourceforge.net/lists/listinfo/qof-devel)
-AM_INIT_AUTOMAKE
+AC_INIT(qof, 0.6.0-pre1, http://lists.sourceforge.net/lists/listinfo/qof-devel)
+
+AC_PREREQ(2.53)
 
 LIBQOF_LIBRARY_VERSION=1:1:0
 LIBQOF_BACKEND_QSF_LIBRARY_VERSION=0:0:0
 AC_SUBST(LIBQOF_LIBRARY_VERSION)
 AC_SUBST(LIBQOF_BACKEND_QSF_LIBRARY_VERSION)
 
-VERSION=0.6.0
+VERSION=0.6.0-pre1
 AC_SUBST(VERSION)
 PACKAGE=qof
 AC_SUBST(PACKAGE)
+AM_INIT_AUTOMAKE([$PACKAGE], [$VERSION])
 
 AC_PROG_LIBTOOL
-
+LIBTOOLIZE
 AM_CONFIG_HEADER(config.h)
 
 AM_MAINTAINER_MODE
@@ -43,7 +45,7 @@ AC_PATH_XTRA
 AC_PROG_INTLTOOL
 INTLTOOLIZE=${INTLTOOLIZE:-intltoolize}
 
-AC_DEFUN(AS_SCRUB_INCLUDE,
+AC_DEFUN([AS_SCRUB_INCLUDE],
 [
   GIVEN_CFLAGS=$[$1]
   INCLUDE_DIRS=`echo | cpp -v 2>&1`
@@ -73,7 +75,11 @@ if test "x$PKG_CONFIG" != x; then
 	AC_SUBST(GLIB_CFLAGS)
 	AC_SUBST(GLIB_LIBS)
 	fi
+else
+	AC_MSG_ERROR([Glib-2.0 is required by QOF but it was not found.])
 fi
+GMODULE_LIBS=`$PKG_CONFIG --libs gmodule-2.0`
+AC_SUBST(GMODULE_LIBS)
 
 dnl **************************************************************
 dnl libxml2
@@ -122,11 +128,13 @@ AC_SUBST(LIBGDA_LIBS)
 if test "x$LIBGDA_LIBS" = x; then
     AC_MSG_RESULT([No, GDA not found; will build using internal SQL library.])
 	LIBQOFSQL_LIBRARY_VERSION=1:1:0
+	ADD_PKG_LIB="-lqofsql"
 	AC_SUBST(LIBQOFSQL_LIBRARY_VERSION)
 else
     GDA_VERSION=`$PKG_CONFIG --modversion libgda`
     AC_MSG_RESULT([yes, using GDA: ${GDA_VERSION}])
     AC_DEFINE(HAVE_GDA,,[We have found GDA])
+	ADD_PKG_LIB="-lgda-2"
     HAVE_GDA="use_gda"
 	AC_SUBST(GDA_VERSION)
 fi
@@ -134,6 +142,7 @@ fi
 AM_CONDITIONAL(USE_LIBGDA, [ test x$HAVE_GDA != x])
 AM_CONDITIONAL(USE_LIBGDA, [ test $HAVE_GDA = "use_gda"])
 AC_SUBST(USE_LIBGDA)
+AC_SUBST(ADD_PKG_LIB)
 
 dnl Stuff needed to build the example progs only ... 
 dnl **************************************************************
@@ -147,7 +156,7 @@ AC_SUBST(GTK_CFLAGS)
 AC_SUBST(GTK_LIBS)
 
 if test "x$GTK_LIBS" = x; then
-     AC_MSG_RESULT([No, build without GTK.])
+     AC_MSG_RESULT([No, build without GTK examples.])
 else
      AC_MSG_RESULT([Yes, will build Gtk examples.])
       AC_DEFINE(HAVE_GTK,,We Have Found GTK)
@@ -244,7 +253,7 @@ AC_SUBST(PERL)
 
 # check for doxygen, mostly stolen from http://log4cpp.sourceforge.net/
 # ----------------------------------------------------------------------------
-AC_DEFUN(BB_ENABLE_DOXYGEN,
+AC_DEFUN([BB_ENABLE_DOXYGEN],
 [
 AC_ARG_ENABLE(doxygen, [  --enable-doxygen        enable documentation generation with doxygen (auto)])
 AC_ARG_ENABLE(dot, [  --enable-dot            use 'dot' to generate graphs in doxygen (auto)])              
@@ -294,10 +303,18 @@ AC_SUBST(QSF_SCHEMA_DIR)
 BACKEND_SCHEMA_DIR=`eval echo $datadir`"/xml/qof/"
 AC_SUBST(BACKEND_SCHEMA_DIR)
 
-QOF_CFLAGS="-I$includedir"
+QOF_CFLAGS="-I$includedir/qof"
+if test x$HAVE_GDA != x; then
+QOF_LIBS="-lqof"
+else
 QOF_LIBS="-lqof -lqofsql"
+fi
 QOF_LIBDEPS="$LDFLAGS"
 QOF_VERSION="$VERSION"
+
+QSF_LIB_DIR=`eval echo $libdir | sed "s%^NONE%$prefix%"`
+QSF_LIB_DIR=`eval echo $QSF_LIB_DIR | sed "s%^NONE%$prefix%"`
+AC_SUBST(QSF_LIB_DIR)
 
 AC_DEFUN([STRUCT_TM_GMTOFF_CHECK],
 [
@@ -326,6 +343,7 @@ Makefile
 backend/Makefile
 backend/dwi/Makefile
 backend/file/Makefile
+backend/file/qsf-dir.h
 doc/Makefile
 doc/doxygen.cfg
 examples/Makefile
@@ -342,24 +360,42 @@ dnl <= Configuration summary =>
 
 echo ""
 echo "qof configuration summary:"
-echo "=================================="
+echo "==========================="
 echo ""
 
 dnl <= CFLAGS and LDFLAGS =>
 echo "CFLAGS : $CFLAGS"
 echo "LDFLAGS : $LDFLAGS"
-echo "QOF_CFLAGS  :   $QOF_CFLAGS"
+echo "QOF_CFLAGS  :   "`eval echo $QOF_CFLAGS`
 echo "QOF_LIBS    :   $QOF_LIBS"
 echo "DWI_LIBS : $DWI_LIBS"
 echo "LIBXML2     :   "`eval echo $LIBXML_VERSION`
 echo "LIBGDA      :   $GDA_VERSION"
 echo "prefix : $prefix"
 echo "data dir : "`eval echo $datadir`
-echo "QSF DIR     :   "`eval echo $QSF_SCHEMA_DIR`
+echo "XML dir     :   "`eval echo $QSF_SCHEMA_DIR`
 echo "include dir : "`eval echo $includedir`
-echo "lib dir : "`eval echo $libdir`
+echo "lib dir     :   "`eval echo $QSF_LIB_DIR`
 echo ""
-
-
 echo ""
 dnl <= End of configuration summary =>
+
+dnl ******************************
+dnl Check if this was CVS source
+dnl ******************************
+if test -f "${srcdir}/README.cvs" ; then
+       PL_FROM_CVS=yes
+fi
+
+if [[ x"$PL_FROM_CVS" = xyes ]]; then
+  echo " .----- NOTICE ------------------------------------------------."
+  echo " |         You are using QOF from CVS source.                  |"
+  echo " |                                                             |"
+  echo " | This is likely to be unstable, or contain some incomplete   |"
+  echo " | features, or just plain not work at all. Use it at your own |"
+  echo " | risk. Please help me to fix any bugs you find, by reporting |"
+  echo " | them back to me via the QOF-devel mailing list.             |"
+  echo " | http://lists.sourceforge.net/lists/listinfo/qof-devel       |"
+  echo " \`-------------------------------------------------------------'"
+  echo ""
+fi

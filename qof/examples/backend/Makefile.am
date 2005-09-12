@@ -19,9 +19,8 @@ AM_CFLAGS =           \
   -I. -I../..        \
   -I${top_srcdir}/qof \
   ${LIBGDA_CFLAGS} \
-  ${GLIB_CFLAGS}
-
-CFLAGS += -Werror
+  ${GLIB_CFLAGS} \
+  -Werror
 
 if USE_LIBGDA
 LDADD =   \
@@ -29,6 +28,7 @@ LDADD =   \
   ${LIBXML2_LIBS}  \
   ${LIBGDA_LIBS} \
   ${GLIB_LIBS}   \
+  ${GMODULE_LIBS} \
   -lltdl -lm
 else
 LDADD =                                   \
@@ -36,6 +36,7 @@ LDADD =                                   \
   ${top_builddir}/lib/libsql/libqofsql.la \
   ${LIBXML2_LIBS}                         \
   ${GLIB_LIBS}                            \
+  ${GMODULE_LIBS} \
   -lltdl -lm
 endif
 

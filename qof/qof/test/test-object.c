@@ -23,7 +23,6 @@
  * Lightly test the QofObject infrastructure.
  */
 #include <glib.h>
-#include <libguile.h>
 
 #include "guid.h"
 #include "gnc-engine-util.h"

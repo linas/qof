@@ -4,7 +4,8 @@ AM_CFLAGS = \
   -I${top_srcdir}/backend/file \
    ${LIBXML2_CFLAGS} \
    ${LIBGDA_CFLAGS} \
-   ${GLIB_CFLAGS}
+   ${GLIB_CFLAGS} \
+   -Werror
 
 INCLUDES = \
    -I. -I../ -I${top_builddir}/qof \
@@ -15,6 +16,7 @@ LDADD = \
    ${top_builddir}/qof/libqof.la \
    ${LIBXML2_LIBS} \
    ${GLIB_LIBS} \
+   ${GMODULE_LIBS} \
    ${LIBGDA_LIBS} \
    -lltdl \
    -lm
@@ -24,6 +26,7 @@ LDADD = \
    ${top_builddir}/lib/libsql/libqofsql.la \
    ${LIBXML2_LIBS} \
    ${GLIB_LIBS} \
+   ${GMODULE_LIBS} \
    -lltdl \
    -lm
 endif

@@ -418,9 +418,7 @@ qof_entity_foreach_copy(gpointer data, gpointer user_data)
 	
 	g_return_if_fail(user_data != NULL);
 	context = (QofEntityCopyData*) user_data;
-	/* in case of any error, let the process know. */
-	if(context->error == TRUE) { return; }
-	context->error = TRUE;
+	ENTER (" ");
 	cm_date.tv_nsec = 0;
 	cm_date.tv_sec =  0;
 	importEnt = context->from;
@@ -503,6 +501,7 @@ qof_entity_foreach_copy(gpointer data, gpointer user_data)
 			qof_session_update_reference_list(context->new_session, reference);
 		}
 	}
+	LEAVE (" ");
 }
 
 static gboolean
@@ -550,10 +549,10 @@ qof_entity_list_foreach(gpointer data, gpointer user_data)
 		g_slist_free(qecd->param_list);
 		qecd->param_list = NULL;
 	}
-	qof_begin_edit(inst);
 	qof_class_param_foreach(original->e_type, qof_entity_param_cb, qecd);
-	qof_commit_edit(inst);
+	qof_begin_edit(inst);
 	g_slist_foreach(qecd->param_list, qof_entity_foreach_copy, qecd);
+	qof_commit_edit(inst);
 }
 
 static void
@@ -627,6 +626,8 @@ gboolean qof_entity_copy_list(QofSession *new_session, GList *entity_list)
 {
 	QofEntityCopyData *qecd;
 
+	if(!new_session || !entity_list) { return FALSE; }
+	ENTER (" list=%d", g_list_length(entity_list));
 	qecd = g_new0(QofEntityCopyData, 1);
 	gnc_engine_suspend_events();
 	qecd->param_list = NULL;
@@ -635,6 +636,7 @@ gboolean qof_entity_copy_list(QofSession *new_session, GList *entity_list)
 	g_list_foreach(entity_list, qof_entity_list_foreach, qecd);
 	gnc_engine_resume_events();
 	g_free(qecd);
+	LEAVE (" ");
 	return TRUE;
 }
 
@@ -903,13 +905,21 @@ qof_session_load_backend(QofSession * session, char * access_method)
 	QofBook *book;
 	char *msg;
 	gint num;
+	gboolean prov_type;
+	gboolean (*type_check) (const char*);
 	
-	ENTER (" ");
+	ENTER (" list=%d", g_slist_length(provider_list));
+	prov_type = FALSE;
 	if (NULL == provider_list)
 	{
 		for (num = 0; backend_list[num].filename != NULL; num++) {
-			qof_load_backend_library(backend_list[num].libdir,
-				backend_list[num].filename, backend_list[num].init_fcn);
+			if(!qof_load_backend_library(backend_list[num].libdir,
+				backend_list[num].filename, backend_list[num].init_fcn))
+			{
+				PWARN (" failed to load %s from %s using %s",
+				backend_list[num].filename, backend_list[num].libdir,
+				backend_list[num].init_fcn);
+			}
 		}
 	}
 	p = g_slist_copy(provider_list);
@@ -921,9 +931,20 @@ qof_session_load_backend(QofSession * session, char * access_method)
 		{
 			/* More than one backend could provide this
 			access method, check file type compatibility. */
-			if(!prov->check_data_type(session->book_id)) continue;
-
-			if (NULL == prov->backend_new) continue;
+			type_check = (gboolean (*)(const char*)) prov->check_data_type;
+			prov_type = (type_check)(session->book_id);
+			if(!prov_type)
+			{
+				PINFO(" %s not usable", prov->provider_name);
+				p = p->next;
+				continue;
+			}
+			PINFO (" selected %s", prov->provider_name);
+			if (NULL == prov->backend_new) 
+			{
+				p = p->next;
+				continue;
+			}
 			/* Use the providers creation callback */
       	    session->backend = (*(prov->backend_new))();
 			session->backend->provider = prov;
@@ -1203,7 +1224,7 @@ qof_session_save (QofSession *session,
 	book_id = g_strdup(session->book_id);
 	if(partial == TRUE)
 	{
-		if(session->backend->provider) {
+		if(session->backend && session->backend->provider) {
 			prov = session->backend->provider;
 			if(TRUE == prov->partial_book_supported)
 			{

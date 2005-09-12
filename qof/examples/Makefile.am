@@ -11,8 +11,6 @@ SUBDIRS = $(EXAMPLES) backend
 
 # SUBDIRS = gobject
 
-CFLAGS += -Werror
-
 test_book_merge_SOURCES = test-book-merge.c
 
 query_example_SOURCES = \
@@ -43,7 +41,8 @@ AM_CFLAGS =  \
   -I${top_srcdir}/backend/file \
   ${LIBXML2_CFLAGS} \
   ${LIBGDA_CFLAGS} \
-  ${GLIB_CFLAGS}
+  ${GLIB_CFLAGS} \
+  -Werror
 
 if USE_LIBGDA
 test_qsf_LDADD = \
@@ -52,6 +51,7 @@ test_qsf_LDADD = \
   ${LIBXML2_LIBS} \
   ${LIBGDA_LIBS} \
   ${GLIB_LIBS}   \
+  ${GMODULE_LIBS} \
   -lltdl
 else
 test_qsf_LDADD = \
@@ -61,6 +61,7 @@ test_qsf_LDADD = \
   ${LIBXML2_LIBS}                         \
   ${LIBGDA_LIBS} \
   ${GLIB_LIBS}                            \
+  ${GMODULE_LIBS} \
   -lltdl
 endif
 
@@ -72,6 +73,7 @@ test_book_merge_LDADD = \
   ${LIBXML2_LIBS} \
   ${LIBGDA_LIBS} \
   ${GLIB_LIBS}   \
+  ${GMODULE_LIBS} \
   -lltdl
 else
 test_book_merge_LDADD = \
@@ -82,6 +84,7 @@ test_book_merge_LDADD = \
   ${LIBXML2_LIBS}                         \
   ${LIBGDA_LIBS} \
   ${GLIB_LIBS}                            \
+  ${GMODULE_LIBS} \
   -lltdl
 endif
 
@@ -91,6 +94,7 @@ LDADD =   \
   ${LIBXML2_LIBS} \
   ${LIBGDA_LIBS} \
   ${GLIB_LIBS}   \
+  ${GMODULE_LIBS} \
   -lltdl -lm
 else
 LDADD =                                   \
@@ -99,6 +103,7 @@ LDADD =                                   \
   ${LIBXML2_LIBS}                         \
   ${LIBGDA_LIBS} \
   ${GLIB_LIBS}                            \
+  ${GMODULE_LIBS} \
   -lltdl -lm
 endif
 
