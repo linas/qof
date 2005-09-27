@@ -1,3 +1,36 @@
+2005-09-27  Neil Williams <linux@codehelp.co.uk>
+
+	* backend/file/qof-backend-qsf.h: Unneeded wrapper.
+	* backend/file/qsf-backend.c: New log_module support.
+	* backend/file/qsf-xml.c: QOF_MOD_QSF
+	* qof/gnc-date.c: QOF_MOD_ENGINE
+	* qof/gnc-event.c: QOF_MOD_ENGINE 
+	* qof/gnc-trace.c: Removing enum based module selection,
+	replacing with GHashTable method to support non-GnuCash usage.
+	* qof/gnc-trace.h: Documenting new log functions.
+	* qof/guid.c: QOF_MOD_ENGINE
+	* qof/kvp_frame.c: QOF_MOD_KVP
+	* qof/kvp_frame.h: QOF_MOD_KVP
+	* qof/qof.h: adding gnc-trace.h
+	* qof/qof_book_merge.c: New log_module support.
+	* qof/qof_book_merge.h: QOF_MOD_MERGE
+	* qof/qofbackend.c: QOF_MOD_BACKEND
+	* qof/qofbackend.h: new log_module support
+	* qof/qofbook.c: QOF_MOD_ENGINE
+	* qof/qofclass.c: QOF_MOD_CLASS
+	* qof/qofclass.h: new log_module support
+	* qof/qofgobj.c: QOF_MOD_QUERY
+	* qof/qofid.c: QOF_MOD_ENGINE
+	* qof/qofinstance.c: QOF_MOD_ENGINE
+	* qof/qofobject.c: QOF_MOD_OBJECT
+	* qof/qofobject.h: new log_module support.
+	* qof/qofquery.c: QOF_MOD_QUERY
+	* qof/qofquery.h: new log_module support.
+	* qof/qofquerycore.c: QOF_MOD_QUERY
+	* qof/qofsession.c: QOF_MOD_SESSION
+	* qof/qofsession.h: new log_module support.
+	* qof/qofsql.c: QOF_MOD_QUERY
+
 2005-09-11  Neil Williams <linux@codehelp.co.uk>
 
 	* configure.in: libtool fix and wrong bracketing fix.

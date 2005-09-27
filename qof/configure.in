@@ -25,7 +25,6 @@ AC_SUBST(PACKAGE)
 AM_INIT_AUTOMAKE([$PACKAGE], [$VERSION])
 
 AC_PROG_LIBTOOL
-LIBTOOLIZE
 AM_CONFIG_HEADER(config.h)
 
 AM_MAINTAINER_MODE
@@ -193,7 +192,7 @@ dnl *******************************
 dnl Internationalization
 dnl ******************************* 
 
-ALL_LINGUAS=" "
+ALL_LINGUAS="en_GB "
 GETTEXT_PACKAGE=qof
 AC_SUBST(GETTEXT_PACKAGE)
 AM_GLIB_GNU_GETTEXT

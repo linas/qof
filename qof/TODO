@@ -1,39 +1,5 @@
-
-Mac OSX: load_backend_library wants .dylib - changed in CVS in error
-Change back using a define check.
-
-Mac OSX pilot-QOF checks for strcasestr remain.
-ld: warning multiple definitions of symbol _strcasestr
-/opt/fergus/qof/lib/libqof.dylib(gnc-engine-util.o) definition of _strcasestr
-/usr/lib/libdl.dylib(strcasestr.So) definition of _strcasestr
-ld: Undefined symbols:
-___freadable
-_getline
-_poptFreeContext
-_poptGetContext
-_poptGetNextOpt
-_poptGetOptArg
-_poptHelpOptions
-_poptPrintUsage
-_poptSetOtherOptionHelp
-_g_date_get_day
-_g_date_get_month
-_g_date_get_year
-_poptAddAlias
-_poptBadOption
-_poptGetInvocationName
-_poptParseArgvString
-_poptStrerror
-_g_string_append_printf
-_g_string_printf
-_g_set_error
-make: *** [pilot-qof] Error 1
-neil@fergus:/opt/working/pilot-qof/src $ 
-
-
 For a full list of TODO items, see the Doxygen output.
 
 cd doc/
 make doc
 lynx html/todo.html
-

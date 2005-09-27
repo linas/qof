@@ -1,7 +1,21 @@
                 QOF - Query Object Framework
                 ----------------------------
-                        April 2004
-Updated May 2005.
+
+0.6.0-pre1 release notes - Sept 05
+----------------------------------
+
+QOF v0.6.0 adds a lot of new code, including a new backend, book
+merge support, new data types and improved methods for loading
+other suitable backends. This pre-release is a test-bed and some
+functions may require further work.
+
+New this release:
+-----------------
+ o QofBook merge support with collision handling.
+ o Support for partial books with references to linked objects.
+ o XML backend available to all programs using QOF. A generic format
+   to describe any object in XML.
+ o Methods to convert objects between applications.
 
 Brief Description:
 ------------------

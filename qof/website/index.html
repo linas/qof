@@ -150,7 +150,8 @@ gncTransaction.date='15.06.2003';</tt>).  This is done with a "client-side"
 parser, that parses this SQL locally, because, of course, it has to be run
 locally.  See the <tt>sql-example.c</tt> file for a usage example. </p>
 </li>
-<li><p> Provide integration with database backends.  In particular, the programmer
+<li><p>
+Provide integration with database backends.  In particular, the programmer
 should be able to use QOF to create a local 'cache' of objects that mirrors a
 subset of the contents in a remote database.  The idea is that applications, by
 working with a local copy, can be highly responsive and have good performance.
@@ -164,14 +165,20 @@ Applications that pull in none of their data, and instead issue SQL queries as
 needed, tend to have terrible performance profiles, since the user must wait for
 the query to complete and return data.  In other words, QOF provides
 scalability: instead of the all-or-nothing approach, it provides a middle
-ground, allowing small fast apps to access huge databases. </p>
+ground, allowing small fast apps to access huge databases.
+</p>
 <p> <b>Status:</b> The GnuCash backend provides access to file and to SQL
 storage.  However, not all of this code has been abstracted out in a generic way
 to be brought back into QOF.  Linas has got the major pieces ready to go, in the
 DWI project, but they're not integrated yet. Neil has added support for partial
 books that make this cache possible and merging that makes the data in the
 partial books accessible. Partial books also make it simple to export an
-arbitrary selection of objects and entities.
+arbitrary selection of objects and entities. QOF v0.6.0 starts the process of
+using <code>libgda</code> - a data abstraction layer inherited from 
+<a href="http://www.gnome-db.org/">Gnome-DB</a> but available for use by 
+non-Gnome applications. This should be able to provide the generic access to 
+various database managers like Postgres, MySQL, SQLite, Oracle and others 
+using ODBC.
 </p></li>
 <li><p> The current 'client-side' SQL engine is rather basic in its features and
 performance.  For example, the current search over object fields is O(N),
@@ -211,17 +218,8 @@ deprecating older GnuCash-specific naming conventions.</p>
 <li><a href="http://pilot-qof.sourceforge.net/">Pilot-QOF</a>.</li>
 <li><a href="http://dwi.sourceforge.net/">DWI</a></li>
 </ul>
-<p>Packages are available for QOF v0.5.0 for:</p>
-<ul>
-<li>GNU/Linux Debian<ul><li>
-<a href="http://packages.debian.org/testing/libs/libqof-0.5.0-1">Testing</a>
-</li><li>
-<a href="http://packages.debian.org/unstable/libs/libqof-0.5.0-1">Unstable</a>
-</li></ul></li>
-<li><a
-href="http://rpm.pbone.net/index.php3?stat=3&amp;search=qof&amp;srodzaj=3">
-Fedora</a></li>
-</ul>
+<p>QOF is now available on pre-release at v0.6.0-pre1. A Debian
+experimental package will be available soon.</p>
 <p>Packages are also planned for Fink and DarwinPorts (Mac OSX) and a <a 
 href="http://sourceforge.net/docman/display_doc.php?docid=28363&amp;group_id=83302">
 sample .spec file</a> exists for RPM-based distributions.</p>
