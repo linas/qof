@@ -51,7 +51,7 @@
 #include "qofinstance-p.h"
 #include "qofobject.h"
 
-static short module = MOD_QUERY;
+static gchar* log_module = QOF_MOD_QUERY;
 
 /* =================================================================== */
 

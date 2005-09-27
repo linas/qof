@@ -8,7 +8,9 @@ AM_CFLAGS = \
   -DLOCALE_DIR=\""$(datadir)/locale"\" \
 	${LIBXML2_CFLAGS} \
   ${GLIB_CFLAGS} \
-  -Werror
+  -Werror \
+  -Wmissing-prototypes \
+  -Wmissing-declarations
 
 libqof_backend_qsf_la_SOURCES = \
 	qsf-backend.c \

@@ -25,7 +25,8 @@
 #include "qofinstance-p.h"
 #include "qofchoice.h"
 #include "qofid-p.h"
-static short module = MOD_ENGINE;
+
+static gchar* log_module = QOF_MOD_MERGE;
 
 /* private rule iteration struct */
 struct qof_book_mergeRuleIterate {

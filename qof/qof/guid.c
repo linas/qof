@@ -66,7 +66,7 @@ static pthread_once_t guid_buffer_key_once = PTHREAD_ONCE_INIT;
 #endif
 
 /* This static indicates the debugging module that this .o belongs to.  */
-static short module = MOD_ENGINE;
+static gchar* log_module = QOF_MOD_ENGINE;
 
 /** Memory management routines ***************************************/
 static void

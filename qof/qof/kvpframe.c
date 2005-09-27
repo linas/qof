@@ -72,7 +72,7 @@ struct _KvpValue
 };
 
 /* This static indicates the debugging module that this .o belongs to.  */
-static short module = MOD_KVP;
+static gchar* log_module = QOF_MOD_KVP;
 
 /********************************************************************
  * KvpFrame functions

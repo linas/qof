@@ -5,7 +5,9 @@ AM_CFLAGS = \
    ${LIBXML2_CFLAGS} \
    ${LIBGDA_CFLAGS} \
    ${GLIB_CFLAGS} \
-   -Werror
+  -Werror \
+  -Wmissing-prototypes \
+  -Wmissing-declarations
 
 INCLUDES = \
    -I. -I../ -I${top_builddir}/qof \

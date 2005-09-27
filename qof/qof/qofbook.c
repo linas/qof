@@ -53,7 +53,7 @@
 
 #include "guid.h"
 
-static short module = MOD_ENGINE;
+static gchar* log_module = QOF_MOD_ENGINE;
 
 /* ====================================================================== */
 /* constructor / destructor */
@@ -191,6 +191,7 @@ qof_book_set_backend (QofBook *book, QofBackend *be)
   if (!book) return;
   ENTER ("book=%p be=%p", book, be);
   book->backend = be;
+  LEAVE (" ");
 }
 
 void qof_book_kvp_changed (QofBook *book)

@@ -82,7 +82,9 @@ AM_CFLAGS = -g        \
 	${LIBXML2_CFLAGS}  \
   ${LIBGDA_CFLAGS} \
   ${GLIB_CFLAGS} \
-  -Werror
+  -Werror \
+  -Wmissing-prototypes \
+  -Wmissing-declarations
 
 if USE_LIBGDA
 INCLUDES = \

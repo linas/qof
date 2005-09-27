@@ -34,7 +34,7 @@
 #include "qofobject-p.h"
 #include "qofbook.h"
 
-static short module = MOD_QUERY;
+static gchar* log_module = QOF_MOD_OBJECT;
 
 static gboolean object_is_initialized = FALSE;
 static GList *object_modules = NULL;

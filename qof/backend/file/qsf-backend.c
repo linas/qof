@@ -33,27 +33,42 @@
 #define QSF_TYPE_BINARY "binary"
 #define QSF_TYPE_GLIST "glist"
 #define QSF_TYPE_FRAME "frame"
+#define QSF_COMPRESS "compression_level"
 
-static int module = MOD_BACKEND;
+static gchar* log_module = QOF_MOD_QSF;
+static int use_gz_level = 0;
+
+static void option_cb (QofBackendOption *option, gpointer data)
+{
+	if(0 == safe_strcmp(QSF_COMPRESS, option->option_name)) {
+		use_gz_level = *(gint*)option->value;
+	}
+}
 
 static void
 qsf_load_config(QofBackend *be, KvpFrame *config)
 {
-  gchar *dummy;
-
-  dummy = g_strdup(_("test string only"));
-  g_free(dummy);
+  qof_backend_option_foreach(config, option_cb, NULL);
+  use_gz_level = 4;
 }
 
 static KvpFrame*
 qsf_get_config(QofBackend *be)
 {
 	if(!be) { return NULL; }
-	if(!kvp_frame_is_empty(be->backend_configuration)) {
-		kvp_frame_delete(be->backend_configuration);
-		be->backend_configuration = kvp_frame_new();
-	}
-	return be->backend_configuration;
+	QofBackendOption *option;
+
+	qof_backend_prepare_frame(be);
+	option = g_new0(QofBackendOption, 1);
+	option->option_name = QSF_COMPRESS;
+	option->description = _("Level of compression to use: 0 for none, 9 for highest.");
+	option->tooltip = _("QOF can compress QSF XML files using gzip. "
+		"Note that compression is not used when outputting to STDOUT.");
+	option->type = KVP_TYPE_GINT64;
+	option->value = (gpointer)&use_gz_level;
+	qof_backend_prepare_option(be, option);
+	g_free(option);
+	return qof_backend_complete_frame(be);
 }
 
 struct QSFBackend_s 
@@ -741,22 +756,26 @@ qofbook_to_qsf(QofBook *book)
 }
 
 static void
-write_qsf_from_book(FILE *out, QofBook *book)
+write_qsf_from_book(const char *path, QofBook *book)
 {
 	xmlDocPtr qsf_doc;
 	gint write_result;
 	QofBackend *be;
 	
+	be = qof_book_get_backend(book);
 	qsf_doc = qofbook_to_qsf(book);
 	write_result = 0;
+	if((use_gz_level > 0) && (use_gz_level <= 9)) 
+	{
+		xmlSetDocCompressMode(qsf_doc, use_gz_level); 
+	}
 	g_return_if_fail(qsf_is_valid(QSF_SCHEMA_DIR, QSF_OBJECT_SCHEMA, qsf_doc) == TRUE);
-	write_result = xmlDocFormatDump(out, qsf_doc, 1);
-	if(write_result < 0) {
-		be = qof_book_get_backend(book);
+	write_result = xmlSaveFormatFileEnc(path, qsf_doc, "UTF-8", 1);
+	if(write_result < 0) 
+	{
 		qof_backend_set_error(be, ERR_FILEIO_WRITE_ERROR);
 		return;
 	}
-	fprintf(out, "\n");
 	xmlFreeDoc(qsf_doc);
 }
 
@@ -767,16 +786,16 @@ write_qsf_to_stdout(QofBook *book)
 	
 	qsf_doc = qofbook_to_qsf(book);
 	g_return_if_fail(qsf_is_valid(QSF_SCHEMA_DIR, QSF_OBJECT_SCHEMA, qsf_doc) == TRUE);
-	xmlDocFormatDump(stdout, qsf_doc, 1);
+	xmlSaveFormatFileEnc("-", qsf_doc, "UTF-8", 1);
 	fprintf(stdout, "\n");
 	xmlFreeDoc(qsf_doc);
+	LEAVE (" ");
 }
 
 void
 qsf_write_file(QofBackend *be, QofBook *book)
 {
 	QSFBackend *qsf_be;
-	FILE *out;
 	char *path;
 	
 	qsf_be = (QSFBackend*)be;
@@ -786,14 +805,8 @@ qsf_write_file(QofBackend *be, QofBook *book)
 		return;
 	}
 	path = strdup(qsf_be->fullpath);
-	out = fopen(path, "w");
-	if (!out) {
-		qof_backend_set_error(be, ERR_FILEIO_WRITE_ERROR);
-		return;
-	}
-	write_qsf_from_book(out, book);
+	write_qsf_from_book(path, book);
 	g_free(path);
-	fclose(out);
 }
 
 /* QofBackend routine to load from file - needs a map.
@@ -1137,20 +1150,20 @@ QofBackendProvider strings are translatable. */
 void
 qsf_provider_init(void)
 {
+	QofBackendProvider *prov;
+
 	#ifdef ENABLE_NLS
 	setlocale (LC_ALL, "");
 	bindtextdomain (GETTEXT_PACKAGE, LOCALE_DIR);
 	bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
 	textdomain (GETTEXT_PACKAGE);
 	#endif
-	QofBackendProvider *prov;
 	prov = g_new0 (QofBackendProvider, 1);
 	prov->provider_name = "QSF Backend Version 0.1";
 	prov->access_method = "file";
 	prov->partial_book_supported = TRUE;
 	prov->backend_new = qsf_backend_new;
 	prov->check_data_type = qsf_determine_file_type;
-	prov->provider_config = "qsf-backend-v0.1.xml";
 	prov->provider_free = qsf_provider_free;
 	qof_backend_register_provider (prov);
 }

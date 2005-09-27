@@ -26,7 +26,9 @@
 #include <libxml/xmlversion.h>
 #include "qsf-dir.h"
 #include "qsf-xml.h"
-static int module = MOD_BACKEND;
+#include "qof-backend-qsf.h"
+
+static gchar* log_module = QOF_MOD_QSF;
 
 void qsf_free_params(qsf_param *params)
 {

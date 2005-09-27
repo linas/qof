@@ -31,7 +31,7 @@
 #include "qofquerycore.h"
 #include "qofquerycore-p.h"
 
-static short module = MOD_QUERY;
+static gchar* log_module = QOF_MOD_QUERY;
 
 /* A function to destroy a query predicate's pdata */
 typedef void (*QueryPredDataFree) (QofQueryPredData *pdata);

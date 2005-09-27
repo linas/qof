@@ -70,7 +70,7 @@ static QofDateFormat dateFormat = QOF_DATE_FORMAT_LOCALE;
 static QofDateFormat prevQofDateFormat = QOF_DATE_FORMAT_LOCALE;
 
 /* This static indicates the debugging module that this .o belongs to. */
-static short module = MOD_ENGINE;
+static gchar* log_module = QOF_MOD_ENGINE;
 
 /********************************************************************\
 \********************************************************************/

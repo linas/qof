@@ -356,7 +356,7 @@ run_test (void)
   ts.tv_nsec = 0;
   check_time (ts, do_print);
 
-  srand(time(0));
+//  srand(time(0));
 
   ts = *get_random_timespec ();
 

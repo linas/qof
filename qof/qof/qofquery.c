@@ -43,7 +43,7 @@
 #include "qofquerycore.h"
 #include "qofquerycore-p.h"
 
-static short module = MOD_QUERY;
+static gchar* log_module = QOF_MOD_QUERY;
 
 struct _QofQueryTerm 
 {
@@ -717,7 +717,7 @@ GList * qof_query_run (QofQuery *q)
   }
 
   /* Maybe log this sucker */
-  if (gnc_should_log (module, GNC_LOG_DETAIL)) qof_query_print (q);
+  if (gnc_should_log (log_module, GNC_LOG_DETAIL)) qof_query_print (q);
 
   /* Now run the query over all the objects and save the results */
   {

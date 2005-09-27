@@ -31,7 +31,7 @@
 #include "qofclass-p.h"
 #include "qofquery.h"
 
-static short module = MOD_QUERY;
+static gchar* log_module = QOF_MOD_CLASS;
 
 static GHashTable *classTable = NULL;
 static GHashTable *sortTable = NULL;

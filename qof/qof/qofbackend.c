@@ -1,6 +1,7 @@
 /********************************************************************\
  * qofbackend.c -- utility routines for dealing with the data backend  *
  * Copyright (C) 2000 Linas Vepstas <linas@linas.org>               *
+ * Copyright (C) 2004-5 Neil Williams <linux@codehelp.co.uk>        *
  *                                                                  *
  * This program is free software; you can redistribute it and/or    *
  * modify it under the terms of the GNU General Public License as   *
@@ -34,7 +35,7 @@
 #include <errno.h>
 #include "qofbackend-p.h"
 
-static short module = MOD_BACKEND;
+static gchar* log_module = QOF_MOD_BACKEND;
 
 #define QOF_CONFIG_DESC    "desc"
 #define QOF_CONFIG_TIP     "tip"

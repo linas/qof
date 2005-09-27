@@ -24,7 +24,7 @@
 #include "qof.h"
 #include "qofgobj.h"
 
-static short module = MOD_QUERY;
+static gchar* log_module = QOF_MOD_QUERY;
 
 static gboolean initialized = FALSE;
 static GSList *paramList = NULL;
