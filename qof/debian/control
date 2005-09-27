@@ -1,0 +1,41 @@
+Source: qof
+Priority: optional
+Maintainer: Debian QOF packaging team <pkg-qof-maintainers@lists.alioth.debian.org>
+Uploaders: Goedson Teixeira Paixao <goedson@debian.org>, Neil Williams <linux@codehelp.co.uk>
+Build-Depends: debhelper (>= 4.1.46), cdbs, autotools-dev, libltdl3-dev, libglib2.0-dev, libxml2-dev (>= 2.5.10), binutils (>= 2.14.90.0.7), libgda2-dev, libxml-parser-perl
+Standards-Version: 3.6.2
+
+Package: libqof-dev
+Section: libdevel
+Architecture: any
+Depends: libqof1 (= ${Source-Version})
+Description: Query Object Framework
+ A framework to allow the execution of SQL-type queries
+ using collections of in-memory objects as 'tables'.
+ .
+ This package provides the files needed to develop 
+ applications using QOF.
+
+Package: libqof1
+Section: libs
+Architecture: any
+Depends: ${shlibs:Depends}
+Description: Query Object Framework
+ A framework to allow the execution of SQL-type queries
+ using collections of in-memory objects as 'tables'.
+ .
+ This package provides the shared libraries needed 
+ to run programs developed using QOF, the XML schemas
+ to validate files and the QSF XML backend module.
+
+Package: libqof1-dbg
+Section: libs
+Architecture: any
+Depends: libqof1 (= ${Source-Version})
+Description: Query Object Framework - debug symbols
+ A framework to allow the execution of SQL-type queries
+ using collections of in-memory objects as 'tables'.
+ .
+ This package provides the files needed to develop 
+ applications using QOF.
+
