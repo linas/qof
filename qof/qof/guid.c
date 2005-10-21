@@ -58,15 +58,8 @@ static gboolean guid_initialized = FALSE;
 static struct md5_ctx guid_context;
 static GMemChunk *guid_memchunk = NULL;
 
-#if USING_THREADS
-/* guid_to_string uses a thread local buffer. These are used to set it up */
-#include <pthread.h>
-static pthread_key_t guid_buffer_key;
-static pthread_once_t guid_buffer_key_once = PTHREAD_ONCE_INIT;
-#endif
-
 /* This static indicates the debugging module that this .o belongs to.  */
-static gchar* log_module = QOF_MOD_ENGINE;
+static QofLogModule log_module = QOF_MOD_ENGINE;
 
 /* Memory management routines ***************************************/
 static void
@@ -114,6 +107,7 @@ guid_null(void)
     int i;
     char *tmp = "NULLGUID.EMPTY.";
 
+      /* 16th space for '\O' */
     for (i = 0; i < 16; i++)
       null_guid.data[i] = tmp[i];
 
@@ -297,7 +291,7 @@ init_from_int(int val)
 }
 
 static size_t
-init_from_buff(char * buf, size_t buflen)
+init_from_buff(unsigned char * buf, size_t buflen)
 {
   md5_process_bytes(buf, buflen, &guid_context);
   return buflen;
@@ -308,7 +302,7 @@ guid_init(void)
 {
   size_t bytes = 0;
 
-/* Not needed; taken care of on first malloc.
+  /* Not needed; taken care of on first malloc.
    * guid_memchunk_init(); */
 
   md5_init_ctx(&guid_context);
@@ -490,7 +484,7 @@ guid_new(GUID *guid)
 	* is just hiding the problem, not fixing it.
 	*/
   init_from_int (433781*counter);
-  init_from_buff ((char*)guid->data, 16);
+  init_from_buff (guid->data, 16);
 
   if (counter == 0)
   {
@@ -577,22 +571,19 @@ badstring:
 }
 
 /* Allocate the key */
-#if USING_THREADS
-static void guid_buffer_key_alloc(void)
-{
-  pthread_key_create(&guid_buffer_key, NULL /* Never freed */);
-  pthread_setspecific(guid_buffer_key, malloc(GUID_ENCODING_LENGTH+1));
-}
-#endif
 
 const char *
 guid_to_string(const GUID * guid)
 {
-#if USING_THREADS
-  char *string;
+#ifdef G_THREADS_ENABLED
+  static GStaticPrivate guid_buffer_key = G_STATIC_PRIVATE_INIT;
+  gchar *string;
 
-  pthread_once(&guid_buffer_key_once, guid_buffer_key_alloc);
-  string = pthread_getspecific(guid_buffer_key);
+  string = g_static_private_get (&guid_buffer_key);
+  if (string == NULL) {
+    string = malloc(GUID_ENCODING_LENGTH+1);
+    g_static_private_set (&guid_buffer_key, string, g_free);
+  }
 #else
   static char string[64];
 #endif

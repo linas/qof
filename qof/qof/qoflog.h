@@ -51,8 +51,18 @@
 
 DEFINE_ENUM (gncLogLevel, LOG_LEVEL_LIST)
 
+/** Convert gncLogLevel to a string.
+
+The macro correlates the enum value and an
+exact copy as a string, removing the need to
+keep two separate lists in sync.
+*/
 AS_STRING_DEC(gncLogLevel, LOG_LEVEL_LIST)
 
+/** Convert the log_string to a gncLogLevel
+
+Only for use as a partner to ::gncLogLevelasString
+*/
 FROM_STRING_DEC(gncLogLevel, LOG_LEVEL_LIST)
 
 #define GNC_TRACE_INDENT_WIDTH 4

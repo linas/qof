@@ -93,6 +93,9 @@ typedef enum
 #define DATE_FORMAT_FIRST QOF_DATE_FORMAT_US
 #define DATE_FORMAT_LAST  QOF_DATE_FORMAT_LOCALE
 
+/** \deprecated qof_date_format_get_format has been replaced
+by qof_date_text_format_get_string */
+#define qof_date_format_get_format qof_date_text_format_get_string
 
 /**
  * This is how to format the month, as a number, an abbreviated string,

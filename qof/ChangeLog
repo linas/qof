@@ -1,5 +1,13 @@
 2005-10-21  Neil Williams <linux@codehelp.co.uk>
 
+	* qof/gnc-date.h : Deprecating qof_date_format_get_format
+	* qof/gnc-trace.h : Doxygen tweak.
+	* qof/guid.c : GnuCash sync.
+	* ./qof/qofquery-deserial.c : Tweak - just in case someone
+	tries to build it.
+
+2005-10-21  Neil Williams <linux@codehelp.co.uk>
+
 	* HACKING : Advice on how building / hacking
 	QOF 0.6.0 differs from previous versions,
 	including new requirements for packaging
