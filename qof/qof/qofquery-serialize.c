@@ -28,6 +28,9 @@
 #include "qofquerycore-p.h"
 #include "kvp_frame.h"
 
+/* NOTE: Development of this idea has ceased and this file is
+no longer included in the QOF library. It remains in CVS for now.*/
+
 /* ======================================================= */
 
 #define PUT_STR(TOK,VAL) {                           \
