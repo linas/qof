@@ -1,5 +1,187 @@
-Replacement of lib/libsql
--------------------------
+HACKING advice for QOF
+======================
+
+THIS FILE CONTAINS IMPORTANT ADVICE FOR DEVELOPERS
+AND PACKAGERS / MAINTAINERS RELATING TO QOF.
+
+Contents:
+
+1. Building against QOF
+   1.1 AUTOMAKE example
+   1.2 libqof1 API/ABI compatibility.
+   1.3 MAX_REQUIRED specifiers
+   1.4 DWI is optional
+   1.5 Mac OSX
+
+2. Packaging QOF.
+   2.1 libqof-backend-qsf.la is REQUIRED in libqof1
+   2.2 libxml2 >= 2.5.10
+   2.3 There is no QOF dependency on Gtk!
+   2.4 Please include this file. :-)
+
+3. Using libqof-dev
+
+4. Replacement of lib/libsql
+
+	--------------------------------------
+
+1. BUILDING AGAINST QOF
+-----------------------
+
+1.1. AUTOMAKE
+
+Using automake, consider this example as the basis for
+your commands for in configure.ac:
+
+dnl *************************************
+dnl QOF
+dnl *************************************
+
+QOF_REQUIRED=0.6.0
+AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
+if test pkg-config = no; then
+	AC_MSG_ERROR([Please install pkgconfig])
+	exit 1
+fi
+AC_MSG_CHECKING([for QOF - version >= $QOF_REQUIRED])
+QOF=`$PKG_CONFIG --exists 'qof-1 >= $QOF_REQUIRED'`
+QOF_LIBS=`$PKG_CONFIG --libs qof-1`
+QOF_CFLAGS=`$PKG_CONFIG --cflags qof-1`
+QOF_VERSION=`$PKG_CONFIG --modversion qof-1`
+QOF_PREFIX=`$PKG_CONFIG --variable=prefix qof-1`
+QOF_LIB_DIR=`$PKG_CONFIG --variable=libdir qof-1`
+QOF_XML_DIR=`$PKG_CONFIG --variable=xmldir qof-1`
+
+AC_SUBST(QOF_CFLAGS)
+AC_SUBST(QOF_LIBS)
+AC_SUBST(QOF_PREFIX)
+AC_SUBST(QOF_LIB_DIR)
+AC_SUBST(QOF_XML_DIR)
+if test x$QOF_XML_DIR = x; then
+        AC_MSG_RESULT([no])
+        AC_MSG_ERROR([
+        The package requires the Query Object Framework: QOF.
+        You need to install QOF >= 0.6.0 (libqof1).
+        You can find it at http://qof.sourceforge.net/
+])
+        exit 1
+else
+        AC_MSG_RESULT([yes (found $QOF_VERSION)])
+fi
+
+For more information, see the source for Pilot-QOF and CashUtil
+which include an optional method to build from QOF CVS source as
+well as the package.
+
+http://pilot-qof.sourceforge.net/
+http://linux.codehelp.co.uk/cashutil/
+
+1.2. libqof1 API/ABI compatibility.
+
+During the life of the QOF 0.6.x tree, various functions will be
+deprecated and renamed - leaving a #define to support the old name. New
+code will be expected to use the new name and old code the #define
+version. Then when all such code has been sorted out, applications have
+two choices:
+
+  a. Move to the new API with the library, or
+  b. Integrate the #define's in a header of their own.
+
+Either way, the deprecated functions will then be removed from QOF in a
+single operation that takes us smoothly from libqof1 to libqof2.
+
+1.3 MAX_REQUIRED specifiers
+
+Some packages have previously used:
+LIBQOF_REQUIRED_MIN=0.5.2
+LIBQOF_REQUIRED_MAX=0.5.2
+
+The MAX value is no longer required. QOF will only change the API/ABI 
+on a SONAME increment. So each release of libqof1 will always be API/ABI 
+compatible with previous releases of libqof1. It is recommended to only
+specify a minimum and accept any later version of QOF.
+
+1.4 DWI is optional
+
+DWI - Data With Interaction - is a QOF backend in development and it has
+it's own SourceForge project and homepage.
+
+http://dwi.sourceforge.net/
+
+DWI development seems to have stalled and it has not been tested against libqof1.
+QOF still checks for DWI but DWI is completely optional and there is no reason to
+include DWI with QOF at this time.
+
+If you decide to try using DWI against libqof1, please report your results (good
+or bad) to the QOF-devel mailing list.
+
+http://lists.sourceforge.net/lists/listinfo/qof-devel
+
+1.5 Mac OSX
+
+Specify your Mac OSX compiler settings as environment variables.
+e.g. for fink use:
+export CPPFLAGS="-I/sw/include"
+export LDFLAGS="-L/sw/lib"
+
+To only use these for this one build, create a bash script and export
+the variables before calling ./autogen.sh
+
+The test-date program fails randomly on Mac OSX and this can cause
+make check and make distcheck to halt. It may be better to omit this
+test from packages intended to build on OSX.
+
+	--------------------------------------------
+
+2. PACKAGING QOF
+================
+
+2.1 libqof-backend-qsf.la is REQUIRED in libqof1
+
+Unlike many other packages, libqof1 REQUIRES the inclusion of the .la file for
+the QSF backend module into the main binary package - it is NOT acceptable to
+put it in the -dev or -devel package! This is for portability and to make it
+easier to use GModule to load the backend. This method will be used for all
+subsequent QOF backend modules and .la files for those backends will also need
+to be installed by the libqof1 package without requiring a dependency on the 
+development package.
+
+2.2 libxml2 >= 2.5.10
+
+The version string is vital. (Earlier versions will break the QSF backend horribly.)
+
+2.3 There is no QOF dependency on Gtk!
+
+Do not list a QOF runtime or build dependency on libgtk. There is one example 
+that can use Gtk if it is installed but it is omitted from the build without 
+errors if Gtk is not installed:
+checking if we should build examples that use Gtk... Yes, will build Gtk 
+examples.
+
+That's all there is to the Gtk stuff. It's important because projects like 
+pilot-link will not accept code that links to GUI stuff for no good reason.
+
+2.4 Please include this file. :-)
+
+When packaging QOF, please specify HACKING in your packaging rules
+so that it is included with your -devel package.
+
+	----------------------------------------------
+
+3. libqof-dev usage
+===================
+
+The QOF API specifies the use of #include "qof.h" or
+#include <qof.h> - this is because some headers in
+libqof-dev need to be included in the correct sequence.
+Individual filenames and file contents are also subject
+to change during the life of libqof1 and packages using QOF
+need to only use qof.h to avoid problems moving to libqof2.
+
+	------------------------------------------------
+
+4. Replacement of lib/libsql
+============================
 
 The code in lib/libsql came from the libgda package
 at about v1.0.3 and is now commonly available, including
@@ -14,4 +196,3 @@ will eventually be dropped.
 This also helps complete the CashUtil project that will need the
 SQL handling in QOF and GnuCash itself which is likely to use more
 SQL directly in the future.
-
