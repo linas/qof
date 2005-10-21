@@ -47,13 +47,13 @@
 #  define P_tmpdir "/tmp"
 # endif
 
-/** Constants *******************************************************/
+/* Constants *******************************************************/
 #define DEBUG_GUID 0
 #define BLOCKSIZE 4096
 #define THRESHOLD (2 * BLOCKSIZE)
 
 
-/** Static global variables *****************************************/
+/* Static global variables *****************************************/
 static gboolean guid_initialized = FALSE;
 static struct md5_ctx guid_context;
 static GMemChunk *guid_memchunk = NULL;
@@ -68,7 +68,7 @@ static pthread_once_t guid_buffer_key_once = PTHREAD_ONCE_INIT;
 /* This static indicates the debugging module that this .o belongs to.  */
 static gchar* log_module = QOF_MOD_ENGINE;
 
-/** Memory management routines ***************************************/
+/* Memory management routines ***************************************/
 static void
 guid_memchunk_init (void)
 {
@@ -123,7 +123,7 @@ guid_null(void)
   return &null_guid;
 }
 
-/** Function implementations ****************************************/
+/* Function implementations ****************************************/
 
 /* This code is based on code in md5.c in GNU textutils. */
 static size_t

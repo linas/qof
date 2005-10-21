@@ -29,8 +29,8 @@
 #include <regex.h>
 #include <string.h>
 
-#include "gnc-engine-util.h"
 #include "gnc-trace.h"
+#include "gnc-engine-util.h"
 
 #include "qofbackend-p.h"
 #include "qofbook.h"
@@ -43,7 +43,7 @@
 #include "qofquerycore.h"
 #include "qofquerycore-p.h"
 
-static gchar* log_module = QOF_MOD_QUERY;
+static QofLogModule log_module = QOF_MOD_QUERY;
 
 struct _QofQueryTerm 
 {
@@ -409,6 +409,7 @@ check_object (QofQuery *q, gpointer object)
     }
     if (and_terms_ok) 
     {
+      LEAVE (" (terms are OK)");
       return 1;
     }
   }
@@ -418,8 +419,8 @@ check_object (QofQuery *q, gpointer object)
    * may want to get all objects, but in a particular sorted 
    * order.
    */
+  LEAVE (" ");
   if (NULL == q->terms) return 1;
-
   return 0;
 }
 
@@ -477,7 +478,7 @@ compile_sort (QofQuerySort *sort, QofIdType obj)
   sort->obj_cmp = NULL;
 
   /* An empty param_list implies "no sort" */
-  if (!sort->param_list) return;
+  if (!sort->param_list) { LEAVE (" "); return; }
 
   /* Walk the parameter list of obtain the parameter functions */
   sort->param_fcns = compile_params (sort->param_list, obj, &resObj);
@@ -702,10 +703,10 @@ GList * qof_query_run (QofQuery *q)
   GList *node;
   int        object_count = 0;
 
-  ENTER (" q=%p", q);
   if (!q) return NULL;
   g_return_val_if_fail (q->search_for, NULL);
   g_return_val_if_fail (q->books, NULL);
+  ENTER (" q=%p", q);
 
   /* XXX: Prioritize the query terms? */
 
@@ -949,7 +950,7 @@ QofQuery * qof_query_copy (QofQuery *q)
   return copy;
 }
 
-/********************************************************************
+/* *******************************************************************
  * qof_query_invert 
  * return a newly-allocated Query object which is the 
  * logical inverse of the original.
@@ -1032,7 +1033,7 @@ QofQuery * qof_query_invert (QofQuery *q)
   return retval;
 }
 
-/********************************************************************
+/* *******************************************************************
  * qof_query_merge
  * combine 2 Query objects by the logical operation in "op".
  ********************************************************************/
@@ -1413,8 +1414,7 @@ gboolean qof_query_equal (QofQuery *q1, QofQuery *q2)
   return TRUE;
 }
 
-/***************************************************************************/
-/***************************************************************************/
+/* **************************************************************************/
 /* Query Print functions.  qof_query_print is public; everthing else supports
  * that.
  * Just call qof_query_print(QofQuery *q), and it will print out the query 
@@ -1699,6 +1699,7 @@ qof_query_printValueForParam (QofQueryPredData *pd, GString * gs)
                        qof_query_printGuidMatch (pdata->options));
     for (node = pdata->guids; node; node = node->next)
     {
+	  /* THREAD-UNSAFE */
       g_string_sprintfa (gs, ", guids: %s",
 			 guid_to_string ((GUID *) node->data));
     }

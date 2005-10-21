@@ -123,6 +123,7 @@ QSF is in three sections:
 #ifndef _QOF_BACKEND_QSF_H
 #define _QOF_BACKEND_QSF_H
 
+#include "gnc-trace.h"
 #include "qofbackend.h"
 #include "qof-be-utils.h"
 

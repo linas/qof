@@ -6,6 +6,7 @@ Build-Depends: debhelper (>= 4.1.46), cdbs, autotools-dev, libltdl3-dev, libglib
 Standards-Version: 3.6.2
 
 Package: libqof-dev
+Priority: optional
 Section: libdevel
 Architecture: any
 Depends: libqof1 (= ${Source-Version})
@@ -17,6 +18,7 @@ Description: Query Object Framework
  applications using QOF.
 
 Package: libqof1
+Priority: optional
 Section: libs
 Architecture: any
 Depends: ${shlibs:Depends}
@@ -29,6 +31,7 @@ Description: Query Object Framework
  to validate files and the QSF XML backend module.
 
 Package: libqof1-dbg
+Priority: extra
 Section: libs
 Architecture: any
 Depends: libqof1 (= ${Source-Version})
@@ -38,4 +41,3 @@ Description: Query Object Framework - debug symbols
  .
  This package provides the files needed to develop 
  applications using QOF.
-

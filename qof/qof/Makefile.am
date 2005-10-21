@@ -56,10 +56,13 @@ qofinclude_HEADERS = \
    qofinstance-p.h   \
    qofinstance.h     \
    qofquery.h        \
+   qofquery-p.h \
    qofbook.h         \
    qofobject.h       \
    qofquerycore.h    \
+   qofquerycore-p.h \
    qofsession.h      \
+   qofla-dir.h \
    qofsql.h	     \
    qof_book_merge.h
 
@@ -67,14 +70,11 @@ noinst_HEADERS =      \
    gnc-event-p.h      \
    md5.h              \
    qofclass-p.h       \
-   qofla-dir.h  \
    qofmath128.h  \
-   qofquery-p.h       \
    qofquery-deserial.h     \
    qofquery-serialize.h    \
    qofbook-p.h        \
    qofobject-p.h      \
-   qofquerycore-p.h   \
    qofsession-p.h
 
 AM_CFLAGS = -g        \
@@ -104,18 +104,6 @@ LDADD = \
   ${GMODULE_LIBS} \
    ${GLIB_LIBS}
 
-QOFLIBdir = $(libdir)
-
 EXTRA_DIST = \
   qofla-dir.h.in \
   qofmath128.c
-
-CONFIG_CLEAN_FILES = qofla-dir.h
-
-qofla-dir.h: qofla-dir.h.in
-	rm -f $@.tmp
-	sed < $< > $@.tmp \
-                -e 's:@-libdir-@:${QOFLIBdir}:g'
-	mv $@.tmp $@
-
-BUILT_SOURCES = qofla-dir.h

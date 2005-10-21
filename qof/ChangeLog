@@ -1,3 +1,98 @@
+2005-10-21  Neil Williams <linux@codehelp.co.uk>
+
+	* HACKING : Advice on how building / hacking
+	QOF 0.6.0 differs from previous versions,
+	including new requirements for packaging
+	and new methods of providing CFLAGS and LIBS 
+	data via pkg-config.
+	* NEWS : Tweak for 0.6.0
+	* QOF_MANIFEST_ENG : Tweak.
+	* README : Detailing future changes in QOF and
+	adding a pointer to new information in HACKING.
+	* backend/README : Future plans.
+	* backend/file/qof-backend-qsf.h : Trace fix.
+	* backend/file/qsf-backend.c : New log method and
+	tidy up initialisation of the params context.
+	* backend/file/qsf-xml-map.c : Trace fix.
+	* backend/file/qsf-xml.c : Removing double free.
+	* configure.in : Move to 0.6.0 final.
+	* debian/control : Fix override conflict.
+	* doc/doxygen_main_page.c : Warn of future changes
+	and new methods.
+	* examples/test-qsf.c : tweak.
+	* qof/Makefile.am : Temporarily make two private 
+	headers public.
+	* qof/gnc-date.c : Deprecating qof_date_format_get_format
+	and gnc_timet_get_day_start_gdate.
+	* qof/gnc-date.h : Doxygen tweaks.
+	* qof/gnc-engine-util.c : GnuCash sync, cache improvements.
+	* qof/gnc-engine-util.h : New cache methods. Deprecating 
+	the SAFE_STRCMP_REAL and SAFE_STRCASECMP macros in favour 
+	of the function versions.
+	* qof/gnc-event-p.h : Deprecating gnc_engine_generate_event
+	* qof/gnc-event.c : Doxygen tweak and trace fix.
+	* qof/gnc-event.h :  tweak.
+	* qof/gnc-numeric.c : Doxygen fix.
+	* qof/gnc-numeric.h : Typos.
+	* qof/gnc-trace.c : New trace / log methods.
+	* qof/gnc-trace.h : Using enum_as_string macros for logging.
+	* qof/guid.c : Doxygen tweak.
+	* qof/kvp-util.h : This is a QOF file, not GnuCash file.
+	* qof/kvp_frame.c : Cache and logging fix.
+	* qof/kvp_frame.h : Deprecating kvp_frame in favour of KvpFrame,
+	kvp_value in favour of KvpValue and kvp_value_t in favour of
+	KvpValueType.
+	* qof/qof-be-utils.h  : qof_begin_edit and qof_commit_edit fix.
+	* qof/qof.h : Fixing the major header, making it the only header file
+	required to be included to use QOF. Using individual header files in
+	applications linked against QOF is now deprecated.
+	* qof/qof_book_merge.c : Logging fix.
+	* qof/qof_book_merge.h : Fix GNU_SOURCE error.
+	* qof/qofbackend-p.h : Deprecating be->price_lookup and be->export.
+	Add new functions to remove need for qofbook-p.h private header.
+	* qof/qofbackend.c : qof_begin_edit and qof_commit_edit fix.
+	* qof/qofbook-p.h : Doxygen fix.
+	* qof/qofbook.c : Typos, new functions from qofbackend-p.h and
+	cache improvements.
+	* qof/qofbook.h : Doxygen fix.
+	* qof/qofclass-p.h : Doxygen fix.
+	* qof/qofclass.c : Typos and logging fix.
+	* qof/qofclass.h : Typos.
+	* qof/qofgobj.c : Logging fix.
+	* qof/qofid-p.h : Typos.
+	* qof/qofid.c : Logging fix and cache improvement.
+	* qof/qofid.h : Doxygen fix.
+	* qof/qofinstance-p.h : Doxygen fixes.
+	* qof/qofinstance.c : Logging fix.
+	* qof/qofla-dir.h.in : Directory fix.
+	* qof/qofobject.c : Logging fix.
+	* qof/qofquery-deserial.c : Denoting removal from main library.
+	* qof/qofquery-deserial.h : 
+	* qof/qofquery-serialize.c : 
+	* qof/qofquery-serialize.h : 
+	* qof/qofquery.c : Logging fix and balancing log calls.
+	* qof/qofquery.h : Doxygen fix.
+	* qof/qofquerycore.c : Logging fix.
+	* qof/qofquerycore.h : Typos.
+	* qof/qofsession.c : Removing GnuCash code.
+	* qof/qofsession.h : Removing GnuCash comments from Doxygen.
+	* qof/qofsql.c : Logging fix.
+	* qof/qofsql.h : Denoting use of libgda.
+	* qof/test/test-date.c : Highlight issue with Mac OSX
+	* qof/test/test-object.c : Use main QOF header.
+	* qof/test/test-querynew.c : Use main QOF header.
+	* website/index.html : Document additions to HACKING on
+	the website.
+
+2005-10-11  Neil Williams <linux@codehelp.co.uk>
+
+	* configure.in: Build qofla-dir.h from
+	make to put into qof.h Bump version to
+	full 0.6.0 release.
+	* qof/Makefile.am: Remove old build rules.
+	* qof/qofsession.c: Remove unused code.
+	* qof/qofbackend.c: Remove unused code.
+
 2005-09-27  Neil Williams <linux@codehelp.co.uk>
 
 	* backend/file/qof-backend-qsf.h: Unneeded wrapper.

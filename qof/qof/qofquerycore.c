@@ -25,13 +25,13 @@
 
 #include <glib.h>
 
-#include "gnc-engine-util.h"
 #include "gnc-trace.h"
+#include "gnc-engine-util.h"
 #include "qofquery.h"
 #include "qofquerycore.h"
 #include "qofquerycore-p.h"
 
-static gchar* log_module = QOF_MOD_QUERY;
+static QofLogModule log_module = QOF_MOD_QUERY;
 
 /* A function to destroy a query predicate's pdata */
 typedef void (*QueryPredDataFree) (QofQueryPredData *pdata);
@@ -124,7 +124,7 @@ static GHashTable *predEqualTable = NULL;
                                 PREDICATE_ERROR); \
 }
 
-/********************************************************************/
+/* *******************************************************************/
 /* TYPE-HANDLING FUNCTIONS */
 
 /* QOF_TYPE_STRING */

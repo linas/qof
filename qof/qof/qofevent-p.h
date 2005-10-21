@@ -27,7 +27,7 @@
 #include "gnc-event.h"
 #include "qofid.h"
 
-/* XXX deprecated, but still usedion on postgres backend */
+/** \deprecated */
 void gnc_engine_generate_event (const GUID *, QofIdType, GNCEngineEventType);
 
 /* generates an event even when events are suspended! */

@@ -1,5 +1,5 @@
 /********************************************************************\
- * gnc-trace.h -- GnuCash error logging and tracing fcility         *
+ * gnc-trace.h -- QOF logging and tracing facility                  *
  * Copyright (C) 1998-2003 Linas Vepstas <linas@linas.org>          *
  *                                                                  *
  * This program is free software; you can redistribute it and/or    *
@@ -26,7 +26,9 @@
     @{ */
 
 /** @file gnc-trace.h 
- *  @brief QOF error logging and tracing facility */
+ *  @brief QOF error logging and tracing facility 
+ *  (to be renamed qoflog.h in libqof2.)
+*/
 
 #ifndef GNC_TRACE_H
 #define GNC_TRACE_H
@@ -34,32 +36,41 @@
 #include <glib.h>
 #include <stdarg.h>
 #include <stdio.h>
+#include "gnc-engine-util.h"
 
 #define QOF_MOD_ENGINE "qof-engine"
 
-typedef enum
-{
-  GNC_LOG_FATAL   = 0,
-  GNC_LOG_ERROR   = 1,
-  GNC_LOG_WARNING = 2,
-  GNC_LOG_INFO    = 3,
-  GNC_LOG_DEBUG   = 4,
-  GNC_LOG_DETAIL  = 5,
-  GNC_LOG_TRACE   = 6,
-} gncLogLevel;
+#define LOG_LEVEL_LIST(_) \
+  _(GNC_LOG_FATAL, = 0)   \
+  _(GNC_LOG_ERROR, = 1)   \
+  _(GNC_LOG_WARNING, = 2) \
+  _(GNC_LOG_INFO, = 3)    \
+  _(GNC_LOG_DEBUG, = 4)   \
+  _(GNC_LOG_DETAIL, = 5)  \
+  _(GNC_LOG_TRACE, = 6)
+
+DEFINE_ENUM (gncLogLevel, LOG_LEVEL_LIST)
+
+AS_STRING_DEC(gncLogLevel, LOG_LEVEL_LIST)
+
+FROM_STRING_DEC(gncLogLevel, LOG_LEVEL_LIST)
 
 #define GNC_TRACE_INDENT_WIDTH 4
 
 /** Initialize the error logging subsystem
 
 \note Applications should call gnc_set_logfile
-to set the name of the log file, otherwise the
+to set the output, otherwise the
 default of \a /tmp/qof.trace will be used.
+
+As an alternative, use qof_log_init_filename
+which sets the filename and initialises the
+logging subsystem in one operation.
 */
 void gnc_log_init (void);
 
 /** Set the logging level of the given log_module. */
-void gnc_set_log_level(gchar* module, gncLogLevel level);
+void gnc_set_log_level(QofLogModule module, gncLogLevel level);
 
 /** Set the logging level for all known log_modules.
 
@@ -70,8 +81,20 @@ gnc_set_log_level, it will be unaffected by this change.
 void gnc_set_log_level_global(gncLogLevel level);
 
 /** Specify an alternate log output, to pipe or file.  By default,
- *  all logging goes to /tmp/qof.trace */
+ *  all logging goes to /tmp/qof.trace 
+ 
+ Needs to be called \b before gnc_log_init()
+*/
 void gnc_set_logfile (FILE *outfile);
+
+/** Specify a filename for log output.
+
+Calls gnc_log_init() for you.
+*/
+void qof_log_init_filename (const gchar* logfilename);
+
+/** Be nice, close the logfile is possible. */
+void qof_log_shutdown (void);
 
 /** gnc_log_prettify() cleans up subroutine names. AIX/xlC has the habit
  * of printing signatures not names; clean this up. On other operating
@@ -87,12 +110,12 @@ const char * gnc_log_prettify (const char *name);
  log_modules.
 
 */
-gboolean gnc_should_log(gchar* log_module, gncLogLevel log_level);
+gboolean gnc_should_log(QofLogModule log_module, gncLogLevel log_level);
 
 /** Set the default QOF log_modules to the log level. */
 void qof_log_set_default(gncLogLevel log_level);
 
-typedef void (*QofLogCB) (gchar* log_module, gncLogLevel* log_level, gpointer user_data);
+typedef void (*QofLogCB) (QofLogModule log_module, gncLogLevel* log_level, gpointer user_data);
 
 /** Iterate over each known log_module
 
@@ -119,117 +142,121 @@ gint qof_log_module_count(void);
  */
 
 /** Log an fatal error */
-#define FATAL(format, args...) {                     \
+#define FATAL(format, args...) do {                  \
     g_log (G_LOG_DOMAIN, G_LOG_LEVEL_ERROR,          \
       "Fatal Error: %s(): " format, FUNK , ## args); \
-}
+} while (0)
 
-/** Log an serious error */
-#define PERR(format, args...) {                    \
+/** Log a serious error */
+#define PERR(format, args...) do {                   \
   if (gnc_should_log (log_module, GNC_LOG_ERROR)) {    \
     g_log (G_LOG_DOMAIN, G_LOG_LEVEL_CRITICAL,     \
       "Error: %s(): " format, FUNK , ## args);     \
   }                                                \
-}
+} while (0)
 
-/** Log an warning */
-#define PWARN(format, args...) {                   \
+/** Log a warning */
+#define PWARN(format, args...) do {                    \
   if (gnc_should_log (log_module, GNC_LOG_WARNING)) {  \
     g_log (G_LOG_DOMAIN, G_LOG_LEVEL_WARNING,      \
       "Warning: %s(): " format, FUNK , ## args);   \
   }                                                \
-}
+} while (0)
 
 /** Print an informational note */
-#define PINFO(format, args...) {                   \
+#define PINFO(format, args...) do {                 \
   if (gnc_should_log (log_module, GNC_LOG_INFO)) {     \
     g_log (G_LOG_DOMAIN, G_LOG_LEVEL_INFO,         \
       "Info: %s(): " format,                       \
       FUNK , ## args);                             \
   }                                                \
-}
+} while (0)
 
-/** Print an debugging message */
-#define DEBUG(format, args...) {                   \
+/** Print a debugging message */
+#define DEBUG(format, args...) do {                 \
   if (gnc_should_log (log_module, GNC_LOG_DEBUG)) {    \
     g_log (G_LOG_DOMAIN, G_LOG_LEVEL_DEBUG,        \
       "Debug: %s(): " format,                      \
       FUNK , ## args);                             \
   }                                                \
-}
+} while (0)
 
-/** Print an function entry debugging message */
-#define ENTER(format, args...) {                   \
+/** Print a function entry debugging message */
+#define ENTER(format, args...) do {                 \
   extern gint gnc_trace_num_spaces;                \
   if (gnc_should_log (log_module, GNC_LOG_DEBUG)) {    \
     g_log (G_LOG_DOMAIN, G_LOG_LEVEL_DEBUG,        \
       "Enter in %s: %s()" format, __FILE__,        \
       FUNK , ## args);                             \
-    gnc_trace_num_spaces += GNC_TRACE_INDENT_WIDTH;\
+    gnc_trace_num_spaces += GNC_TRACE_INDENT_WIDTH; \
   }                                                \
-}
+} while (0)
 
-/** Print an function exit debugging message */
-#define LEAVE(format, args...) {                   \
+/** Print a function exit debugging message */
+#define LEAVE(format, args...) do {                 \
   extern gint gnc_trace_num_spaces;                \
   if (gnc_should_log (log_module, GNC_LOG_DEBUG)) {    \
-    gnc_trace_num_spaces -= GNC_TRACE_INDENT_WIDTH;\
+    gnc_trace_num_spaces -= GNC_TRACE_INDENT_WIDTH; \
     g_log (G_LOG_DOMAIN, G_LOG_LEVEL_DEBUG,        \
       "Leave: %s()" format,                        \
       FUNK , ## args);                             \
   }                                                \
-}
+} while (0)
 
-/** Print an function trace debugging message */
-#define TRACE(format, args...) {                   \
+/** Print a function trace debugging message */
+#define TRACE(format, args...) do {                 \
   if (gnc_should_log (log_module, GNC_LOG_TRACE)) {    \
     g_log (G_LOG_DOMAIN, G_LOG_LEVEL_DEBUG,        \
       "Trace: %s(): " format, FUNK , ## args);     \
   }                                                \
-}
+} while (0)
 
-#define DEBUGCMD(x) { if (gnc_should_log (log_module, GNC_LOG_DEBUG)) { (x); }}
+#define DEBUGCMD(x) do {                            \
+  if (gnc_should_log (log_module, GNC_LOG_DEBUG)) { \
+		(x);                                        \
+	}                                               \
+} while (0)
 
 /* -------------------------------------------------------- */
 /** Infrastructure to make timing measurements for critical peices 
  * of code. Used for only for performance tuning & debugging. 
  */
 
-void gnc_start_clock (int clockno, gchar* log_module, gncLogLevel log_level,
+void gnc_start_clock (int clockno, QofLogModule log_module, gncLogLevel log_level,
                       const char *function_name, const char *format, ...);
 
 void gnc_report_clock (int clockno,
-                       gchar* log_module,
+                       QofLogModule log_module,
                        gncLogLevel log_level,
                        const char *function_name,
                        const char *format, ...);
 
 void gnc_report_clock_total (int clockno,
-                             gchar* log_module,
+                             QofLogModule log_module,
                              gncLogLevel log_level,
                              const char *function_name,
                              const char *format, ...);
 
 /** start a particular timer */
-#define START_CLOCK(clockno,format, args...) {              \
+#define START_CLOCK(clockno,format, args...) do {        \
   if (gnc_should_log (log_module, GNC_LOG_INFO))                \
-    gnc_start_clock (clockno, module, GNC_LOG_INFO,         \
+    gnc_start_clock (clockno, log_module, GNC_LOG_INFO,  \
              __FUNCTION__, format , ## args);               \
-}
+} while (0)
 
 /** report elapsed time since last report on a particular timer */
-#define REPORT_CLOCK(clockno,format, args...) {             \
+#define REPORT_CLOCK(clockno,format, args...) do {       \
   if (gnc_should_log (log_module, GNC_LOG_INFO))                \
-    gnc_report_clock (clockno, module, GNC_LOG_INFO,        \
+    gnc_report_clock (clockno, log_module, GNC_LOG_INFO, \
              __FUNCTION__, format , ## args);               \
-}
+} while (0)
 
 /** report total elapsed time since timer started */
-#define REPORT_CLOCK_TOTAL(clockno,format, args...) {       \
+#define REPORT_CLOCK_TOTAL(clockno,format, args...) do {       \
   if (gnc_should_log (log_module, GNC_LOG_INFO))                \
-    gnc_report_clock_total (clockno, module, GNC_LOG_INFO,  \
+    gnc_report_clock_total (clockno, log_module, GNC_LOG_INFO, \
              __FUNCTION__, format , ## args);               \
-}
+} while (0)
 
 #endif /* GNC_TRACE_H */
 /* @} */

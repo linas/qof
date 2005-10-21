@@ -73,9 +73,7 @@ typedef enum {
  * The QOF_DATE_MATCH_NORMAL comparison matches the time values,
  *     down to the second.
  */
-/* XXX remove these deprecated old names .. */
-//#define QOF_DATE_MATCH_ROUNDED QOF_DATE_MATCH_DAY
-//#define QOF_DATE_MATCH_NORMAL  QOF_DATE_MATCH_TIME
+
 typedef enum {
   QOF_DATE_MATCH_NORMAL = 1,
   QOF_DATE_MATCH_DAY
@@ -83,7 +81,7 @@ typedef enum {
 
 /** Comparisons for QOF_TYPE_NUMERIC, QOF_TYPE_DEBCRED
  *
- * XXX Should be deprecated, or at least wrapped up as a convnience
+ * XXX Should be deprecated, or at least wrapped up as a convenience
  * function,  this is based on the old bill gribble code, which assumed 
  * the amount was always positive, and then specified a funds-flow 
  * direction (credit, debit, or either).

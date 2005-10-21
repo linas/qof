@@ -1,8 +1,43 @@
-/*! \mainpage QOF design and developer's reference
+/*! \mainpage QOF design and developers reference
 
-This is the new developer and design manual for the Query Object Framework.
-Previous documentation has been integrated into this and it should always be
-up to date since it is generated directly from the source files using Doxygen.
+This is the new developer and design manual for the Query Object
+Framework. Previous documentation has been integrated into this 
+and it should always be up to date since it is generated directly 
+from the source files using Doxygen.
+
+\section changes Future changes within QOF
+
+QOF v0.6.0 introduces \b libqof1 which will remain API compatible
+until all the changes below can be folded into libqof2:
+
+	-# All gnucash-specific code to be removed. Most of this
+		has been done in v0.6.0
+	-# Filename and function name conventions to be made to 
+		conform to a single method:
+		-# filenames: qof<module>.c|h
+		-# functions: qof_<module>_<function>_ ... 
+		\n e.g.
+			-# gnc_date.h becomes qofdate.h
+			-# qof_book_mergeInit becomes qof_book_merge_init
+			-# gnc_numeric_zero becomes qof_numeric_zero
+			-# gnc_set_logfile becomes qof_log_setfile.
+			-# gnc-trace.c|h becomes qoflog.c|h
+	-# These changes will be made by deprecating old names
+		and making old files into placeholders. When libqof2
+		is ready for pre-release, all deprecated elements will
+		include compiler flags that will highlight the code that
+		needs to be changed and placeholder files may be removed
+		at this stage. All flags and deprecated code will
+		then be removed in the final libqof2 release.
+	-# To make this change easier, the qof.h header has been fixed
+		in v0.6.0 and is now the only header file required to be
+		included to use QOF. Using individual header files in 
+		applications linked against QOF is now \b deprecated. All
+		code that uses QOF should only use:
+			-# #include <qof.h>   // or
+			-# #include "qof.h"\n
+		This is the \b only file guaranteed to maintain access to the
+		full QOF API during the entire life of libqof1 and libqof2.
 
 \section general General design documents.
 
@@ -172,6 +207,4 @@ If you have any suggestions concerning this documentation, do not hesitate to
 send suggestions to gnucash-devel (see http://www.gnucash.org/en/lists.phtml
 for details)
 
-Benoit Grégoire mailto:bock@step.polymtl.ca
  */
-

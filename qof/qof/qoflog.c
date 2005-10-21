@@ -1,5 +1,5 @@
 /* *****************************************************************\
- * gnc-trace.c -- GnuCash error loging and tracing facility         *
+ * gnc-trace.c -- QOF logging and tracing facility                  *
  * Copyright (C) 1997-2003 Linas Vepstas <linas@linas.org>          *
  * Copyright (c) 2005 Neil Williams <linux@codehelp.co.uk>          *
  *                                                                  *
@@ -35,12 +35,20 @@
 #include <stdarg.h>
 #include <string.h>
 #include <sys/time.h>
-#include <qof.h>
+#include "qof.h"
 #include "gnc-trace.h"
 
 static FILE *fout = NULL;
+static gchar* filename = NULL;
+
 static const int MAX_TRACE_FILENAME = 100;
 static GHashTable *log_table = NULL;
+
+/* uses the enum_as_string macro from QOF.
+Lookups are done on the string. */
+AS_STRING_FUNC(gncLogLevel, LOG_LEVEL_LIST)
+
+FROM_STRING_FUNC(gncLogLevel, LOG_LEVEL_LIST)
 
 /* Don't be fooled: gnc_trace_num_spaces has external linkage and
    static storage, but can't be defined with 'extern' because it has
@@ -63,9 +71,7 @@ fh_printer (const gchar   *log_domain,
 void 
 gnc_log_init (void)
 {
-   char *filename;
-
-   if(!fout) //allow gnc_set_logfile
+   if(!fout) /* allow gnc_set_logfile */
    {
 	   fout = fopen ("/tmp/qof.trace", "w");
    }
@@ -85,31 +91,34 @@ gnc_log_init (void)
 
 /* Set the logging level of the given module. */
 void
-gnc_set_log_level(gchar* module, gncLogLevel level)
+gnc_set_log_level(QofLogModule log_module, gncLogLevel level)
 {
-	if(!module || level == 0) { return; }
+	gchar* level_string;
+
+	if(!log_module || level == 0) { return; }
+	level_string = g_strdup(gncLogLevelasString(level));
 	if(!log_table)
 	{
 		log_table = g_hash_table_new(g_str_hash, g_str_equal);
 	}
-	g_hash_table_insert(log_table, module, &level);
+	g_hash_table_insert(log_table, (gpointer)log_module, level_string);
 }
 
 static void
 log_module_foreach(gpointer key, gpointer value, gpointer data)
 {
-	gncLogLevel level;
-
-	level = *(gncLogLevel*)data;
-	g_hash_table_insert(log_table, key, &level);
+	g_hash_table_insert(log_table, key, data);
 }
 
 /* Set the logging level for all known modules. */
 void
 gnc_set_log_level_global(gncLogLevel level)
 {
+	gchar* level_string;
+
 	if(!log_table || level == 0) { return; }
-	g_hash_table_foreach(log_table, log_module_foreach, &level);
+	level_string = g_strdup(gncLogLevelasString(level));
+	g_hash_table_foreach(log_table, log_module_foreach, level_string);
 }
 
 void
@@ -117,6 +126,29 @@ gnc_set_logfile (FILE *outfile)
 {
    if(!outfile) { fout = stderr; return; }
    fout = outfile;
+}
+
+void
+qof_log_init_filename (const gchar* logfilename)
+{
+	if(!logfilename)
+	{
+		fout = stderr;
+	}
+	else
+	{
+		filename = g_strdup(logfilename);
+		fout = fopen(filename, "w");
+	}
+	gnc_log_init();
+}
+
+void
+qof_log_shutdown (void)
+{
+	if(fout && fout != stderr) { fclose(fout); }
+	if(filename) { g_free(filename); }
+	g_hash_table_destroy(log_table);
 }
 
 #define MAX_CHARS 50
@@ -166,7 +198,7 @@ struct timeval gnc_clock_total[NUM_CLOCKS] = {
 };
 
 void
-gnc_start_clock (int clockno, gchar* log_module, gncLogLevel log_level,
+gnc_start_clock (int clockno, QofLogModule log_module, gncLogLevel log_level,
                  const char *function_name, const char *format, ...)
 {
   struct timezone tz;
@@ -191,7 +223,7 @@ gnc_start_clock (int clockno, gchar* log_module, gncLogLevel log_level,
 }
 
 void
-gnc_report_clock (int clockno, gchar* log_module, gncLogLevel log_level,
+gnc_report_clock (int clockno, QofLogModule log_module, gncLogLevel log_level,
                   const char *function_name, const char *format, ...)
 {
   struct timezone tz;
@@ -231,7 +263,7 @@ gnc_report_clock (int clockno, gchar* log_module, gncLogLevel log_level,
 
 void
 gnc_report_clock_total (int clockno,
-                        gchar* log_module, gncLogLevel log_level,
+                        QofLogModule log_module, gncLogLevel log_level,
                         const char *function_name, const char *format, ...)
 {
   va_list ap;
@@ -264,14 +296,18 @@ gnc_report_clock_total (int clockno,
 }
 
 gboolean
-gnc_should_log(gchar* log_module, gncLogLevel log_level)
+gnc_should_log(QofLogModule log_module, gncLogLevel log_level)
 {
-	gncLogLevel result;
+	gchar* log_string;
+	gncLogLevel maximum; /* Any log_level less than this will be logged. */
 
-	result = 0;
-	if(!log_table || !log_module || log_level == 0) { return FALSE; }
-	result = *(gncLogLevel*)g_hash_table_lookup(log_table, log_module);
-	if(result == log_level) { return TRUE; }
+	log_string = NULL;
+	if(!log_table || log_module == NULL || log_level == 0) { return FALSE; }
+	log_string = (gchar*)g_hash_table_lookup(log_table, log_module);
+	/* if log_module not found, do not log. */
+	if(!log_string) { return FALSE; }
+	maximum = gncLogLevelfromString(log_string);
+	if(log_level <= maximum) { return TRUE; }
 	return FALSE;
 }
 

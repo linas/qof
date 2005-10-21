@@ -41,13 +41,11 @@
 #define QOF_BOOK_H
 
 #include <glib.h>
-
 #include "qofid.h"
-//#include "qofbackend.h"
 #include "kvp_frame.h"
 
 /** @brief Encapsulates all the information about a dataset
- * manipulated by GnuCash.  This is the top-most structure
+ * manipulated by QOF.  This is the top-most structure
  * used for anchoring data.
  */
 
@@ -81,7 +79,14 @@ QofBook * qof_book_new (void);
     associated with it. */
 void      qof_book_destroy (QofBook *book);
 
-/** \return The table of entities of the given type. 
+/** Close a book to editing.
+
+It is up to the application to check this flag,
+and once marked closed, books cannnot be marked as open.
+*/
+void qof_book_mark_closed (QofBook *book);
+
+/** Return The table of entities of the given type.
  *
  *  When an object's constructor calls qof_instance_init(), a
  *  reference to the object is stored in the book.  The book stores
@@ -100,23 +105,23 @@ QofCollection  * qof_book_get_collection (QofBook *, QofIdType);
 typedef void (*QofCollectionForeachCB) (QofCollection *, gpointer user_data);
 void qof_book_foreach_collection (QofBook *, QofCollectionForeachCB, gpointer);
 
-/** \return The kvp data for the book.
- *  Note that the book KVP data is persistant, and is stored/retrieved
+/** Return The kvp data for the book.
+ *  Note that the book KVP data is persistent, and is stored/retrieved
  *  from the file/database.  Thus, the book KVP is the correct place to
- *  store data that needs to be persistant accross sessions (or shared
+ *  store data that needs to be persistent accross sessions (or shared
  *  between multiple users).  To store application runtime data, use
  *  qof_book_set_data() instead.
  */
 #define qof_book_get_slots(book) qof_instance_get_slots(QOF_INSTANCE(book))
 
 /** The qof_book_set_data() allows arbitrary pointers to structs 
- *    to be stored in QofBook. This is the "prefered" method for 
+ *    to be stored in QofBook. This is the "preferred" method for
  *    extending QofBook to hold new data types.  This is also
  *    the ideal location to store other arbitrary runtime data 
  *    that the application may need.
  *
  *    The book data differs from the book KVP in that the contents
- *    of the book KVP are persistant (are saved and restored to file 
+ *    of the book KVP are persistent (are saved and restored to file
  *    or database), whereas the data pointers exist only at runtime.
  */
 void qof_book_set_data (QofBook *book, const char *key, gpointer data);
@@ -125,7 +130,8 @@ void qof_book_set_data (QofBook *book, const char *key, gpointer data);
  *  when the book is destroyed.  The argument to the callback will be 
  *  the book followed by the data pointer.
  */
-void qof_book_set_data_fin (QofBook *book, const char *key, gpointer data, QofBookFinalCB);
+void qof_book_set_data_fin (QofBook *book, const char *key, gpointer data, 
+                            QofBookFinalCB);
 
 /** Retrieves arbitrary pointers to structs stored by qof_book_set_data. */
 gpointer qof_book_get_data (QofBook *book, const char *key);
@@ -145,8 +151,8 @@ gboolean qof_book_not_saved (QofBook *book);
 
 /** The qof_book_mark_saved() routine marks the book as having been
  *    saved (to a file, to a database). Used by backends to mark the
- *    notsaved flag as FALSE just after loading.  Also used by the
- *    main window code when the used has said to abandon any changes.
+ *    notsaved flag as FALSE just after loading.  Can also be used 
+ *    by the frontend when the used has said to abandon any changes.
  */
 void qof_book_mark_saved(QofBook *book);
 

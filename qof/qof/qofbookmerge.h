@@ -21,10 +21,12 @@
  *                                                                   *
  ********************************************************************/
 
-#define _GNU_SOURCE
 #ifndef QOFBOOKMERGE_H
 #define QOFBOOKMERGE_H
 
+#ifndef _GNU_SOURCE
+#define _GNU_SOURCE
+#endif
 #define QOF_MOD_MERGE "qof-merge"
 
 /** @addtogroup BookMerge
@@ -66,6 +68,7 @@ any error values to the calling process. ::qof_book_mergeInit returns a
 pointer to the ::qof_book_mergeData struct - the calling process needs to
 make sure this is non-NULL to know that the Init has been successful.
 
+(to be renamed qofbookmerge.h in libqof2)
  @{
 */
 /** @file  qof_book_merge.h

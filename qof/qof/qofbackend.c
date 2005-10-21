@@ -35,12 +35,12 @@
 #include <errno.h>
 #include "qofbackend-p.h"
 
-static gchar* log_module = QOF_MOD_BACKEND;
+static QofLogModule log_module = QOF_MOD_BACKEND;
 
 #define QOF_CONFIG_DESC    "desc"
 #define QOF_CONFIG_TIP     "tip"
 
-/********************************************************************\
+/* *******************************************************************\
  * error handling                                                   *
 \********************************************************************/
 
@@ -142,12 +142,9 @@ qof_backend_init(QofBackend *be)
     be->percentage = NULL;
 	be->backend_configuration = kvp_frame_new();
 
-#ifdef GNUCASH_MAJOR_VERSION
-    /* XXX remove these */
-    be->fullpath = NULL;
+	/* to be removed */
     be->price_lookup = NULL;
     be->export = NULL;
-#endif
 }
 
 void
@@ -358,28 +355,29 @@ qof_backend_commit_exists(QofBackend *be)
 	else { return FALSE; }
 }
 
-void 
+gboolean
 qof_begin_edit(QofInstance *inst)
 {
   QofBackend * be;
 
-  if (!inst) { return; }
-  inst->editlevel++;
-  if (1 < inst->editlevel) return;
+  if (!inst) { return FALSE; }
+  (inst->editlevel)++;
+  if (1 < inst->editlevel) { return FALSE; }
   if (0 >= inst->editlevel) { inst->editlevel = 1; }
   be = qof_book_get_backend (inst->book);
     if (be && qof_backend_begin_exists(be)) {
      qof_backend_run_begin(be, inst);
   } else { inst->dirty = TRUE; }
+  return TRUE;
 }
 
-void qof_commit_edit(QofInstance *inst)
+gboolean qof_commit_edit(QofInstance *inst)
 {
   QofBackend * be;
 
-  if (!inst) return;
-  inst->editlevel--;
-  if (0 < inst->editlevel) { return; }
+  if (!inst) { return FALSE; }
+  (inst->editlevel)--;
+  if (0 < inst->editlevel) { return FALSE; }
   if ((-1 == inst->editlevel) && inst->dirty)
   {
     be = qof_book_get_backend ((inst)->book);
@@ -389,6 +387,7 @@ void qof_commit_edit(QofInstance *inst)
     inst->editlevel = 0;
   }
   if (0 > inst->editlevel) { inst->editlevel = 0; }
+  return TRUE;
 }
 
 gboolean

@@ -1,6 +1,5 @@
 # Manifest file for makepatch
 # QOF to GnuCash sync: these files are in qof/qof and src/engine
-# gnc-trace.c gnc-trace.h are left out deliberately for now.
 # guid.c also awaits a proper sync.
 
 gnc-date.c
@@ -12,6 +11,8 @@ gnc-event.h
 gnc-event-p.h
 gnc-numeric.c
 gnc-numeric.h
+gnc-trace.c
+gnc-trace.h
 kvp_frame.c
 kvp_frame.h
 kvp-util.c

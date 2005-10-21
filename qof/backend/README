@@ -12,3 +12,7 @@ http://dwi.sourceforge.net/
 For more information on QSF, see:
 http://code.neil.williamsleesmill.me.uk/qsf.html
 
+Future developments will include building a common SQL backend
+using libgda that will provide pluggable access to any libgda
+compatible database (currently including Oracle, Postgres, MySQL
+SQLite and others). See http://www.gnome-db.org/

@@ -46,11 +46,13 @@
     If a file-io backend needs date handling, it should do it itself,
     instead of depending on the routines here. 
 
+	(to be renamed qofdate.h in libqof2.)
+
     @author Copyright (C) 1997 Robin D. Clark <rclark@cs.hmc.edu> 
     @author Copyright (C) 1998-2001,2003 Linas Vepstas <linas@linas.org>
 */
 
-/* @{ 
+/** @{ 
     @file gnc-date.h 
     @brief Date and Time handling routines  
 */
@@ -283,10 +285,25 @@ QofDateFormat qof_date_format_get(void);
  */
 void qof_date_format_set(QofDateFormat df);
 
-/** DOCUMENT ME! */
+/** This function returns a strftime formatting string for printing an
+ *  all numeric date (e.g. 2005-09-14).  The string returned is based
+ *  upon the location specified.
+ *
+ *  @param df The date style (us, uk, iso, etc) that should be provided.
+ *
+ *  @return A formatting string that will print a date in the
+ *  requested style  */
 const gchar *qof_date_format_get_string(QofDateFormat df);
-/** DOCUMENT ME! */
-const gchar *qof_date_format_get_format(QofDateFormat df);
+
+/** This function returns a strftime formatting string for printing a
+ *  date using words and numbers (e.g. 2005-September-14).  The string
+ *  returned is based upon the location specified.
+ *
+ *  @param df The date style (us, uk, iso, etc) that should be provided.
+ *
+ *  @return A formatting string that will print a date in the
+ *  requested style  */
+const gchar *qof_date_text_format_get_string(QofDateFormat df);
 // @}
 
 /** dateSeparator
@@ -464,13 +481,21 @@ time_t gnc_timet_get_day_start(time_t time_val);
  *  seconds and adjust it to the last second of that day. */
 time_t gnc_timet_get_day_end(time_t time_val);
 
+#ifndef GNUCASH_MAJOR_VERSION
 /** The gnc_timet_get_day_start() routine will take the given time in
- *  GLib GDate format and adjust it to the last second of that day. */
+ *  GLib GDate format and adjust it to the last second of that day.
+ *
+ *  @deprecated
+ */
 time_t gnc_timet_get_day_start_gdate (GDate *date);
 
 /** The gnc_timet_get_day_end() routine will take the given time in
- *  GLib GDate format and adjust it to the last second of that day. */
+ *  GLib GDate format and adjust it to the last second of that day.
+ *
+ *  @deprecated
+ */
 time_t gnc_timet_get_day_end_gdate (GDate *date);
+#endif /* GNUCASH_MAJOR_VERSION */
 
 /** Get the numerical last date of the month. (28, 29, 30, 31) */
 int date_get_last_mday(struct tm *tm);
@@ -513,4 +538,3 @@ char * xaccDateUtilGetStampNow (void);
 //@}
 //@}
 #endif /* GNC_DATE_H */
-

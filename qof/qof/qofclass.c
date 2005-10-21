@@ -1,5 +1,5 @@
 /********************************************************************\
- * qofclass.c -- provide QOF paramterized data objects              *
+ * qofclass.c -- provide QOF parameterized data objects              *
  * Copyright (C) 2002 Derek Atkins <warlord@MIT.EDU>                *
  *                                                                  *
  * This program is free software; you can redistribute it and/or    *
@@ -25,13 +25,13 @@
 
 #include <glib.h>
 
-#include "gnc-engine-util.h"
 #include "gnc-trace.h"
+#include "gnc-engine-util.h"
 #include "qofclass.h"
 #include "qofclass-p.h"
 #include "qofquery.h"
 
-static gchar* log_module = QOF_MOD_CLASS;
+static QofLogModule log_module = QOF_MOD_CLASS;
 
 static GHashTable *classTable = NULL;
 static GHashTable *sortTable = NULL;
@@ -70,7 +70,7 @@ qof_class_register (QofIdTypeConst obj_name,
     g_hash_table_insert (classTable, (char *)obj_name, ht);
   }
 
-  /* At least right now, we allow dummy, paramterless objects, 
+  /* At least right now, we allow dummy, parameterless objects,
    * for testing purposes.  Although I suppose that should be 
    * an error..  */
   /* Now insert all the parameters */

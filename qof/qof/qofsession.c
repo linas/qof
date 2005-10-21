@@ -42,9 +42,9 @@
 
 #include <glib.h>
 #include "qofla-dir.h"
+#include "gnc-trace.h"
 #include "gnc-engine-util.h"
 #include "gnc-event.h"
-#include "gnc-trace.h"
 #include "qofsession.h"
 #include "qofbackend-p.h"
 #include "qof-be-utils.h"
@@ -53,15 +53,10 @@
 #include "qofobject.h"
 #include "qofsession-p.h"
 
-/* Some gnucash-specific code */
-#ifdef GNUCASH_MAJOR_VERSION
-#include "gnc-module.h"
-#endif /* GNUCASH */
-
 /** \deprecated should not be static */
 static QofSession * current_session = NULL;
 static GHookList * session_closed_hooks = NULL;
-static gchar* log_module = QOF_MOD_SESSION;
+static QofLogModule log_module = QOF_MOD_SESSION;
 static GSList *provider_list = NULL;
 
 /* ====================================================================== */
@@ -82,7 +77,7 @@ qof_session_add_close_hook (GFunc fn, gpointer data)
   GHook *hook;
 
   if (session_closed_hooks == NULL) {
-    session_closed_hooks = malloc(sizeof(GHookList));
+      session_closed_hooks = malloc(sizeof(GHookList)); /* LEAKED */
     g_hook_list_init (session_closed_hooks, sizeof(GHook));
   }
 
@@ -233,6 +228,8 @@ qof_session_get_current_session (void)
   return current_session;
 }
 
+/** \deprecated Each application should keep
+their \b own session context. */
 void
 qof_session_set_current_session (QofSession *session)
 {
@@ -814,86 +811,6 @@ struct backend_providers backend_list[] = {
 	{ NULL, NULL, NULL }
 };
 
-#ifdef GNUCASH_MAJOR_VERSION 
-
-static void
-qof_session_int_backend_load_error(QofSession *session,
-                                   char *message, char *dll_err)
-{
-    PWARN ("%s %s", message, dll_err ? dll_err : "");
-
-    g_free(session->book_id);
-    session->book_id = NULL;
-
-    qof_session_push_error (session, ERR_BACKEND_NO_BACKEND, NULL);
-}
-
-/* Gnucash uses its module system to load a backend; other users
- * use traditional dlopen calls. This will change with CashUtil.
- */
-static void
-qof_session_load_backend(QofSession * session, char * backend_name)
-{
-	GList     *node;
-	QofBook   *book;
-	GNCModule  mod;
-	GSList    *p;
-	char       *mod_name, *access_method, *msg;
-	QofBackend *(* be_new_func)(void);
-	QofBackendProvider *prov;
-
-	mod	= 0;
-	mod_name = g_strdup_printf("gnucash/backend/%s", backend_name);
-	msg = g_strdup_printf(" ");
-	mod = gnc_module_load(mod_name, 0);
-	if (mod) 
-	{
-		be_new_func = gnc_module_lookup(mod, "gnc_backend_new");
-		if(be_new_func) 
-		{
-			session->backend = be_new_func();
-			for (node=session->books; node; node=node->next)
-			{
-				book = node->data;
-				qof_book_set_backend (book, session->backend);
-			}
-		}
-		else { qof_session_int_backend_load_error(session, " can't find backend_new ",""); }
-	}
-	else
-	{
-	/* QSF is built for the QOF version, use that if no module is found.
-	  This allows the GnuCash version to be called with an access method,
-	  as it would be in QOF, instead of a resolved module name.
-	*/
-	access_method = g_strdup(backend_name);
-	for (p = provider_list; p; p=p->next)
-	{
-		prov = p->data;
-		/* Does this provider handle the desired access method? */
-		if (0 == strcasecmp (access_method, prov->access_method))
-		{
-			if (NULL == prov->backend_new) continue;
-			/* Use the providers creation callback */
-			session->backend = (*(prov->backend_new))();
-			session->backend->provider = prov;
-			/* Tell the books about the backend that they'll be using. */
-			for (node=session->books; node; node=node->next)
-			{
-				book = node->data;
-				qof_book_set_backend (book, session->backend);
-			}
-			return;
-		}
-	}
-	msg = g_strdup_printf("failed to load '%s' backend", backend_name);
-	qof_session_push_error (session, ERR_BACKEND_NO_HANDLER, msg);
-  }
-  g_free(mod_name);
-}
-
-#else /* GNUCASH */
-
 static void
 qof_session_load_backend(QofSession * session, char * access_method)
 {
@@ -961,7 +878,6 @@ qof_session_load_backend(QofSession * session, char * access_method)
 	qof_session_push_error (session, ERR_BACKEND_NO_HANDLER, msg);
 	LEAVE (" ");
 }
-#endif /* GNUCASH */
 
 /* ====================================================================== */
 
@@ -1167,6 +1083,7 @@ qof_session_load (QofSession *session,
 		qof_book_set_backend (ob, NULL);
 		qof_book_destroy (ob);
 	}
+        /* Um, I think we're leaking the oldbooks list. */
 	
 	LEAVE ("sess = %p, book_id=%s", session, session->book_id
          ? session->book_id : "(null)");
@@ -1261,11 +1178,13 @@ qof_session_save (QofSession *session,
 				session->backend->provider = prov;
 				if (session->backend->session_begin)
 				{
-					/* Call begin - what values to use for booleans? */
+					/* Call begin - backend has been changed,
+					   so make sure a file can be written,
+					   use ignore_lock and create_if_nonexistent */
 					g_free(session->book_id);
 					session->book_id = NULL;
 					(session->backend->session_begin)(session->backend, session,
-						book_id, TRUE, FALSE);
+						book_id, TRUE, TRUE);
 					PINFO("Done running session_begin on changed backend");
 					err = qof_backend_get_error(session->backend);
 					msg = qof_backend_get_message(session->backend);
@@ -1342,48 +1261,6 @@ qof_session_save (QofSession *session,
 }
 
 /* ====================================================================== */
-/* XXX This exports the list of accounts to a file.  It does not export
- * any transactions.  Its a place-holder until full book-closing is implemented.
- */
-
-#ifdef GNUCASH_MAJOR_VERSION
-
-gboolean
-qof_session_export (QofSession *tmp_session,
-                    QofSession *real_session,
-                    QofPercentageFunc percentage_func)
-{
-  QofBook *book;
-  QofBackend *be;
-
-  if ((!tmp_session) || (!real_session)) return FALSE;
-
-  book = qof_session_get_book (real_session);
-  ENTER ("tmp_session=%p real_session=%p book=%p book_id=%s", 
-         tmp_session, real_session, book,
-         tmp_session -> book_id
-         ? tmp_session->book_id : "(null)");
-
-  /* There must be a backend or else.  (It should always be the file
-   * backend too.)
-   */
-  be = tmp_session->backend;
-  if (!be)
-    return FALSE;
-
-  be->percentage = percentage_func;
-  if (be->export)
-    {
-
-      (be->export)(be, book);
-      if (save_error_handler(be, tmp_session)) return FALSE;
-    }
-
-  return TRUE;
-}
-#endif /* GNUCASH_MAJOR_VERSION */
-
-/* ====================================================================== */
 
 void
 qof_session_end (QofSession *session)
@@ -1422,7 +1299,7 @@ qof_session_destroy (QofSession *session)
   /* destroy the backend */
   qof_session_destroy_backend(session);
 
-  for (node=session->books; node; node=node->next)
+  for (node = session->books; node; node = node->next)
   {
     QofBook *book = node->data;
     qof_book_set_backend (book, NULL);
@@ -1492,49 +1369,5 @@ qof_session_process_events (QofSession *session)
 
   return session->backend->process_events (session->backend);
 }
-
-/* ====================================================================== */
-
-#ifdef GNUCASH_MAJOR_VERSION
-
-/* this should go in a separate binary to create a rpc server */
-
-void
-gnc_run_rpc_server (void)
-{
-  const char * dll_err;
-  void * dll_handle;
-  int (*rpc_run)(short);
-  int ret;
- 
-  /* open and resolve all symbols now (we don't want mystery 
-   * failure later) */
-#ifndef RTLD_NOW
-# ifdef RTLD_LAZY
-#  define RTLD_NOW RTLD_LAZY
-# endif
-#endif
-  dll_handle = dlopen ("libgnc_rpc.so", RTLD_NOW);
-  if (! dll_handle) 
-  {
-    dll_err = dlerror();
-    PWARN (" can't load library: %s\n", dll_err ? dll_err : "");
-    return;
-  }
-  
-  rpc_run = dlsym (dll_handle, "rpc_server_run");
-  dll_err = dlerror();
-  if (dll_err) 
-  {
-    dll_err = dlerror();
-    PWARN (" can't find symbol: %s\n", dll_err ? dll_err : "");
-    return;
-  }
-  
-  ret = (*rpc_run)(0);
-
-  /* XXX How do we force an exit? */
-}
-#endif /* GNUCASH_MAJOR_VERSION */
 
 /* =================== END OF FILE ====================================== */

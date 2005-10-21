@@ -32,9 +32,9 @@
 #include <math.h>
 
 #include "gnc-date.h"
+#include "gnc-trace.h"
 #include "gnc-engine-util.h"
 #include "gnc-numeric.h"
-#include "gnc-trace.h"
 #include "guid.h"
 #include "kvp_frame.h"
 
@@ -72,9 +72,9 @@ struct _KvpValue
 };
 
 /* This static indicates the debugging module that this .o belongs to.  */
-static gchar* log_module = QOF_MOD_KVP;
+static QofLogModule log_module = QOF_MOD_KVP;
 
-/********************************************************************
+/* *******************************************************************
  * KvpFrame functions
  ********************************************************************/
 
@@ -113,7 +113,7 @@ kvp_frame_new(void)
 static void
 kvp_frame_delete_worker(gpointer key, gpointer value, gpointer user_data) 
 {
-  g_cache_remove(gnc_engine_get_string_cache(), key);
+  gnc_string_cache_remove(key);
   kvp_value_delete((KvpValue *)value);  
 }
 
@@ -148,7 +148,7 @@ kvp_frame_copy_worker(gpointer key, gpointer value, gpointer user_data)
 {
   KvpFrame * dest = (KvpFrame *)user_data;
   g_hash_table_insert(dest->hash,
-                      (gpointer)g_cache_insert(gnc_engine_get_string_cache(), key), 
+                      gnc_string_cache_insert(key),
                       (gpointer)kvp_value_copy(value));
 }
 
@@ -189,7 +189,7 @@ kvp_frame_replace_slot_nc (KvpFrame * frame, const char * slot,
   if(key_exists) 
   {
     g_hash_table_remove(frame->hash, slot);
-    g_cache_remove(gnc_engine_get_string_cache(), orig_key);
+    gnc_string_cache_remove(orig_key);
   }
   else
   {
@@ -199,8 +199,7 @@ kvp_frame_replace_slot_nc (KvpFrame * frame, const char * slot,
   if(new_value) 
   {
     g_hash_table_insert(frame->hash,
-                        g_cache_insert(gnc_engine_get_string_cache(),
-                                       (gpointer) slot),
+                        gnc_string_cache_insert((gpointer) slot),
                         new_value);
   }
 
@@ -1038,7 +1037,7 @@ kvp_frame_get_slot_path_gslist (KvpFrame *frame,
   }
 }
 
-/********************************************************************
+/* *******************************************************************
  * kvp glist functions
  ********************************************************************/
 
@@ -1108,7 +1107,7 @@ kvp_glist_compare(const GList * list1, const GList * list2)
   return 0;
 }
 
-/********************************************************************
+/* *******************************************************************
  * KvpValue functions
  ********************************************************************/
 
@@ -1745,6 +1744,7 @@ kvp_value_to_string(const KvpValue *val)
         break;
 
     case KVP_TYPE_GUID:
+		/* THREAD-UNSAFE */
         ctmp = guid_to_string(kvp_value_get_guid(val));
         tmp2 = g_strdup_printf("KVP_VALUE_GUID(%s)", ctmp ? ctmp : "");
         return tmp2;

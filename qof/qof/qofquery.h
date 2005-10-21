@@ -101,7 +101,7 @@ typedef enum {
   QOF_QUERY_XOR
 } QofQueryOp;
 
-/* First/only term is same as 'and' */
+/** First/only term is same as 'and' */
 #define QOF_QUERY_FIRST_TERM QOF_QUERY_AND
 
 /** Default sort object type */

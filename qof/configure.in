@@ -9,7 +9,7 @@ dnl Process this file with autoconf to produce a configure script.
 # implements checks for a variety of system-specific functions
 #
 
-AC_INIT(qof, 0.6.0-pre1, http://lists.sourceforge.net/lists/listinfo/qof-devel)
+AC_INIT(qof, 0.6.0, http://lists.sourceforge.net/lists/listinfo/qof-devel)
 
 AC_PREREQ(2.53)
 
@@ -18,7 +18,7 @@ LIBQOF_BACKEND_QSF_LIBRARY_VERSION=0:0:0
 AC_SUBST(LIBQOF_LIBRARY_VERSION)
 AC_SUBST(LIBQOF_BACKEND_QSF_LIBRARY_VERSION)
 
-VERSION=0.6.0-pre1
+VERSION=0.6.0
 AC_SUBST(VERSION)
 PACKAGE=qof
 AC_SUBST(PACKAGE)
@@ -351,6 +351,7 @@ examples/gobject/Makefile
 lib/Makefile
 lib/libsql/Makefile
 qof/Makefile
+qof/qofla-dir.h
 qof/test/Makefile
 qof-1.pc
 ])

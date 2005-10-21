@@ -30,7 +30,7 @@
 #include <glib.h>
 #include <stdlib.h>
 #include <string.h>
-#include <qof.h>
+#include "qof.h"
 #include "gnc-engine-util.h"
 
 
@@ -221,16 +221,43 @@ qof_util_bool_to_int (const char * val)
 
 static GCache * gnc_string_cache = NULL;
 
-/* maybe better to make this function static */
+#ifdef THESE_CAN_BE_USEFUL_FOR_DEGUGGING
+static guint g_str_hash_KEY(gconstpointer v) {
+    return g_str_hash(v);
+}
+static guint g_str_hash_VAL(gconstpointer v) {
+    return g_str_hash(v);
+}
+static gpointer g_strdup_VAL(gpointer v) {
+    return g_strdup(v);
+}
+static gpointer g_strdup_KEY(gpointer v) {
+    return g_strdup(v);
+}
+static void g_free_VAL(gpointer v) {
+    return g_free(v);
+}
+static void g_free_KEY(gpointer v) {
+    return g_free(v);
+}
+static gboolean gnc_str_equal(gconstpointer v, gconstpointer v2)
+{
+    return (v && v2) ? g_str_equal(v, v2) : FALSE;
+}
+#endif
+
 GCache*
 gnc_engine_get_string_cache(void)
 {
-    if(!gnc_string_cache) 
-    {
+    if(!gnc_string_cache) {
         gnc_string_cache = g_cache_new(
-            (GCacheNewFunc) g_strdup, g_free,
-            (GCacheDupFunc) g_strdup, g_free, g_str_hash, 
-            g_str_hash, g_str_equal);
+            (GCacheNewFunc) g_strdup, /* value_new_func     */
+            g_free,                   /* value_destroy_func */
+            (GCacheDupFunc) g_strdup, /* key_dup_func       */
+            g_free,                   /* key_destroy_func   */
+            g_str_hash,               /* hash_key_func      */
+            g_str_hash,               /* hash_value_func    */
+            g_str_equal);             /* key_equal_func     */
     }
     return gnc_string_cache;
 }
@@ -238,16 +265,20 @@ gnc_engine_get_string_cache(void)
 void
 gnc_engine_string_cache_destroy (void)
 {
+    if (gnc_string_cache)
   g_cache_destroy (gnc_string_cache);
   gnc_string_cache = NULL;
 }
 
-void gnc_string_cache_remove(gpointer key)
+void
+gnc_string_cache_remove(gconstpointer key)
 {
   g_cache_remove(gnc_engine_get_string_cache(), key);
 }
 
-gpointer gnc_string_cache_insert(gpointer key)
+
+gpointer
+gnc_string_cache_insert(gpointer key)
 {
   return g_cache_insert(gnc_engine_get_string_cache(), key);
 }

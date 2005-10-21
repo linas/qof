@@ -99,12 +99,14 @@ typedef enum {
   KVP_TYPE_FRAME       /**< no QOF equivalent. */
 } KvpValueType;
 
-/** \deprecated Deprecated backwards compat tokens 
+/** \deprecated Deprecated backwards compat token
 
 do \b not use these in new code. 
 */
 #define kvp_frame KvpFrame
+/** \deprecated Deprecated backwards compat token */
 #define kvp_value KvpValue
+/** \deprecated Deprecated backwards compat token */
 #define kvp_value_t KvpValueType
   
 /** @name KvpFrame Constructors

@@ -37,7 +37,7 @@
 #include "qofinstance.h"
 #include "qofinstance-p.h"
 
-static gchar* log_module = QOF_MOD_ENGINE;
+static QofLogModule log_module = QOF_MOD_ENGINE;
 
 /* ========================================================== */
 

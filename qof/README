@@ -1,6 +1,53 @@
                 QOF - Query Object Framework
                 ----------------------------
 
+Packagers and maintainers: Please see the HACKING file
+for specific advice on building against and packaging QOF.
+
+0.6.0 final release - October 2005.
+-----------------------------------
+
+The logging subsystem has been overhauled to make it more
+generic and easier to use with other applications.
+
+The backends are now loaded using GModule which requires each
+backend to use QofBackendProvider and install the .la file
+alongside the backend library in the *main* package, not the
+-dev or -devel package.
+
+v0.6.0 introduces libqof1 which will remain API compatible
+until all the changes below can be folded into libqof2:
+
+	1. All gnucash-specific code to be removed. Most of this
+		has been done in v0.6.0
+	2. Filename and function name conventions to be made to 
+		conform to a single method:
+		filenames: qof<module>.c|h
+		functions: qof_<module>_<function>_ ...
+		e.g. gnc_date.h becomes qofdate.h
+		qof_book_mergeInit becomes qof_book_merge_init
+		gnc_numeric_zero becomes qof_numeric_zero
+		gnc_set_logfile becomes qof_log_setfile.
+		gnc-trace.c|h becomes qoflog.c|h
+	3. These changes will be made by deprecating old names
+		and making old files into placeholders. When libqof2
+		is ready for pre-release, all deprecated elements will
+		include compiler flags that will highlight the code that
+		needs to be changed and placeholder files may be removed
+		at this stage. All flags and deprecated code will
+		then be removed in the final libqof2 release.
+	4. To make this change easier, the qof.h header has been fixed
+		in v0.6.0 and is now the only header file required to be
+		included to use QOF. Using individual header files in 
+		applications linked against QOF is now *deprecated*. All
+		code that uses QOF should only use:
+		#include <qof.h>
+		// or
+		#include "qof.h"
+		This is the only file guaranteed to maintain access to the
+		full QOF API during the entire life of libqof1 and libqof2.
+		
+
 0.6.0-pre1 release notes - Sept 05
 ----------------------------------
 
@@ -83,15 +130,7 @@ file for more info.
 Linking/Building
 ----------------
 This version of QOF uses the 'pkg' system of managing include files
-and libraries.  To compile and link your program against QOF, include
-the following directives in your Makefile:
-
-QOF_CFLAGS = `pkg-config qof-1 --cflags`
-QOF_LIBS = `pkg-config qof-1 --libs`
-ACSUBST(QOF_CFLAGS)
-ACSUBST(QOF_LIBS)
-
-This will automatically supply the correct paths to include files and 
-libraries for your application.
+and libraries.  To compile and link your program against QOF, see the
+example in the HACKING file.
 
 ------------------------- END OF DOCUMENT -------------------------

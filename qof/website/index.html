@@ -13,6 +13,7 @@
 <li><a href="#intro">Introduction</a></li>
 <li><a href="http://sourceforge.net/projects/qof/">SourceForge</a></li>
 <li><a href="#docs">Documentation</a></li>
+<li><a href="#devel">Development</a></li>
 <li><a href="#example">Examples</a><ul>
 <li><a href="#generate">Generating</a></li>
 <li><a href="#online">Online</a></li></ul>
@@ -82,6 +83,23 @@ once built using doxygen:
 <a href="http://code.neil.williamsleesmill.me.uk/">book merge</a>
 and the <a href="http://code.neil.williamsleesmill.me.uk/qsf.html">XML
 backend</a> designs.</p>
+</div>
+<hr><h2 id="devel">Development</h2>
+<h3>Building against or packaging QOF</h3>
+<div><p>The HACKING file in the source includes specific advice on
+building with QOF and packaging QOF for your distribution, including:</p>
+<ol style="list-style-type: lower-roman"><li>Building against QOF
+<ol style="list-style-type: lower-roman">
+<li>AUTOMAKE example</li>
+<li>libqof1 API/ABI compatibility.</li>
+<li>MAX_REQUIRED specifiers.</li>
+<li>DWI is optional.</li></ol></li>
+<li>Packaging QOF.<ol>
+<li>libqof-backend-qsf.la is REQUIRED in libqof1.</li>
+<li>libxml2 >= 2.5.10</li>
+<li>There is no QOF dependency on Gtk!</li></ol></li>
+<li>Using libqof-dev</li>
+<li>Replacement of lib/libsql</li></ol>
 </div>
 <hr><h2 id="support">Support</h2>
 <div><p>Support should be obtained by subscribing to the mailing list:

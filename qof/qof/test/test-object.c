@@ -24,10 +24,7 @@
  */
 #include <glib.h>
 
-#include "guid.h"
-#include "gnc-engine-util.h"
-#include "qofbook.h"
-#include "qofobject.h"
+#include "qof.h"
 
 #include "test-stuff.h"
 

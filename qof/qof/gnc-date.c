@@ -27,7 +27,7 @@
 #define __EXTENSIONS__
 
 #include "config.h"
-
+/* to be renamed qofdate.c */
 #include <ctype.h>
 
 #ifdef HAVE_LANGINFO_D_FMT
@@ -42,7 +42,6 @@
 #include <glib.h>
 
 #include "gnc-date.h"
-#include "gnc-engine-util.h"
 #include "gnc-trace.h"
 
 #ifndef HAVE_STRPTIME
@@ -70,7 +69,7 @@ static QofDateFormat dateFormat = QOF_DATE_FORMAT_LOCALE;
 static QofDateFormat prevQofDateFormat = QOF_DATE_FORMAT_LOCALE;
 
 /* This static indicates the debugging module that this .o belongs to. */
-static gchar* log_module = QOF_MOD_ENGINE;
+static QofLogModule log_module = QOF_MOD_ENGINE;
 
 /********************************************************************\
 \********************************************************************/
@@ -236,12 +235,11 @@ timespec_abs(const Timespec *t)
   return retval;
 }
 
-/** \brief Converts any time on a day to midday that day.
+/* Converts any time on a day to midday that day.
 
  * given a timepair contains any time on a certain day (local time)
  * converts it to be midday that day.  
  */
-
 Timespec
 timespecCanonicalDayTime(Timespec t)
 {
@@ -408,7 +406,7 @@ return string
 
 Globals: dateFormat
 */
-const gchar *qof_date_format_get_format(QofDateFormat df)
+const gchar *qof_date_text_format_get_string(QofDateFormat df)
 {
   switch(df) {
    case QOF_DATE_FORMAT_US:
@@ -1321,6 +1319,8 @@ gnc_timet_get_day_end (time_t time_val)
   return mktime(&tm);
 }
 
+
+#ifndef GNUCASH_MAJOR_VERSION
 time_t
 gnc_timet_get_day_start_gdate (GDate *date)
 {
@@ -1352,6 +1352,7 @@ gnc_timet_get_day_end_gdate (GDate *date)
   secs = mktime (&stm);
   return secs;
 }
+#endif /* GNUCASH_MAJOR_VERSION */
 
 /* ======================================================== */
 

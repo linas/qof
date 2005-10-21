@@ -22,7 +22,7 @@
 
 /**
     @file qofsql.c
-    @brief QOF client-side SQL parser.
+    @brief QOF client-side SQL parser - interfaces with libgda.
     @author Copyright (C) 2004 Linas Vepstas <linas@linas.org>
 
 */
@@ -51,7 +51,7 @@
 #include "qofinstance-p.h"
 #include "qofobject.h"
 
-static gchar* log_module = QOF_MOD_QUERY;
+static QofLogModule log_module = QOF_MOD_QUERY;
 
 /* =================================================================== */
 

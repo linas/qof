@@ -270,7 +270,7 @@ struct QofBackendProvider_s
   so each one is passed the path to the data (e.g. a file) and
   should return TRUE only:
 -# if the backend recognises the type as one that it can load and write or 
--#if the path contains no data but can be used (e.g. a new session).
+-# if the path contains no data but can be used (e.g. a new session).
   
   \note If the backend can cope with more than one type, the backend
   should not try to store or cache the sub-type for this data.
@@ -329,8 +329,7 @@ struct QofBackend_s
    */
   char * fullpath;
 
-#ifdef GNUCASH_MAJOR_VERSION
-  /** XXX price_lookup should be removed during the redesign
+  /** \deprecated price_lookup should be removed during the redesign
    * of the SQL backend... prices can now be queried using
    * the generic query mechanism.
    *
@@ -340,13 +339,12 @@ struct QofBackend_s
    */
   void (*price_lookup) (QofBackend *, gpointer);
 
-  /** XXX Export should really _NOT_ be here, but is left here for now.
+  /** \deprecated Export should really _NOT_ be here, but is left here for now.
    * I'm not sure where this should be going to. It should be
    * removed ASAP.   This is a temporary hack-around until period-closing
    * is fully implemented.
    */
   void (*export) (QofBackend *, QofBook *);
-#endif
 
 };
 
@@ -378,6 +376,31 @@ void qof_backend_set_message(QofBackend *be, const char *format, ...);
 char * qof_backend_get_message(QofBackend *be);
 
 void qof_backend_init(QofBackend *be);
+
+/** Allow backends to see if the book is open 
+
+@return 'y' if book is open, otherwise 'n'.
+*/
+gchar qof_book_get_open_marker(QofBook *book);
+
+/** get the book version
+
+used for tracking multiuser updates in backends.
+
+@return -1 if no book exists, 0 if the book is
+new, otherwise the book version number.
+*/
+gint32 qof_book_get_version (QofBook *book);
+
+/** get the book tag number
+
+used for kvp management in sql backends.
+*/
+guint32 qof_book_get_idata (QofBook *book);
+
+void qof_book_set_version (QofBook *book, gint32 version);
+
+void qof_book_set_idata(QofBook *book, guint32 idata);
 
 /* @} */
 /* @} */

@@ -24,11 +24,11 @@
 #define _GNU_SOURCE
 
 #include <libxml/xmlversion.h>
+#include "qof-backend-qsf.h"
 #include "qsf-dir.h"
 #include "qsf-xml.h"
-#include "qof-backend-qsf.h"
 
-static gchar* log_module = QOF_MOD_QSF;
+static QofLogModule log_module = QOF_MOD_QSF;
 
 void qsf_free_params(qsf_param *params)
 {
@@ -38,8 +38,7 @@ void qsf_free_params(qsf_param *params)
 		g_list_free(params->referenceList);
 	}
 	g_slist_free(params->supported_types);
-	xmlFreeDoc(params->output_doc);
-	xmlFreeNs(params->map_ns);
+	if(params->map_ns) { xmlFreeNs(params->map_ns); }
 }
 
 int

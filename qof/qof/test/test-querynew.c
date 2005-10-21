@@ -22,12 +22,8 @@
 #include <glib.h>
 #include <stdio.h>
 
-#include "guid.h"
-#include "gnc-engine-util.h"
-#include "qofobject.h"
+#include "qof.h"
 #include "qofclass-p.h"
-#include "qofquery.h"
-#include "qofquerycore.h"
 #include "qofquerycore-p.h"
 
 #include "test-stuff.h"
