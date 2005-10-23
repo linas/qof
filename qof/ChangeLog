@@ -1,3 +1,16 @@
+2005-10-23  Neil Williams <linux@codehelp.co.uk>
+
+	* debian/changelog : New upstream release.
+	* debian/libqof1.install : Ensure XML schemas and new
+	gettext translation is installed with libqof1.
+	* qof/gnc-date.c : Fix date string conversion to work
+	on broken mktime implementations.
+	* qof/gnc-date.h : Deprecate gnc_date_my_last_mday
+	* qof/test/test-date.c : Add more special case tests.
+	* rpm/qof1.spec : Add translation to sample RPM spec
+	file.
+	* website/index.html : Release update.
+
 2005-10-21  Neil Williams <linux@codehelp.co.uk>
 
 	* qof/gnc-date.h : Deprecating qof_date_format_get_format

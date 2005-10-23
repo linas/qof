@@ -506,7 +506,7 @@ int date_get_last_mday(struct tm *tm);
 /** Is the mday field the last day of the specified month.*/
 gboolean date_is_last_mday(struct tm *tm);
 
-/** DOCUMENT ME! Probably the same as date_get_last_mday() */
+/** \deprecated Use date_get_last_mday() */
 int gnc_date_my_last_mday (int month, int year);
 /** DOCUMENT ME! Probably the same as date_get_last_mday() */
 int gnc_timespec_last_mday (Timespec ts);

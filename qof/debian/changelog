@@ -1,3 +1,9 @@
+qof (0.6.0-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Neil Williams <linux@codehelp.co.uk>  Fri, 21 Oct 2005 19:04:14 +0000
+
 qof (0.5.99+0.6.0pre1-1) experimental; urgency=low
 
   * New upstream release

@@ -61,13 +61,14 @@ make uninstall
 %{_libdir}/libqofsql.la
 %{_libdir}/libqofsql.so
 %{_libdir}/libqofsql.so.1.0.1
+%{_datadir}/locale/en_GB/LC_MESSAGES/qof.mo
 %{_datadir}/xml/qof/qsf/pilot-qsf-GnuCashInvoice.xml
 %{_datadir}/xml/qof/qsf/qsf-map.xsd.xml
 %{_datadir}/xml/qof/qsf/qsf-object.xsd.xml
 
 %files devel
 %defattr(-,root,root)
-%doc AUTHORS INSTALL README NEWS ChangeLog TODO
+%doc AUTHORS HACKING INSTALL README NEWS ChangeLog TODO
 %{_libdir}/libqof.a
 %{_libdir}/libqofsql.a
 %{_libdir}/libqof-backend-qsf.a
@@ -85,6 +86,7 @@ make uninstall
 %{_includedir}/qof/qofbackend-p.h
 %{_includedir}/qof/qof-backend-qsf.h
 %{_includedir}/qof/qof-be-utils.h
+%{_includedir}/qof/qofla-dir.h
 %{_includedir}/qof/qofbook.h
 %{_includedir}/qof/qof_book_merge.h
 %{_includedir}/qof/qofclass.h

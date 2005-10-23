@@ -13,6 +13,7 @@
 <li><a href="#intro">Introduction</a></li>
 <li><a href="http://sourceforge.net/projects/qof/">SourceForge</a></li>
 <li><a href="#docs">Documentation</a></li>
+<li><a href="#download">Downloads</a></li>
 <li><a href="#devel">Development</a></li>
 <li><a href="#example">Examples</a><ul>
 <li><a href="#generate">Generating</a></li>
@@ -96,7 +97,7 @@ building with QOF and packaging QOF for your distribution, including:</p>
 <li>DWI is optional.</li></ol></li>
 <li>Packaging QOF.<ol>
 <li>libqof-backend-qsf.la is REQUIRED in libqof1.</li>
-<li>libxml2 >= 2.5.10</li>
+<li>libxml2 &gt;= 2.5.10</li>
 <li>There is no QOF dependency on Gtk!</li></ol></li>
 <li>Using libqof-dev</li>
 <li>Replacement of lib/libsql</li></ol>
@@ -112,9 +113,10 @@ Project</a>, where this framework is a deep, central component. QOF is basically
 the GnuCash "engine" with all of the financial objects removed. As such, QOF is
 "tried and true", and has proven its worth. However, this SourceForge project is
 listed as "alpha" because much work remains to be done, including the expanded
-support for SQL backends, scheme wrappers, and many other features. Currently,
-the QOF code is kept manually in sync with the GnuCash code; at some future
-date, the QOF core will be removed from GnuCash.</p>
+support for SQL backends, scheme wrappers and many other features.</p>
+<p>QOF has now been enabled as an external library for GnuCash and the QOF
+code is kept manually in sync with the GnuCash code prior to each QOF
+release; at some future date, the QOF core will be removed from GnuCash.</p>
 </div>
 <hr><h2 id="functions">Function</h2>
 <div><p>Besides the query framework, QOF also provides a number of other
@@ -221,12 +223,32 @@ backend. </p>
 </ul>
 </div>
 <hr>
+<h2 id="download">Downloads</h2>
+<div>
+<ul>
+<li>The source code release for v0.6.0 is available from <a title="qof-0.6.0.tar.gz"
+href="http://prdownloads.sourceforge.net/qof/qof-0.6.0-pre1.tar.gz?download"
+>SourceForge</a>.</li>
+<li>Debian packages will be available from the main mirrors soon but there
+are <b>test packages</b> available using a trivial apt repository.
+ (the / at the end of the URL is important.)<br/>
+<code>deb http://www.linux.codehelp.co.uk/ packages/<br/>
+deb-src http://www.linux.codehelp.co.uk/ packages/</code><br/>
+Please note that these are not the usual quality-assured Debian packages,
+these are only tests - demos if you will.</li>
+<li>There is also a sample .spec file available in QOF CVS, available 
+via <a href="http://cvs.sourceforge.net/viewcvs.py/qof/qof/rpm/">SourceForge</a>.
+<li>Packages are also planned for Fink and DarwinPorts (Mac OSX)</li>
+</ul>
+</div>
+
+<hr>
 <h2 id="status">Project Status</h2>
 <div>
 <p>This code is in active, daily use in
 <a href="http://www.gnucash.org">GnuCash</a>, and when used there, it is
 'stable' code.  However, the code in this CVS tree is under development,
-is lacking in certain desired features, and might not compile. Neil is adding
+and is lacking in certain desired features. Neil is adding
 documentation wherever and whenever possible and QOF generator will provide
 all the examples. The subroutine naming convention is being resolved by
 deprecating older GnuCash-specific naming conventions.</p>
@@ -234,19 +256,13 @@ deprecating older GnuCash-specific naming conventions.</p>
 <ul>
 <li><a href="http://gttr.sourceforge.net">GnoTime</a>.</li>
 <li><a href="http://pilot-qof.sourceforge.net/">Pilot-QOF</a>.</li>
-<li><a href="http://dwi.sourceforge.net/">DWI</a></li>
+<li><a href="http://dwi.sourceforge.net/">DWI</a>.</li>
+<li><a href="http://www.linux.codehelp.co.uk/cashutil/">CashUtil</a>.</li>
 </ul>
-<p>QOF is now available on pre-release at v0.6.0-pre1. A Debian
-experimental package will be available soon.</p>
-<p>Packages are also planned for Fink and DarwinPorts (Mac OSX) and a <a 
-href="http://sourceforge.net/docman/display_doc.php?docid=28363&amp;group_id=83302">
-sample .spec file</a> exists for RPM-based distributions.</p>
-<p>You can download code and find out more about the project at the
-<a href="http://sourceforge.net/projects/qof/">QOF SourceForge Project
-Site</a>.</p></div>
+</div>
 <hr>
 <div><p>Written by Linas Vepstas &lt;linas@linas.org&gt; April 2004<br/>
-Updated by Neil Williams &lt;linux@codehelp.co.uk&gt; May 2005.</p></div>
+Updated by Neil Williams &lt;linux@codehelp.co.uk&gt; October 2005.</p></div>
 <hr>
 <div><a href="http://sourceforge.net">
 <img src="http://sourceforge.net/sflogo.php?group_id=83302&amp;type=5"

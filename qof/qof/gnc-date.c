@@ -256,20 +256,16 @@ timespecCanonicalDayTime(Timespec t)
 
 int gnc_date_my_last_mday (int month, int year)
 {
-  gboolean is_leap;
-  static int days_in_month[2][12] =
-    {/* non leap */ {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31},
-     /*   leap   */ {31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}};
+  static int last_day_of_month[2][12] = {
+  /* non leap */ {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31},
+  /*   leap   */ {31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}
+  };
 
   /* Is this a leap year? */
-  if (year % 2000 == 0)
-    is_leap = TRUE;
-  else if (year % 400 == 0)
-      is_leap = FALSE;
-  else
-    is_leap = (year % 4 == 0);
-
-  return days_in_month[is_leap][month-1];
+  if (year % 2000 == 0) return last_day_of_month[1][month-1];
+  if (year % 400 == 0 ) return last_day_of_month[0][month-1];
+  if (year % 4   == 0 ) return last_day_of_month[1][month-1];
+  return last_day_of_month[0][month-1];
 }
 
 /* Retrieve the last numerical day of the month
@@ -1012,6 +1008,7 @@ Timespec
 gnc_iso8601_to_timespec_gmt(const char *str)
 {
   char buf[4];
+  gchar *dupe;
   Timespec ts;
   struct tm stm;
   long int nsec =0;
@@ -1019,7 +1016,7 @@ gnc_iso8601_to_timespec_gmt(const char *str)
   ts.tv_sec=0;
   ts.tv_nsec=0;
   if (!str) return ts;
-
+  dupe = g_strdup(str);
   stm.tm_year = atoi(str) - 1900;
   str = strchr (str, '-'); if (str) { str++; } else { return ts; }
   stm.tm_mon = atoi(str) - 1;
@@ -1078,7 +1075,7 @@ gnc_iso8601_to_timespec_gmt(const char *str)
    */
   {
     struct tm tmp_tm;
-    struct tm *tm;
+    struct tm tm;
     long int tz;
     int tz_hour;
     time_t secs;
@@ -1090,23 +1087,57 @@ gnc_iso8601_to_timespec_gmt(const char *str)
 
     secs = mktime (&tmp_tm);
 
+    if(secs < 0) 
+    {
+    /* Workaround buggy mktime implementations that get confused
+       on the day daylight saving starts or ends. (OSX) */
+      PWARN (" mktime failed to handle daylight saving: "
+       "tm_hour=%d tm_year=%d tm_min=%d tm_sec=%d tm_isdst=%d for string=%s", 
+        stm.tm_hour, stm.tm_year, stm.tm_min,
+        stm.tm_sec, stm.tm_isdst, dupe ); 
+      tmp_tm.tm_hour++;
+      secs = mktime (&tmp_tm);
+      if (secs < 0) 
+      { 
+      /* if, for some strange reason, first attempt didn't fix it,
+         try reversing the workaround. */
+        tmp_tm.tm_hour -= 2;
+        secs = mktime (&tmp_tm);
+      }
+      if (secs < 0) 
+      {
+        /* Seriously buggy mktime - give up.  */
+        PERR (" unable to recover from buggy mktime ");
+        g_free(dupe);
+        return ts;
+      }
+    }
+
     /* The call to localtime is 'bogus', but it forces 'timezone' to
      * be set. Note that we must use the accurate date, since the
      * value of 'gnc_timezone' includes daylight savings corrections
      * for that date. */
-    tm = localtime (&secs);
 
-    tz = gnc_timezone (tm);
+    tm = *localtime_r (&secs, &tm);
+
+    tz = gnc_timezone (&tmp_tm);
 
     tz_hour = tz / 3600;
     stm.tm_hour -= tz_hour;
-    stm.tm_min -= (tz - (3600 * tz_hour)) / 60;
+    stm.tm_min -= (tz % 3600) / 60;
     stm.tm_isdst = tmp_tm.tm_isdst;
-  }
-
   ts.tv_sec = mktime (&stm);
+    if(ts.tv_sec < 0) { 
+      PWARN (" mktime failed to adjust calculated time:"
+        " tm_hour=%d tm_year=%d tm_min=%d tm_sec=%d tm_isdst=%d", 
+        stm.tm_hour, stm.tm_year, stm.tm_min,
+        stm.tm_sec, stm.tm_isdst ); 
+      /* Try and make some sense of the result. */
+      ts.tv_sec = secs - tz;  
+    }
   ts.tv_nsec = nsec;
-
+  }
+  g_free(dupe);
   return ts;
 }
 
@@ -1116,8 +1147,8 @@ gnc_iso8601_to_timespec_gmt(const char *str)
 char * 
 gnc_timespec_to_iso8601_buff (Timespec ts, char * buff)
 {
-  int len;
-  int tz_hour, tz_min;
+  int len, tz_hour, tz_min;
+  long int secs;
   char cyn;
   time_t tmp;
   struct tm parsed;
@@ -1125,10 +1156,9 @@ gnc_timespec_to_iso8601_buff (Timespec ts, char * buff)
   tmp = ts.tv_sec;
   localtime_r(&tmp, &parsed);
 
-  tz_hour = gnc_timezone (&parsed) / 3600;
-  tz_min = (gnc_timezone (&parsed) - 3600*tz_hour) / 60;
-  if (0>tz_min) { tz_min +=60; tz_hour --; }
-  if (60<=tz_min) { tz_min -=60; tz_hour ++; }
+  secs = gnc_timezone (&parsed);
+  tz_hour = secs / 3600;
+  tz_min = (secs % 3600) / 60;
 
   /* We also have to print the sign by hand, to work around a bug
    * in the glibc 2.1.3 printf (where %+02d fails to zero-pad).
@@ -1267,7 +1297,7 @@ gnc_timezone (struct tm *tm)
   /* timezone is seconds *west* of UTC and is
    * not adjusted for daylight savings time.
    * In Spring, we spring forward, wheee! */
-  return timezone - (tm->tm_isdst > 0 ? 60 * 60 : 0);
+  return (long int)(timezone - (tm->tm_isdst > 0 ? 3600 : 0));
 #endif
 }
 

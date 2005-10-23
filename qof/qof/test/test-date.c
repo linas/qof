@@ -310,9 +310,21 @@ run_test (void)
   ts = gnc_iso8601_to_timespec_gmt ("2008-02-28 23:23:23.000000 -0000");
   check_time (ts, do_print);
 
-  /* Various 'special' times. What makes these so special? */
+  /* Various 'special' times e.g. times before and after daylight saving */
+
+  ts.tv_sec = 796179600;
+  ts.tv_nsec = 0;
+  check_time (ts, do_print);
+
+  ts.tv_sec = 796179500;
+  ts.tv_nsec = 72000;
+  check_time (ts, do_print);
 
   ts.tv_sec = 152098136;
+  ts.tv_nsec = 0;
+  check_time (ts, do_print);
+
+  ts.tv_sec = 1964049931;
   ts.tv_nsec = 0;
   check_time (ts, do_print);
 
@@ -356,15 +368,14 @@ run_test (void)
   ts.tv_nsec = 0;
   check_time (ts, do_print);
 
-//  srand(time(0));
+  srand(time(0));
 
   ts = *get_random_timespec ();
 
   for (i = 0; i < 10000; i++)
   {
     ts.tv_sec += 10800;
-    if (!check_time (ts, FALSE))
-      return;
+    check_time (ts, FALSE);
   }
 
   for (i = 0; i < 5000; i++)
