@@ -14,7 +14,7 @@
  * along with this program; if not, contact:                        *
  *                                                                  *
  * Free Software Foundation           Voice:  +1-617-542-5942       *
- * 59 Temple Place - Suite 330        Fax:    +1-617-542-2652       *
+ * 51 Franklin Street, Fifth Floor    Fax:    +1-617-542-2652       *
  * Boston, MA  02111-1307,  USA       gnu@gnu.org                   *
  *                                                                  *
 \********************************************************************/
@@ -74,7 +74,7 @@
 /** @} */
 
 #include "qofid.h"
-#include "gnc-trace.h"
+#include "qoflog.h"
 #include "gnc-date.h"
 #include "gnc-numeric.h"
 #include "gnc-event.h"
@@ -97,5 +97,6 @@
 #include "qof_book_merge.h"
 #include "qof-be-utils.h"
 #include "qofla-dir.h"
+#include "deprecated.h"
 
 #endif /* QOF_H_ */

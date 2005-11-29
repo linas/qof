@@ -16,7 +16,7 @@
  * along with this program; if not, contact:                        *
  *                                                                  *
  * Free Software Foundation           Voice:  +1-617-542-5942       *
- * 59 Temple Place - Suite 330        Fax:    +1-617-542-2652       *
+ * 51 Franklin Street, Fifth Floor    Fax:    +1-617-542-2652       *
  * Boston, MA  02111-1307,  USA       gnu@gnu.org                   *
  *                                                                  *
 \********************************************************************/
@@ -25,7 +25,7 @@
 
 #include <glib.h>
 
-#include "gnc-trace.h"
+#include "qoflog.h"
 #include "gnc-engine-util.h"
 #include "qofclass.h"
 #include "qofclass-p.h"
@@ -43,7 +43,46 @@ static gboolean clear_table (gpointer key, gpointer value, gpointer user_data)
   return TRUE;
 }
 
-/********************************************************************/
+/* *******************************************************************/
+/* PRIVATE FUNCTIONS */
+
+static gboolean check_init (void)
+{
+    if (initialized) return TRUE;
+
+    PERR("You must call qof_class_init() before using qof_class.");
+    return FALSE;
+}
+
+void
+qof_class_init(void)
+{
+  if (initialized) return;
+  initialized = TRUE;
+
+  classTable = g_hash_table_new (g_str_hash, g_str_equal);
+  sortTable = g_hash_table_new (g_str_hash, g_str_equal);
+}
+
+void
+qof_class_shutdown (void)
+{
+  if (!initialized) return;
+  initialized = FALSE;
+
+  g_hash_table_foreach_remove (classTable, clear_table, NULL);
+  g_hash_table_destroy (classTable);
+  g_hash_table_destroy (sortTable);
+}
+
+QofSortFunc
+qof_class_get_default_sort (QofIdTypeConst obj_name)
+{
+  if (!obj_name) return NULL;
+  return g_hash_table_lookup (sortTable, obj_name);
+}
+
+/* *******************************************************************/
 /* PUBLISHED API FUNCTIONS */
 
 void 
@@ -55,6 +94,7 @@ qof_class_register (QofIdTypeConst obj_name,
   int i;
 
   if (!obj_name) return;
+  if (!check_init()) return;
 
   if (default_sort_function)
   {
@@ -83,31 +123,11 @@ qof_class_register (QofIdTypeConst obj_name,
   }
 }
 
-void 
-qof_class_init(void)
-{
-  if (initialized) return;
-  initialized = TRUE;
-
-  classTable = g_hash_table_new (g_str_hash, g_str_equal);
-  sortTable = g_hash_table_new (g_str_hash, g_str_equal);
-}
-
-void 
-qof_class_shutdown (void)
-{
-  if (!initialized) return;
-  initialized = FALSE;
-
-  g_hash_table_foreach_remove (classTable, clear_table, NULL);
-  g_hash_table_destroy (classTable);
-  g_hash_table_destroy (sortTable);
-}
-
 gboolean
 qof_class_is_registered (QofIdTypeConst obj_name)
 {
   if (!obj_name) return FALSE;
+  if (!check_init()) return FALSE;
 
   if (g_hash_table_lookup (classTable, obj_name)) return TRUE;
 
@@ -122,6 +142,7 @@ qof_class_get_parameter (QofIdTypeConst obj_name,
 
   g_return_val_if_fail (obj_name, NULL);
   g_return_val_if_fail (parameter, NULL);
+  if (!check_init()) return NULL;
 
   ht = g_hash_table_lookup (classTable, obj_name);
   if (!ht)
@@ -177,13 +198,6 @@ qof_class_get_parameter_type (QofIdTypeConst obj_name,
   if (!prm) return NULL;
 
   return (prm->param_type);
-}
-
-QofSortFunc 
-qof_class_get_default_sort (QofIdTypeConst obj_name)
-{
-  if (!obj_name) return NULL;
-  return g_hash_table_lookup (sortTable, obj_name);
 }
 
 /* ================================================================ */

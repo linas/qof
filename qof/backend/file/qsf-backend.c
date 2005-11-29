@@ -19,7 +19,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 #define _GNU_SOURCE
@@ -970,8 +970,7 @@ qsf_object_commitCB(gpointer key, gpointer value, gpointer data)
 	void (*char_setter)      (QofEntity*, char);
 	void (*kvp_frame_setter) (QofEntity*, KvpFrame*);
 	
-	g_return_if_fail(data != NULL);
-	g_return_if_fail(value != NULL);
+	g_return_if_fail(data && value && key);
 	params = (qsf_param*)data;
 	node = (xmlNodePtr)value;
 	parameter_name = (const char*)key;

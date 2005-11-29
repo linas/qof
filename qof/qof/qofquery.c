@@ -16,8 +16,8 @@
  * along with this program; if not, contact:                        *
  *                                                                  *
  * Free Software Foundation           Voice:  +1-617-542-5942       *
- * 59 Temple Place - Suite 330        Fax:    +1-617-542-2652       *
- * Boston, MA  02111-1307,  USA       gnu@gnu.org                   *
+ * 51 Franklin Street, Fifth Floor    Fax:    +1-617-542-2652       *
+ * Boston, MA  02110-1301,  USA       gnu@gnu.org                   *
  *                                                                  *
 \********************************************************************/
 
@@ -29,7 +29,7 @@
 #include <regex.h>
 #include <string.h>
 
-#include "gnc-trace.h"
+#include "qoflog.h"
 #include "gnc-engine-util.h"
 
 #include "qofbackend-p.h"
@@ -1273,6 +1273,7 @@ void qof_query_init (void)
   ENTER (" ");
   qof_query_core_init ();
   qof_class_init ();
+  LEAVE ("Completed initialization of QofQuery");
 }
 
 void qof_query_shutdown (void)
@@ -1472,7 +1473,7 @@ qof_query_print (QofQuery * query)
   }
 
   str = g_string_new (" ");
-  g_string_sprintf (str, "Maximum number of results: %d", maxResults);
+  g_string_printf (str, "Maximum number of results: %d", maxResults);
   output = g_list_append (output, str);
 
   qof_query_printOutput (output);
@@ -1488,7 +1489,7 @@ qof_query_printOutput (GList * output)
   {
     GString *line = (GString *) lst->data;
 
-    fprintf (stderr, "%s\n", line->str);
+    DEBUG (" %s", line->str);
     g_string_free (line, TRUE);
     line = NULL;
   }
@@ -1553,7 +1554,7 @@ qof_query_printSorts (QofQuerySort *s[], const gint numSorts, GList * output)
 {
   GSList *gsl, *n = NULL;
   gint curSort;
-  GString *gs = g_string_new ("  Sort Parameters:\n");
+  GString *gs = g_string_new ("  Sort Parameters:   ");
 
   for (curSort = 0; curSort < numSorts; curSort++)
   {
@@ -1565,17 +1566,17 @@ qof_query_printSorts (QofQuerySort *s[], const gint numSorts, GList * output)
     increasing = qof_query_sort_get_increasing (s[curSort]);
 
     gsl = qof_query_sort_get_param_path (s[curSort]); 
-    if (gsl) g_string_sprintfa (gs, "    Param: ");
+    if (gsl) g_string_append_printf (gs, "    Param: ");
     for (n=gsl; n; n = n->next)
     {
       QofIdType param_name = n->data;
-      if (gsl != n)g_string_sprintfa (gs, "\n           ");
-      g_string_sprintfa (gs, "%s", param_name);
+      if (gsl != n) g_string_append_printf (gs, "           ");
+      g_string_append_printf (gs, "%s", param_name);
     }
     if (gsl) 
     {
-      g_string_sprintfa (gs, " %s\n", increasing ? "DESC" : "ASC");
-      g_string_sprintfa (gs, "    Options: 0x%x\n", s[curSort]->options);
+      g_string_append_printf (gs, " %s ", increasing ? "DESC" : "ASC");
+      g_string_append_printf (gs, "    Options: 0x%x  ", s[curSort]->options);
     }
   }
 
@@ -1610,7 +1611,7 @@ qof_query_printAndTerms (GList * terms, GList * output)
                                      g_string_new("    INVERT SENSE "));
     output = g_list_append (output, qof_query_printParamPath (path));
     output = g_list_append (output, qof_query_printPredData (pd));
-    output = g_list_append (output, g_string_new("\n"));
+//    output = g_list_append (output, g_string_new(" "));
   }
 
   return output;
@@ -1623,7 +1624,7 @@ static GString *
 qof_query_printParamPath (GSList * parmList)
 {
   GSList *list = NULL;
-  GString *gs = g_string_new ("    Param List:\n");
+  GString *gs = g_string_new ("    Param List: ");
   g_string_append (gs, "      ");
   for (list = parmList; list; list = list->next)
   {
@@ -1643,14 +1644,14 @@ qof_query_printPredData (QofQueryPredData *pd)
 {
   GString *gs;
 
-  gs = g_string_new ("    Pred Data:\n      ");
+  gs = g_string_new ("    Pred Data:      ");
   g_string_append (gs, (gchar *) pd->type_name);
 
   /* Char Predicate and GUID predicate don't use the 'how' field. */
   if (safe_strcmp (pd->type_name, QOF_TYPE_CHAR) &&
       safe_strcmp (pd->type_name, QOF_TYPE_GUID))
   {
-    g_string_sprintfa (gs, "\n      how: %s",
+    g_string_append_printf (gs, "      how: %s",
                        qof_query_printStringForHow (pd->how));
   }
 
@@ -1695,12 +1696,12 @@ qof_query_printValueForParam (QofQueryPredData *pd, GString * gs)
   {
     GList *node;
     query_guid_t pdata = (query_guid_t) pd;
-    g_string_sprintfa (gs, "\n      Match type %s",
+    g_string_append_printf (gs, "      Match type %s",
                        qof_query_printGuidMatch (pdata->options));
     for (node = pdata->guids; node; node = node->next)
     {
 	  /* THREAD-UNSAFE */
-      g_string_sprintfa (gs, ", guids: %s",
+      g_string_append_printf (gs, ", guids: %s",
 			 guid_to_string ((GUID *) node->data));
     }
     return;
@@ -1708,9 +1709,9 @@ qof_query_printValueForParam (QofQueryPredData *pd, GString * gs)
   if (!safe_strcmp (pd->type_name, QOF_TYPE_STRING))
   {
     query_string_t pdata = (query_string_t) pd;
-    g_string_sprintfa (gs, "\n      Match type %s",
+    g_string_append_printf (gs, "      Match type %s",
                        qof_query_printStringMatch (pdata->options));
-    g_string_sprintfa (gs, " %s string: %s",
+    g_string_append_printf (gs, " %s string: %s",
                        pdata->is_regex ? "Regex" : "Not regex",
                        pdata->matchstring);
     return;
@@ -1718,9 +1719,9 @@ qof_query_printValueForParam (QofQueryPredData *pd, GString * gs)
   if (!safe_strcmp (pd->type_name, QOF_TYPE_NUMERIC))
   {
     query_numeric_t pdata = (query_numeric_t) pd;
-    g_string_sprintfa (gs, "\n      Match type %s",
+    g_string_append_printf (gs, "      Match type %s",
                        qof_query_printNumericMatch (pdata->options));
-    g_string_sprintfa (gs, " gnc_numeric: %s",
+    g_string_append_printf (gs, " gnc_numeric: %s",
                        gnc_num_dbg_to_string (pdata->amount));
     return;
   }
@@ -1728,54 +1729,54 @@ qof_query_printValueForParam (QofQueryPredData *pd, GString * gs)
   {
     GSList *node;
     query_kvp_t pdata = (query_kvp_t) pd;
-    g_string_sprintfa (gs, "\n      kvp path: ");
+    g_string_append_printf (gs, "      kvp path: ");
     for (node = pdata->path; node; node = node->next)
     {
-      g_string_sprintfa (gs, "/%s", (gchar *) node->data);
+      g_string_append_printf (gs, "/%s", (gchar *) node->data);
     }
-    g_string_sprintfa (gs, "\n");
-    g_string_sprintfa (gs, "      kvp value: %s\n", 
+//    g_string_append_printf (gs, "");
+    g_string_append_printf (gs, "      kvp value: %s ", 
                          kvp_value_to_string (pdata->value));
     return;
   }
   if (!safe_strcmp (pd->type_name, QOF_TYPE_INT64))
   {
     query_int64_t pdata = (query_int64_t) pd;
-    g_string_sprintfa (gs, " int64: %" G_GINT64_FORMAT, pdata->val);
+    g_string_append_printf (gs, " int64: %" G_GINT64_FORMAT, pdata->val);
     return;
   }
   if (!safe_strcmp (pd->type_name, QOF_TYPE_INT32))
   {
     query_int32_t pdata = (query_int32_t) pd;
-    g_string_sprintfa (gs, " int32: %d", pdata->val);
+    g_string_append_printf (gs, " int32: %d", pdata->val);
     return;
   }
   if (!safe_strcmp (pd->type_name, QOF_TYPE_DOUBLE))
   {
     query_double_t pdata = (query_double_t) pd;
-    g_string_sprintfa (gs, " double: %.18g", pdata->val);
+    g_string_append_printf (gs, " double: %.18g", pdata->val);
     return;
   }
   if (!safe_strcmp (pd->type_name, QOF_TYPE_DATE))
   {
     query_date_t pdata = (query_date_t) pd;
-    g_string_sprintfa (gs, "\n      Match type %s",
+    g_string_append_printf (gs, "       Match type %s",
                        qof_query_printDateMatch (pdata->options));
-    g_string_sprintfa (gs, " query_date: %s", gnc_print_date (pdata->date));
+    g_string_append_printf (gs, " query_date: %s", gnc_print_date (pdata->date));
     return;
   }
   if (!safe_strcmp (pd->type_name, QOF_TYPE_CHAR))
   {
     query_char_t pdata = (query_char_t) pd;
-    g_string_sprintfa (gs, "\n      Match type %s",
+    g_string_append_printf (gs, "       Match type %s",
                        qof_query_printCharMatch (pdata->options));
-    g_string_sprintfa (gs, " char list: %s", pdata->char_list);
+    g_string_append_printf (gs, " char list: %s", pdata->char_list);
     return;
   }
   if (!safe_strcmp (pd->type_name, QOF_TYPE_BOOLEAN))
   {
     query_boolean_t pdata = (query_boolean_t) pd;
-    g_string_sprintfa (gs, " boolean: %s", pdata->val?"TRUE":"FALSE");
+    g_string_append_printf (gs, " boolean: %s", pdata->val?"TRUE":"FALSE");
     return;
   }
   /** \todo QOF_TYPE_COLLECT */

@@ -15,8 +15,8 @@
  * along with this program; if not, contact:                        *
  *                                                                  *
  * Free Software Foundation           Voice:  +1-617-542-5942       *
- * 59 Temple Place - Suite 330        Fax:    +1-617-542-2652       *
- * Boston, MA  02111-1307,  USA       gnu@gnu.org                   *
+ * 51 Franklin Street, Fifth Floor    Fax:    +1-617-542-2652       *
+ * Boston, MA  02110-1301,  USA       gnu@gnu.org                   *
 \********************************************************************/
 
 /**
@@ -42,7 +42,7 @@
 
 #include <glib.h>
 #include "qofla-dir.h"
-#include "gnc-trace.h"
+#include "qoflog.h"
 #include "gnc-engine-util.h"
 #include "gnc-event.h"
 #include "qofsession.h"
@@ -325,7 +325,7 @@ qof_book_set_partial(QofBook *book)
 	partial =
          (gboolean)GPOINTER_TO_INT(qof_book_get_data(book, PARTIAL_QOFBOOK));
 	if(!partial) {
-		qof_book_set_data(book, PARTIAL_QOFBOOK, (gboolean*)TRUE);
+		qof_book_set_data(book, PARTIAL_QOFBOOK, GINT_TO_POINTER(TRUE));
 	}
 }
 

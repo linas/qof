@@ -14,7 +14,7 @@
  * along with this program; if not, contact:                        *
  *                                                                  *
  * Free Software Foundation           Voice:  +1-617-542-5942       *
- * 59 Temple Place - Suite 330        Fax:    +1-617-542-2652       *
+ * 51 Franklin Street, Fifth Floor    Fax:    +1-617-542-2652       *
  * Boston, MA  02111-1307,  USA       gnu@gnu.org                   *
  *                                                                  *
 \********************************************************************/
@@ -35,7 +35,7 @@
 #ifndef QOF_BE_UTILS_H
 #define QOF_BE_UTILS_H
 
-#include "gnc-trace.h"
+#include "qoflog.h"
 #include "gnc-engine-util.h"
 #include "qofbackend-p.h"
 #include "qofbook.h"
@@ -52,7 +52,6 @@
  */
 
 #define QOF_BEGIN_EDIT(inst)                                        \
-  QofBackend * be;                                                  \
   if (!(inst)) return;                                              \
                                                                     \
   (inst)->editlevel++;                                              \
@@ -66,12 +65,15 @@
   ENTER ("(inst=%p)", (inst));                                      \
                                                                     \
   /* See if there's a backend.  If there is, invoke it. */          \
+  {                                                                 \
+    QofBackend * be;                                                \
   be = qof_book_get_backend ((inst)->book);                         \
-    if (be && qof_backend_begin_exists((be))) {                     \
-     qof_backend_run_begin((be), (inst));                           \
+      if (be && qof_backend_begin_exists(be)) {                     \
+         qof_backend_run_begin(be, (inst));                         \
   } else {                                                          \
      /* We tried and failed to start transaction! */                \
      (inst)->dirty = TRUE;                                          \
+  }                                                                 \
   }                                                                 \
   LEAVE (" ");
 
@@ -109,8 +111,8 @@ gboolean qof_begin_edit(QofInstance *inst);
   {                                                              \
     QofBackend * be;                                             \
     be = qof_book_get_backend ((inst)->book);                    \
-    if (be && qof_backend_begin_exists((be))) {                  \
-     qof_backend_run_begin((be), (inst));                        \
+    if (be && qof_backend_begin_exists(be)) {                    \
+      qof_backend_run_begin(be, (inst));                         \
     }                                                            \
     (inst)->editlevel = 0;                                       \
   }                                                              \
@@ -148,7 +150,7 @@ gboolean qof_commit_edit(QofInstance *inst);
                                                                  \
   /* See if there's a backend.  If there is, invoke it. */       \
   be = qof_book_get_backend ((inst)->book);                      \
-  if (be && qof_backend_commit_exists((be)))                     \
+  if (be && qof_backend_commit_exists(be))                       \
   {                                                              \
     QofBackendError errcode;                                     \
                                                                  \
@@ -157,7 +159,7 @@ gboolean qof_commit_edit(QofInstance *inst);
       errcode = qof_backend_get_error (be);                      \
     } while (ERR_BACKEND_NO_ERR != errcode);                     \
                                                                  \
-    qof_backend_run_commit((be), (inst));                        \
+    qof_backend_run_commit(be, (inst));                          \
     errcode = qof_backend_get_error (be);                        \
     if (ERR_BACKEND_NO_ERR != errcode)                           \
     {                                                            \

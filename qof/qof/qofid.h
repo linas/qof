@@ -15,7 +15,7 @@
  * along with this program; if not, contact:                        *
  *                                                                  *
  * Free Software Foundation           Voice:  +1-617-542-5942       *
- * 59 Temple Place - Suite 330        Fax:    +1-617-542-2652       *
+ * 51 Franklin Street, Fifth Floor    Fax:    +1-617-542-2652       *
  * Boston, MA  02111-1307,  USA       gnu@gnu.org                   *
  *                                                                  *
 \********************************************************************/
@@ -110,8 +110,8 @@ typedef const gchar* QofLogModule;
 })
 
 /** return TRUE if object is of the given type */
-#define QOF_CHECK_TYPE(obj,type) \
-  (0 == QSTRCMP((type),(((QofEntity *)(obj))->e_type)))
+#define QOF_CHECK_TYPE(obj,type) (((obj) != NULL) && \
+  (0 == QSTRCMP((type),(((QofEntity *)(obj))->e_type))))
 
 /** cast object to the indicated type,
 print error message if its bad  */
@@ -185,8 +185,8 @@ QofEntity * qof_collection_lookup_entity (QofCollection *, const GUID *);
 typedef void (*QofEntityForeachCB) (QofEntity *, gpointer user_data);
 
 /** Call the callback for each entity in the collection. */
-void qof_collection_foreach (QofCollection *, 
-                       QofEntityForeachCB, gpointer user_data);
+void qof_collection_foreach (QofCollection *, QofEntityForeachCB, 
+                             gpointer user_data);
 
 /** Store and retreive arbitrary object-defined data 
  *

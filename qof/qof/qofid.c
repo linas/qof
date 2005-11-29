@@ -17,7 +17,7 @@
  * along with this program; if not, contact:                        *
  *                                                                  *
  * Free Software Foundation           Voice:  +1-617-542-5942       *
- * 59 Temple Place - Suite 330        Fax:    +1-617-542-2652       *
+ * 51 Franklin Street, Fifth Floor    Fax:    +1-617-542-2652       *
  * Boston, MA  02111-1307,  USA       gnu@gnu.org                   *
  *                                                                  *
 \********************************************************************/
@@ -29,7 +29,7 @@
 
 #include "qofid.h"
 #include "qofid-p.h"
-#include "gnc-trace.h"
+#include "qoflog.h"
 #include "gnc-engine-util.h"
 
 static QofLogModule log_module = QOF_MOD_ENGINE;
@@ -289,7 +289,7 @@ qof_collection_lookup_entity (QofCollection *col, const GUID * guid)
   QofEntity *ent;
   g_return_val_if_fail (col, NULL);
   if (guid == NULL) return NULL;
-  ent = g_hash_table_lookup (col->hash_of_entities, guid->data);
+  ent = g_hash_table_lookup (col->hash_of_entities, guid);
   return ent;
 }
 
@@ -326,22 +326,19 @@ qof_collection_count (QofCollection *col)
 gboolean 
 qof_collection_is_dirty (QofCollection *col)
 {
-   if (!col) return FALSE;
-   return col->is_dirty;
+   return col ? col->is_dirty : FALSE;
 }
 
 void 
 qof_collection_mark_clean (QofCollection *col)
 {
-   if (!col) return;
-   col->is_dirty = FALSE;
+   if (!col) { col->is_dirty = FALSE; }
 }
 
 void 
 qof_collection_mark_dirty (QofCollection *col)
 {
-   if (!col) return;
-   col->is_dirty = TRUE;
+   if (!col) { col->is_dirty = TRUE; }
 }
 
 /* =============================================================== */
@@ -349,15 +346,13 @@ qof_collection_mark_dirty (QofCollection *col)
 gpointer 
 qof_collection_get_data (QofCollection *col)
 {
-   if (!col) return NULL;
-   return col->data;
+   return col ? col->data : NULL;
 }
 
 void 
 qof_collection_set_data (QofCollection *col, gpointer user_data)
 {
-   if (!col) return;
-   col->data = user_data;
+   if (!col) { col->data = user_data; }
 }
 
 /* =============================================================== */
@@ -376,8 +371,8 @@ static void foreach_cb (gpointer key, gpointer item, gpointer arg)
 }
 
 void
-qof_collection_foreach (QofCollection *col, 
-                   QofEntityForeachCB cb_func, gpointer user_data)
+qof_collection_foreach (QofCollection *col, QofEntityForeachCB cb_func, 
+                        gpointer user_data)
 {
   struct _iterate iter;
 

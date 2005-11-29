@@ -15,7 +15,7 @@
  * along with this program; if not, contact:                        *
  *                                                                  *
  * Free Software Foundation           Voice:  +1-617-542-5942       *
- * 59 Temple Place - Suite 330        Fax:    +1-617-542-2652       *
+ * 51 Franklin Street, Fifth Floor    Fax:    +1-617-542-2652       *
  * Boston, MA  02111-1307,  USA       gnu@gnu.org                   *
  *                                                                  *
 \********************************************************************/
@@ -27,8 +27,7 @@
  * Copyright (C) 2003 Linas Vepstas <linas@linas.org>
  */
 
-#include "gnc-trace.h"
-
+#include "qoflog.h"
 #include "kvp-util-p.h"
 #include "qofbook.h"
 #include "qofbook-p.h"

@@ -18,7 +18,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
  
 /** @addtogroup Backend
@@ -102,10 +102,6 @@ GNU GPL licence and QSF is free software.
 		datebook repetition calculations.
 	- Rationalise the API - remove functions that shouldn't be public.
 
-\todo QOF contains numerous g_string_sprintf and g_string_sprintfa calls.
-	These are deprecated and should be renamed to g_string_printf and g_string_append_printf
-	respectively.
-
 QSF is in three sections:
 	- QSF Backend : a QofBackend for file:/ QSF objects and maps.
 		qsf-backend.c
@@ -123,7 +119,7 @@ QSF is in three sections:
 #ifndef _QOF_BACKEND_QSF_H
 #define _QOF_BACKEND_QSF_H
 
-#include "gnc-trace.h"
+#include "qoflog.h"
 #include "qofbackend.h"
 #include "qof-be-utils.h"
 

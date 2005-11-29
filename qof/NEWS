@@ -1,3 +1,8 @@
+November 2005: Preparing 0.6.1 - 64bit patch for qofgobj.c,
+	Fixed the INSERT handler to accept more than one value.
+	Fixed the FSF addresses in each file.
+  QOF for embedded systems support.
+
 October 2005: Preparing for libqof1 final release and outlining
     how QOF will change in the future.
 

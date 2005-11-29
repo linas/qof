@@ -15,7 +15,7 @@
  * along with this program; if not, contact:                        *
  *                                                                  *
  * Free Software Foundation           Voice:  +1-617-542-5942       *
- * 59 Temple Place - Suite 330        Fax:    +1-617-542-2652       *
+ * 51 Franklin Street, Fifth Floor    Fax:    +1-617-542-2652       *
  * Boston, MA  02111-1307,  USA       gnu@gnu.org                   *
 \********************************************************************/
 
@@ -114,10 +114,19 @@ substitutes for the function equivalents.
 @{
 
   Similar but used when the enum is NOT a typedef 
- note the LACK of a define_enum macro - don't use one! 
+  Make sure you use the DEFINE_ENUM_NON_TYPEDEF macro.
+
+ You can precede the FROM_STRING_FUNC_NON_TYPEDEF 
+ and AS_STRING_FUNC_NON_TYPEDEF macros with the 
+ keyword static if appropriate.
  
  ENUM_BODY is used in both types.
  */
+
+#define DEFINE_ENUM_NON_TYPEDEF(name, list)   \
+    enum name {                               \
+        list(ENUM_BODY)                       \
+    };
 
 #define FROM_STRING_DEC_NON_TYPEDEF(name, list)      \
    void name##fromString                          \

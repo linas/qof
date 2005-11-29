@@ -1,7 +1,44 @@
 2005-11-29  Neil Williams <linux@codehelp.co.uk>
 
+	* configure.in : Remove examples from build and dist.
+	* Makefile.am : Remove examples from build and dist.
+	* qof/Makefile.am : Replace gnc-trace with qoflog
+	and add deprecated.h
+	* qof/qof-be-utils.h : Tidy up macros.
+	* qof/qof.h : Add deprecated.h and qoflog.h, remove
+	gnc-trace.h
+	* qof/qofclass.c : Reorganise private and public functions
+	to make the API clearer.
+	* qof/qofid.c : Rationalise the hash_table index, optimise
+	some error checks. GnuCash sync.
+	* qof/qoflog.c : New file, replaces gnc-trace.c - new function
+	names to fit convention and new enum names. Removing 
+	gnc_trace_num_spaces in favour of a simpler function call.
+	* qof/qoflog.h : New file, replaces gnc-trace.h
+	* qof/qofquery.c : Reviewing qof_query_print to be able to
+	output it via qoflog.
+	* qof/qofsession.c : Avoid (gboolean*), use GINT_TO_POINTER
+	instead.
+	* qof/qofsql.c : Fix INSERT SQL handling.
+	* website/hacking.html : New file.
+	* website/index.html : Updated to not link to pre1.	
+
+2005-11-29  Neil Williams <linux@codehelp.co.uk>
+
 	* doc/Makefile.am : Fix website symlink -
 	thanks to Toshio Kuratomi.
+
+2005-11-17  Neil Williams <linux@codehelp.co.uk>
+
+	* qof/qofsql.c : Fix insert bug.
+	* all source files : Update FSF address.
+
+2005-11-13  Neil Williams <linux@codehelp.co.uk>
+
+	 * qof/Makefile.am : Stop bringing in the top
+	 include dir - thanks to Koen Kooi <koen@handhelds.org>
+	 * qof/gnc-engine-util.h : Fix non-typedef enum_as_string
+	 macro definition and document use of statics.
 
 2005-10-23  Neil Williams <linux@codehelp.co.uk>
 

@@ -15,8 +15,8 @@
  * along with this program; if not, contact:                        *
  *                                                                  *
  * Free Software Foundation           Voice:  +1-617-542-5942       *
- * 59 Temple Place - Suite 330        Fax:    +1-617-542-2652       *
- * Boston, MA  02111-1307,  USA       gnu@gnu.org                   *
+ * 51 Franklin Street, Fifth Floor    Fax:    +1-617-542-2652       *
+ * Boston, MA  02110-1301,  USA       gnu@gnu.org                   *
  *                                                                  *
 \********************************************************************/
 
@@ -151,7 +151,7 @@ QofQuery * qof_query_create_for (QofIdTypeConst obj_type);
 void qof_query_destroy (QofQuery *q);
 
 /** Set the object type to be searched for.  The results of 
- *  performuing the query will be a list of this obj_type.
+ *  performing the query will be a list of this obj_type.
  */
 void qof_query_search_for (QofQuery *query, QofIdTypeConst obj_type);
 
@@ -357,8 +357,10 @@ void qof_query_set_max_results (QofQuery *q, int n);
  */
 gboolean qof_query_equal (QofQuery *q1, QofQuery *q2);
 
-/** Print the Query in human-readable format.
+/** Log the Query in human-readable format.
  * Useful for debugging and development.
+ * QOF_MOD_QUERY must be set to log levels
+ * GNC_LOG_DEBUG or greater. (Usually using qof_log_set_default)
  */
 void qof_query_print (QofQuery *query);
 
