@@ -13,7 +13,7 @@ libqof_la_SOURCES =  \
    gnc-engine-util.c \
    gnc-numeric.c     \
    gnc-event.c       \
-   gnc-trace.c       \
+   qoflog.c         \
    guid.c            \
    kvp_frame.c       \
    kvp-util.c        \
@@ -39,7 +39,7 @@ qofinclude_HEADERS = \
    gnc-engine-util.h \
    gnc-numeric.h     \
    gnc-event.h       \
-   gnc-trace.h       \
+   qoflog.h \
    guid.h            \
    kvp_frame.h       \
    kvp-util.h        \
@@ -64,7 +64,8 @@ qofinclude_HEADERS = \
    qofsession.h      \
    qofla-dir.h \
    qofsql.h	     \
-   qof_book_merge.h
+   qof_book_merge.h \
+   deprecated.h
 
 noinst_HEADERS =      \
    gnc-event-p.h      \
@@ -88,13 +89,11 @@ AM_CFLAGS = -g        \
 
 if USE_LIBGDA
 INCLUDES = \
-  -I$(includedir) \
   -DPREFIX=\""$(prefix)"\"  \
   -DDATADIR=\""$(datadir)"\"
 else
 INCLUDES =                     \
    -I${top_srcdir}/lib/libsql             \
-   -I$(includedir)             \
    -DPREFIX=\""$(prefix)"\"    \
    -DDATADIR=\""$(datadir)"\" 
 endif
@@ -106,4 +105,5 @@ LDADD = \
 
 EXTRA_DIST = \
   qofla-dir.h.in \
-  qofmath128.c
+  qofmath128.c \
+  deprecated.h
