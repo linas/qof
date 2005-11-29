@@ -1,13 +1,5 @@
 ## -*-m4-*-
-
 dnl Process this file with autoconf to produce a configure script.
-
-# FILE:
-# configure.in for the QOF package
-#
-# FUNCTION:
-# implements checks for a variety of system-specific functions
-#
 
 AC_INIT(qof, 0.6.0, http://lists.sourceforge.net/lists/listinfo/qof-devel)
 
@@ -40,6 +32,8 @@ AC_PROG_LN_S
 AC_PROG_MAKE_SET
 
 AC_PATH_XTRA
+AC_FUNC_MKTIME
+AC_FUNC_STRTOD
 
 AC_PROG_INTLTOOL
 INTLTOOLIZE=${INTLTOOLIZE:-intltoolize}
@@ -62,7 +56,6 @@ dnl *****************************************
 dnl pkg-config check time
 dnl *****************************************
 
-LIBXML2_REQUIRED=2.5.10
 AM_PATH_GLIB_2_0("2.0.0", , ,gobject)
 
 AC_PATH_PROG(PKG_CONFIG,pkg-config)
@@ -71,20 +64,21 @@ if test "x$PKG_CONFIG" != x; then
 	if test x$GLIB_VERSION != x; then
 	GLIB_LIBS=`$PKG_CONFIG --libs glib-2.0`
 	GLIB_CFLAGS=`$PKG_CONFIG --cflags glib-2.0`
+	GMODULE_LIBS=`$PKG_CONFIG --libs gmodule-2.0`
+	AC_SUBST(GMODULE_LIBS)
 	AC_SUBST(GLIB_CFLAGS)
 	AC_SUBST(GLIB_LIBS)
 	fi
 else
 	AC_MSG_ERROR([Glib-2.0 is required by QOF but it was not found.])
 fi
-GMODULE_LIBS=`$PKG_CONFIG --libs gmodule-2.0`
-AC_SUBST(GMODULE_LIBS)
 
 dnl **************************************************************
 dnl libxml2
 dnl libxml2 v2.5.10 is required for QSF (backend/file)
 dnl **************************************************************
 
+LIBXML2_REQUIRED=2.5.10
 PKG_CHECK_MODULES(LIBXML2, libxml-2.0 >= $LIBXML2_REQUIRED)
 LIBXML_VERSION=`xml2-config --version`
 AC_SUBST(LIBXML2_CFLAGS)
@@ -100,7 +94,6 @@ case $host_os in
 		AC_MSG_RESULT([yes, patching libtool to always build dylibs])
 		mv libtool libtool.old
 		sed -e 's/^deplibs_check_method.*/deplibs_check_method=pass_all/g' \
-			-e 's|^archive_cmds.*|archive_cmds="$CC -dynamiclib \\$allow_undefined_flag -o \\$lib \\$libobjs \\$deplibs\\$linker_flags -install_name \\$rpath/\\$soname \\$verstring"|g' \
 			-e 's|^library_names_spec.*|library_names_spec="\\$libname\\$release\\$versuffix.dylib \\$libname\\$release\\${major}.dylib \\$libname.dylib"|g' \
 			-e 's|^soname_spec.*|soname_spec="\\$libname\\$release\\$major.dylib"|g' \
 			< libtool.old > libtool
@@ -143,29 +136,6 @@ AM_CONDITIONAL(USE_LIBGDA, [ test $HAVE_GDA = "use_gda"])
 AC_SUBST(USE_LIBGDA)
 AC_SUBST(ADD_PKG_LIB)
 
-dnl Stuff needed to build the example progs only ... 
-dnl **************************************************************
-
-AC_MSG_CHECKING([if we should build examples that use Gtk])
-GTK_CFLAGS=`$PKG_CONFIG --cflags gtk+-2.0`
-GTK_LIBS=`$PKG_CONFIG --libs gtk+-2.0`
-AS_SCRUB_INCLUDE(GTK_CFLAGS)
-AS_SCRUB_INCLUDE(GTK_LIBS)
-AC_SUBST(GTK_CFLAGS)
-AC_SUBST(GTK_LIBS)
-
-if test "x$GTK_LIBS" = x; then
-     AC_MSG_RESULT([No, build without GTK examples.])
-else
-     AC_MSG_RESULT([Yes, will build Gtk examples.])
-      AC_DEFINE(HAVE_GTK,,We Have Found GTK)
-      HAVE_GTK="use_gtk"
-fi
-
-AM_CONDITIONAL(BUILD_GTK, [test x$HAVE_GTK != x])
-AM_CONDITIONAL(BUILD_GTK, [test $HAVE_GTK = "use_gtk"])
-AC_SUBST(BUILD_GTK)
-
 dnl **************************************************************
 dnl Checks for typedefs, structures, and compiler characteristics.
 dnl **************************************************************
@@ -205,8 +175,8 @@ dnl Need to check for libdwi-qof too ....
 dnl **************************************************************
 
 AC_MSG_CHECKING([for DWI])
-DWI_CFLAGS=`$PKG_CONFIG --cflags dwi-0`
-DWI_LIBS=`$PKG_CONFIG --libs dwi-0`
+DWI_CFLAGS=`$PKG_CONFIG --silence-errors --cflags dwi-0`
+DWI_LIBS=`$PKG_CONFIG --silence-errors --libs dwi-0`
 AC_SUBST(DWI_CFLAGS)
 AC_SUBST(DWI_LIBS)
                                                                                 
@@ -345,9 +315,6 @@ backend/file/Makefile
 backend/file/qsf-dir.h
 doc/Makefile
 doc/doxygen.cfg
-examples/Makefile
-examples/backend/Makefile
-examples/gobject/Makefile
 lib/Makefile
 lib/libsql/Makefile
 qof/Makefile

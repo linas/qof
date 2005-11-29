@@ -2,12 +2,12 @@
 # Makefile.am for libqof
 #
 if USE_LIBGDA
-SUBDIRS = backend qof examples . po doc
+SUBDIRS = backend qof . po doc
 else
-SUBDIRS = lib backend qof examples . po doc
+SUBDIRS = lib backend qof . po doc
 endif
 
-DIST_SUBDIRS = lib backend qof examples . po doc
+DIST_SUBDIRS = lib backend qof . po doc
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = qof-1.pc
@@ -34,4 +34,3 @@ DISTCLEANFILES = \
   intltool-extract \
   make-potfiles \
   po/.intltool-merge-cache
-
