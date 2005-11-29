@@ -13,5 +13,8 @@ doc: doxygen.cfg
 	echo "doc: " && pwd
 	rm -rf html
 	$(DOXYGEN) doxygen.cfg
-	rm ../website/doxy
+	if test ! -d ../website; then mkdir ../website; fi
+	if test -h ../website/doxy; then rm ../website/doxy; fi	
 	ln -s ../doc/html/ ../website/doxy
+
+
