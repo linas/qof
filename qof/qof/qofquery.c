@@ -370,9 +370,6 @@ check_object (QofQuery *q, gpointer object)
   QofQueryTerm * qt;
   int       and_terms_ok=1;
   
-  ENTER (" object=%p terms=%p name=%s", 
-          object, q->terms, qof_object_printable (q->search_for, object));
-
   for(or_ptr = q->terms; or_ptr; or_ptr = or_ptr->next) 
   {
     and_terms_ok = 1;
@@ -407,11 +404,7 @@ check_object (QofQuery *q, gpointer object)
         /* XXX: Don't know how to do this conversion -- do we care? */
       }
     }
-    if (and_terms_ok) 
-    {
-      LEAVE (" (terms are OK)");
-      return 1;
-    }
+    if (and_terms_ok) { return 1; }
   }
 
   /* If there are no terms, assume a "match any" applies.
@@ -419,7 +412,6 @@ check_object (QofQuery *q, gpointer object)
    * may want to get all objects, but in a particular sorted 
    * order.
    */
-  LEAVE (" ");
   if (NULL == q->terms) return 1;
   return 0;
 }
@@ -1243,8 +1235,8 @@ void qof_query_set_book (QofQuery *q, QofBook *book)
   if (g_list_index (q->books, book) == -1)
     q->books = g_list_prepend (q->books, book);
 
-  g_slist_prepend (slist, QOF_PARAM_GUID);
-  g_slist_prepend (slist, QOF_PARAM_BOOK);
+  slist = g_slist_prepend (slist, QOF_PARAM_GUID);
+  slist = g_slist_prepend (slist, QOF_PARAM_BOOK);
   qof_query_add_guid_match (q, slist,
                         qof_book_get_guid(book), QOF_QUERY_AND);
 }
@@ -1416,10 +1408,7 @@ gboolean qof_query_equal (QofQuery *q1, QofQuery *q2)
 }
 
 /* **************************************************************************/
-/* Query Print functions.  qof_query_print is public; everthing else supports
- * that.
- * Just call qof_query_print(QofQuery *q), and it will print out the query 
- * contents to stderr.
+/* Query Print functions for use with qof_log_set_level.
 */
 
 /* Static prototypes */
@@ -1439,7 +1428,11 @@ static GString *qof_query_printParamPath (GSList * parmList);
 static void qof_query_printValueForParam (QofQueryPredData *pd, GString * gs);
 static void qof_query_printOutput (GList * output);
 
-/*
+/** \deprecated access via qof_log instead.
+ The query will be logged automatically if qof_log_set_default
+ or qof_log_set_level(QOF_MOD_QUERY, ...) are set to QOF_LOG_DEBUG
+ or higher.
+
         This function cycles through a QofQuery object, and
         prints out the values of the various members of the query
 */
@@ -1734,7 +1727,6 @@ qof_query_printValueForParam (QofQueryPredData *pd, GString * gs)
     {
       g_string_append_printf (gs, "/%s", (gchar *) node->data);
     }
-//    g_string_append_printf (gs, "");
     g_string_append_printf (gs, "      kvp value: %s ", 
                          kvp_value_to_string (pdata->value));
     return;
