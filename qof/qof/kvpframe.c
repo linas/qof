@@ -243,7 +243,7 @@ get_or_make (KvpFrame *fr, const char * key)
     return next_frame;
 }
 
-/* Get pointer to last frame in path. If teh path doesn't exist,
+/* Get pointer to last frame in path. If the path doesn't exist,
  * it is created.  The string stored in keypath will be hopelessly 
  * mangled .
  */
@@ -1635,6 +1635,13 @@ kvp_value_glist_to_string(const GList *list)
     return tmp2;
 }
 
+static void
+kvp_frame_to_bare_string_helper(gpointer key, gpointer value, gpointer data)
+{
+	gchar **str = (gchar**)data;
+	*str = g_strdup_printf("%s", kvp_value_to_bare_string((KvpValue *)value));
+}
+
 gchar*
 kvp_value_to_bare_string(const KvpValue *val)
 {
@@ -1643,7 +1650,7 @@ kvp_value_to_bare_string(const KvpValue *val)
     const gchar *ctmp;
     
     g_return_val_if_fail(val, NULL);
-    
+    tmp1 = g_strdup("");
     switch(kvp_value_get_type(val))
     {
     case KVP_TYPE_GINT64:
@@ -1673,13 +1680,13 @@ kvp_value_to_bare_string(const KvpValue *val)
         break;
 
     case KVP_TYPE_TIMESPEC:
-        tmp1 = g_new0 (char, 40);
-        gnc_timespec_to_iso8601_buff (kvp_value_get_timespec (val), tmp1);
-        tmp2 = g_strdup_printf("%s", tmp1);
-        g_free(tmp1);
-        return tmp2;
+	{
+		time_t t;
+		t = timespecToTime_t(kvp_value_get_timespec(val));
+        qof_date_format_set(QOF_DATE_FORMAT_UTC);
+        return qof_print_date(t);
         break;
-
+	}
     case KVP_TYPE_BINARY:
     {
         guint64 len;
@@ -1691,19 +1698,26 @@ kvp_value_to_bare_string(const KvpValue *val)
         break;
  
     case KVP_TYPE_GLIST:
+		/* borked. kvp_value_glist_to_string is a debug fcn */
+	{
         tmp1 = kvp_value_glist_to_string(kvp_value_get_glist(val));
         tmp2 = g_strdup_printf("%s", tmp1 ? tmp1 : "");
         g_free(tmp1);
         return tmp2;
         break;
-
+	}
     case KVP_TYPE_FRAME:
-        tmp1 = kvp_frame_to_string(kvp_value_get_frame(val));
-        tmp2 = g_strdup_printf("%s", tmp1 ? tmp1 : "");
-        g_free(tmp1);
-        return tmp2;
-        break;
+	{
+		KvpFrame *frame;
 
+		frame = kvp_value_get_frame(val);
+		if (frame->hash) {
+			tmp1 = g_strdup("");
+			g_hash_table_foreach(frame->hash, kvp_frame_to_bare_string_helper, &tmp1);
+		}
+        return tmp1;
+        break;
+	}
     default:
         return g_strdup_printf(" ");
         break;

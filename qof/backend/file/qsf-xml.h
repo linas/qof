@@ -38,15 +38,7 @@
 #include <libxml/tree.h>
 #include <libxml/parser.h>
 #include <libxml/xmlschemas.h>
-#include "gnc-date.h"
-#include "qof_book_merge.h"
-#include "qofbook.h"
-#include "qofclass.h"
-#include "qofobject.h"
-#include "kvp_frame.h"
-#include "qofbackend-p.h"
-#include "qofsession-p.h"
-#include "qofbook-p.h"
+#include "qof.h"
 
 #if defined(HAVE_GETTEXT)             /* HAVE_GETTEXT */
 
@@ -387,6 +379,7 @@ typedef struct qsf_metadata
 	*/
 	int boolean_calculation_done; /**< simple trip once this boolean is complete. */
 	char *filepath; /**< Path to the QSF file. */
+	gchar* full_kvp_path;         /**< Full path for each KvpValue written out. */
 }qsf_param;
 
 /** \brief Free the QSF context.
