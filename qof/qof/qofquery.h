@@ -63,13 +63,6 @@ the canonical form, and the same predicate may be evaluated multiple
 times per split for complex queries.  This is a place where we could
 probably optimize.
 
-Evaluation of a Query (see qof_query_run()) is optimized as much as
-possible by short-circuited evaluation.  The predicates in each
-AND-chain are sorted by predicate type, with Account queries sorted
-first to allow the evaluator to completely eliminate accounts from the
-search if there's no chance of them having splits that match.
-(XXX above no longer applies)
-
  @{ */
 /** @file qofquery.h
     @brief find objects that match a certain expression.
@@ -77,7 +70,6 @@ search if there's no chance of them having splits that match.
     @author Copyright (C) 2003 Linas Vepstas <linas@linas.org>
 
 */
-
 
 #ifndef QOF_QUERYNEW_H
 #define QOF_QUERYNEW_H
@@ -357,10 +349,11 @@ void qof_query_set_max_results (QofQuery *q, int n);
  */
 gboolean qof_query_equal (QofQuery *q1, QofQuery *q2);
 
-/** Log the Query in human-readable format.
- * Useful for debugging and development.
- * QOF_MOD_QUERY must be set to log levels
- * GNC_LOG_DEBUG or greater. (Usually using qof_log_set_default)
+/** Log the Query 
+ *
+ * \deprecated Do not call directly, use the standard log
+ * module code: ::qof_log_set_level(QOF_MOD_QUERY, QOF_LOG_DEBUG);
+ * or ::qof_log_set_default(QOF_LOG_DEBUG);
  */
 void qof_query_print (QofQuery *query);
 
