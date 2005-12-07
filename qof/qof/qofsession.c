@@ -350,6 +350,11 @@ qof_entity_param_cb(QofParam *param, gpointer data)
 	g_return_if_fail(data != NULL);
 	qecd = (QofEntityCopyData*)data;
 	g_return_if_fail(param != NULL);
+	/* KVP doesn't need a set routine to be copied. */
+	if(0 == safe_strcmp(param->param_type, QOF_TYPE_KVP)) {
+		qecd->param_list = g_slist_prepend(qecd->param_list, param);
+		return;
+	}
 	if((param->param_getfcn != NULL)&&(param->param_setfcn != NULL)) {
 			qecd->param_list = g_slist_prepend(qecd->param_list, param);
 	}
@@ -478,9 +483,18 @@ qof_entity_foreach_copy(gpointer data, gpointer user_data)
 		registered_type = TRUE;
 	}
 	if(safe_strcmp(cm_param->param_type, QOF_TYPE_KVP) == 0) { 
-		cm_kvp = kvp_frame_copy((KvpFrame*)cm_param->param_getfcn(importEnt,cm_param));
+		cm_kvp = (KvpFrame*)cm_param->param_getfcn(importEnt,cm_param);
 		kvp_frame_setter = (void(*)(QofEntity*, KvpFrame*))cm_param->param_setfcn;
 		if(kvp_frame_setter != NULL) { kvp_frame_setter(targetEnt, cm_kvp); }
+		else
+		{
+			QofInstance *target_inst;
+
+			PINFO (" copying instance frame");
+			target_inst = (QofInstance*)targetEnt;
+			kvp_frame_delete(target_inst->kvp_data);
+			target_inst->kvp_data = kvp_frame_copy(cm_kvp);
+		}
 		registered_type = TRUE;
 	}
 	if(safe_strcmp(cm_param->param_type, QOF_TYPE_CHAR) == 0) { 
