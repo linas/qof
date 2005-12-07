@@ -1,3 +1,34 @@
+2005-12-07  Neil Williams <linux@codehelp.co.uk>
+
+	New functions to add days or months to a
+	Timespec. Deprecating date_add_months.
+	* qof/gnc-date.c :
+	* qof/gnc-date.h :
+	
+
+2005-12-06  Neil Williams <linux@codehelp.co.uk>
+
+	* QOF_MANIFEST_ENG :
+	* QOF_MANIFEST_QSF : removed.
+
+	* qof/qof_book_merge.c : detailing todo for param_as_string
+	* qof/qofquery.c : 
+	* qof/qofquery.h : Deprecate qof_query_print in favour of 
+	log system
+	* qof/kvp_frame.c : Adding support for timespec and 
+	correcting frame handler
+	* qof/qofsession.c : KVP does not need a set routine to be copied.
+
+	* backend/file/qsf-backend.c : Removing duplicate code, fixing 
+	timespec handling and kvp frame	handling.
+	* backend/file/qsf-xml.h : Correcting KVP path write-out in QSF.
+
+2005-12-04  Neil Williams <linux@codehelp.co.uk>
+
+	* qof/qofquery.c : Do not ignore the return value of GList
+	functions.  This is likely to become a warning in a future 
+	version of glib. (David Hampton, <hampton@employees.org>).
+
 2005-11-29  Neil Williams <linux@codehelp.co.uk>
 
 	* configure.in : Remove examples from build and dist.
