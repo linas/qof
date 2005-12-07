@@ -1,8 +1,9 @@
 /********************************************************************\
  * gnc-date.c -- misc utility functions to handle date and time     * 
+ *         (to be renamed qofdate.c in libqof2)                     *
  *                                                                  *
  * Copyright (C) 1997 Robin D. Clark <rclark@cs.hmc.edu>            *
- * Copyright (C) 1998-2000, 20003 Linas Vepstas <linas@linas.org>   *
+ * Copyright (C) 1998-2000, 2003 Linas Vepstas <linas@linas.org>    *
  *                                                                  *
  * This program is free software; you can redistribute it and/or    *
  * modify it under the terms of the GNU General Public License as   *
@@ -322,7 +323,7 @@ void date_add_months (struct tm *tm, int months, gboolean track_last_day)
   if (!track_last_day)
     return;
 
-  /* Track last day of the month, i.e. 1/31 -> 2/28 -> 3/30 */
+  /* Track last day of the month, i.e. 1/31 -> 2/28 -> 3/31 */
   new_last_mday = date_get_last_mday(tm);
   if (was_last_day || (tm->tm_mday > new_last_mday))
     tm->tm_mday = new_last_mday;
@@ -1414,6 +1415,54 @@ gnc_timet_get_today_end (void)
 
   gnc_tm_get_day_end(&tm, time(NULL));
   return mktime(&tm);
+}
+
+gboolean
+qof_date_add_days(Timespec *ts, gint days)
+{
+	struct tm tm;
+	time_t    tt;
+
+	g_return_val_if_fail(ts, FALSE);
+	tt = timespecToTime_t(*ts);
+	tm = *gmtime_r(&tt, &tm);
+	tm.tm_mday += days;
+	/* let mktime normalise the months and year
+	because we aren't tracking last_day_of_month */
+	tt = mktime(&tm);
+	if(tt < 0) { return FALSE; }
+	timespecFromTime_t(ts, tt);
+	return TRUE;
+}
+
+gboolean
+qof_date_add_months(Timespec *ts, gint months, gboolean track_last_day)
+{
+	struct tm tm;
+	time_t    tt;
+	gint new_last_mday;
+	gboolean was_last_day;
+
+	g_return_val_if_fail(ts, FALSE);
+	tt = timespecToTime_t(*ts);
+	tm = *gmtime_r(&tt, &tm);
+	was_last_day = date_is_last_mday(&tm);
+	tm.tm_mon += months;
+	while (tm.tm_mon > 11) {
+		tm.tm_mon -= 12;
+		tm.tm_year++;
+	}
+	if (track_last_day) {
+		/* Track last day of the month, i.e. 1/31 -> 2/28 -> 3/31 */
+		new_last_mday = date_get_last_mday(&tm);
+		if (was_last_day || (tm.tm_mday > new_last_mday)) {
+			tm.tm_mday = new_last_mday;
+		}
+	}
+	tt = mktime(&tm);
+	if(tt < 0) { return FALSE; }
+	timespecFromTime_t(ts, tt);
+	return TRUE;
 }
 
 /********************** END OF FILE *********************************\

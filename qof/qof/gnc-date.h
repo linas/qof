@@ -1,3 +1,10 @@
+/***************************************************************************
+ *            gnc-date.h (to be renamed qofdate.h)
+ *
+ *  Copyright (C) 1997 Robin D. Clark <rclark@cs.hmc.edu>
+ *  Copyright (C) 1998-2000, 2003 Linas Vepstas <linas@linas.org>
+ *  Copyright  2005  Neil Williams <linux@codehelp.co.uk>
+ ****************************************************************************/
 /********************************************************************\
  * This program is free software; you can redistribute it and/or    *
  * modify it under the terms of the GNU General Public License as   *
@@ -242,8 +249,26 @@ char * gnc_timespec_to_iso8601_buff (Timespec ts, char * buff);
  * routine might return incorrect values for dates before 1970.  */
 void gnc_timespec2dmy (Timespec ts, int *day, int *month, int *year);
 
-/** Add a number of months to a time value and normalize.  Optionally
- * also track the last day of the month, i.e. 1/31 -> 2/28 -> 3/30. */
+/** \brief Add a number of days to a Timespec and normalise.
+
+Together with qof_date_add_months, replaces date_add_months.
+
+\return FALSE on error, otherwise TRUE.
+*/
+gboolean qof_date_add_days(Timespec *ts, gint days);
+
+/** \brief Add a number of months to a Timespec and normalise.
+
+Optionally track the last day of the month so that adding one
+month to 31st January returns 28th February (29th in a leap year)
+and adding three months returns 30th April.
+
+\return FALSE on error, otherwise TRUE.
+*/
+gboolean qof_date_add_months(Timespec *ts, gint months, gboolean track_last_day);
+
+/** \deprecated Add a number of months to a time value and normalize.  Optionally
+ * also track the last day of the month, i.e. 1/31 -> 2/28 -> 3/31. */
 void date_add_months (struct tm *tm, int months, gboolean track_last_day);
 
 /** \warning hack alert XXX FIXME -- these date routines return incorrect
