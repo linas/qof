@@ -30,7 +30,8 @@ libqof_la_SOURCES =  \
    qofquerycore.c    \
    qofsession.c      \
    qofsql.c          \
-   qof_book_merge.c
+   qof_book_merge.c  \
+   deprecated.c
 
 qofincludedir = ${pkgincludedir}
 
@@ -79,13 +80,10 @@ noinst_HEADERS =      \
    qofsession-p.h
 
 AM_CFLAGS = -g        \
-   @CFLAGS@           \
+  ${warnFLAGS} \
 	${LIBXML2_CFLAGS}  \
   ${LIBGDA_CFLAGS} \
-  ${GLIB_CFLAGS} \
-  -Werror \
-  -Wmissing-prototypes \
-  -Wmissing-declarations
+  ${GLIB_CFLAGS} 
 
 if USE_LIBGDA
 INCLUDES = \
