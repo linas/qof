@@ -453,7 +453,7 @@ test_rule_loop (qof_book_mergeData *mergeData, qof_book_mergeRule *rule, guint r
 }
 
 int
-main ()
+main (int argc, const char *argv[])
 {
 	gnc_engine_get_string_cache ();
 	guid_init ();

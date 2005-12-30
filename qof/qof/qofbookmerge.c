@@ -21,11 +21,7 @@
  *                                                                   *
  ********************************************************************/
 
-#include "qoflog.h"
-#include "qof_book_merge.h"
-#include "qofinstance-p.h"
-#include "qofchoice.h"
-#include "qofid-p.h"
+#include "qof.h"
 
 static QofLogModule log_module = QOF_MOD_MERGE;
 

@@ -1,3 +1,63 @@
+2005-12-29  Neil Williams <linux@codehelp.co.uk>
+
+	Typo in FSF address corrected.
+	* various :
+
+	* qof/guid.c : Support glib 2.9.0 improvement
+
+2005-12-29  Neil Williams <linux@codehelp.co.uk>
+
+	* qof/deprecated.c : New file to preserve deprecated function
+	names into the binary for compatibility until libqof2.
+	* qof/Makefile.am : New file compiled into libqof1.
+
+	Changes to use qof.h
+	* backend/file/qsf-backend.c : 
+	* backend/file/qsf-xml-map.c :
+	* backend/file/qsf-xml.c :
+	* qof/deprecated.h :
+	* qof/gnc-event.c :
+	* qof/guid.c :
+	* qof/kvp_frame.c :
+	* qof/qof_book_merge.c :
+	* qof/qofbackend.c :
+	* qof/qofbook.c :
+	* qof/qofclass.c :
+	* qof/qofid.c :
+	* qof/qofinstance.c :
+	* qof/qofobject.c :
+	* qof/qofquery.c :
+	* qof/qofquerycore.c :
+	* qof/qofsession.c :
+	* qof/qofsql.c :
+
+2005-12-28  Neil Williams <linux@codehelp.co.uk>
+
+	* qof/qofbackend.c : Allow partial paths to make 
+	full use of GModule and the lack of a .la file 
+	non-critical.
+	* autogen.sh : Adopt a more streamlined script.
+	
+2005-12-18  Neil Williams <linux@codehelp.co.uk>
+
+	* configure.in : Adding extra compiler warnings.
+	* qof/gnc-engine-util.h : Deprecating HAVE_SCANF_LLD
+
+2005-12-14  Neil Williams <linux@codehelp.co.uk>
+
+	* backend/file/qof-backend-qsf.h : v0.2 of QSF, 
+	including a	new QofBackendOption, QSF_MAP_FILES.
+	* backend/file/qsf-xml.h : Private header,
+	converted more functions to static.
+	* backend/file/qsf-backend.c : Reorganise to
+	use more static functions.
+	* backend/file/qsf-xml.c : Remove redundant
+	(private) functions.
+	
+	* configure.in : Bump source version to 0.6.1,
+	libqof1 library version to 1.2.0 and qsf library
+	version to 0.1.0.
+
 2005-12-07  Neil Williams <linux@codehelp.co.uk>
 
 	New functions to add days or months to a
@@ -5,7 +65,6 @@
 	* qof/gnc-date.c :
 	* qof/gnc-date.h :
 	
-
 2005-12-06  Neil Williams <linux@codehelp.co.uk>
 
 	* QOF_MANIFEST_ENG :

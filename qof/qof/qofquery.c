@@ -29,18 +29,11 @@
 #include <regex.h>
 #include <string.h>
 
-#include "qoflog.h"
-#include "gnc-engine-util.h"
-
+#include "qof.h"
 #include "qofbackend-p.h"
-#include "qofbook.h"
 #include "qofbook-p.h"
-#include "qofclass.h"
 #include "qofclass-p.h"
-#include "qofobject.h"
-#include "qofquery.h"
 #include "qofquery-p.h"
-#include "qofquerycore.h"
 #include "qofquerycore-p.h"
 
 static QofLogModule log_module = QOF_MOD_QUERY;

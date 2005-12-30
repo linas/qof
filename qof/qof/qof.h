@@ -15,7 +15,7 @@
  *                                                                  *
  * Free Software Foundation           Voice:  +1-617-542-5942       *
  * 51 Franklin Street, Fifth Floor    Fax:    +1-617-542-2652       *
- * Boston, MA  02111-1307,  USA       gnu@gnu.org                   *
+ * Boston, MA  02110-1301,  USA       gnu@gnu.org                   *
  *                                                                  *
 \********************************************************************/
 
@@ -98,5 +98,12 @@
 #include "qof-be-utils.h"
 #include "qofla-dir.h"
 #include "deprecated.h"
+
+/** allow easy logging of QSF debug messages */
+#define QOF_MOD_QSF "qof-backend-qsf"
+/** allow easy loading of the QSF backend */
+#define QSF_BACKEND_LIB "libqof-backend-qsf.la"
+/** allow easy loading of the QSF backend */
+#define QSF_MODULE_INIT "qsf_provider_init"
 
 #endif /* QOF_H_ */

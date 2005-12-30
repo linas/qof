@@ -18,7 +18,7 @@
  *                                                                  *
  * Free Software Foundation           Voice:  +1-617-542-5942       *
  * 51 Franklin Street, Fifth Floor    Fax:    +1-617-542-2652       *
- * Boston, MA  02111-1307,  USA       gnu@gnu.org                   *
+ * Boston, MA  02110-1301,  USA       gnu@gnu.org                   *
  *                                                                  *
 \********************************************************************/
 
@@ -33,6 +33,7 @@
 #include <dlfcn.h>
 #include <sys/stat.h>
 #include <errno.h>
+#include "qof.h"
 #include "qofbackend-p.h"
 
 static QofLogModule log_module = QOF_MOD_BACKEND;
@@ -404,7 +405,12 @@ qof_load_backend_library (const char *directory,
 	g_return_val_if_fail(g_module_supported(), FALSE);
 	fullpath = g_module_build_path(directory, filename);
 	PINFO (" fullpath=%s", fullpath);
-	g_return_val_if_fail((stat(fullpath, &sbuf) == 0), FALSE);
+	if(stat(fullpath, &sbuf) != 0)
+	{
+		PINFO (" incomplete or non-existent path passed, %s,"
+			" trying to use GModule to locate the backend.",
+			fullpath );
+	}
 	backend = g_module_open(fullpath, G_MODULE_BIND_LAZY);
 	if(!backend) { 
 		g_message ("%s: %s\n", PACKAGE, g_module_error ());

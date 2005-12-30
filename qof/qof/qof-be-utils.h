@@ -15,7 +15,7 @@
  *                                                                  *
  * Free Software Foundation           Voice:  +1-617-542-5942       *
  * 51 Franklin Street, Fifth Floor    Fax:    +1-617-542-2652       *
- * Boston, MA  02111-1307,  USA       gnu@gnu.org                   *
+ * Boston, MA  02110-1301,  USA       gnu@gnu.org                   *
  *                                                                  *
 \********************************************************************/
 /** @addtogroup Object
@@ -104,7 +104,7 @@ gboolean qof_begin_edit(QofInstance *inst);
   (inst)->editlevel--;                                           \
   if (0 < (inst)->editlevel) return;                             \
                                                                  \
-  /* The pricedb sufffers from delayed update...     */          \
+  /* The pricedb suffers from delayed update...     */          \
   /* This may be setting a bad precedent for other types, I fear. */ \
   /* Other types probably really should handle begin like this. */ \
   if ((-1 == (inst)->editlevel) && (inst)->dirty)                \

@@ -27,8 +27,8 @@ EXTRA_DIST =       \
 	parser.y  
 
 AM_CFLAGS = -g     \
-	@CFLAGS@        \
-	@GLIB_CFLAGS@
+	${CFLAGS}        \
+	${GLIB_CFLAGS}
 
 INCLUDES = \
 	-I$(includedir) 

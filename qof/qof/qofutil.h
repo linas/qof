@@ -16,7 +16,7 @@
  *                                                                  *
  * Free Software Foundation           Voice:  +1-617-542-5942       *
  * 51 Franklin Street, Fifth Floor    Fax:    +1-617-542-2652       *
- * Boston, MA  02111-1307,  USA       gnu@gnu.org                   *
+ * Boston, MA  02110-1301,  USA       gnu@gnu.org                   *
 \********************************************************************/
 
 /** @addtogroup Utilities
@@ -155,11 +155,14 @@ substitutes for the function equivalents.
 
 /** @} */
 
-/* Define the long long int conversion for scanf */
+/** \deprecated Define the long long int conversion for scanf 
+ * HAVE_SCANF_LLD will be removed from libqof2
+ * */
 #if HAVE_SCANF_LLD
-# define GNC_SCANF_LLD "%lld"
+# define GNC_SCANF_LLD "%lld" /**< \deprecated 
+	use G_GINT64_FORMAT instead. */
 #else
-# define GNC_SCANF_LLD "%qd"
+# define GNC_SCANF_LLD "%qd"  /**< \deprecated */
 #endif
 
 /** @name Convenience wrappers

@@ -16,7 +16,7 @@
  *                                                                  *
  * Free Software Foundation           Voice:  +1-617-542-5942       *
  * 51 Franklin Street, Fifth Floor    Fax:    +1-617-542-2652       *
- * Boston, MA  02111-1307,  USA       gnu@gnu.org                   *
+ * Boston, MA  02110-1301,  USA       gnu@gnu.org                   *
  *                                                                  *
 \********************************************************************/
 
@@ -27,13 +27,10 @@
  * Copyright (C) 2003 Linas Vepstas <linas@linas.org>
  */
 
-#include "qoflog.h"
+#include "qof.h"
 #include "kvp-util-p.h"
-#include "qofbook.h"
 #include "qofbook-p.h"
-#include "qofid.h"
 #include "qofid-p.h"
-#include "qofinstance.h"
 #include "qofinstance-p.h"
 
 static QofLogModule log_module = QOF_MOD_ENGINE;

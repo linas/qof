@@ -38,18 +38,8 @@
 #include "sql_parser.h"
 #endif
 #include <time.h>
-#include "kvp_frame.h"
-#include "gnc-date.h"
-#include "gnc-numeric.h"
-#include "qoflog.h"
-#include "guid.h"
-#include "qofbook.h"
-#include "qofquery.h"
-#include "qofquerycore.h"
-#include "qofsql.h"
-#include "gnc-engine-util.h"
-#include "qofinstance-p.h"
-#include "qofobject.h"
+
+#include "qof.h"
 
 static QofLogModule log_module = QOF_MOD_QUERY;
 

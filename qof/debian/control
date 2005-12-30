@@ -16,6 +16,8 @@ Description: Query Object Framework
  .
  This package provides the files needed to develop 
  applications using QOF.
+ .
+  Homepage: http://qof.sourceforge.net/
 
 Package: libqof1
 Priority: optional
@@ -29,6 +31,8 @@ Description: Query Object Framework
  This package provides the shared libraries needed 
  to run programs developed using QOF, the XML schemas
  to validate files and the QSF XML backend module.
+ .
+  Homepage: http://qof.sourceforge.net/
 
 Package: libqof1-dbg
 Priority: extra
@@ -41,3 +45,6 @@ Description: Query Object Framework - debug symbols
  .
  This package provides the files needed to develop 
  applications using QOF.
+ .
+  Homepage: http://qof.sourceforge.net/
+

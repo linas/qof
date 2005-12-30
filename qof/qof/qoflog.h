@@ -21,10 +21,10 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
- *  02111-1307,  USA
+ *  02110-1301,  USA
  */
 
-/** @addtogroup QofLog
+/** @addtogroup Trace
     @{ */
 
 /** @file qof-log.h 
@@ -33,7 +33,6 @@
 
 #ifndef _QOF_LOG_H
 #define _QOF_LOG_H
-
 
 #include <glib.h>
 #include <stdarg.h>
@@ -53,24 +52,29 @@
 
 DEFINE_ENUM (QofLogLevel, LOG_LEVEL_LIST)
 
-/** Convert QofLogLevel to a string.
+AS_STRING_DEC(QofLogLevel, LOG_LEVEL_LIST) /**< Convert QofLogLevel to a string.
 
 The macro correlates the enum value and an
 exact copy as a string, removing the need to
 keep two separate lists in sync.
 */
-AS_STRING_DEC(QofLogLevel, LOG_LEVEL_LIST)
 
-/** Convert the log_string to a QofLogLevel
+FROM_STRING_DEC(QofLogLevel, LOG_LEVEL_LIST) /**< Convert the 
+log_string to a QofLogLevel
 
 Only for use as a partner to ::QofLogLevelasString
 */
-FROM_STRING_DEC(QofLogLevel, LOG_LEVEL_LIST)
 
+/** indents once for each ENTER macro */
 void qof_log_add_indent(void);
 
+/** gets the running total of the indent */
 gint qof_log_get_indent(void);
 
+/** drops back one indent for each LEAVE macro
+
+indent is reset to zero if less than a single indent would exist.
+*/
 void qof_log_drop_indent(void);
 
 /** Initialize the error logging subsystem
@@ -110,7 +114,7 @@ Calls qof_log_init() for you.
 */
 void qof_log_init_filename (const gchar* logfilename);
 
-/** Be nice, close the logfile is possible. */
+/** Be nice, close the logfile if possible. */
 void qof_log_shutdown (void);
 
 /** qof_log_prettify() cleans up subroutine names. AIX/xlC has the habit

@@ -18,11 +18,12 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02110-1301, USA.
  */
  
 #ifndef _DEPRECATED_H
 #define _DEPRECATED_H
+#include "qof.h"
 
 /** @file deprecated.h
 	@brief transitional header from libqof1 to libqof2
@@ -32,22 +33,22 @@
 #define gncLogLevel QofLogLevel
 
 /** \deprecated use qof_log_init_filename instead */
-#define gnc_log_init qof_log_init
+void gnc_log_init (void);
 
 /** \deprecated use qof_log_set_level insead. */
-#define gnc_set_log_level qof_log_set_level
+void gnc_set_log_level(QofLogModule module, gncLogLevel level);
 
 /** \deprecated use qof_log_set_level_global instead. */
-#define gnc_set_log_level_global qof_log_set_level_global
+void gnc_set_log_level_global(gncLogLevel level);
 
 /** \deprecated use qof_log_set_file instead. */
-#define gnc_set_logfile qof_log_set_file
+void gnc_set_logfile (FILE *outfile);
 
 /** \deprecated use qof_log_prettify instead. */
-#define gnc_log_prettify qof_log_prettify
+const char * gnc_log_prettify (const char *name);
 
 /** \deprecated use qof_log_check instead. */
-#define gnc_should_log qof_log_check
+gboolean gnc_should_log(QofLogModule log_module, gncLogLevel log_level);
 
 /** \deprecated */
 #define GNC_LOG_FATAL   QOF_LOG_FATAL
@@ -64,5 +65,11 @@
 /** \deprecated */
 #define GNC_LOG_TRACE   QOF_LOG_TRACE
 
+/** \deprecated use qof_start_clock */
+void gnc_start_clock (int, QofLogModule, gncLogLevel, const char*, const char*, ...);
+/** \deprecated use qof_report_clock */
+void gnc_report_clock (int, QofLogModule, gncLogLevel, const char*, const char*, ...);
+/** \deprecated use qof_report_clock_total */
+void gnc_report_clock_total (int, QofLogModule, gncLogLevel, const char*, const char*, ...);
 
 #endif /* _DEPRECATED_H */

@@ -25,10 +25,7 @@
 
 #include <glib.h>
 
-#include "qoflog.h"
-#include "gnc-engine-util.h"
-#include "qofquery.h"
-#include "qofquerycore.h"
+#include "qof.h"
 #include "qofquerycore-p.h"
 
 static QofLogModule log_module = QOF_MOD_QUERY;

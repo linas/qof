@@ -16,7 +16,7 @@
  *                                                                  *
  * Free Software Foundation           Voice:  +1-617-542-5942       *
  * 51 Franklin Street, Fifth Floor    Fax:    +1-617-542-2652       *
- * Boston, MA  02111-1307,  USA       gnu@gnu.org                   *
+ * Boston, MA  02110-1301,  USA       gnu@gnu.org                   *
 \********************************************************************/
 
 /*
@@ -39,18 +39,12 @@
 
 #include <glib.h>
 
-#include "gnc-event.h"
+#include "qof.h"
 #include "gnc-event-p.h"
-#include "qoflog.h"
 #include "qofbackend-p.h"
-#include "qofbook.h"
 #include "qofbook-p.h"
-#include "qofclass.h"
 #include "qofid-p.h"
 #include "qofobject-p.h"
-#include "gnc-engine-util.h"
-
-#include "guid.h"
 
 static QofLogModule log_module = QOF_MOD_ENGINE;
 

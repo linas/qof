@@ -19,6 +19,7 @@ LDADD = \
    ${LIBXML2_LIBS} \
    ${GLIB_LIBS} \
    ${GMODULE_LIBS} \
+   ${GOBJECT_LIBS} \
    ${LIBGDA_LIBS} \
    -lltdl \
    -lm
@@ -29,6 +30,7 @@ LDADD = \
    ${LIBXML2_LIBS} \
    ${GLIB_LIBS} \
    ${GMODULE_LIBS} \
+   ${GOBJECT_LIBS} \
    -lltdl \
    -lm
 endif

@@ -41,16 +41,9 @@
 #include <unistd.h>
 
 #include <glib.h>
-#include "qofla-dir.h"
-#include "qoflog.h"
-#include "gnc-engine-util.h"
-#include "gnc-event.h"
-#include "qofsession.h"
+#include "qof.h"
 #include "qofbackend-p.h"
-#include "qof-be-utils.h"
-#include "qofbook.h"
 #include "qofbook-p.h"
-#include "qofobject.h"
 #include "qofsession-p.h"
 
 /** \deprecated should not be static */
@@ -490,7 +483,6 @@ qof_entity_foreach_copy(gpointer data, gpointer user_data)
 		{
 			QofInstance *target_inst;
 
-			PINFO (" copying instance frame");
 			target_inst = (QofInstance*)targetEnt;
 			kvp_frame_delete(target_inst->kvp_data);
 			target_inst->kvp_data = kvp_frame_copy(cm_kvp);
