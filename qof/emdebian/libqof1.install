@@ -1,0 +1,2 @@
+debian/tmp/usr/lib/libqof*.so.*
+debian/tmp/usr/lib/libqof-backend*.la
