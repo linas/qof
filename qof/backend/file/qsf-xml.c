@@ -24,22 +24,12 @@
 #define _GNU_SOURCE
 
 #include <libxml/xmlversion.h>
+#include "qof.h"
 #include "qof-backend-qsf.h"
 #include "qsf-dir.h"
 #include "qsf-xml.h"
 
 static QofLogModule log_module = QOF_MOD_QSF;
-
-void qsf_free_params(qsf_param *params)
-{
-	g_hash_table_destroy(params->qsf_calculate_hash);
-	g_hash_table_destroy(params->qsf_default_hash);
-	if(params->referenceList) {
-		g_list_free(params->referenceList);
-	}
-	g_slist_free(params->supported_types);
-	if(params->map_ns) { xmlFreeNs(params->map_ns); }
-}
 
 int
 qsf_compare_tag_strings(const xmlChar *node_name, char *tag_name)
@@ -163,6 +153,7 @@ gboolean is_our_qsf_object(const char *path)
 		return FALSE; 
 	}
 	object_root = xmlDocGetRootElement(doc);
+	/* check that all objects in the file are already registered in QOF */
 	valid.validation_table = g_hash_table_new(g_str_hash, g_str_equal);
 	valid.qof_registered_count = 0;
 	valid.valid_object_count = 0;
@@ -183,8 +174,9 @@ gboolean is_qsf_object(const char *path)
 	doc = xmlParseFile(path);
 	if(doc == NULL) { return FALSE; }
 	if(TRUE != qsf_is_valid(QSF_SCHEMA_DIR, QSF_OBJECT_SCHEMA, doc)) { return FALSE; }
-	/** \todo implement a way of finding more than one map */
-	return is_qsf_object_with_map(path, "pilot-qsf-GnuCashInvoice.xml");
+	/* Note cannot test against a map here, so if the file is valid QSF,
+	accept it and work out the details later. */
+	return TRUE;
 }
 
 gboolean is_our_qsf_object_be(qsf_param *params)
@@ -233,7 +225,9 @@ gboolean is_our_qsf_object_be(qsf_param *params)
 
 gboolean is_qsf_object_be(qsf_param *params)
 {
+	gboolean result;
 	xmlDocPtr doc;
+	GList *maps;
 	char *path;
 
 	g_return_val_if_fail((params != NULL),FALSE);
@@ -257,8 +251,14 @@ gboolean is_qsf_object_be(qsf_param *params)
 			return FALSE;
 		}
 	}
-	/** \todo implement a way of finding more than one map */
-	return is_qsf_object_with_map_be("pilot-qsf-GnuCashInvoice.xml", params);
+	result = FALSE;
+	/* retrieve list of maps from config frame. */
+	for(maps = params->map_files; maps; maps=maps->next)
+	{
+		result = is_qsf_object_with_map_be(maps->data, params);
+		if(result) { break;}
+	}
+	return result;
 }
 
 static void

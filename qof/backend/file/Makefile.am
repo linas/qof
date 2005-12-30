@@ -3,14 +3,12 @@ SUBDIRS = .
 lib_LTLIBRARIES=libqof-backend-qsf.la
 
 AM_CFLAGS = \
+  ${warnFLAGS} \
 	-I.. -I../.. \
 	-I${top_srcdir}/qof \
   -DLOCALE_DIR=\""$(datadir)/locale"\" \
 	${LIBXML2_CFLAGS} \
-  ${GLIB_CFLAGS} \
-  -Werror \
-  -Wmissing-prototypes \
-  -Wmissing-declarations
+  ${GLIB_CFLAGS}
 
 libqof_backend_qsf_la_SOURCES = \
 	qsf-backend.c \

@@ -5,7 +5,6 @@
  *  Copyright  2005  Neil Williams
  *  linux@codehelp.co.uk
  ****************************************************************************/
-
 /*
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -29,6 +28,7 @@
 #include <libxml/tree.h>
 #include <libxml/parser.h>
 #include <libxml/xmlschemas.h>
+#include "qof.h"
 #include "qof-backend-qsf.h"
 #include "qsf-xml.h"
 #include "qsf-dir.h"
@@ -65,7 +65,7 @@ qsf_string_default_handler(const char *default_name, GHashTable *qsf_default_has
 	xmlNodeAddContent(node, output);
 }
 
-void
+static void
 qsf_map_validation_handler(xmlNodePtr child, xmlNsPtr ns, qsf_validator *valid)
 {
 	xmlChar *qof_version, *match;
@@ -353,7 +353,7 @@ qsf_map_default_handler(xmlNodePtr child, xmlNsPtr ns, qsf_param *params )
 	}
 }
 
-void
+static void
 qsf_map_top_node_handler(xmlNodePtr child, xmlNsPtr ns, qsf_param *params)
 {
 	xmlChar	*qof_version;
@@ -586,13 +586,13 @@ qsf_add_object_tag(qsf_param *params, int count)
 	extra_node = xmlAddChild(params->output_node,
 		xmlNewNode(params->qsf_ns, BAD_CAST QSF_OBJECT_TAG));
 	xmlNewProp(extra_node, BAD_CAST QSF_OBJECT_TYPE,
-		xmlGetProp(params->cur_node, BAD_CAST QSF_OBJECT_TYPE));
+		xmlGetProp(params->convert_node, BAD_CAST QSF_OBJECT_TYPE));
 	property = xmlCharStrdup(str->str);
 	xmlNewProp(extra_node, BAD_CAST QSF_OBJECT_COUNT, property);
 	return extra_node;
 }
 
-void
+static void
 qsf_map_object_handler(xmlNodePtr child, xmlNsPtr ns, qsf_param *params)
 {
 	xmlNodePtr param_node, export_node;
@@ -696,7 +696,7 @@ qsf_object_convert(xmlDocPtr mapDoc, xmlNodePtr qsf_root, qsf_param *params)
 //	qsf_node_foreach(qsf_root, qsf_map_object_handler, &iter, params);
 	for(cur_node = map_root->children; cur_node != NULL; cur_node = cur_node->next)
 	{
-		params->cur_node = cur_node;
+		params->convert_node = cur_node;
 		params->count = 0;
 		if(qsf_is_element(cur_node, params->map_ns, MAP_OBJECT_TAG))
 		{
