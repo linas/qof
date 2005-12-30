@@ -57,15 +57,24 @@ simpler, more natural way to work with objects.</p>
 <div><a href="http://qof-gen.sourceforge.net/">
 <img src="sflogosm.png" alt="qof-gen at SourceForge" id="sflogosm">
 </a></div>
-<div>Writing new QOF objects and examples can be a tad repetitive so
+<div><p>Writing new QOF objects and examples can be a tad repetitive so
 <a href="http://qof-gen.sourceforge.net/">QOF generator</a>
 automates the process using HTML forms and PHP. The generator is still new but
 it does create usable C code and an example program that can be compiled against
-current QOF CVS.
+current QOF CVS.</p>
+<h4>Using qof-generator with common front-end code</h4>
+<p>A second role for qof-generator involves providing a central repository for
+common front-end code that cannot go into QOF itself. Unlike backends, it seems
+strange to make a front-end into a GModule (although it can probably be done) and
+front-ends require dependencies that simply do not fit with the wider remit of the
+libqof1 library. So <code>qof-main.c|h</code> and <code>qof-shell.c|h</code> will
+be updated from qof-generator so that each project can benefit from improvements
+made elsewhere.
+</p>
 </div>
 <h3 id="online">Online examples</h3>
-<div><p>Several usage examples are also provided with the source code.  Most
-notable are:</p>
+<div><p>Two incomplete usage examples are available online. These demonstrate
+the code but are not intended to compile.</p>
 <ul>
 <li>An <a href="my-obj-example.c.html">example of using QOF
 to perform a query over some user-defined objects</a>. This example shows 
@@ -88,21 +97,29 @@ and the <a href="http://code.neil.williamsleesmill.me.uk/qsf.html">XML
 backend</a> designs.</p>
 </div>
 <hr><h2 id="devel">Development</h2>
-<h3>Building against or packaging QOF</h3>
-<div><p>The HACKING file in the source includes specific advice on
-building with QOF and packaging QOF for your distribution, including:</p>
-<ol style="list-style-type: lower-roman"><li>Building against QOF
-<ol style="list-style-type: lower-roman">
-<li>AUTOMAKE example</li>
-<li>libqof1 API/ABI compatibility.</li>
-<li>MAX_REQUIRED specifiers.</li>
-<li>DWI is optional.</li></ol></li>
-<li>Packaging QOF.<ol>
-<li>libqof-backend-qsf.la is REQUIRED in libqof1.</li>
-<li>libxml2 &gt;= 2.5.10</li>
-<li>There is no QOF dependency on Gtk!</li></ol></li>
-<li>Using libqof-dev</li>
-<li>Replacement of lib/libsql</li></ol>
+<h3>Development roadmap and direction</h3>
+<div><p>Undo support is being tested and work continues to bring all
+filenames and function names into line to make the code easier to follow.
+Also, SQL-handling is to be improved to support more of the possible SQL-type
+commands like UPDATE and DELETE. (Certain commands can never be supported,
+see <a href="http://qof.sourceforge.net/doxy/group__SQL.html">
+http://qof.sourceforge.net/doxy/group__SQL.html</a>). INSERT was added
+in 0.6.1</p>
+<p>Future work centres on new backends and an example CLI front-end built
+within qof-generator. New backends include:</p>
+<ul><li>Direct <a href="http://www.sqlite.org/">sqlite</a> support - available
+as an optional replacement for QSF in embedded systems. (QSF itself is relatively
+small but libxml2 is getting too large for some embedded systems.)</li>
+<li><a href="http://www.gnome-db.org/">libgda</a> backend support for the host
+PC. This takes the backends in the other direction - enabling pluggable support
+for a range of large database programs (including sqlite) to provide a single
+connection for all registered QOF objects to whichever programs are available
+to libgda. The current sql-parser code in QOF was originally copied from
+libgda and v0.6.0 can use external libgda to parse SQL where available. libgda
+will remain optional (to make QOF easier for embedded systems).
+</li></ul>
+<p>These new backends are likely to become optional packages so that QOF can be
+installed with any of the backends - as long as it has at least one.</p>
 </div>
 <hr><h2 id="support">Support</h2>
 <div><p>Support should be obtained by subscribing to the mailing list:
@@ -112,10 +129,8 @@ http://lists.sourceforge.net/lists/listinfo/qof-devel</a>.</p>
 <hr><h2 id="origins">Origins</h2>
 <div><p>QOF is an offshoot from the <a href="http://www.gnucash.org/">GnuCash
 Project</a>, where this framework is a deep, central component. QOF is basically
-the GnuCash "engine" with all of the financial objects removed. As such, QOF is
-"tried and true", and has proven its worth. However, this SourceForge project is
-listed as "alpha" because much work remains to be done, including the expanded
-support for SQL backends, scheme wrappers and many other features.</p>
+the GnuCash &quot;engine&quot; with all of the financial objects removed. As such, 
+QOF is &quot;tried and true&quot;, and has proven its worth.</p>
 <p>QOF has now been enabled as an external library for GnuCash and the QOF
 code is kept manually in sync with the GnuCash code prior to each QOF
 release; at some future date, the QOF core will be removed from GnuCash.</p>
@@ -132,12 +147,12 @@ A collection of objects can be associated with a particular data store. Besides
 just reading from and writing to the backend, queries can be passed to the
 backend, so that if a particular object does not exist locally, it can be
 fetched from the backend.</li>
-<li><b>Key-Value Pair trees</b> (also known as "frames and slots").
+<li><b>Key-Value Pair trees</b> (also known as &quot;frames and slots&quot;).
 KVP trees provide a generic, extensible way to hang additional data onto an
 object.  The trees store the data hierarchically, in a set of hash tables, and
 can be accessed using a URL-like path name. KVP trees are a great way to allow
 objects to be extensible.</li>
-<li><b>Trace Utilities</b>
+<li><b>Log Utilities</b>
 Allow warning, error and debugging messages to be enabled or disabled at
 run-time, thus allowing individual components of an application to be
 individually traced.</li>
@@ -158,19 +173,16 @@ intervention.</li>
 <hr>
 <h2 id="goals">Project Goals</h2>
 <div><p>Below are some concrete project goals.
-See <a href="why-qof.html">"Why QOF?"</a> for the more abstract ideas behind
-QOF, including the relationships between "database-driven", "program-driven"
-and "data-centric" programming explored at
+See <a href="why-qof.html">&quot;Why QOF?&quot;</a> for the more abstract ideas 
+behind QOF, including the relationships between &quot;database-driven&quot;, 
+&qquot;program-driven&quot; and &quot;data-centric&quot; programming explored at
 <a href="http://www.data-freedom.org/explain.html">Data-Freedom.org</a>.</p>
 <ul><li><p> Provide an object framework that allows programmers to create expressive
 queries that will search through a collection of objects, returning the desired
 set of objects.</p>
 <p><b>Status:</b> Completed, in that queries can be built and run.  Queries can be
 built with either a low-level C API, or by writing in an SQL-like language (for
-example, <tt>SELECT memo FROM gncTransaction WHERE
-gncTransaction.date='15.06.2003';</tt>).  This is done with a "client-side"
-parser, that parses this SQL locally, because, of course, it has to be run
-locally.  See the <tt>sql-example.c</tt> file for a usage example. </p>
+example, <tt>SELECT * FROM Transaction WHERE date='15.06.2003';</tt>).</p>
 </li>
 <li><p>
 Provide integration with database backends.  In particular, the programmer
@@ -218,9 +230,9 @@ written out to XML and read back in to <b>any</b> QOF application.
 </p></li>
 <li><p> Provide memory-management facilities. If objects in the local object 
 cache haven't been used in a while, and the application memory usage is getting 
-too large, the unused objects should be "reaped" or garbage-collected.  Of course,
-this can be done only if the object is fully in sync with the persistent storage
-backend. </p>
+too large, the unused objects should be &quot;reaped&quot; or garbage-collected.
+Of course, this can be done only if the object is fully in sync with the persistent
+storage backend.</p>
 <p>Status: just an idea, not started.</p></li>
 </ul>
 </div>
@@ -228,12 +240,15 @@ backend. </p>
 <h2 id="download">Downloads</h2>
 <div>
 <ul>
-<li>The source code release for v0.6.0 is available from <a title="qof-0.6.0.tar.gz"
-href="http://prdownloads.sourceforge.net/qof/qof-0.6.0.tar.gz?download"
+<li>The source code release for v0.6.1 is available from <a title="qof-0.6.1.tar.gz"
+href="http://prdownloads.sourceforge.net/qof/qof-0.6.1.tar.gz?download"
 >SourceForge</a>.</li>
-<li>Debian packages will be available from the main mirrors soon but there
-are <b>test packages</b> available using a trivial apt repository.
- (the / at the end of the URL is important.)<br/>
+<li>Also <a href="http://freshmeat.net/projects/qof/">Freshmeat</a>.</li>
+<li>Debian packages are available in 
+<a href="http://packages.debian.org/unstable/libs/libqof1">unstable</a> (0.6.1) 
+and <a href="http://packages.debian.org/testing/libs/libqof1">testing</a> (0.6.0). 
+There are also <b>test packages</b> available using a trivial apt repository.
+(the / at the end of the URL is important.)<br/>
 <code>deb http://www.linux.codehelp.co.uk/ packages/<br/>
 deb-src http://www.linux.codehelp.co.uk/ packages/</code><br/>
 Please note that these are not the usual quality-assured Debian packages,
@@ -247,19 +262,21 @@ via <a href="http://cvs.sourceforge.net/viewcvs.py/qof/qof/rpm/">SourceForge</a>
 <hr>
 <h2 id="status">Project Status</h2>
 <div>
-<p>This code is in active, daily use in
-<a href="http://www.gnucash.org">GnuCash</a>, and when used there, it is
-'stable' code.  However, the code in this CVS tree is under development,
-and is lacking in certain desired features. Neil is adding
-documentation wherever and whenever possible and QOF generator will provide
-all the examples. The subroutine naming convention is being resolved by
+<p>This code is in active, daily use in <a href="http://www.gnucash.org">GnuCash</a>
+and <a href="http://pilot-qof.sourceforge.net/">pilot-qof</a>. It is
+'stable' code. Neil is adding documentation wherever and whenever possible as
+well as sqlite and libgda optional backends using GModule and QOF generator will 
+provide all the examples. The subroutine naming convention is being resolved by
 deprecating older GnuCash-specific naming conventions.</p>
 <p>The other projects currently using QOF are:</p>
 <ul>
-<li><a href="http://gttr.sourceforge.net">GnoTime</a>.</li>
-<li><a href="http://pilot-qof.sourceforge.net/">Pilot-QOF</a>.</li>
-<li><a href="http://dwi.sourceforge.net/">DWI</a>.</li>
-<li><a href="http://www.linux.codehelp.co.uk/cashutil/">CashUtil</a>.</li>
+<li><a href="http://gttr.sourceforge.net">GnoTime</a> (Gnome Time Tracker).</li>
+<li><a href="http://pilot-qof.sourceforge.net/">pilot-qof</a> (Query Palm databases).</li>
+<li><a href="http://dwi.sourceforge.net/">DWI</a> (Data With Interaction).</li>
+<li><a href="http://www.linux.codehelp.co.uk/cashutil/">CashUtil</a>
+(the gnucash command line interface).</li>
+<li><a href="http://linux.codehelp.co.uk/embedded.html#gpeexpenses">
+gpe-expenses</a> for embedded devices like iPAQs.</li>
 </ul>
 </div>
 <hr>

@@ -32,8 +32,8 @@ title="Query Object Framework">QOF</acronym></h1>
 <div><img src="qof-logo.jpg" id="qoflogo" alt="image based on the hebrew
 symbol of the same name"></div>
 
-<h2>This file contains important advice for developers
-and packagers / maintainers relating to QOF</h2>
+<h2>Advice for packagers / maintainers</h2>
+<h3>Updated December 2005 for QOF 0.6.1</h3>
 
 <ul>
 <li>Building against QOF
@@ -47,13 +47,13 @@ and packagers / maintainers relating to QOF</h2>
 </li>
 <li>Packaging QOF.
 <ul>
-<li><a href="#la">libqof-backend-qsf.la is REQUIRED in libqof1</a></li>
+<li><a href="#la">libqof-backend-qsf.la in libqof1</a></li>
 <li><a href="#libxml">libxml2 >= 2.5.10</a></li>
 <li><a href="#nogtk">There is no QOF dependency on Gtk!</a></li>
 </ul>
 </li>
 <li><a href="#dev">Using libqof-dev</a></li>
-<li><a href="#libsql">Replacement of lib/libsql</a></li>
+<li><a href="#libsql">lib/libsql</a></li>
 </ul>
 
 <h2>BUILDING AGAINST QOF</h2>
@@ -73,13 +73,13 @@ if test pkg-config = no; then
 	exit 1
 fi
 AC_MSG_CHECKING([for QOF - version >= $QOF_REQUIRED])
-QOF=`$PKG_CONFIG --exists 'qof-1 >= $QOF_REQUIRED'`
-QOF_LIBS=`$PKG_CONFIG --libs qof-1`
-QOF_CFLAGS=`$PKG_CONFIG --cflags qof-1`
-QOF_VERSION=`$PKG_CONFIG --modversion qof-1`
-QOF_PREFIX=`$PKG_CONFIG --variable=prefix qof-1`
-QOF_LIB_DIR=`$PKG_CONFIG --variable=libdir qof-1`
-QOF_XML_DIR=`$PKG_CONFIG --variable=xmldir qof-1`
+QOF=`$PKG_CONFIG --silence-errors --exists 'qof-1 >= $QOF_REQUIRED'`
+QOF_LIBS=`$PKG_CONFIG --silence-errors --libs qof-1`
+QOF_CFLAGS=`$PKG_CONFIG --silence-errors --cflags qof-1`
+QOF_VERSION=`$PKG_CONFIG --silence-errors --modversion qof-1`
+QOF_PREFIX=`$PKG_CONFIG --silence-errors --variable=prefix qof-1`
+QOF_LIB_DIR=`$PKG_CONFIG --silence-errors --variable=libdir qof-1`
+QOF_XML_DIR=`$PKG_CONFIG --silence-errors --variable=xmldir qof-1`
 
 AC_SUBST(QOF_CFLAGS)
 AC_SUBST(QOF_LIBS)
@@ -164,7 +164,16 @@ http://lists.sourceforge.net/lists/listinfo/qof-devel</a></p>
 <p>Specify your Mac OSX compiler settings as environment variables.
 e.g. for fink use:</p>
 <pre>export CPPFLAGS="-I/sw/include"
-export LDFLAGS="-L/sw/lib"</pre>
+export LDFLAGS="-L/sw/lib"
+export LIBTOOL="glibtool"
+export PATH="/sw/bin:$PATH"
+export ACLOCAL_FLAGS="-I /sw/share/aclocal"
+</pre>
+<p>Helpful pair of settings for general manpage usage
+(to go into .bashrc in your home directory):</p>
+<pre>export MANPATH="/sw/share/man:&lt;build_path&gt;"
+export PAGER="less -s"
+</pre>
 
 <p>To only use these for this one build, create a bash script and export
 the variables before calling ./autogen.sh</p>
@@ -172,30 +181,28 @@ the variables before calling ./autogen.sh</p>
 <hr>
 <h2>PACKAGING QOF</h2>
 
-<h3 id="la">libqof-backend-qsf.la is REQUIRED in libqof1</h3>
+<h3 id="la">libqof-backend-qsf.la in libqof1</h3>
 <div>
-<p>Unlike many other packages, libqof1 <b>REQUIRES</b> the inclusion of the .la file for
-the QSF backend module into the main binary package - it is NOT acceptable to
-put it in the -dev or -devel package! This is for portability and to make it
-easier to use GModule to load the backend. This method will be used for all
-subsequent QOF backend modules and .la files for those backends will also need
-to be installed by the libqof1 package without requiring a dependency on the 
-development package.</p>
+<p>This section has been re-written in the light of real usage of the QOF
+library, in particular on embedded systems. The previous statements about
+the .la files mainly reflected a previous implementation before the switch
+to GModule. I would recommend that the .la files are installed with the main
+library where possible but it is no longer a requirement of QOF.
+</p>
 </div>
 <hr>
 <h3 id="libxml">libxml2 &gt;= 2.5.10</h3>
 
-<p>The version string is vital. (Earlier versions will break the QSF backend horribly.)</p>
+<p>The version string is vital. (Earlier versions will break the QSF 
+backend horribly.)</p>
 <hr>
 
 <h3 id="nogtk">There is no QOF dependency on Gtk!</h3>
 <div>
-<p>Do not list a QOF runtime or build dependency on libgtk. There is one example 
-that can use Gtk if it is installed but it is omitted from the build without 
-errors if Gtk is not installed:</p>
-<pre>checking if we should build examples that use Gtk... Yes, will build Gtk examples.</pre>
-
-<p>That's all there is to the Gtk stuff. It's important because projects like 
+<p>Do <b>not</b> list a QOF runtime or build dependency on libgtk. The one example 
+that could use Gtk has now been <b>removed</b> from the distribution tarball
+along with the other (outdated) examples.</p>
+<p>That's all there ever was to the Gtk stuff. It's important because projects like 
 pilot-link will not accept code that links to GUI stuff for no good reason.</p>
 </div>
 <hr>
@@ -224,14 +231,15 @@ on Mac OSX via fink - albeit at only v1.0.4-3.</p>
 has 1.2.1-2.</p>
 
 <p>Therefore, libgda will be used wherever possible and lib/libsql
-will eventually be dropped.</p>
+will eventually be reserved only for systems that cannot use libgda.</p>
 
 <p>This also helps complete the CashUtil project that will need the
 SQL handling in QOF and GnuCash itself which is likely to use more
 SQL directly in the future.</p>
 </div>
 <hr>
-<div><p>Written by Neil Williams &lt;linux@codehelp.co.uk&gt; October 2005.</p></div>
+<div><p>Written by Neil Williams &lt;linux@codehelp.co.uk&gt; December 2005.
+</p></div>
 <hr>
 <div><a href="http://sourceforge.net">
 <img src="http://sourceforge.net/sflogo.php?group_id=83302&amp;type=5"
