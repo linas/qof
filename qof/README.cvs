@@ -1,30 +1,23 @@
-This file contains guidelines for using QOF from CVS.
-They have been adapted from the guidelines for GnuCash which 
-in turn were adapted from the guidelines for gnome-libs by
-Miguel de Icaza who adapted them from guidelines written by
-Owen Taylor.
+Building QOF from CVS.
+======================
 
- + In order to build QOF from CVS, you need to run the autogen.sh
-   command to generate and execute a configure script.  When building
-   from CVS you should ALWAYS pass your configure options directly to
-   autogen.sh.  For example:
+ + You need to run the autogen.sh command to generate a configure script.
+   autogen.sh accepts no options.
 
-	./autogen.sh --enable-doxygen --prefix=/opt/qof
+   Autogen will automatically generate the configure script and indicate
+   which SPECIAL ARGUMENTS you should pass to ./configure to enable certain 
+   files to be built with error checking. If you run "configure" without these 
+   special arguments, make install will try to use privileged directories
+   and certain error conditions will not be checked.
 
-   Autogen will automatically generate the configure script and then
-   run it WITH SPECIAL ARGUMENTS to make sure certain files get built.
-   If you run "configure" without these special arguments, it is very likely
-   that GnuCash will fail to build.  Therefore, do not run configure by
-   hand.
+   Typical arguments for ./configure are:
+   --enable-maintainer-mode \
+   --enable-compile-warnings \
+   --enable-error-on-warning \
+   --prefix=/opt/build/qof
 
    If in doubt, you can run autogen.sh, run ./configure --help,
    then re-run autogen.sh with your options.
 
-Neil Williams
-Oct 24, 2004
-
-Dave Peticolas
-June 21, 2002
-
-Derek Atkins
-November 21, 2002
+re-written by Neil Williams
+Dec 21, 2005
