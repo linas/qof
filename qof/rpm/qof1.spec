@@ -1,5 +1,5 @@
 %define name qof
-%define version 0.6.0
+%define version 0.6.1
 %define release 1
 
 Summary: Query Object Framework
@@ -8,7 +8,7 @@ Version: %{version}
 Release: %{release}
 Copyright: GPL
 Group: Libraries
-Source: http://prdownloads.sourceforge.net/qof/qof-0.6.0.tar.gz
+Source: http://prdownloads.sourceforge.net/qof/qof-0.6.1.tar.gz
 URL: http://qof.sourceforge.net/
 # Remember to change the packager string to your details
 Packager: Neil Williams
@@ -54,13 +54,16 @@ make uninstall
 %doc AUTHORS README NEWS ChangeLog
 %{_libdir}/libqof.la
 %{_libdir}/libqof.so
-%{_libdir}/libqof.so.1.0.1
+%{_libdir}/libqof.so.1.0.2
+%{_libdir}/libqof.so.1
 %{_libdir}/libqof-backend-qsf.la
 %{_libdir}/libqof-backend-qsf.so
-%{_libdir}/libqof-backend-qsf.so.0.0.0
+%{_libdir}/libqof-backend-qsf.so.0.0.1
+%{_libdir}/libqof-backend-qsf.so.0
 %{_libdir}/libqofsql.la
 %{_libdir}/libqofsql.so
 %{_libdir}/libqofsql.so.1.0.1
+%{_libdir}/libqofsql.so.1
 %{_datadir}/locale/en_GB/LC_MESSAGES/qof.mo
 %{_datadir}/xml/qof/qsf/pilot-qsf-GnuCashInvoice.xml
 %{_datadir}/xml/qof/qsf/qsf-map.xsd.xml
@@ -68,16 +71,16 @@ make uninstall
 
 %files devel
 %defattr(-,root,root)
-%doc AUTHORS HACKING INSTALL README NEWS ChangeLog TODO
+%doc AUTHORS INSTALL README NEWS ChangeLog TODO
 %{_libdir}/libqof.a
 %{_libdir}/libqofsql.a
 %{_libdir}/libqof-backend-qsf.a
 %{_libdir}/pkgconfig/qof-1.pc
+%{_includedir}/qof/deprecated.h
 %{_includedir}/qof/gnc-date.h
 %{_includedir}/qof/gnc-engine-util.h
 %{_includedir}/qof/gnc-event.h
 %{_includedir}/qof/gnc-numeric.h
-%{_includedir}/qof/gnc-trace.h
 %{_includedir}/qof/guid.h
 %{_includedir}/qof/kvp_frame.h
 %{_includedir}/qof/kvp-util.h
@@ -97,6 +100,7 @@ make uninstall
 %{_includedir}/qof/qofid-p.h
 %{_includedir}/qof/qofinstance.h
 %{_includedir}/qof/qofinstance-p.h
+%{_includedir}/qof/qoflog.h
 %{_includedir}/qof/qofobject.h
 %{_includedir}/qof/qofquerycore.h
 %{_includedir}/qof/qofquery.h

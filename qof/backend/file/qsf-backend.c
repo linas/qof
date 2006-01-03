@@ -173,7 +173,6 @@ qsf_determine_file_type(const char *path)
 {
 	struct stat sbuf;
 
-	PINFO (" %s", path);
 	if (!path) { return TRUE; }
 	if (0 == safe_strcmp(path, QOF_STDOUT)) { return TRUE; }
 	if (stat(path, &sbuf) <0)    { return FALSE; }
@@ -909,7 +908,6 @@ write_qsf_to_stdout(QofBook *book, qsf_param *params)
 	xmlSaveFormatFileEnc("-", qsf_doc, "UTF-8", 1);
 	fprintf(stdout, "\n");
 	xmlFreeDoc(qsf_doc);
-	LEAVE (" ");
 }
 
 static void

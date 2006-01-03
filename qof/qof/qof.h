@@ -102,7 +102,7 @@
 /** allow easy logging of QSF debug messages */
 #define QOF_MOD_QSF "qof-backend-qsf"
 /** allow easy loading of the QSF backend */
-#define QSF_BACKEND_LIB "libqof-backend-qsf.la"
+#define QSF_BACKEND_LIB "libqof-backend-qsf"
 /** allow easy loading of the QSF backend */
 #define QSF_MODULE_INIT "qsf_provider_init"
 

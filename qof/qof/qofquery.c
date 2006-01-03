@@ -1416,7 +1416,7 @@ static gchar *qof_query_printDateMatch (QofDateMatch d);
 static gchar *qof_query_printNumericMatch (QofNumericMatch n);
 static gchar *qof_query_printGuidMatch (QofGuidMatch g);
 static gchar *qof_query_printCharMatch (QofCharMatch c);
-static GString *qof_query_printPredData (QofQueryPredData *pd);
+static GList *qof_query_printPredData (QofQueryPredData *pd, GList *lst);
 static GString *qof_query_printParamPath (GSList * parmList);
 static void qof_query_printValueForParam (QofQueryPredData *pd, GString * gs);
 static void qof_query_printOutput (GList * output);
@@ -1540,7 +1540,7 @@ qof_query_printSorts (QofQuerySort *s[], const gint numSorts, GList * output)
 {
   GSList *gsl, *n = NULL;
   gint curSort;
-  GString *gs = g_string_new ("  Sort Parameters:   ");
+  GString *gs = g_string_new ("Sort Parameters:   ");
 
   for (curSort = 0; curSort < numSorts; curSort++)
   {
@@ -1578,7 +1578,7 @@ qof_query_printSorts (QofQuerySort *s[], const gint numSorts, GList * output)
 static GList *
 qof_query_printAndTerms (GList * terms, GList * output)
 {
-  const char *prefix = "  AND Terms:";
+  const char *prefix = "AND Terms:";
   QofQueryTerm *qt;
   QofQueryPredData *pd;
   GSList *path;
@@ -1596,7 +1596,7 @@ qof_query_printAndTerms (GList * terms, GList * output)
     if (invert) output = g_list_append (output, 
                                      g_string_new("    INVERT SENSE "));
     output = g_list_append (output, qof_query_printParamPath (path));
-    output = g_list_append (output, qof_query_printPredData (pd));
+    output = qof_query_printPredData (pd, output);
 //    output = g_list_append (output, g_string_new(" "));
   }
 
@@ -1610,7 +1610,7 @@ static GString *
 qof_query_printParamPath (GSList * parmList)
 {
   GSList *list = NULL;
-  GString *gs = g_string_new ("    Param List: ");
+  GString *gs = g_string_new ("Param List: ");
   g_string_append (gs, "      ");
   for (list = parmList; list; list = list->next)
   {
@@ -1625,12 +1625,12 @@ qof_query_printParamPath (GSList * parmList)
 /*
         Process the PredData of the AND terms
 */
-static GString *
-qof_query_printPredData (QofQueryPredData *pd)
+static GList *
+qof_query_printPredData (QofQueryPredData *pd, GList *lst)
 {
   GString *gs;
 
-  gs = g_string_new ("    Pred Data:      ");
+  gs = g_string_new ("Pred Data: ");
   g_string_append (gs, (gchar *) pd->type_name);
 
   /* Char Predicate and GUID predicate don't use the 'how' field. */
@@ -1640,10 +1640,11 @@ qof_query_printPredData (QofQueryPredData *pd)
     g_string_append_printf (gs, "      how: %s",
                        qof_query_printStringForHow (pd->how));
   }
-
+  lst = g_list_append(lst, gs);
+  gs = g_string_new ("");
   qof_query_printValueForParam (pd, gs);
-
-  return gs;
+  lst = g_list_append(lst, gs);
+  return lst;
 }                               /* qof_query_printPredData */
 
 /*
@@ -1682,7 +1683,7 @@ qof_query_printValueForParam (QofQueryPredData *pd, GString * gs)
   {
     GList *node;
     query_guid_t pdata = (query_guid_t) pd;
-    g_string_append_printf (gs, "      Match type %s",
+    g_string_append_printf (gs, "Match type %s",
                        qof_query_printGuidMatch (pdata->options));
     for (node = pdata->guids; node; node = node->next)
     {

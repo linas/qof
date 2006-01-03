@@ -22,6 +22,7 @@ make-potfiles: make-potfiles.in Makefile
 	mv $@.tmp $@
 
 EXTRA_DIST =                   \
+  HACKING \
   make-potfiles.in \
 	intltool-extract.in         \
 	intltool-merge.in           \

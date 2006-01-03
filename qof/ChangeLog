@@ -1,3 +1,27 @@
+2006-03-10  Neil Williams <linux@codehelp.co.uk>
+
+	* Makefile.am : Add HACKING to dist.
+	* backend/file/pilot-qsf-GnuCashInvoice.xml :
+	update objects - the file may still be removed in a 
+	future release.
+	* backend/file/qsf-backend.c : remove uneven 
+	debug call
+	* backend/file/qsf-xml-map.c : improve debug handling
+	* fink/qof1.info : Update library SONAMES for packaging.
+	* qof/qofbackend.c : 
+	* qof/qof.h : Finalise module loading. Downgrade the reliance
+	on the .la files for backends.
+	* rpm/qof1.spec : Missed some symlinks.
+
+2006-01-01  Neil Williams <linux@codehelp.co.uk>
+
+	* qof/qofobject.c : 
+	* qof/qofobject-p.h : New function to check full
+	compliance of an object once instead of failing
+	repeatedly.
+	* qof/qofsession.c : Check we can create an object
+	before attempting.
+
 2005-12-29  Neil Williams <linux@codehelp.co.uk>
 
 	Typo in FSF address corrected.

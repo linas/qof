@@ -697,23 +697,6 @@ void
 qsf_node_foreach(xmlNodePtr parent, qsf_nodeCB cb,
 	struct qsf_node_iterate *iter, qsf_param *params);
 
-/** \brief Loads the QSF into a QofSession, ready to merge.
- 
-Loads a QSF object file containing only GnuCash objects
-into a second QofSession.
- 
-@param first_session A QofSession pointer to the original session. This
-will become the target of the subsequent qof_book_merge.
-
-@param path	Absolute or relative path to the file to be loaded
- 
-@return ERR_BACKEND_NO_ERR == 0 on success, otherwise the QofBackendError
-	set by the QSFBackend.
-  			
-*//*
-QofBackendError 
-qof_session_load_our_qsf_object(QofSession *first_session, const char *path);*/
-
 /** \brief Convert between QSF objects
 
 This is the main workhorse of the conversion between QSF objects using
@@ -739,10 +722,6 @@ Used to parse object and map files.
 void
 qsf_object_node_handler(xmlNodePtr child, xmlNsPtr qsf_ns, qsf_param *params);
 
-/** \brief Create a new QSF backend.
-*/
-//QofBackend* qsf_backend_new(void);
-	
 /** @} */
 /** @} */
 

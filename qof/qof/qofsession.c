@@ -45,6 +45,7 @@
 #include "qofbackend-p.h"
 #include "qofbook-p.h"
 #include "qofsession-p.h"
+#include "qofobject-p.h"
 
 /** \deprecated should not be static */
 static QofSession * current_session = NULL;
@@ -541,8 +542,19 @@ qof_entity_list_foreach(gpointer data, gpointer user_data)
 	qecd = (QofEntityCopyData*)user_data;
 	if(qof_entity_guid_match(qecd->new_session, original)) { return; }
 	qecd->from = original;
+	if(!qof_object_compliance(original->e_type, FALSE)) 
+	{
+		qecd->error = TRUE;
+		return;
+	}
 	book = qof_session_get_book(qecd->new_session);
 	inst = (QofInstance*)qof_object_new_instance(original->e_type, book);
+	if(!inst) 
+	{ 
+		PERR (" failed to create new entity type=%s.", original->e_type);
+		qecd->error = TRUE;
+		return;
+	}
 	qecd->to = &inst->entity;
 	g = qof_entity_get_guid(original);
 	qof_entity_set_guid(qecd->to, g);
@@ -586,6 +598,7 @@ qof_entity_coll_copy(QofEntity *original, gpointer user_data)
 	g_return_if_fail(user_data != NULL);
 	qecd = (QofEntityCopyData*)user_data;
 	book = qof_session_get_book(qecd->new_session);
+	if(!qof_object_compliance(original->e_type, TRUE)) { return; }
 	inst = (QofInstance*)qof_object_new_instance(original->e_type, book);
 	qecd->to = &inst->entity;
 	qecd->from = original;
@@ -596,7 +609,8 @@ qof_entity_coll_copy(QofEntity *original, gpointer user_data)
 	qof_commit_edit(inst);
 }
 
-gboolean qof_entity_copy_to_session(QofSession* new_session, QofEntity* original)
+gboolean 
+qof_entity_copy_to_session(QofSession* new_session, QofEntity* original)
 {
 	QofEntityCopyData qecd;
 	QofInstance *inst;
@@ -604,6 +618,7 @@ gboolean qof_entity_copy_to_session(QofSession* new_session, QofEntity* original
 
 	if(!new_session || !original) { return FALSE; }
 	if(qof_entity_guid_match(new_session, original)) { return FALSE; }
+	if(!qof_object_compliance(original->e_type, TRUE)) { return FALSE; }
 	gnc_engine_suspend_events();
 	qecd.param_list = NULL;
 	book = qof_session_get_book(new_session);
@@ -636,12 +651,17 @@ gboolean qof_entity_copy_list(QofSession *new_session, GList *entity_list)
 	qof_book_set_partial(qof_session_get_book(new_session));
 	g_list_foreach(entity_list, qof_entity_list_foreach, qecd);
 	gnc_engine_resume_events();
+	if(qecd->error) 
+	{ 
+		PWARN (" some/all entities in the list could not be copied.");
+	}
 	g_free(qecd);
 	LEAVE (" ");
 	return TRUE;
 }
 
-gboolean qof_entity_copy_coll(QofSession *new_session, QofCollection *entity_coll)
+gboolean 
+qof_entity_copy_coll(QofSession *new_session, QofCollection *entity_coll)
 {
 	QofEntityCopyData qecd;
 
@@ -650,7 +670,8 @@ gboolean qof_entity_copy_coll(QofSession *new_session, QofCollection *entity_col
 	qecd.new_session = new_session;
 	qof_book_set_partial(qof_session_get_book(qecd.new_session));
 	qof_collection_foreach(entity_coll, qof_entity_coll_foreach, &qecd);
-	qof_class_param_foreach(qof_collection_get_type(entity_coll), qof_entity_param_cb, &qecd);
+	qof_class_param_foreach(qof_collection_get_type(entity_coll), 
+		qof_entity_param_cb, &qecd);
 	qof_collection_foreach(entity_coll, qof_entity_coll_copy, &qecd);
 	if(qecd.param_list != NULL) { g_slist_free(qecd.param_list); }
 	gnc_engine_resume_events();
@@ -795,7 +816,7 @@ gboolean qof_entity_copy_one_r(QofSession *new_session, QofEntity *ent)
 
 /* ====================================================================== */
 
-/* Programs that use their own backends also need to call
+/** Programs that use their own backends also need to call
 the default QOF ones. The backends specified here are
 loaded only by applications that do not have their own. */
 struct backend_providers
@@ -808,11 +829,11 @@ struct backend_providers
 /* All available QOF backends need to be described here
 and the last entry must be three NULL's.
 Remember: Use the libdir from the current build environment
-and use the .la NOT the .so - .so is not portable! */
+and use JUST the module name without .so - .so is not portable! */
 struct backend_providers backend_list[] = {
-	{ QOF_LIB_DIR, "libqof-backend-qsf.la", "qsf_provider_init" },
+	{ QOF_LIB_DIR, QSF_BACKEND_LIB, QSF_MODULE_INIT },
 #ifdef HAVE_DWI
-	{ QOF_LIB_DIR, "libqof_backend_dwi.la", "dwiend_provider_init" },
+	{ QOF_LIB_DIR, "libqof_backend_dwi", "dwiend_provider_init" },
 #endif
 	{ NULL, NULL, NULL }
 };
