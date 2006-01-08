@@ -20,10 +20,16 @@ make-potfiles: make-potfiles.in Makefile
       -e 's:@-PERL-@:${PERL}:g'
 	chmod +x $@.tmp
 	mv $@.tmp $@
+	./make-potfiles > ./po/POTFILES.in
+
+pot: Makefile
+	rm -f po/$(PACKAGE).pot
+	make -C po $(PACKAGE).pot
 
 EXTRA_DIST =                   \
   HACKING \
   make-potfiles.in \
+  po/POTFILES.in \
 	intltool-extract.in         \
 	intltool-merge.in           \
 	intltool-update.in          \
@@ -34,4 +40,5 @@ DISTCLEANFILES = \
 	intltool-merge    \
   intltool-extract \
   make-potfiles \
+  po/POTFILES.in \
   po/.intltool-merge-cache

@@ -330,13 +330,13 @@ qof_collection_is_dirty (QofCollection *col)
 void 
 qof_collection_mark_clean (QofCollection *col)
 {
-   if (!col) { col->is_dirty = FALSE; }
+   if (col) { col->is_dirty = FALSE; }
 }
 
 void 
 qof_collection_mark_dirty (QofCollection *col)
 {
-   if (!col) { col->is_dirty = TRUE; }
+   if (col) { col->is_dirty = TRUE; }
 }
 
 /* =============================================================== */
@@ -350,7 +350,7 @@ qof_collection_get_data (QofCollection *col)
 void 
 qof_collection_set_data (QofCollection *col, gpointer user_data)
 {
-   if (!col) { col->data = user_data; }
+   if (col) { col->data = user_data; }
 }
 
 /* =============================================================== */

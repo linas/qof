@@ -1,3 +1,7 @@
+January 2006: Backend loader now less reliant on .la 
+	files - still recommended. Added deprecated.c to
+	preserve deprecated function names into the binary.
+
 November 2005: Preparing 0.6.1 - 64bit patch for qofgobj.c,
 	Fixed the INSERT handler to accept more than one value.
 	Fixed the FSF addresses in each file.

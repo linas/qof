@@ -1,4 +1,10 @@
-2006-03-10  Neil Williams <linux@codehelp.co.uk>
+2006-01-08  Neil Williams <linux@codehelp.co.uk>
+
+	* qof/qofid.c : Fix logical bug that prevented collection
+	data being set.
+	* qof/gnc-numeric.c : gnucash sync.
+
+2006-01-03  Neil Williams <linux@codehelp.co.uk>
 
 	* Makefile.am : Add HACKING to dist.
 	* backend/file/pilot-qsf-GnuCashInvoice.xml :
