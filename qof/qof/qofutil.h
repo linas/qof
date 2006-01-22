@@ -92,7 +92,7 @@ substitutes for the function equivalents.
     const char* name##asString(name n);
 
 #define AS_STRING_FUNC(name, list)       \
-    const char* name##asString(name n) {       \
+    const char* name##asString(name n) { \
         switch (n) {                     \
             list(AS_STRING_CASE)         \
             default: return "";  } }
@@ -113,13 +113,13 @@ substitutes for the function equivalents.
 /** \name enum as string with no typedef
 @{
 
-  Similar but used when the enum is NOT a typedef 
+  Similar but used when the enum is NOT a typedef
   Make sure you use the DEFINE_ENUM_NON_TYPEDEF macro.
 
  You can precede the FROM_STRING_FUNC_NON_TYPEDEF 
  and AS_STRING_FUNC_NON_TYPEDEF macros with the 
  keyword static if appropriate.
- 
+  
  ENUM_BODY is used in both types.
  */
 
@@ -128,30 +128,30 @@ substitutes for the function equivalents.
         list(ENUM_BODY)                       \
     };
 
-#define FROM_STRING_DEC_NON_TYPEDEF(name, list)      \
+#define FROM_STRING_DEC_NON_TYPEDEF(name, list)   \
    void name##fromString                          \
-	(const char* str, enum name *type);
+   (const char* str, enum name *type);
 
-#define FROM_STRING_CASE_NON_TYPEDEF(name, value)    \
-    if (strcmp(str, #name) == 0) { *type = name; }
+#define FROM_STRING_CASE_NON_TYPEDEF(name, value) \
+   if (strcmp(str, #name) == 0) { *type = name; }
 
-#define FROM_STRING_FUNC_NON_TYPEDEF(name, list)     \
+#define FROM_STRING_FUNC_NON_TYPEDEF(name, list)  \
    void name##fromString                          \
-	(const char* str, enum name *type) {         \
+   (const char* str, enum name *type) {           \
    if(str == NULL) { return; }                    \
     list(FROM_STRING_CASE_NON_TYPEDEF) }
 
-#define AS_STRING_DEC_NON_TYPEDEF(name, list)        \
-    const char* name##asString(enum name n);
+#define AS_STRING_DEC_NON_TYPEDEF(name, list)     \
+   const char* name##asString(enum name n);
 
-#define AS_STRING_FUNC_NON_TYPEDEF(name, list)       \
-    const char* name##asString(enum name n) {        \
-        switch (n) {                     \
-            list(AS_STRING_CASE_NON_TYPEDEF)         \
+#define AS_STRING_FUNC_NON_TYPEDEF(name, list)    \
+   const char* name##asString(enum name n) {      \
+       switch (n) {                               \
+           list(AS_STRING_CASE_NON_TYPEDEF)       \
            default: return ""; } }
 
-#define AS_STRING_CASE_NON_TYPEDEF(name, value)      \
-    case name: { return #name; }
+#define AS_STRING_CASE_NON_TYPEDEF(name, value)   \
+   case name: { return #name; }
 
 /** @} */
 
@@ -300,13 +300,27 @@ void gnc_engine_string_cache_destroy (void);
 */
 void gnc_string_cache_remove(gconstpointer key);
 
-/** You can use this function with g_hash_table_insert(), or the key
+/** You can use this function with g_hash_table_insert(), for the key
    (or value), as long as you use the destroy notifier above.
 */
-gpointer gnc_string_cache_insert(gpointer key);
+gpointer gnc_string_cache_insert(gconstpointer key);
 
-#define CACHE_INSERT(str) gnc_string_cache_insert((gpointer)(str));
-#define CACHE_REMOVE(str) gnc_string_cache_remove((str));
+#define CACHE_INSERT(str) gnc_string_cache_insert((gconstpointer)(str))
+#define CACHE_REMOVE(str) gnc_string_cache_remove((str))
+
+/* Replace cached string currently in 'dst' with string in 'src'.
+ * Typical usage:
+ *     void foo_set_name(Foo *f, const char *str) {
+ *        CACHE_REPLACE(f->name, str);
+ *     }
+ * It avoids unnecessary ejection by doing INSERT before REMOVE.
+*/
+#define CACHE_REPLACE(dst, src) do {               \
+        gpointer tmp = CACHE_INSERT((src));        \
+        CACHE_REMOVE((dst));                       \
+        (dst) = tmp;                               \
+    } while (0)
+
 
 #endif /* QOF_UTIL_H */
 /** @} */
