@@ -187,9 +187,9 @@ built with either a low-level C API, or by writing in an SQL-like language (for
 example, <tt>SELECT * FROM Transaction WHERE date='15.06.2003';</tt>).</p>
 </li>
 <li><p>
-Provide integration with database backends.  In particular, the programmer
+Provide integration with database backends. In particular, the programmer
 should be able to use QOF to create a local 'cache' of objects that mirrors a
-subset of the contents in a remote database.  The idea is that applications, by
+subset of the contents in a remote database. The idea is that applications, by
 working with a local copy, can be highly responsive and have good performance.
 On the other hand, by working with only a subset of the remote data, the
 application can avoid having a huge memory footprint. This is a very unique
@@ -204,8 +204,8 @@ scalability: instead of the all-or-nothing approach, it provides a middle
 ground, allowing small fast apps to access huge databases.
 </p>
 <p> <b>Status:</b> The GnuCash backend provides access to file and to SQL
-storage.  However, not all of this code has been abstracted out in a generic way
-to be brought back into QOF.  Linas has got the major pieces ready to go, in the
+storage. However, not all of this code has been abstracted out in a generic way
+to be brought back into QOF. Linas has got the major pieces ready to go, in the
 DWI project, but they're not integrated yet. Neil has added support for partial
 books that make this cache possible and merging that makes the data in the
 partial books accessible. Partial books also make it simple to export an
@@ -220,12 +220,12 @@ using ODBC.
 performance.  For example, the current search over object fields is O(N),
 because each object instance is checked for a match.  It would be nice to add
 support for 'primary keys' and/or indexes as the first step towards a query
-optimizer.  Alternately (or in addition), a different query engine might be
+optimizer. Alternately (or in addition), a different query engine might be
 wedged into place. For example, sqllite might make for an excellent client-side
 sql engine: its small fast and optimized. </p></li>
 <li><p> Provide for off-line operation.  Because the object data is cached locally,
 users should be able to continue doing useful work even if they are not attached
-to the net.  When they regain net access, QOF should be able to resynchronize
+to the net. When they regain net access, QOF should be able to resynchronize
 with the remote servers. </p>
 <p><b>Status:</b> Implemented as XML. Any book (partial or complete) can be 
 written out to XML and read back in to <b>any</b> QOF application.
@@ -246,18 +246,29 @@ storage backend.</p>
 href="http://prdownloads.sourceforge.net/qof/qof-0.6.1.tar.gz?download"
 >SourceForge</a>.</li>
 <li>Also <a href="http://freshmeat.net/projects/qof/">Freshmeat</a>.</li>
-<li>Debian packages are available in 
+<li><b>Debian</b> packages are available in 
 <a href="http://packages.debian.org/unstable/libs/libqof1">unstable</a> (0.6.1-1) 
-and <a href="http://packages.debian.org/testing/libs/libqof1">testing</a> (0.6.0-2). 
-There are also <b>test packages</b> available using a trivial apt repository.
+and <a href="http://packages.debian.org/testing/libs/libqof1">testing</a> (0.6.0-2).
+<ul><li>
+There are <b>test packages</b> available using a trivial apt repository.
 (the / at the end of the URL is important.)<br/>
 <code>deb http://www.linux.codehelp.co.uk/ packages/<br/>
 deb-src http://www.linux.codehelp.co.uk/ packages/</code><br/>
 Please note that these are not the usual quality-assured Debian packages,
-these are only tests - demos if you will.</li>
-<li>There is also a sample .spec file available in QOF CVS, available 
-via <a href="http://cvs.sourceforge.net/viewcvs.py/qof/qof/rpm/">SourceForge</a>.
-<li>Packages are also planned for Fink and DarwinPorts (Mac OSX)</li>
+these are only tests - demos if you will.</li></ul></li>
+<li>QOF 0.6.1 is in 
+<a href="http://packages.ubuntu.com/dapper/libs/libqof1">Ubuntu Universe</a>.</li>
+<li>There is a sample .spec file available in QOF CVS, available 
+via <a href="http://cvs.sourceforge.net/viewcvs.py/qof/qof/rpm/">SourceForge</a>.</li>
+<li>RPM packages have been prepared for 
+<a href="http://rpmfind.net/linux/RPM/fedora/extras/4/i386/qof-0.6.1-1.fc4.i386.html">
+Fedora 4 Extras</a> and 
+<a href="http://rpmfind.net/linux/RPM/fedora/devel/i386/qof-0.6.1-1.fc5.i386.html">
+Fedora 5 Extras</a>. 
+(<a href="http://rpmfind.net/linux/rpm2html/search.php?query=qof">Other versions</a>).
+</li>
+<li>Packages are also planned for 
+<a href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=1399946&amp;group_id=17203&amp;atid=414256">Fink</a> and DarwinPorts (Mac OSX)</li>
 </ul>
 </div>
 
