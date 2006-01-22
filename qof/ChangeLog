@@ -1,3 +1,17 @@
+2006-01-22  Neil Williams <linux@codehelp.co.uk>
+
+	* src/backend/file/qsf-backend.c : Prevent bad time
+	values from being passed to entity.
+	* qof/gnc-engine-util.c|h : Add CACHE_REPLACE(dst, src)
+	macro for common case in string setters.
+	Chris Shoemaker <chris@cvs.gnucash.org>
+	gnucash r12319.
+	* website/index.html : Update for new package
+	locations.
+	* po/sv.po : New Swedish translation.
+	* po/vi.po : New Vietnamese translation.
+	* configure.in : Support new translations.
+
 2006-01-08  Neil Williams <linux@codehelp.co.uk>
 
 	* qof/qofid.c : Fix logical bug that prevented collection
