@@ -121,10 +121,10 @@ amended or added, the data is labelled \a MERGE_UPDATE.
  final commit leaves the existing book completely untouched.
 */
 typedef enum { 
-	MERGE_UNDEF, 		/**< default value before comparison is made. */
-	MERGE_ABSOLUTE, 	/**< GUID exact match, no new data - \b ignore */
+	MERGE_UNDEF,     /**< default value before comparison is made. */
+	MERGE_ABSOLUTE,  /**< GUID exact match, no new data - \b ignore */
 	MERGE_NEW,       /**< import object does \b not exist in the target book - \b add */
-	MERGE_REPORT, 		/**< import object needs user intervention - \b report */
+	MERGE_REPORT,    /**< import object needs user intervention - \b report */
 	MERGE_DUPLICATE, /**< import object with different GUID exactly matches existing GUID - \b ignore */
 	MERGE_UPDATE,    /**< import object matches an existing entity but includes new or 
                              modified parameter data - \b update */
@@ -157,15 +157,15 @@ same name in mergeData.
 typedef struct 
 {
 	/* internal counters and reference variables */
-	gboolean mergeAbsolute;			/**< Only set if the GUID of the import matches the target */
-	double difference;				/**< used to find best match in a book where no GUID matches */
-	gboolean updated;				/**< prevent the mergeResult from being overwritten. */
+	gboolean mergeAbsolute;   /**< Only set if the GUID of the import matches the target */
+	double difference;       /**< used to find best match in a book where no GUID matches */
+	gboolean updated;        /**< prevent the mergeResult from being overwritten. */
 	/* rule objects set from or by external calls */
-	QofIdType mergeType;			/**< type of comparison required for check for collision */
-	const char* mergeLabel;			/**< Descriptive label for the object type, useful for the
-											user intervention dialog. */
-	GSList *mergeParam;				/**< list of usable parameters for the object type */
-	GSList *linkedEntList;			/**< list of complex data types included in this object. 
+	QofIdType mergeType;     /**< type of comparison required for check for collision */
+	const gchar* mergeLabel;  /**< Descriptive label for the object type, useful for the
+                                 user intervention dialog. */
+	GSList *mergeParam;      /**< list of usable parameters for the object type */
+	GSList *linkedEntList;   /**< list of complex data types included in this object. 
 
 	linkedEntList contains an ::QofEntity reference to any parameter that is not
 	one of the core QOF_TYPE data types. This entity must be already registered with QOF
@@ -174,8 +174,8 @@ typedef struct
 	the invoice will be set to MERGE_REPORT and the customer as MERGE_NEW.
 	*/
 	qof_book_mergeResult mergeResult; /**< result of comparison with main ::QofBook */
-	QofEntity *importEnt;			/**< pointer to the current entity in the import book. */
-	QofEntity *targetEnt;			/**< pointer to the corresponding entity in the target book, if any. */
+	QofEntity *importEnt;    /**< pointer to the current entity in the import book. */
+	QofEntity *targetEnt;    /**< pointer to the corresponding entity in the target book, if any. */
 }qof_book_mergeRule;
 
 
@@ -194,21 +194,21 @@ structures.
 */
 typedef struct
 {
-	GSList 	*mergeObjectParams;	/**< GSList of ::QofParam details for each parameter in the current object. */
-	GList 	*mergeList;			/**< GList of all ::qof_book_mergeRule rules for the merge operation. */
-	GSList 	*targetList;		/**< GSList of ::QofEntity * for each object of this type in the target book */
-	QofBook *mergeBook;			/**< pointer to the import book for this merge operation. */
-	QofBook *targetBook;		/**< pointer to the target book for this merge operation. */
-	gboolean abort;				/**< set to TRUE if MERGE_INVALID is set. */
+	GSList 	*mergeObjectParams;  /**< GSList of ::QofParam details for each parameter in the current object. */
+	GList 	*mergeList;          /**< GList of all ::qof_book_mergeRule rules for the merge operation. */
+	GSList 	*targetList;         /**< GSList of ::QofEntity * for each object of this type in the target book */
+	QofBook *mergeBook;          /**< pointer to the import book for this merge operation. */
+	QofBook *targetBook;         /**< pointer to the target book for this merge operation. */
+	gboolean abort;	             /**< set to TRUE if MERGE_INVALID is set. */
 	qof_book_mergeRule *currentRule; /**< placeholder for the rule currently being tested or applied. */
-	GSList *orphan_list;			/**< List of QofEntity's that need to be rematched.
+	GSList *orphan_list;         /**< List of QofEntity's that need to be rematched.
 
 	When one QofEntity has a lower difference to the targetEnt than the previous best_match,
 	the new match takes precedence. This list holds those orphaned entities that are not a good
 	enough match so that these can be rematched later. The ranking is handled using
 	the private qof_entity_rating struct and the GHashTable ::qof_book_mergeData::target_table.
 	*/
-	GHashTable *target_table;	/**< The GHashTable to hold the qof_entity_rating values.  */
+	GHashTable *target_table;    /**< The GHashTable to hold the qof_entity_rating values.  */
 
 }qof_book_mergeData;
 
@@ -331,7 +331,7 @@ also available to the dialog as qof_book_mergeRule::mergeLabel.
 This allows the dialog to display the description of the object and all parameter data.
 
 */
-char* qof_book_merge_param_as_string(QofParam *qtparam, QofEntity *qtEnt);
+gchar* qof_book_merge_param_as_string(QofParam *qtparam, QofEntity *qtEnt);
 
 /** \brief called by dialog callback to set the result of user intervention
 

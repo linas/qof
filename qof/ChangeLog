@@ -1,6 +1,16 @@
+2006-01-23  Neil Williams <linux@codehelp.co.uk>
+
+	* qof/qof_book_merge.h : Use gchar consistently
+	instead of mixing with char.
+	* qof/qof_book_merge.c : Fix merge handling of
+	QOF_TYPE_CHAR to use gchar instead of casting
+	from a gchar*
+	* qof/test/test-book-merge.c : Add test case 
+	to make sure QOF_TYPE_CHAR handling is working.
+
 2006-01-22  Neil Williams <linux@codehelp.co.uk>
 
-	* src/backend/file/qsf-backend.c : Prevent bad time
+	* backend/file/qsf-backend.c : Prevent bad time
 	values from being passed to entity.
 	* qof/gnc-engine-util.c|h : Add CACHE_REPLACE(dst, src)
 	macro for common case in string setters.

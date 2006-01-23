@@ -40,8 +40,8 @@ struct qof_book_mergeRuleIterate {
 	a string match will still provide a better target
 	than when other types match and the string does not.
 */
-#define DEFAULT_MERGE_WEIGHT	1
-#define QOF_STRING_WEIGHT		3
+#define DEFAULT_MERGE_WEIGHT    1
+#define QOF_STRING_WEIGHT       3
 #define QOF_DATE_STRING_LENGTH  MAX_DATE_LENGTH
 
 static qof_book_mergeRule*
@@ -56,12 +56,12 @@ qof_book_mergeUpdateRule(qof_book_mergeRule *currentRule, gboolean match, gint w
 	if(absolute && !match) { currentRule->mergeResult = MERGE_UPDATE; }
 	if(!absolute && match &&currentRule->mergeResult == MERGE_UNDEF) {
 			currentRule->mergeResult = MERGE_DUPLICATE;
-		}
+	}
 	if(!absolute && !match) {
 		currentRule->difference += weight;
 		if(currentRule->mergeResult == MERGE_DUPLICATE) {
 			currentRule->mergeResult = MERGE_REPORT;
-	}
+		}
 	}
 	return currentRule;
 }
@@ -86,7 +86,7 @@ qof_book_mergeCompare( qof_book_mergeData *mergeData )
 {
 	qof_book_mergeRule *currentRule;
 	QofCollection *mergeColl, *targetColl;
-	gchar      *stringImport, *stringTarget, *charImport, *charTarget;
+	gchar      *stringImport, *stringTarget;
 	QofEntity  *mergeEnt, *targetEnt, *referenceEnt;
 	const GUID *guidImport, *guidTarget;
 	QofParam   *qtparam;
@@ -101,7 +101,8 @@ qof_book_mergeCompare( qof_book_mergeData *mergeData )
 	double        doubleImport, doubleTarget,    (*double_getter)  (QofEntity*, QofParam*);
 	gint32        i32Import, i32Target,          (*int32_getter)   (QofEntity*, QofParam*);
 	gint64        i64Import, i64Target,          (*int64_getter)   (QofEntity*, QofParam*);
-	
+	gchar         charImport, charTarget,        (*char_getter)    (QofEntity*, QofParam*);
+
 	g_return_val_if_fail((mergeData != NULL), -1);
 	currentRule = mergeData->currentRule;
 	g_return_val_if_fail((currentRule != NULL), -1);
@@ -201,8 +202,9 @@ qof_book_mergeCompare( qof_book_mergeData *mergeData )
 			knowntype= TRUE;
 		}
 		if(safe_strcmp(mergeType, QOF_TYPE_CHAR) == 0) { 
-			charImport = qtparam->param_getfcn(mergeEnt,qtparam);
-			charTarget = qtparam->param_getfcn(targetEnt,qtparam);
+			char_getter = (gchar (*)(QofEntity*, QofParam*)) qtparam->param_getfcn;
+			charImport = char_getter(mergeEnt, qtparam);
+			charTarget = char_getter(targetEnt, qtparam);
 			if(charImport == charTarget) { mergeMatch = TRUE; }
 			currentRule = qof_book_mergeUpdateRule(currentRule, mergeMatch, DEFAULT_MERGE_WEIGHT); 
 			knowntype= TRUE;
@@ -220,7 +222,7 @@ qof_book_mergeCompare( qof_book_mergeData *mergeData )
 			if(0 == qof_collection_compare(mergeColl, targetColl)) { mergeMatch = TRUE; }
 			currentRule = qof_book_mergeUpdateRule(currentRule, mergeMatch, DEFAULT_MERGE_WEIGHT);
 			knowntype = TRUE;
-	}
+		}
 		if(safe_strcmp(mergeType, QOF_TYPE_CHOICE) ==0) {
 			referenceEnt = qtparam->param_getfcn(mergeEnt, qtparam);
 			currentRule->linkedEntList = g_slist_prepend(currentRule->linkedEntList, referenceEnt);
@@ -234,8 +236,8 @@ qof_book_mergeCompare( qof_book_mergeData *mergeData )
 					currentRule->linkedEntList = g_slist_prepend(currentRule->linkedEntList, referenceEnt);
 					if(referenceEnt == qtparam->param_getfcn(targetEnt, qtparam)) { mergeMatch = TRUE; }
 					currentRule = qof_book_mergeUpdateRule(currentRule, mergeMatch, DEFAULT_MERGE_WEIGHT);
-	}
-	}
+			}
+		}
 		paramList = g_slist_next(paramList);
 	}
 	mergeData->currentRule = currentRule;
@@ -248,7 +250,7 @@ static void
 qof_book_mergeCommitForeachCB(gpointer rule, gpointer arg)
 {
 	struct qof_book_mergeRuleIterate *iter;
-	
+
 	g_return_if_fail(arg != NULL);
 	iter = (struct qof_book_mergeRuleIterate*)arg;
 	g_return_if_fail(iter->data != NULL);
@@ -258,7 +260,7 @@ qof_book_mergeCommitForeachCB(gpointer rule, gpointer arg)
 
 static void
 qof_book_mergeCommitForeach (
-								qof_book_mergeRuleForeachCB cb, 
+			qof_book_mergeRuleForeachCB cb, 
 			qof_book_mergeResult mergeResult,
 			qof_book_mergeData *mergeData)
 {
@@ -369,7 +371,7 @@ qof_book_merge_match_orphans(qof_book_mergeData *mergeData)
 			mergeData->mergeList = g_list_prepend(mergeData->mergeList,rule);
 			orphans = g_slist_next(orphans);
 			continue;
-	}
+		}
 		mergeData->currentRule = rule;
 		g_return_if_fail(qof_book_mergeCompare(mergeData) != -1);
 		if(difference > mergeData->currentRule->difference) {
@@ -385,7 +387,7 @@ qof_book_merge_match_orphans(qof_book_mergeData *mergeData)
 	g_slist_free(targets);
 }
 
-static void
+static void 
 qof_book_mergeForeachTarget (QofEntity* targetEnt, gpointer user_data)
 {
 	qof_book_mergeData *mergeData;
@@ -413,7 +415,7 @@ qof_book_mergeForeachTypeTarget ( QofObject* merge_obj, gpointer user_data)
 	}
 }
 
-static void
+static void 
 qof_book_mergeForeach ( QofEntity* mergeEnt, gpointer user_data) 
 {
 	qof_book_mergeRule *mergeRule, *currentRule;
@@ -422,7 +424,7 @@ qof_book_mergeForeach ( QofEntity* mergeEnt, gpointer user_data)
 	GUID *g;
 	double difference;
 	GSList *c;
-	
+
 	g_return_if_fail(user_data != NULL);
 	mergeData = (qof_book_mergeData*)user_data;
 	g_return_if_fail(mergeEnt != NULL);
@@ -516,7 +518,7 @@ static void
 qof_book_mergeForeachParam( QofParam* param, gpointer user_data) 
 {
 	qof_book_mergeData *mergeData;
-	
+
 	g_return_if_fail(user_data != NULL);
 	mergeData = (qof_book_mergeData*)user_data;
 	g_return_if_fail(param != NULL);
@@ -529,7 +531,7 @@ static void
 qof_book_mergeForeachType ( QofObject* merge_obj, gpointer user_data) 
 {
 	qof_book_mergeData *mergeData;
-	
+
 	g_return_if_fail(user_data != NULL);
 	mergeData = (qof_book_mergeData*)user_data;
 	g_return_if_fail((merge_obj != NULL));
@@ -566,35 +568,35 @@ qof_book_mergeCommitRuleLoop(
 						qof_book_mergeRule *rule, 
 						guint remainder) 
 { 
-	QofInstance 	*inst;
-	gboolean		registered_type;
-	QofEntity 		*referenceEnt;
+	QofInstance *inst;
+	gboolean    registered_type;
+	QofEntity   *referenceEnt;
 	/* cm_ prefix used for variables that hold the data to commit */
 	QofCollection *cm_coll;
-	QofParam 		*cm_param;
+	QofParam    *cm_param;
 	gchar       *cm_string;
-	const GUID 		*cm_guid;
-	KvpFrame 		*cm_kvp;
+	const GUID  *cm_guid;
+	KvpFrame    *cm_kvp;
 	/* function pointers and variables for parameter getters that don't use pointers normally */
-	gnc_numeric 	cm_numeric, (*numeric_getter)	(QofEntity*, QofParam*);
-	double 			cm_double, 	(*double_getter)	(QofEntity*, QofParam*);
-	gboolean 		cm_boolean, (*boolean_getter)	(QofEntity*, QofParam*);
-	gint32 			cm_i32, 	(*int32_getter)		(QofEntity*, QofParam*);
-	gint64 			cm_i64, 	(*int64_getter)		(QofEntity*, QofParam*);
-	Timespec 		cm_date, 	(*date_getter)		(QofEntity*, QofParam*);
-	char         cm_char,    (*char_getter)     (QofEntity*, QofParam*);
+	gnc_numeric  cm_numeric, (*numeric_getter)  (QofEntity*, QofParam*);
+	double       cm_double,  (*double_getter)   (QofEntity*, QofParam*);
+	gboolean     cm_boolean, (*boolean_getter)  (QofEntity*, QofParam*);
+	gint32       cm_i32,     (*int32_getter)    (QofEntity*, QofParam*);
+	gint64       cm_i64,     (*int64_getter)    (QofEntity*, QofParam*);
+	Timespec     cm_date,    (*date_getter)     (QofEntity*, QofParam*);
+	gchar        cm_char,    (*char_getter)     (QofEntity*, QofParam*);
 	/* function pointers to the parameter setters */
-	void	(*string_setter)	(QofEntity*, const char*);
-	void	(*date_setter)		(QofEntity*, Timespec);
-	void	(*numeric_setter)	(QofEntity*, gnc_numeric);
-	void	(*guid_setter)		(QofEntity*, const GUID*);
-	void	(*double_setter)	(QofEntity*, double);
-	void	(*boolean_setter)	(QofEntity*, gboolean);
-	void	(*i32_setter)		(QofEntity*, gint32);
-	void	(*i64_setter)		(QofEntity*, gint64);
-	void (*char_setter)      (QofEntity*, char);
-	void	(*kvp_frame_setter)	(QofEntity*, KvpFrame*);
-	void	(*reference_setter)	(QofEntity*, QofEntity*);
+	void (*string_setter)    (QofEntity*, const gchar*);
+	void (*date_setter)      (QofEntity*, Timespec);
+	void (*numeric_setter)   (QofEntity*, gnc_numeric);
+	void (*guid_setter)      (QofEntity*, const GUID*);
+	void (*double_setter)    (QofEntity*, double);
+	void (*boolean_setter)   (QofEntity*, gboolean);
+	void (*i32_setter)       (QofEntity*, gint32);
+	void (*i64_setter)       (QofEntity*, gint64);
+	void (*char_setter)      (QofEntity*, gchar);
+	void (*kvp_frame_setter) (QofEntity*, KvpFrame*);
+	void (*reference_setter) (QofEntity*, QofEntity*);
 	void (*collection_setter)(QofEntity*, QofCollection*);
 
 	g_return_if_fail(rule != NULL);
@@ -616,13 +618,13 @@ qof_book_mergeCommitRuleLoop(
 	*/
 	while(rule->mergeParam != NULL) {
 		registered_type = FALSE;
-		g_return_if_fail(rule->mergeParam->data);		
+		g_return_if_fail(rule->mergeParam->data);
 		cm_param = rule->mergeParam->data;
 		rule->mergeType = cm_param->param_type;
 		if(safe_strcmp(rule->mergeType, QOF_TYPE_STRING) == 0)  { 
 			cm_string = cm_param->param_getfcn(rule->importEnt, cm_param);
-			string_setter = (void(*)(QofEntity*, const char*))cm_param->param_setfcn;
-			if(string_setter != NULL) {	string_setter(rule->targetEnt, cm_string); }
+			string_setter = (void(*)(QofEntity*, const gchar*))cm_param->param_setfcn;
+			if(string_setter != NULL) { string_setter(rule->targetEnt, cm_string); }
 			registered_type = TRUE;
 		}
 		if(safe_strcmp(rule->mergeType, QOF_TYPE_DATE) == 0) { 
@@ -681,9 +683,9 @@ qof_book_mergeCommitRuleLoop(
 			registered_type = TRUE;
 		}
 		if(safe_strcmp(rule->mergeType, QOF_TYPE_CHAR) == 0) { 
-			char_getter = (char (*)(QofEntity*, QofParam*)) cm_param->param_getfcn;
+			char_getter = (gchar (*)(QofEntity*, QofParam*)) cm_param->param_getfcn;
 			cm_char = char_getter(rule->importEnt,cm_param);
-			char_setter = (void(*)(QofEntity*, char))cm_param->param_setfcn;
+			char_setter = (void(*)(QofEntity*, gchar))cm_param->param_setfcn;
 			if(char_setter != NULL) { char_setter(rule->targetEnt, cm_char); }
 			registered_type = TRUE;
 		}
@@ -694,7 +696,7 @@ qof_book_mergeCommitRuleLoop(
 			registered_type = TRUE;
 		}
 		if(safe_strcmp(rule->mergeType, QOF_TYPE_CHOICE) == 0) {
-				referenceEnt = cm_param->param_getfcn(rule->importEnt, cm_param);
+			referenceEnt = cm_param->param_getfcn(rule->importEnt, cm_param);
 			reference_setter = (void(*)(QofEntity*, QofEntity*))cm_param->param_setfcn;
 			if(reference_setter != NULL) 
 			{ 
@@ -797,11 +799,11 @@ gchar* qof_instance_param_as_string(const QofParam*, QofInstance*);
 and then add
 gchar* qof_class_get_param_as_string(QofIdTypeConst, QofInstance*); ?
 */
-char*
+gchar*
 qof_book_merge_param_as_string(QofParam *qtparam, QofEntity *qtEnt)
 {
 	gchar       *param_string, param_date[QOF_DATE_STRING_LENGTH];
-	char        param_sa[GUID_ENCODING_LENGTH + 1];
+	gchar       param_sa[GUID_ENCODING_LENGTH + 1];
 	QofType     paramType;
 	const GUID *param_guid;
 	time_t      param_t;
@@ -811,7 +813,7 @@ qof_book_merge_param_as_string(QofParam *qtparam, QofEntity *qtEnt)
 	gboolean    param_boolean,  (*boolean_getter) (QofEntity*, QofParam*);
 	gint32      param_i32,      (*int32_getter)   (QofEntity*, QofParam*);
 	gint64      param_i64,      (*int64_getter)   (QofEntity*, QofParam*);
-	char        param_char,     (*char_getter)    (QofEntity*, QofParam*);
+	gchar       param_char,     (*char_getter)    (QofEntity*, QofParam*);
 
 	param_string = NULL;
 	paramType = qtparam->param_type;
@@ -870,7 +872,7 @@ qof_book_merge_param_as_string(QofParam *qtparam, QofEntity *qtEnt)
 		/* "kvp" contains repeating values, cannot be a single string for the frame. */
 		if(safe_strcmp(paramType, QOF_TYPE_KVP) == 0) { return param_string; }
 		if(safe_strcmp(paramType, QOF_TYPE_CHAR) == 0) { 
-			char_getter = (char (*)(QofEntity*, QofParam*)) qtparam->param_getfcn;
+			char_getter = (gchar (*)(QofEntity*, QofParam*)) qtparam->param_getfcn;
 			param_char = char_getter(qtEnt, qtparam);
 			param_string = g_strdup_printf("%c", param_char);
 			return param_string;

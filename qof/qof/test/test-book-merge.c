@@ -26,7 +26,7 @@
  Gtk, Guile, Scheme or gnc-module handlers. The only
  libraries that can be used here are Glib and QOF itself.
  */
- 
+
 #include <glib.h>
 #define _GNU_SOURCE
 
@@ -46,6 +46,7 @@
 #define OBJ_VERSION "early"
 #define OBJ_MINOR "tiny"
 #define OBJ_ACTIVE "ofcourse"
+#define OBJ_FLAG   "tiny_flag"
 
 static void test_rule_loop (qof_book_mergeData*, qof_book_mergeRule*, guint);
 static void test_merge (void);
@@ -56,6 +57,7 @@ typedef struct obj_s
 {
 	QofInstance inst;
 	char     	*Name;
+	char            flag;
 	gnc_numeric Amount;
 	const GUID 	*obj_guid;
 	Timespec 	date;
@@ -76,6 +78,7 @@ void obj_setDiscount(myobj*, double);
 void obj_setActive(myobj*,  gboolean);
 void obj_setVersion(myobj*, gint32);
 void obj_setMinor(myobj*,   gint64);
+void obj_setFlag(myobj*, char);
 
 /* obvious getter functions */
 char*		obj_getName(myobj*);
@@ -86,6 +89,7 @@ double		obj_getDiscount(myobj*);
 gboolean	obj_getActive(myobj*);
 gint32		obj_getVersion(myobj*);
 gint64		obj_getMinor(myobj*);
+char            obj_getFlag(myobj*);
 
 myobj*
 obj_create(QofBook *book)
@@ -101,8 +105,23 @@ obj_create(QofBook *book)
 	g->active = TRUE;
 	g->version = 1;
 	g->minor = 1;
+	g->flag = 'n';
 	gnc_engine_gen_event(&g->inst.entity, GNC_EVENT_CREATE);
 	return g;
+}
+
+void
+obj_setFlag(myobj *g, char f)
+{
+	g_return_if_fail(g);
+	g->flag = f;
+}
+
+char
+obj_getFlag(myobj *g)
+{
+	g_return_val_if_fail(g, 'n');
+	return g->flag;
 }
 
 void
@@ -186,14 +205,14 @@ obj_setGUID(myobj* g, const GUID* h)
 	g->obj_guid = h;
 }
 
-const GUID* 
+const GUID*
 obj_getGUID(myobj *g)
 {
 	if(!g) return NULL;
 	return g->obj_guid;
 }
 
-void 
+void
 obj_setName(myobj* g, char* h)
 {
 	if(!g || !h) return;
@@ -238,15 +257,25 @@ static QofObject obj_object_def = {
 gboolean myobjRegister (void)
 {
   static QofParam params[] = {
-	{ OBJ_NAME,		QOF_TYPE_STRING,	(QofAccessFunc)obj_getName,		(QofSetterFunc)obj_setName		},
-	{ OBJ_AMOUNT,   QOF_TYPE_NUMERIC,   (QofAccessFunc)obj_getAmount,   (QofSetterFunc)obj_setAmount	},
-	{ OBJ_GUID,		QOF_TYPE_GUID,		(QofAccessFunc)obj_getGUID,		(QofSetterFunc)obj_setGUID		},
-	{ OBJ_DATE,		QOF_TYPE_DATE,		(QofAccessFunc)obj_getDate,		(QofSetterFunc)obj_setDate		},
-	{ OBJ_DISCOUNT, QOF_TYPE_DOUBLE,	(QofAccessFunc)obj_getDiscount, (QofSetterFunc)obj_setDiscount  },
-	{ OBJ_ACTIVE,   QOF_TYPE_BOOLEAN,   (QofAccessFunc)obj_getActive,   (QofSetterFunc)obj_setActive	},
-	{ OBJ_VERSION,  QOF_TYPE_INT32,		(QofAccessFunc)obj_getVersion,  (QofSetterFunc)obj_setVersion   },
-	{ OBJ_MINOR,	QOF_TYPE_INT64,		(QofAccessFunc)obj_getMinor,	(QofSetterFunc)obj_setMinor		},
-    { QOF_PARAM_BOOK, QOF_ID_BOOK,		(QofAccessFunc)qof_instance_get_book, NULL },
+	{ OBJ_NAME,     QOF_TYPE_STRING,  (QofAccessFunc)obj_getName, 
+		(QofSetterFunc)obj_setName },
+	{ OBJ_AMOUNT,   QOF_TYPE_NUMERIC, (QofAccessFunc)obj_getAmount,
+		(QofSetterFunc)obj_setAmount },
+	{ OBJ_GUID,     QOF_TYPE_GUID,    (QofAccessFunc)obj_getGUID,	
+		(QofSetterFunc)obj_setGUID },
+	{ OBJ_DATE,     QOF_TYPE_DATE,    (QofAccessFunc)obj_getDate,	
+		(QofSetterFunc)obj_setDate },
+	{ OBJ_DISCOUNT, QOF_TYPE_DOUBLE,  (QofAccessFunc)obj_getDiscount, 
+		(QofSetterFunc)obj_setDiscount },
+	{ OBJ_ACTIVE,   QOF_TYPE_BOOLEAN, (QofAccessFunc)obj_getActive,   
+		(QofSetterFunc)obj_setActive },
+	{ OBJ_VERSION,  QOF_TYPE_INT32,   (QofAccessFunc)obj_getVersion,  
+		(QofSetterFunc)obj_setVersion },
+	{ OBJ_MINOR,    QOF_TYPE_INT64,	  (QofAccessFunc)obj_getMinor,	
+		(QofSetterFunc)obj_setMinor },
+	{ OBJ_FLAG,     QOF_TYPE_CHAR,    (QofAccessFunc)obj_getFlag,
+		(QofSetterFunc)obj_setFlag },
+    { QOF_PARAM_BOOK, QOF_ID_BOOK,	(QofAccessFunc)qof_instance_get_book, NULL },
     { QOF_PARAM_GUID, QOF_TYPE_GUID,	(QofAccessFunc)qof_instance_get_guid, NULL },
     { NULL },
   };
@@ -256,7 +285,7 @@ gboolean myobjRegister (void)
   return qof_object_register (&obj_object_def);
 }
 
-static void 
+static void
 test_merge (void)
 {
 	QofBook *target, *import;
@@ -268,13 +297,15 @@ test_merge (void)
 	gint32 version;
 	gint64 minor;
 	gchar *import_init, *target_init;
+	gchar flag, flag_check;
 	gnc_numeric obj_amount;
 	qof_book_mergeData *mergeData;
-	
+
 	target = qof_book_new();
 	import = qof_book_new();
 	init_value = 1.00;
 	result = 0;
+	flag = 'x';
 	discount = 0.5;
 	active = TRUE;
 	version = 1;
@@ -300,7 +331,8 @@ test_merge (void)
 	do_test ((NULL != &import_obj->Name), "#7 string set");
 	obj_amount = double_to_gnc_numeric(init_value,1, GNC_HOW_DENOM_EXACT);
 	obj_setAmount(import_obj, obj_amount);
-	do_test ((gnc_numeric_check(obj_getAmount(import_obj)) == GNC_ERROR_OK), "#8 gnc_numeric set");
+	do_test ((gnc_numeric_check(obj_getAmount(import_obj)) == GNC_ERROR_OK), 
+		"#8 gnc_numeric set");
 	obj_setActive(import_obj, active);
 	do_test ((FALSE != &import_obj->active), "#9 gboolean set");
 	obj_setDiscount(import_obj, discount);
@@ -312,6 +344,8 @@ test_merge (void)
 	obj_setDate(import_obj, ts );
 	tc = import_obj->date;
 	do_test ((timespec_cmp(&ts, &tc) == 0), "#13 date set");
+	obj_setFlag(import_obj, flag);
+	do_test ((flag == obj_getFlag(import_obj)), "#14 flag set");
 
 	obj_amount = gnc_numeric_add(obj_amount, obj_amount, 1, GNC_HOW_DENOM_EXACT);
 	discount = 0.25;
@@ -330,11 +364,13 @@ test_merge (void)
 	obj_setVersion(new_obj, version);
 	obj_setMinor(new_obj, minor);
 	obj_setDate(new_obj, ts);
+	obj_setFlag(new_obj, flag);
 
 	obj_amount = gnc_numeric_add(obj_amount, obj_amount, 1, GNC_HOW_DENOM_EXACT);
 	discount = 0.35;
 	version = 2;
 	minor = 3;
+	flag = 'z';
 	tc.tv_sec = ts.tv_sec -1;
 	tc.tv_nsec = 0;
 
@@ -350,6 +386,8 @@ test_merge (void)
 	obj_setVersion(target_obj, version);
 	obj_setMinor(target_obj, minor);
 	obj_setDate(target_obj, tc );
+	obj_setFlag(target_obj, flag);
+	do_test ((flag == obj_getFlag(target_obj)), "#15 flag set");
 
 	mergeData = qof_book_mergeInit(import, target);
 	do_test ( mergeData != NULL, "FATAL: Merge could not be initialised!\t aborting . . ");
@@ -362,35 +400,47 @@ test_merge (void)
  	qof_book_mergeRuleForeach(mergeData, test_rule_loop, MERGE_DUPLICATE);
 
 	/* import should not be in the target - pass if import_init fails match with target */
-	do_test (((safe_strcmp(obj_getName(import_obj),obj_getName(target_obj))) != 0), "Init value test #1");
-	
+	do_test (((safe_strcmp(obj_getName(import_obj),obj_getName(target_obj))) != 0), 
+		"Init value test #1");
+
 	/* a good commit returns zero */
  	do_test (qof_book_mergeCommit(mergeData) == 0, "Commit failed");
 
 	/* import should be in the target - pass if import_init matches target */
-	do_test (((safe_strcmp(import_init,obj_getName(target_obj))) == 0), "Merged value test #1");
+	do_test (((safe_strcmp(import_init,obj_getName(target_obj))) == 0), 
+		"Merged value test #1");
 
 	/* import should be the same as target - pass if values are the same */
-	do_test (((safe_strcmp(obj_getName(target_obj),obj_getName(import_obj))) == 0), "Merged value test #2");
+	do_test (((safe_strcmp(obj_getName(target_obj),obj_getName(import_obj))) == 0), 
+		"Merged value test #2");
 
 	/* check that the Amount really is a gnc_numeric */
-	do_test ((gnc_numeric_check(obj_getAmount(import_obj)) == GNC_ERROR_OK), "import gnc_numeric check");
-	do_test ((gnc_numeric_check(obj_getAmount(target_obj)) == GNC_ERROR_OK), "target gnc_numeric check");
+	do_test ((gnc_numeric_check(obj_getAmount(import_obj)) == GNC_ERROR_OK), 
+		"import gnc_numeric check");
+	do_test ((gnc_numeric_check(obj_getAmount(target_obj)) == GNC_ERROR_OK), 
+		"target gnc_numeric check");
 
 	/* obj_amount was changed after the import object was set, so expect a difference. */
 	do_test ((gnc_numeric_compare(obj_getAmount(import_obj), obj_amount) != GNC_ERROR_OK),
-			"gnc_numeric value check #1");
+		"gnc_numeric value check #1");
 
 	/* obj_amount is in the target object with the import value, expect a difference/ */
 	do_test ((gnc_numeric_compare(obj_getAmount(target_obj), obj_amount) != GNC_ERROR_OK),
-			"gnc_numeric value check #2");
+		"gnc_numeric value check #2");
 
 	/* target had a different date, so import date should now be set */
 	tc = target_obj->date;
 	do_test ((timespec_cmp(&ts, &tc) == 0), "date value check: 1");
 	tc = import_obj->date;
 	do_test ((timespec_cmp(&tc, &ts) == 0), "date value check: 2");
-	do_test ((timespec_cmp(&import_obj->date, &target_obj->date) == 0), "date value check: 3");
+	do_test ((timespec_cmp(&import_obj->date, &target_obj->date) == 0), 
+		"date value check: 3");
+
+	/* import should be the same as target - pass if values are the same */
+	flag_check = obj_getFlag(target_obj);
+	do_test ((flag_check == obj_getFlag(import_obj)), "flag value check: 1");
+	do_test ((obj_getFlag(import_obj) == obj_getFlag(target_obj)), 
+		"flag value check: 2");
 }
 
 static void
@@ -401,7 +451,7 @@ test_rule_loop (qof_book_mergeData *mergeData, qof_book_mergeRule *rule, guint r
 	char *importstring;
 	char *targetstring;
 	gboolean skip_target;
-	
+
 	importstring = NULL;
 	targetstring = NULL;
 	skip_target = FALSE;
@@ -431,7 +481,7 @@ test_rule_loop (qof_book_mergeData *mergeData, qof_book_mergeRule *rule, guint r
 			do_test ((importstring != NULL), "loop:#12 direct get_fcn import");
 			do_test ((safe_strcmp(importstring, "test") == 0), "loop:#13 direct import comparison");
 			if(!skip_target) {
-			targetstring = eachParam->param_getfcn(rule->targetEnt, eachParam);		
+			targetstring = eachParam->param_getfcn(rule->targetEnt, eachParam);
 			do_test ((targetstring != NULL), "loop:#14 direct get_fcn target");
 			do_test ((safe_strcmp(targetstring, "testing") == 0), "loop:#15 direct target comparison");
 		}
