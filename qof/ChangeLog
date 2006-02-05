@@ -1,5 +1,13 @@
 2006-02-05  Neil Williams <linux@codehelp.co.uk>
 
+	* qof/deprecated.c : 
+	* qof/deprecated.h :
+	* qof/qoflog.c :
+	* qof/qoflog.h : Deprecating qof_log_set_level_global due to 
+	misleading name
+
+2006-02-05  Neil Williams <linux@codehelp.co.uk>
+
 	* qof/gnc-numeric.c : Derek's fixes for reciprocal
 	numeric handling. Derek Atkins <warlord@mit.edu>
 	* qof/test/test-numeric.c : Derek's test for the
