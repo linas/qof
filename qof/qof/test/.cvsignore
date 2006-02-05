@@ -6,6 +6,7 @@ test-querynew
 test-object
 test-numeric
 test-guid
+test-recursive
 *.o
 .libs
 .deps

@@ -60,13 +60,19 @@ test_querynew_SOURCES = \
   test-stuff.c \
   test-querynew.c
 
+test_recursive_SOURCES = \
+  test-engine-stuff.c \
+  test-stuff.c \
+  test-recursive.c
+
 noinst_PROGRAMS = \
   test-book-merge \
   test-date \
   test-guid \
   test-numeric \
   test-object \
-  test-querynew
+  test-querynew \
+  test-recursive
 
 TESTS = \
   test-book-merge \
@@ -74,9 +80,9 @@ TESTS = \
   test-guid \
   test-numeric \
   test-object \
-  test-querynew
+  test-querynew \
+  test-recursive
 
 EXTRA_DIST = \
   test-stuff.h \
   test-engine-stuff.h
-
