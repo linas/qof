@@ -21,12 +21,13 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+ *  02110-1301, USA.
  */
 
 #include <ctype.h>
 #include <glib.h>
-
+#include "qof.h"
 #include "test-stuff.h"
 #include "test-engine-stuff.h"
 #include "gnc-numeric.h"
@@ -39,15 +40,15 @@ gnc_numeric_print(gnc_numeric in)
   char * retval;
   if(gnc_numeric_check(in)) 
   {
-    retval = g_strdup_printf("<ERROR> [%lld / %lld]",
-                             (long long int) in.num,
-                             (long long int) in.denom); 
+	retval = g_strdup_printf("<ERROR> [%" G_GINT64_FORMAT " / %" G_GINT64_FORMAT "]",
+							 in.num,
+							 in.denom);
   }
   else 
   {
-    retval = g_strdup_printf("[%lld / %lld]",
-                             (long long int) in.num,
-                             (long long int) in.denom); 
+	retval = g_strdup_printf("[%" G_GINT64_FORMAT " / %" G_GINT64_FORMAT "]",
+							 in.num,
+							 in.denom);
   }
   return retval;
 }
@@ -542,9 +543,28 @@ check_mult_div (void)
   gint64 v;
   gnc_numeric c, d;
   gnc_numeric amt_a, amt_tot, frac, val_tot, val_a;
+  gnc_numeric a, b;
 
-  gnc_numeric a = gnc_numeric_create(2, 6);
-  gnc_numeric b = gnc_numeric_create(1, 4);
+  a = gnc_numeric_create(-100, 100);
+  b = gnc_numeric_create(1, 1);
+  check_binary_op (gnc_numeric_create(-100, 100),
+                   gnc_numeric_div(a, b, GNC_DENOM_AUTO, GNC_HOW_DENOM_EXACT),
+                   a, b, "expected %s got %s = %s / %s div exact");
+
+  a = gnc_numeric_create(-100, 100);
+  b = gnc_numeric_create(-1, 1);
+  check_binary_op (gnc_numeric_create(100, 100),
+                   gnc_numeric_div(a, b, GNC_DENOM_AUTO, GNC_HOW_DENOM_EXACT),
+                   a, b, "expected %s got %s = %s / %s div exact");
+
+  a = gnc_numeric_create(-100, 100);
+  b = gnc_numeric_create(-1, 1);
+  check_binary_op (gnc_numeric_create(100, 100),
+                   gnc_numeric_mul(a, b, GNC_DENOM_AUTO, GNC_HOW_DENOM_EXACT),
+                   a, b, "expected %s got %s = %s * %s mult exact");
+
+  a = gnc_numeric_create(2, 6);
+  b = gnc_numeric_create(1, 4);
 
   check_binary_op (gnc_numeric_create(2,24), 
                    gnc_numeric_mul(a, b, GNC_DENOM_AUTO, GNC_HOW_DENOM_EXACT),
@@ -745,6 +765,90 @@ check_mult_div (void)
 
 }
   
+static void
+check_reciprocal(void)
+{
+    gnc_numeric a, b, ans, val;
+    double flo;
+
+    val = gnc_numeric_create(-60,20);
+    check_unary_op (gnc_numeric_eq, gnc_numeric_create (-3, -1),
+                    gnc_numeric_convert(val, GNC_DENOM_RECIPROCAL(1),
+                                        GNC_HOW_RND_NEVER),
+                    val, "expected %s = %s = (%s as RECIP(1))");
+
+    a = gnc_numeric_create(200, 100);
+    b = gnc_numeric_create(300, 100);
+
+    /* 2 + 3 = 5 */
+    ans = gnc_numeric_add(a, b, GNC_DENOM_RECIPROCAL(1), GNC_HOW_RND_NEVER);
+    check_binary_op (gnc_numeric_create(5, -1),
+                     ans, a, b, "expected %s got %s = %s + %s for reciprocal");
+
+    /* 2 + 3 = 5 */
+    a = gnc_numeric_create(2, -1);
+    b = gnc_numeric_create(300, 100);
+    ans = gnc_numeric_add(a, b, GNC_DENOM_RECIPROCAL(1), GNC_HOW_RND_NEVER);
+    check_binary_op (gnc_numeric_create(5, -1),
+                     ans, a, b, "expected %s got %s = %s + %s for reciprocal");
+
+
+    /* 2 + 3 = 5 */
+    a = gnc_numeric_create(2, -1);
+    b = gnc_numeric_create(300, 100);
+    ans = gnc_numeric_add(a, b, GNC_DENOM_RECIPROCAL(1), GNC_HOW_RND_NEVER);
+    check_binary_op (gnc_numeric_create(5, -1),
+                     ans, a, b, "expected %s got %s = %s + %s for recirocal");
+
+    /* check gnc_numeric_to_double */
+    flo = gnc_numeric_to_double(gnc_numeric_create(5, -1));
+    do_test ((5.0 == flo), "reciprocal conversion");
+
+    /* check gnc_numeric_compare */
+    a = gnc_numeric_create(2, 1);
+    b = gnc_numeric_create(2, -1);
+    do_test((0 == gnc_numeric_compare(a, b)), " 2 == 2 ");
+    a = gnc_numeric_create(2, 1);
+    b = gnc_numeric_create(3, -1);
+    do_test((-1 == gnc_numeric_compare(a, b)), " 2 < 3 ");
+    a = gnc_numeric_create(-2, 1);
+    b = gnc_numeric_create(2, -1);
+    do_test((-1 == gnc_numeric_compare(a, b)), " -2 < 2 ");
+    a = gnc_numeric_create(2, -1);
+    b = gnc_numeric_create(3, -1);
+    do_test((-1 == gnc_numeric_compare(a, b)), " 2 < 3 ");
+
+    /* check for equality */
+    a = gnc_numeric_create(2, 1);
+    b = gnc_numeric_create(2, -1);
+    do_test(gnc_numeric_equal(a, b), " 2 == 2 ");
+
+    /* check gnc_numeric_mul */
+    a = gnc_numeric_create(2, 1);
+    b = gnc_numeric_create(3, -1);
+    ans = gnc_numeric_mul(a, b, GNC_DENOM_RECIPROCAL(1), GNC_HOW_RND_NEVER);
+    check_binary_op (gnc_numeric_create(6, -1),
+                     ans, a, b, "expected %s got %s = %s * %s for recirocal");
+
+    /* check gnc_numeric_div */
+    /* -60 / 20 = -3 */
+    a = gnc_numeric_create(-60, 1);
+    b = gnc_numeric_create(2, -10);
+    ans = gnc_numeric_div(a, b, GNC_DENOM_RECIPROCAL(1), GNC_HOW_RND_NEVER);
+    check_binary_op (gnc_numeric_create(-3, -1),
+                     ans, a, b, "expected %s got %s = %s / %s for recirocal");
+
+    /* 60 / 20 = 3 */
+    a = gnc_numeric_create(60, 1);
+    b = gnc_numeric_create(2, -10);
+    ans = gnc_numeric_div(a, b, GNC_DENOM_RECIPROCAL(1), GNC_HOW_RND_NEVER);
+    check_binary_op (gnc_numeric_create(3, -1),
+                     ans, a, b, "expected %s got %s = %s / %s for recirocal");
+
+
+}
+
+
 /* ======================================================= */
 
 static void
@@ -758,16 +862,18 @@ run_test (void)
 	check_neg();
 	check_add_subtract();
 	check_mult_div ();
+	check_reciprocal();
 }
 
 int
 main (int argc, char **argv)
 {
-
+  qof_init();
   run_test ();
 
   print_test_results();
   exit(get_rv());
+  qof_close();
   return 0;
 }
 
