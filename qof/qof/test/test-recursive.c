@@ -25,8 +25,6 @@
 #include <glib/gprintf.h>
 #define _GNU_SOURCE
 
-#include "qofinstance-p.h"
-#include "gnc-event-p.h"
 #include "qof.h"
 #include "test-engine-stuff.h"
 #include "test-stuff.h"
