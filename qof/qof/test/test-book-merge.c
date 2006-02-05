@@ -305,11 +305,11 @@ test_merge (void)
 	import = qof_book_new();
 	init_value = 1.00;
 	result = 0;
-	flag = 'x';
-	discount = 0.5;
+	flag = get_random_character();
+	discount = get_random_double();
 	active = TRUE;
-	version = 1;
-	minor = 1;
+	version = get_random_int_in_range(0,10000);
+	minor = get_random_int_in_range(1000001,2000000);
 	import_init = "test";
 	target_init = "testing";
 	qof_date_format_set(QOF_DATE_FORMAT_UK);
@@ -348,7 +348,7 @@ test_merge (void)
 	do_test ((flag == obj_getFlag(import_obj)), "#14 flag set");
 
 	obj_amount = gnc_numeric_add(obj_amount, obj_amount, 1, GNC_HOW_DENOM_EXACT);
-	discount = 0.25;
+	discount = get_random_double();
 	version = 2;
 	minor = 3;
 
@@ -367,7 +367,7 @@ test_merge (void)
 	obj_setFlag(new_obj, flag);
 
 	obj_amount = gnc_numeric_add(obj_amount, obj_amount, 1, GNC_HOW_DENOM_EXACT);
-	discount = 0.35;
+	discount = get_random_double();
 	version = 2;
 	minor = 3;
 	flag = 'z';

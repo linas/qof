@@ -1,3 +1,19 @@
+2006-02-05  Neil Williams <linux@codehelp.co.uk>
+
+	* qof/gnc-numeric.c : Derek's fixes for reciprocal
+	numeric handling. Derek Atkins <warlord@mit.edu>
+	* qof/test/test-numeric.c : Derek's test for the
+	fixed reciprocal handling. Derek Atkins <warlord@mit.edu>
+
+2006-02-01  Neil Williams <linux@codehelp.co.uk>
+
+	* qof/test/Makefile.am :
+	* qof/test/test-book-merge.c : adding some 
+	randomness to the test
+	* qof/test/test-recursive.c : New test to 
+	identify and then fix problems in 
+	qof_entity_copy_coll_r
+
 2006-01-23  Neil Williams <linux@codehelp.co.uk>
 
 	* qof/qof_book_merge.h : Use gchar consistently
