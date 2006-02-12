@@ -18,7 +18,8 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor
+ *  Boston, MA  02110-1301,  USA 
  */
 
 #include <glib.h>
@@ -38,13 +39,17 @@
 #define OBJ_NAME "somename"
 #define OBJ_AMOUNT "anamount"
 #define OBJ_DATE "nottoday"
-#define OBJ_GUID "unique"
 #define OBJ_DISCOUNT "hefty"
 #define OBJ_VERSION "early"
 #define OBJ_MINOR "tiny"
 #define OBJ_ACTIVE "ofcourse"
 #define OBJ_FLAG   "tiny_flag"
 #define OBJ_RELATIVE "family"
+#define OBJ_LIST "descendents"
+
+/* set to TRUE to get QSF XML output
+ * requires QSF available (i.e. make install) */
+static gboolean debug = FALSE;
 
 /* simple object structure */
 typedef struct child_s
@@ -53,7 +58,6 @@ typedef struct child_s
 	gchar       *Name;
 	gchar       flag;
 	gnc_numeric Amount;
-	const GUID  *child_guid;
 	Timespec    date;
 	double      discount; /* cheap pun, I know. */
 	gboolean    active;
@@ -69,7 +73,6 @@ typedef struct parent_s
 	gchar       *Name;
 	gchar       flag;
 	gnc_numeric Amount;
-	const GUID  *parent_guid;
 	Timespec    date;
 	double      discount; /* cheap pun, I know. */
 	gboolean    active;
@@ -82,10 +85,10 @@ typedef struct grand_s
 {
 	QofInstance  inst;
 	myparent     *child;
+	GList        *descend;
 	gchar        *Name;
 	gchar        flag;
 	gnc_numeric  Amount;
-	const GUID   *grand_guid;
 	Timespec     date;
 	double       discount; /* cheap pun, I know. */
 	gboolean     active;
@@ -103,7 +106,6 @@ gboolean mychildRegister (void);
 
 /* obvious setter functions */
 void grand_setName(mygrand*,	gchar*);
-void grand_setGUID(mygrand*,	const GUID*);
 void grand_setAmount(mygrand*,  gnc_numeric);
 void grand_setDate(mygrand*,	Timespec h);
 void grand_setDiscount(mygrand*, double);
@@ -114,7 +116,6 @@ void grand_setFlag(mygrand*,    gchar);
 
 /* obvious getter functions */
 gchar*      grand_getName(mygrand*);
-const GUID* grand_getGUID(mygrand*);
 gnc_numeric grand_getAmount(mygrand*);
 Timespec    grand_getDate(mygrand*);
 double	    grand_getDiscount(mygrand*);
@@ -125,7 +126,6 @@ gchar       grand_getFlag(mygrand*);
 
 /* obvious setter functions */
 void parent_setName(myparent*,	   gchar*);
-void parent_setGUID(myparent*,	   const GUID*);
 void parent_setAmount(myparent*,   gnc_numeric);
 void parent_setDate(myparent*,	   Timespec h);
 void parent_setDiscount(myparent*, double);
@@ -136,7 +136,6 @@ void parent_setFlag(myparent*,     gchar);
 
 /* obvious getter functions */
 gchar*	    parent_getName(myparent*);
-const GUID* parent_getGUID(myparent*);
 gnc_numeric parent_getAmount(myparent*);
 Timespec    parent_getDate(myparent*);
 double	    parent_getDiscount(myparent*);
@@ -147,7 +146,6 @@ gchar       parent_getFlag(myparent*);
 
 /* obvious setter functions */
 void child_setName(mychild*,	   gchar*);
-void child_setGUID(mychild*,	   const GUID*);
 void child_setAmount(mychild*,   gnc_numeric);
 void child_setDate(mychild*,	   Timespec h);
 void child_setDiscount(mychild*, double);
@@ -158,7 +156,6 @@ void child_setFlag(mychild*,     gchar);
 
 /* obvious getter functions */
 gchar*	    child_getName(mychild*);
-const GUID* child_getGUID(mychild*);
 gnc_numeric child_getAmount(mychild*);
 Timespec    child_getDate(mychild*);
 double	    child_getDiscount(mychild*);
@@ -175,16 +172,16 @@ grand_create(QofBook *book)
 	g_return_val_if_fail(book, NULL);
 	g = g_new0(mygrand, 1);
 	qof_instance_init (&g->inst, GRAND_MODULE_NAME, book);
-	g->grand_guid = get_random_guid();
 	g->date = *get_random_timespec();
-	g->discount = get_random_double();
+	g->discount = get_random_double();;
 	g->active = get_random_boolean();
 	g->version = get_random_int_in_range(1,10000);
-	g->minor = get_random_int_in_range(100000,99999999);
+	g->minor = get_random_int_in_range(100001,99999999);
 	g->flag = get_random_character();
 	g->Name = get_random_string();
 	g->Amount = get_random_gnc_numeric();
 	g->child = NULL;
+	g->descend = NULL;
 	gnc_engine_gen_event(&g->inst.entity, GNC_EVENT_CREATE);
 	return g;
 }
@@ -197,12 +194,11 @@ parent_create(QofBook *book)
 	g_return_val_if_fail(book, NULL);
 	g = g_new0(myparent, 1);
 	qof_instance_init (&g->inst, PARENT_MODULE_NAME, book);
-	g->parent_guid = get_random_guid();
 	g->date = *get_random_timespec();
 	g->discount = get_random_double();
 	g->active = get_random_boolean();
 	g->version = get_random_int_in_range(1,10000);
-	g->minor = get_random_int_in_range(100000,99999999);
+	g->minor = get_random_int_in_range(100001,99999999);
 	g->flag = get_random_character();
 	g->Name = get_random_string();
 	g->Amount = get_random_gnc_numeric();
@@ -219,17 +215,55 @@ child_create(QofBook *book)
 	g_return_val_if_fail(book, NULL);
 	g = g_new0(mychild, 1);
 	qof_instance_init (&g->inst, CHILD_MODULE_NAME, book);
-	g->child_guid = get_random_guid();
 	g->date = *get_random_timespec();
 	g->discount = get_random_double();
 	g->active = get_random_boolean();
 	g->version = get_random_int_in_range(1,10000);
-	g->minor = get_random_int_in_range(100000,99999999);
+	g->minor = get_random_int_in_range(100001,99999999);
 	g->flag = get_random_character();
 	g->Name = get_random_string();
 	g->Amount = get_random_gnc_numeric();
 	gnc_engine_gen_event(&g->inst.entity, GNC_EVENT_CREATE);
 	return g;
+}
+
+static void
+descend_cb (QofEntity *ent, gpointer user_data)
+{
+	mygrand *g = (mygrand*)user_data;
+
+	g_return_if_fail(g || ent);
+	g->descend = g_list_prepend(g->descend, (mychild*)ent);
+}
+
+static void
+grand_setDescend(mygrand *g, QofCollection *coll)
+{
+	g_return_if_fail(g || coll);
+	if(0 != safe_strcmp(qof_collection_get_type(coll), CHILD_MODULE_NAME))
+	{
+		return;
+	}
+	qof_collection_foreach(coll, descend_cb, g);
+}
+
+static QofCollection*
+grand_getDescend(mygrand *g)
+{
+	QofCollection *col;
+	QofEntity *ent;
+	GList *list;
+
+	g_return_val_if_fail(g, NULL);
+	col = qof_collection_new(CHILD_MODULE_NAME);
+	for(list = g_list_copy(g->descend);list;list=list->next)
+	{
+		ent = (QofEntity*)list->data;
+		if(!ent) { break; }
+		do_test(0 == safe_strcmp(ent->e_type, CHILD_MODULE_NAME), "wrong entity");
+		qof_collection_add_entity(col, ent);
+	}
+	return col;
 }
 
 static void
@@ -332,20 +366,6 @@ grand_getDate(mygrand *g)
 	if(!g) return ts;
 	ts = g->date;
 	return ts;
-}
-
-void
-grand_setGUID(mygrand* g, const GUID* h)
-{
-	if(!g) return;
-	g->grand_guid = h;
-}
-
-const GUID*
-grand_getGUID(mygrand *g)
-{
-	if(!g) return NULL;
-	return g->grand_guid;
 }
 
 void
@@ -479,20 +499,6 @@ parent_getDate(myparent *p)
 }
 
 void
-parent_setGUID(myparent* p, const GUID* h)
-{
-	if(!p) return;
-	p->parent_guid = h;
-}
-
-const GUID*
-parent_getGUID(myparent *p)
-{
-	if(!p) return NULL;
-	return p->parent_guid;
-}
-
-void
 parent_setName(myparent* p, gchar* h)
 {
 	if(!p || !h) return;
@@ -609,20 +615,6 @@ child_getDate(mychild *c)
 }
 
 void
-child_setGUID(mychild* c, const GUID* h)
-{
-	if(!c) return;
-	c->child_guid = h;
-}
-
-const GUID*
-child_getGUID(mychild *c)
-{
-	if(!c) return NULL;
-	return c->child_guid;
-}
-
-void
 child_setName(mychild* c, gchar* h)
 {
 	if(!c || !h) return;
@@ -657,8 +649,8 @@ static QofObject grand_object_def = {
   create:                (gpointer)grand_create,
   book_begin:            NULL,
   book_end:              NULL,
-  is_dirty:              NULL,
-  mark_clean:            NULL,
+  is_dirty:              qof_collection_is_dirty,
+  mark_clean:            qof_collection_mark_clean,
   foreach:               qof_collection_foreach,
   printable:             NULL,
   version_cmp:           (int (*)(gpointer,gpointer)) qof_instance_version_cmp,
@@ -671,8 +663,6 @@ gboolean mygrandRegister (void)
 	(QofSetterFunc)grand_setName },
     { OBJ_AMOUNT,   QOF_TYPE_NUMERIC, (QofAccessFunc)grand_getAmount,
  	(QofSetterFunc)grand_setAmount },
-/*   { OBJ_GUID,     QOF_TYPE_GUID,    (QofAccessFunc)grand_getGUID,	
-	(QofSetterFunc)grand_setGUID },*/
     { OBJ_DATE,     QOF_TYPE_DATE,    (QofAccessFunc)grand_getDate,	
 	(QofSetterFunc)grand_setDate },
     { OBJ_DISCOUNT, QOF_TYPE_DOUBLE,  (QofAccessFunc)grand_getDiscount, 
@@ -687,12 +677,15 @@ gboolean mygrandRegister (void)
 	(QofSetterFunc)grand_setFlag },
     { OBJ_RELATIVE,	PARENT_MODULE_NAME, (QofAccessFunc)grand_getChild,
 	(QofSetterFunc)grand_setChild },
+	{ OBJ_LIST,    QOF_TYPE_COLLECT,  (QofAccessFunc)grand_getDescend,
+	(QofSetterFunc)grand_setDescend },
     { QOF_PARAM_BOOK, QOF_ID_BOOK,	(QofAccessFunc)qof_instance_get_book, NULL },
     { QOF_PARAM_GUID, QOF_TYPE_GUID,	(QofAccessFunc)qof_instance_get_guid, NULL },
     { NULL },
   };
 
   qof_class_register (GRAND_MODULE_NAME, NULL, params);
+/*  if(!qof_choice_create(GRAND_MODULE_NAME)) { return FALSE; }*/
 
   return qof_object_register (&grand_object_def);
 }
@@ -704,8 +697,8 @@ static QofObject parent_object_def = {
   create:                (gpointer)parent_create,
   book_begin:            NULL,
   book_end:              NULL,
-  is_dirty:              NULL,
-  mark_clean:            NULL,
+  is_dirty:              qof_collection_is_dirty,
+  mark_clean:            qof_collection_mark_clean,
   foreach:               qof_collection_foreach,
   printable:             NULL,
   version_cmp:           (int (*)(gpointer,gpointer)) qof_instance_version_cmp,
@@ -718,8 +711,6 @@ gboolean myparentRegister (void)
 	(QofSetterFunc)parent_setName },
     { OBJ_AMOUNT,   QOF_TYPE_NUMERIC, (QofAccessFunc)parent_getAmount,
 	(QofSetterFunc)parent_setAmount },
-/*   { OBJ_GUID,     QOF_TYPE_GUID,    (QofAccessFunc)parent_getGUID,	
-	(QofSetterFunc)parent_setGUID },*/
     { OBJ_DATE,     QOF_TYPE_DATE,    (QofAccessFunc)parent_getDate,	
 	(QofSetterFunc)parent_setDate },
     { OBJ_DISCOUNT, QOF_TYPE_DOUBLE,  (QofAccessFunc)parent_getDiscount, 
@@ -751,8 +742,8 @@ static QofObject child_object_def = {
   create:                (gpointer)child_create,
   book_begin:            NULL,
   book_end:              NULL,
-  is_dirty:              NULL,
-  mark_clean:            NULL,
+  is_dirty:              qof_collection_is_dirty,
+  mark_clean:            qof_collection_mark_clean,
   foreach:               qof_collection_foreach,
   printable:             NULL,
   version_cmp:           (int (*)(gpointer,gpointer)) qof_instance_version_cmp,
@@ -765,8 +756,6 @@ gboolean mychildRegister (void)
 	(QofSetterFunc)child_setName },
     { OBJ_AMOUNT,   QOF_TYPE_NUMERIC, (QofAccessFunc)child_getAmount,
 	(QofSetterFunc)child_setAmount },
-/*   { OBJ_GUID,     QOF_TYPE_GUID,    (QofAccessFunc)child_getGUID,	
-	(QofSetterFunc)child_setGUID },*/
     { OBJ_DATE,     QOF_TYPE_DATE,    (QofAccessFunc)child_getDate,	
 	(QofSetterFunc)child_setDate },
     { OBJ_DISCOUNT, QOF_TYPE_DOUBLE,  (QofAccessFunc)child_getDiscount, 
@@ -833,12 +822,29 @@ create_data (QofSession *original, guint counter)
 			break; 
 		}
 		case 4 : { /* new grand, unrelated parent, child unrelated to grand */
+			QofCollection *coll;
+
 			grand1 = (mygrand*)qof_object_new_instance(GRAND_MODULE_NAME, start);
 			parent1 = (myparent*)qof_object_new_instance(PARENT_MODULE_NAME, start);
 			child1 = (mychild*)qof_object_new_instance(CHILD_MODULE_NAME, start);
+			child_setName(child1, "grandparenttest");
 			parent_setChild(parent1, child1);
 			do_test((NULL == grand_getChild(grand1)), "new grand, unrelated parent");
 			do_test((child1 == parent_getChild(parent1)), "child unrelated to grand");
+			coll = grand_getDescend(grand1);
+			do_test((coll != NULL), "grandparent not valid");
+			if(coll)
+			{
+				QofEntity *ent;
+
+				ent = (QofEntity*)child1;
+				qof_collection_add_entity(coll, ent);
+				grand_setDescend(grand1, coll);
+				qof_collection_destroy(coll);
+				do_test((g_list_length(grand1->descend) > 0), "entity not added");
+				do_test((qof_collection_count(grand_getDescend(grand1)) > 0), 
+					"empty collection returned");
+			}
 			break;
 		}
 	}
@@ -870,10 +876,14 @@ later).
 void
 qof_entity_set_reference_data(QofBook *partial_book, QofEntity *ent);
 
+/** \todo FIXME: References tend to be picked up by all suitable
+entities, not only the one that originally held the reference! */
+
 void
 qof_entity_set_reference_data(QofBook *partial_book, QofEntity *ent)
 {
-	void (*reference_setter) (QofEntity*, QofEntity*);
+	void (*choice_setter) (QofEntity*, QofEntity*);
+	void (*collect_setter)(QofEntity*, QofCollection*);
 	QofEntityReference *ref;
 	GList *book_ref_list;
 	QofCollection *coll;
@@ -881,27 +891,54 @@ qof_entity_set_reference_data(QofBook *partial_book, QofEntity *ent)
 	gboolean partial;
 
 	g_return_if_fail(partial_book || ent);
+	reference = NULL;
+	coll = NULL;
 	partial =
 	  (gboolean)GPOINTER_TO_INT(qof_book_get_data(partial_book, PARTIAL_QOFBOOK));
 	g_return_if_fail(partial);
 	book_ref_list = qof_book_get_data(partial_book, ENTITYREFERENCE);
+	do_test((g_list_length(book_ref_list) > 0), "no book_ref_list");
 	while(book_ref_list)
 	{
 		ref = (QofEntityReference*)book_ref_list->data;
-		if(0 != guid_compare(ref->ref_guid, qof_entity_get_guid(ent)))
+		if(0 == guid_compare(ref->ref_guid, qof_entity_get_guid(ent)))
 		{ 
 			book_ref_list = g_list_next(book_ref_list);
 			continue; 
 		}
+		/* collect and choice handling */
+		collect_setter = (void(*)(QofEntity*, QofCollection*))ref->param->param_setfcn;
+		choice_setter = (void(*)(QofEntity*, QofEntity*))ref->param->param_setfcn;
+		if(0 == safe_strcmp(ref->param->param_type, QOF_TYPE_COLLECT))
+		{
+			QofCollection *temp_col;
+			char cm_sa[GUID_ENCODING_LENGTH + 1];
+
+			temp_col = ref->param->param_getfcn(ent, ref->param);
+			do_test((0 == safe_strcmp(qof_collection_get_type(temp_col),
+				CHILD_MODULE_NAME)), "wrong collection");
+			coll = qof_book_get_collection(partial_book, 
+				qof_collection_get_type(temp_col));
+			guid_to_string_buff(ref->ref_guid, cm_sa);
+			reference = qof_collection_lookup_entity(coll, ref->ref_guid);
+			if(reference) { 
+				qof_collection_add_entity(temp_col, reference);
+				qof_begin_edit((QofInstance*)ent);
+				qof_begin_edit((QofInstance*)reference);
+				if(collect_setter) { collect_setter(ent, temp_col); }
+				qof_commit_edit((QofInstance*)ent);
+				qof_commit_edit((QofInstance*)reference);
+				qof_collection_destroy(temp_col);
+			}
+		}
+		if(0 == safe_strcmp(ref->param->param_type, QOF_TYPE_CHOICE))
+		{
 		coll = qof_book_get_collection(partial_book, ref->type);
 		reference = qof_collection_lookup_entity(coll, ref->ref_guid);
 		do_test((reference == NULL), "reference is null");
-		reference_setter = (void(*)(QofEntity*, QofEntity*))ref->param->param_setfcn;
-		if(reference_setter != NULL)
-		{
 			qof_begin_edit((QofInstance*)ent);
 			qof_begin_edit((QofInstance*)reference);
-			reference_setter(ent, reference);
+			if(choice_setter) { choice_setter(ent, reference); }
 			qof_commit_edit((QofInstance*)ent);
 			qof_commit_edit((QofInstance*)reference);
 		}
@@ -951,13 +988,11 @@ test_recursion (QofSession *original, guint counter)
 	QofCollection *grand_coll;
 	struct tally c;
 	QofBook *book;
-	gboolean debug;
 	guint d, e;
 
 	c.nulls = 0;
 	c.total = 0;
 	c.book = NULL;
-	debug = FALSE; /* switch to TRUE to see the XML output.*/
 	book = qof_session_get_book(original);
 	grand_coll = qof_book_get_collection(book, GRAND_MODULE_NAME);
 	copy = qof_session_new();
@@ -973,9 +1008,13 @@ test_recursion (QofSession *original, guint counter)
 	c.total = 0;
 	c.book = book;
 	qof_object_foreach(GRAND_MODULE_NAME, book, check_cb, &c);
+	/* re-enable this test - there are duplicates in current results. */
 //	do_test((d == c.nulls), "Null parents do not match");
 	do_test((e == c.total), "Total parents do not match");
-	if(debug) { qof_session_save(copy, NULL); }
+	if(counter == 4 && debug == TRUE) { 
+		qof_session_save(copy, NULL);
+		qof_session_save(original, NULL);
+	}
 	qof_session_end(copy);
 	copy = NULL;
 }
@@ -990,12 +1029,13 @@ main (int argc, const char *argv[])
 	mygrandRegister();
 	myparentRegister();
 	mychildRegister();
-	original = qof_session_new();
-	qof_session_begin(original, QOF_STDOUT, TRUE, FALSE);
 	for(counter = 0; counter < 25; counter++)
 	{
+		original = qof_session_new();
+		qof_session_begin(original, QOF_STDOUT, TRUE, FALSE);
 		create_data(original, (counter % 5));
 		test_recursion(original, (counter % 5));
+		qof_session_end(original);
 	}
 	print_test_results();
 	qof_close();
