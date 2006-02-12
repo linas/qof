@@ -3,6 +3,7 @@ Makefile.in
 Makefile.in.in
 POTFILES
 POTFILES.in
+stamp-it
 *.pot
 *.gmo
 

@@ -1,3 +1,20 @@
+2006-02-12  Neil Williams <linux@codehelp.co.uk>
+
+	* qof/qofbackend.h : Add error value for files that
+	cannot be opened. ERR_FILEIO_READ_ERROR.
+	* backend/file/qsf-backend.c : Check that files can be opened before
+	trying to work out their type. Use new QofBackendError value
+	if open to read fails.
+	* qof/gnc-event.c : Derek Atkin's patch for better handling of event 
+	removal.  This allows us to actually clean up, but also makes sure we 
+	don't destroy the handler list out from under us as we're processing events.
+	* qof/test/Makefile.am : adding new events test.
+	* qof/test/test-events.c : New file: First set of tests, more needed.
+	* qof/test/test-recursive.c : Beginning fix of QOF_TYPE_COLLECT 
+	recursive copying. More to be done.
+	* qof/test/test-stuff.c : Ensuring get_random_double 
+	returns at least some decimal places more often than not.
+
 2006-02-05  Neil Williams <linux@codehelp.co.uk>
 
 	* qof/deprecated.c : 
