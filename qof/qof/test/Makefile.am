@@ -65,6 +65,11 @@ test_recursive_SOURCES = \
   test-stuff.c \
   test-recursive.c
 
+test_event_SOURCES = \
+  test-engine-stuff.c \
+  test-stuff.c \
+  test-event.c
+
 noinst_PROGRAMS = \
   test-book-merge \
   test-date \
@@ -72,7 +77,8 @@ noinst_PROGRAMS = \
   test-numeric \
   test-object \
   test-querynew \
-  test-recursive
+  test-recursive \
+  test-event
 
 TESTS = \
   test-book-merge \
@@ -81,7 +87,8 @@ TESTS = \
   test-numeric \
   test-object \
   test-querynew \
-  test-recursive
+  test-recursive \
+  test-event
 
 EXTRA_DIST = \
   test-stuff.h \
