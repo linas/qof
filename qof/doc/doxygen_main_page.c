@@ -34,8 +34,8 @@ until all the changes below can be folded into libqof2:
 		included to use QOF. Using individual header files in 
 		applications linked against QOF is now \b deprecated. All
 		code that uses QOF should only use:
-			-# #include <qof.h>   // or
-			-# #include "qof.h"\n
+			-# include <qof.h>   // or
+			-# include "qof.h"\n
 		This is the \b only file guaranteed to maintain access to the
 		full QOF API during the entire life of libqof1 and libqof2.
 

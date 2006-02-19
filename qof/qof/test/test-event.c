@@ -44,7 +44,7 @@
 
 /* set to TRUE to get QSF XML output
  * requires QSF available (i.e. make install) */
-static gboolean debug = TRUE;
+static gboolean debug = FALSE;
 
 /* deliberately make these global to the file to pick up
 errors where developers access handlers directly. This practice

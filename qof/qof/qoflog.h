@@ -27,7 +27,7 @@
 /** @addtogroup Trace
     @{ */
 
-/** @file qof-log.h 
+/** @file qoflog.h 
  *  @brief QOF error logging and tracing facility 
 */
 
