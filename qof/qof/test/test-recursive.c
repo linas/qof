@@ -781,6 +781,7 @@ gboolean mychildRegister (void)
 static void
 create_data (QofSession *original, guint counter)
 {
+	QofCollection *coll;
 	QofBook *start;
 	mygrand *grand1;
 	myparent *parent1;
@@ -788,11 +789,20 @@ create_data (QofSession *original, guint counter)
 
 	start = qof_session_get_book(original);
 	grand1 = (mygrand*)qof_object_new_instance(GRAND_MODULE_NAME, start);
-	do_test ((NULL != &grand1->inst), "#2 instance init");
+	do_test ((NULL != &grand1->inst), "instance init");
 	switch (counter)
 	{
 		case 0 : { /* NULL tree */ 
 			do_test((grand1 != NULL), "empty tree check");
+			coll = qof_book_get_collection(start, GRAND_MODULE_NAME);
+			do_test((qof_collection_count(coll) == 1), 
+				"Too many grandparents found - should be 1");
+			coll = qof_book_get_collection(start, CHILD_MODULE_NAME);
+			do_test((qof_collection_count(coll) == 0), 
+				"child found, should be empty");
+			coll = qof_book_get_collection(start, PARENT_MODULE_NAME);
+			do_test((qof_collection_count(coll) == 0), 
+				"tree not empty: parent found");
 			break;
 		}
 		case 1 : { /* one parent, no child */ 
@@ -800,6 +810,15 @@ create_data (QofSession *original, guint counter)
 			grand_setChild(grand1, parent1);
 			do_test((parent1 != NULL), "single parent check");
 			do_test((grand_getChild(grand1) == parent1), "set child in grandparent");
+			coll = qof_book_get_collection(start, GRAND_MODULE_NAME);
+			do_test((qof_collection_count(coll) == 1), 
+				"Wrong number of grandparents, should be 1");
+			coll = qof_book_get_collection(start, CHILD_MODULE_NAME);
+			do_test((qof_collection_count(coll) == 0), 
+				"Should be no child entities this iteration.");
+			coll = qof_book_get_collection(start, PARENT_MODULE_NAME);
+			do_test((qof_collection_count(coll) == 1), 
+				"Wrong number of parents found, should be 1");
 			break;
 		}
 		case 2 : { /* one parent, one child */ 
@@ -810,6 +829,15 @@ create_data (QofSession *original, guint counter)
 			parent_setChild(parent1, child1);
 			do_test((child1 != NULL), "one parent with one related child");
 			do_test((child1 == parent_getChild(parent1)), "child of single parent");
+			coll = qof_book_get_collection(start, GRAND_MODULE_NAME);
+			do_test((qof_collection_count(coll) == 1), 
+				"Wrong number of grandparents. Should be 1");
+			coll = qof_book_get_collection(start, CHILD_MODULE_NAME);
+			do_test((qof_collection_count(coll) == 1), 
+				"Wrong number of child entities, should be 1");
+			coll = qof_book_get_collection(start, PARENT_MODULE_NAME);
+			do_test((qof_collection_count(coll) == 1), 
+				"Wrong number of parents. Should be 1");
 			break;
 		}
 		case 3 : { /* same grand, new parent, same child */
@@ -819,15 +847,21 @@ create_data (QofSession *original, guint counter)
 			parent_setChild(parent1, child1);
 			do_test((parent1 == grand_getChild(grand1)), "same grandparent, new parent");
 			do_test((child1 == parent_getChild(parent1)), "new parent, same child");
+			coll = qof_book_get_collection(start, GRAND_MODULE_NAME);
+			do_test((qof_collection_count(coll) == 1), 
+				"Wrong number of grandparents. Should be 1, Iteration 3.");
+			coll = qof_book_get_collection(start, CHILD_MODULE_NAME);
+			do_test((qof_collection_count(coll) == 1), 
+				"Wrong number of child entities, should be 1. Iteration 3.");
+			coll = qof_book_get_collection(start, PARENT_MODULE_NAME);
+			do_test((qof_collection_count(coll) == 1), 
+				"Wrong number of parents. Should be 1. Iteration 3.");
 			break; 
 		}
 		case 4 : { /* new grand, unrelated parent, child unrelated to grand */
-			QofCollection *coll;
-
 			grand1 = (mygrand*)qof_object_new_instance(GRAND_MODULE_NAME, start);
 			parent1 = (myparent*)qof_object_new_instance(PARENT_MODULE_NAME, start);
 			child1 = (mychild*)qof_object_new_instance(CHILD_MODULE_NAME, start);
-			child_setName(child1, "grandparenttest");
 			parent_setChild(parent1, child1);
 			do_test((NULL == grand_getChild(grand1)), "new grand, unrelated parent");
 			do_test((child1 == parent_getChild(parent1)), "child unrelated to grand");
@@ -850,105 +884,9 @@ create_data (QofSession *original, guint counter)
 	}
 }
 
-/** \brief Read QofEntityReference data for this entity and set values.
-
-@param partial_book The partial book containing the referenceList
-@param ent The parent entity to hold the converted reference.
-
-The referenceList is a GList of QofEntityReference structures that contain
-the GUID of each end of a reference. e.g. where one entity refers to another.
-
-The referenceList is used in partial books to store relationships between
-entities when the entities themselves might not exist in the partial book.
-
-If the book is not marked as a partial book, an assertion error is generated.
-
-This routine tries to lookup the given entity in the referenceList for the
-book and then tries to lookup the reference - to find the child entity that
-was originally linked to this parent. The child entity is then set in the
-parent so that it can be located as normal.
-
-If the child entity does not exist in this partial book, the parent entity
-is not updated. The referenceList is unchanged (in case the child is added
-later).
-
-*/
-void
-qof_entity_set_reference_data(QofBook *partial_book, QofEntity *ent);
-
-/** \todo FIXME: References tend to be picked up by all suitable
-entities, not only the one that originally held the reference! */
-
-void
-qof_entity_set_reference_data(QofBook *partial_book, QofEntity *ent)
-{
-	void (*choice_setter) (QofEntity*, QofEntity*);
-	void (*collect_setter)(QofEntity*, QofCollection*);
-	QofEntityReference *ref;
-	GList *book_ref_list;
-	QofCollection *coll;
-	QofEntity *reference;
-	gboolean partial;
-
-	g_return_if_fail(partial_book || ent);
-	reference = NULL;
-	coll = NULL;
-	partial =
-	  (gboolean)GPOINTER_TO_INT(qof_book_get_data(partial_book, PARTIAL_QOFBOOK));
-	g_return_if_fail(partial);
-	book_ref_list = qof_book_get_data(partial_book, ENTITYREFERENCE);
-	do_test((g_list_length(book_ref_list) > 0), "no book_ref_list");
-	while(book_ref_list)
-	{
-		ref = (QofEntityReference*)book_ref_list->data;
-		if(0 == guid_compare(ref->ref_guid, qof_entity_get_guid(ent)))
-		{ 
-			book_ref_list = g_list_next(book_ref_list);
-			continue; 
-		}
-		/* collect and choice handling */
-		collect_setter = (void(*)(QofEntity*, QofCollection*))ref->param->param_setfcn;
-		choice_setter = (void(*)(QofEntity*, QofEntity*))ref->param->param_setfcn;
-		if(0 == safe_strcmp(ref->param->param_type, QOF_TYPE_COLLECT))
-		{
-			QofCollection *temp_col;
-			char cm_sa[GUID_ENCODING_LENGTH + 1];
-
-			temp_col = ref->param->param_getfcn(ent, ref->param);
-			do_test((0 == safe_strcmp(qof_collection_get_type(temp_col),
-				CHILD_MODULE_NAME)), "wrong collection");
-			coll = qof_book_get_collection(partial_book, 
-				qof_collection_get_type(temp_col));
-			guid_to_string_buff(ref->ref_guid, cm_sa);
-			reference = qof_collection_lookup_entity(coll, ref->ref_guid);
-			if(reference) { 
-				qof_collection_add_entity(temp_col, reference);
-				qof_begin_edit((QofInstance*)ent);
-				qof_begin_edit((QofInstance*)reference);
-				if(collect_setter) { collect_setter(ent, temp_col); }
-				qof_commit_edit((QofInstance*)ent);
-				qof_commit_edit((QofInstance*)reference);
-				qof_collection_destroy(temp_col);
-			}
-		}
-		if(0 == safe_strcmp(ref->param->param_type, QOF_TYPE_CHOICE))
-		{
-		coll = qof_book_get_collection(partial_book, ref->type);
-		reference = qof_collection_lookup_entity(coll, ref->ref_guid);
-		do_test((reference == NULL), "reference is null");
-			qof_begin_edit((QofInstance*)ent);
-			qof_begin_edit((QofInstance*)reference);
-			if(choice_setter) { choice_setter(ent, reference); }
-			qof_commit_edit((QofInstance*)ent);
-			qof_commit_edit((QofInstance*)reference);
-		}
-		book_ref_list = g_list_next(book_ref_list);
-	}
-}
-
 struct tally
 {
-	guint nulls, total;
+	guint nulls, total, collect;
 	QofBook *book;
 };
 
@@ -956,6 +894,7 @@ static void
 check_cb (QofEntity *ent, gpointer data)
 {
 	QofEntity *parent, *child;
+	QofCollection *coll;
 	struct tally *c;
 	const QofParam *param;
 	mygrand  *testg;
@@ -963,20 +902,27 @@ check_cb (QofEntity *ent, gpointer data)
 	mychild  *testc;
 
 	c = (struct tally*)data;
-	/* find the child entity in the copied book */
+	/* check the same number and type of entities
+	exist in the copied book */
 	testg = (mygrand*)ent;
+	/* we always have a grandparent */
 	do_test((testg != NULL), "grandparent not found");
 	c->total++;
-	if(c->book) { qof_entity_set_reference_data(c->book, ent); }
-	testp = grand_getChild(testg);
+	param = qof_class_get_parameter(GRAND_MODULE_NAME, OBJ_LIST);
+	coll = (QofCollection*)param->param_getfcn(ent, param);
+	c->collect = qof_collection_count(coll);
+	if(c->book) { qof_book_set_references(c->book); }
 	param = qof_class_get_parameter(GRAND_MODULE_NAME, OBJ_RELATIVE);
-	parent = param->param_getfcn(ent, param);
-	if(!parent || !testp) { c->nulls++; return; }
+	parent = (QofEntity*)param->param_getfcn(ent, param);
+	testp = grand_getChild((mygrand*)ent);
+	/* not all grandparents have family so just keep count. */
+	if(!parent) { c->nulls++; return; }
 	do_test((0 == safe_strcmp(parent_getName(testp), 
 		parent_getName((myparent*)parent))), "parent copy test");
 	param = qof_class_get_parameter(PARENT_MODULE_NAME, OBJ_RELATIVE);
-	testc = parent_getChild(testp);
 	child = param->param_getfcn(parent, param);
+	testc = parent_getChild((myparent*)parent);
+	if(!child) { c->nulls++; return; }
 	do_test((0 == safe_strcmp(child_getName(testc), 
 		child_getName((mychild*)child))), "child copy test");
 }
@@ -988,15 +934,17 @@ test_recursion (QofSession *original, guint counter)
 	QofCollection *grand_coll;
 	struct tally c;
 	QofBook *book;
-	guint d, e;
+	guint d, e, f;
 
 	c.nulls = 0;
 	c.total = 0;
+	c.collect = 0;
 	c.book = NULL;
 	book = qof_session_get_book(original);
 	grand_coll = qof_book_get_collection(book, GRAND_MODULE_NAME);
 	copy = qof_session_new();
-	qof_session_begin(copy, QOF_STDOUT, TRUE, FALSE);
+	if(debug) { qof_session_begin(copy, QOF_STDOUT, TRUE, FALSE); }
+	/* TODO: implement QOF_TYPE_CHOICE testing. */
 	qof_entity_copy_coll_r(copy, grand_coll);
 	/* test the original */
 	qof_object_foreach(GRAND_MODULE_NAME, book, check_cb, &c);
@@ -1004,13 +952,15 @@ test_recursion (QofSession *original, guint counter)
 	/* test the copy */
 	d = c.nulls;
 	e = c.total;
+	f = c.collect;
 	c.nulls = 0;
 	c.total = 0;
+	c.collect = 0;
 	c.book = book;
 	qof_object_foreach(GRAND_MODULE_NAME, book, check_cb, &c);
-	/* re-enable this test - there are duplicates in current results. */
-//	do_test((d == c.nulls), "Null parents do not match");
+	do_test((d == c.nulls), "Null parents do not match");
 	do_test((e == c.total), "Total parents do not match");
+	do_test((f == c.collect), "Number of children in descendents does not match");
 	if(counter == 4 && debug == TRUE) { 
 		qof_session_save(copy, NULL);
 		qof_session_save(original, NULL);
@@ -1029,10 +979,10 @@ main (int argc, const char *argv[])
 	mygrandRegister();
 	myparentRegister();
 	mychildRegister();
-	for(counter = 0; counter < 25; counter++)
+	for(counter = 0; counter < 35; counter++)
 	{
 		original = qof_session_new();
-		qof_session_begin(original, QOF_STDOUT, TRUE, FALSE);
+		if(debug) { qof_session_begin(original, QOF_STDOUT, TRUE, FALSE); }
 		create_data(original, (counter % 5));
 		test_recursion(original, (counter % 5));
 		qof_session_end(original);

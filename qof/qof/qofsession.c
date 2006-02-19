@@ -49,6 +49,7 @@
 
 /** \deprecated should not be static */
 static QofSession * current_session = NULL;
+
 static GHookList * session_closed_hooks = NULL;
 static QofLogModule log_module = QOF_MOD_SESSION;
 static GSList *provider_list = NULL;
@@ -355,35 +356,6 @@ qof_entity_param_cb(QofParam *param, gpointer data)
 	}
 }
 
-QofEntityReference*
-qof_entity_get_reference_from(QofEntity *ent, const QofParam *param)
-{
-	QofEntityReference *reference;
-	QofEntity    *ref_ent;
-	const GUID   *cm_guid;
-	char         cm_sa[GUID_ENCODING_LENGTH + 1];
-	gchar        *cm_string;
-
-	g_return_val_if_fail(param, NULL);
-	ref_ent = (QofEntity*)param->param_getfcn(ent, param);
-	if(ref_ent != NULL) {
-		reference = g_new0(QofEntityReference, 1);
-		reference->type = ent->e_type;
-		reference->ref_guid = g_new(GUID, 1);
-		reference->ent_guid = &ent->guid;
-		reference->param = qof_class_get_parameter(ent->e_type, param->param_name);
-		cm_guid = qof_entity_get_guid(ref_ent);
-		guid_to_string_buff(cm_guid, cm_sa);
-		cm_string = g_strdup(cm_sa);
-		if(TRUE == string_to_guid(cm_string, reference->ref_guid)) {
-			g_free(cm_string);
-			return reference;
-		}
-		g_free(cm_string);
-	}
-	return NULL;
-}
-
 static void
 col_ref_cb (QofEntity* ref_ent, gpointer user_data)
 {
@@ -534,8 +506,10 @@ qof_entity_foreach_copy(gpointer data, gpointer user_data)
 		cm_col = (QofCollection*)cm_param->param_getfcn(importEnt, cm_param);
 		if(cm_col)
 		{
+			/* create one reference for each member of the collection. */
 			qof_collection_foreach(cm_col, col_ref_cb, context);
 		}
+		registered_type = TRUE;
 	}
 	if(registered_type == FALSE) {
 /*		referenceEnt = (QofEntity*)cm_param->param_getfcn(importEnt, cm_param);
@@ -773,6 +747,7 @@ recurse_ent_cb(QofEntity *ent, gpointer user_data)
 		if(ref_param->param_name == NULL) { continue; }
 		if(0 == safe_strcmp(ref_param->param_type, QOF_TYPE_COLLECT)) {
 			QofCollection *col;
+
 			col = ref_param->param_getfcn(ent, ref_param);
 			if(col) {
 			qof_collection_foreach(col, recurse_collection_cb, store);
