@@ -1,3 +1,24 @@
+2006-02-20  Neil Williams <linux@codehelp.co.uk>
+
+	* qof/gnc-event.c :
+	* qof/gnc-event-p.h :
+	* qof/gnc-event.h : Removed files.
+	
+	* qof/qofevent.c :
+	* qof/qofevent-p.h :
+	* qof/qofevent.h : Replacement files using extensible
+	event identifiers.
+	
+	* qof/deprecated.c : Old functions now pointed to
+	replacements.
+	* qof/deprecated.h : Old defines now pointed to 
+	replacements.
+	* qof/deprecated-p.h : gnc-event-p.h deprecated
+	function declaration.
+
+	* qof/qof.h : Replace files.
+	* qof/Makefile.am : Replace files.
+
 2006-02-19  Neil Williams <linux@codehelp.co.uk>
 
 	* backend/file/qsf-backend.c : Correcting collect handling, 
