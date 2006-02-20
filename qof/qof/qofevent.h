@@ -1,5 +1,5 @@
 /********************************************************************
- * gnc-event.h -- engine event handling interface                   *
+ * qofevent.h -- QOF event handling interface                       *
  * Copyright 2000 Dave Peticolas <dave@krondo.com>                  *
  *                                                                  *
  * This program is free software; you can redistribute it and/or    *
@@ -24,96 +24,94 @@
 /** @addtogroup Event
 @{
 */
-/** @file gnc-event.h
-    @brief engine event handling interface
-	(to be renamed qofevent.h in libqof2)
+/** @file qofevent.h
+    @brief QOF event handling interface
 	@author Copyright 2000 Dave Peticolas <dave@krondo.com>
+	@author Copyright 2006 Neil Williams  <linux@codehelp.co.uk>
 */
 
-#ifndef GNC_EVENT_H
-#define GNC_EVENT_H
+#ifndef QOF_EVENT_H
+#define QOF_EVENT_H
 
 #include <glib.h>
+#include "qof.h"
 
-#include "guid.h"
-#include "qofid.h"
+/** Define the type of events allowed. */
+typedef gint QofEventId;
 
-typedef enum
-{
-  GNC_EVENT_NONE    = 0,
-  GNC_EVENT_CREATE  = 1 << 0,
-  GNC_EVENT_MODIFY  = 1 << 1,
-  GNC_EVENT_DESTROY = 1 << 2,
-  GNC_EVENT_ADD     = 1 << 3,
-  GNC_EVENT_REMOVE  = 1 << 4,
-  GNC_EVENT_ALL     = 0xff
-} GNCEngineEventType;
+/** \brief Default events for backwards compatibility.
 
+These defaults merely replicate previous behaviour,
+any process can define their own events. 
+*/
+#define QOF_EVENT_NONE     0
+#define QOF_EVENT_CREATE   1
+#define QOF_EVENT_MODIFY   2
+#define QOF_EVENT_DESTROY  3
+#define QOF_EVENT_ADD      4
+#define QOF_EVENT_REMOVE   5
+#define QOF_EVENT_ALL      6 /**< unused */
 
-/** GNCEngineEventHandler
+/** Allow scope for more defaults in future. Additional
+event identifiers must be larger than this. */
+#define QOF_DEFAULT_LIMIT  10
 
- *   Handler invoked when an engine event occurs.
+/** \brief Handler invoked when an engine event occurs.
  *
- * @param entity:      GUID of entity generating event
- * @param type:	QofIdType of the entity generating the event
- * @param event_type:  one of the single-bit GNCEngineEventTypes, not a combination
+ * @param ent:      Entity generating the event
+ * @param event_type:  The name of the event, including additional names and
+ 	the older defaults.
  * @param user_data:   user_data supplied when handler was registered.
  */
-typedef void (*GNCEngineEventHandler) (GUID *entity, QofIdType type,
-                                       GNCEngineEventType event_type,
+typedef void (*QofEventHandler) (QofEntity *ent,  QofEventId event_type,
                                        gpointer user_data);
 
-/** gnc_engine_register_event_handler
-
- *   Register a handler for engine events.
+/** \brief Register a handler for engine events.
  *
  * @param handler:   handler to register
  * @param user_data: data provided when handler is invoked
  *
  * @return id identifying handler
  */
-gint gnc_engine_register_event_handler (GNCEngineEventHandler handler,
-                                        gpointer user_data);
+gint qof_event_register_handler (QofEventHandler handler, gpointer user_data);
 
-/** gnc_engine_unregister_event_handler
-
- *   Unregister an engine event handler.
+/** \brief Unregister an engine event handler.
  *
  * @param handler_id: the id of the handler to unregister
  */
-void gnc_engine_unregister_event_handler (gint handler_id);
+void qof_event_unregister_handler (gint handler_id);
 
-/** gnc_engine_generate_event
+/** \brief Invoke all registered event handlers using the given arguments.
 
- *   Invoke all registered event handlers using the given arguments.
+   Certain default events are used by QOF:
+
+-QOF_EVENT_DEFAULT_CREATE events should be generated after the object
+    has been created and registered in the engine entity table.
+-QOF_EVENT_DEFAULT_MODIFY events should be generated whenever any data
+     member or submember (i.e., splits) is changed.
+-QOF_EVENT_DEFAULT_DESTROY events should be called before the object
+     has been destroyed or removed from the entity table.
+
+   Any other events are entirely the concern of the application.
+
+ \note QofEventHandler routines do \b NOT support generating
+ events from a GUID and QofIdType - you must specify a genuine QofEntity.
+
+ @param entity:     the entity generating the event
+ @param event_type: the name of the event.
+*/
+void qof_event_gen (QofEntity *entity, QofEventId event_type);
+
+/** \brief  Suspend all engine events.
  *
- *   GNC_EVENT_CREATE events should be generated after the object
- *     has been created and registered in the engine entity table.
- *   GNC_EVENT_MODIFY events should be generated whenever any data
- *     member or submember (i.e., splits) is changed.
- *   GNC_EVENT_DESTROY events should be called before the object
- *     has been destroyed or removed from the entity table.
- *
- * @param entity:     the GUID of the entity generating the event
- * @param event_type: the type of event -- this should be one of the
- *             single-bit GNCEngineEventType values, not a combination.
- */
-void gnc_engine_gen_event (QofEntity *entity,
-                                GNCEngineEventType event_type);
-/** gnc_engine_suspend_events
-
- *   Suspend all engine events. This function may be
- *   called multiple times. To resume event generation,
+ *    This function may be called multiple times. To resume event generation,
  *   an equal number of calls to gnc_engine_resume_events
  *   must be made.
  */
-void gnc_engine_suspend_events (void);
+void qof_event_suspend (void);
 
-/** gnc_engine_resume_events
-
- *   Resume engine event generation.
- */
-void gnc_engine_resume_events (void);
+/** Resume engine event generation. */
+void qof_event_resume (void);
 
 #endif
 /** @} */
