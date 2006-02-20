@@ -68,8 +68,7 @@ qofinclude_HEADERS = \
    qofla-dir.h \
    qofsql.h	     \
    qof_book_merge.h \
-   deprecated.h \
-   deprecated-p.h
+   deprecated.h
 
 noinst_HEADERS =      \
    md5.h              \

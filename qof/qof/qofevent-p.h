@@ -37,12 +37,6 @@ typedef struct
   gint handler_id;
 } HandlerInfo;
 
-/* for backwards compatibility - New code must not use this function.
-The function and the handler prototype will be remove from qofevent.c in libqoqf2 */
-
-gint qof_event_register_old_handler(GNCEngineEventHandler old_handler,
-									gpointer user_data);
-
 /** \deprecated Prevents handlers locating the QofCollection or casting
 to the QofInstance and locating the book, editlevel or dirty flag.
 Use qof_event_gen instead.

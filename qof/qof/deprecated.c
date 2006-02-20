@@ -22,7 +22,6 @@
 \********************************************************************/
 
 #include "qof.h"
-#include "deprecated-p.h"
 
 /* Don't be fooled: gnc_trace_num_spaces has external linkage and
    static storage, but can't be defined with 'extern' because it has
@@ -63,10 +62,6 @@ gnc_engine_register_event_handler (GNCEngineEventHandler handler,
 {
 	return qof_event_register_old_handler(handler, user_data);
 }
-void gnc_engine_force_event (QofEntity *entity, GNCEngineEventType event_type)
-{
-	qof_event_force(entity, event_type);
-}
 void gnc_engine_unregister_event_handler (gint handler_id)
 {
 	qof_event_unregister_handler(handler_id);
@@ -82,11 +77,4 @@ void gnc_engine_resume_events (void)
 void gnc_engine_gen_event (QofEntity *entity, GNCEngineEventType event_type)
 {
 	qof_event_gen(entity, event_type);
-}
-void 
-gnc_engine_generate_event (const GUID *guid, QofIdType e_type, 
-         GNCEngineEventType event_type)
-{
-	/* caution: this is an incomplete entity! */
-	qof_event_generate(guid, e_type, event_type);
 }

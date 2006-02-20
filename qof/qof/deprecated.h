@@ -106,11 +106,14 @@ void gnc_report_clock_total (int, QofLogModule, gncLogLevel, const char*, const 
 typedef void (*GNCEngineEventHandler) (GUID *entity, QofIdType type,
                                        GNCEngineEventType event_type,
                                        gpointer user_data);
+/** \deprecated For backwards compatibility - New code must not use
+this function. The function and the handler prototype will be remove
+from qofevent.c in libqoqf2 */
+gint qof_event_register_old_handler(GNCEngineEventHandler old_handler,
+									gpointer user_data);
 /** \deprecated use qof_event_register_handler instead. */
 gint gnc_engine_register_event_handler (GNCEngineEventHandler handler,
                                    gpointer user_data);
-/** \deprecated */
-void gnc_engine_generate_event (const GUID *, QofIdType, GNCEngineEventType);
 /** \deprecated use qof_event_unregister_handler instead. */
 void gnc_engine_unregister_event_handler (gint handler_id);
 /** \deprecated use qof_event_gen instead. */
