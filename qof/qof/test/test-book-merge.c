@@ -30,10 +30,9 @@
 #include <glib.h>
 #define _GNU_SOURCE
 
-#include "qofinstance-p.h"
-#include "gnc-event-p.h"
 #include "qof.h"
-#include "qof_book_merge.h"
+#include "qofinstance-p.h"
+#include "qofevent-p.h"
 #include "test-stuff.h"
 
 #define TEST_MODULE_NAME "book-merge-test"
@@ -106,7 +105,7 @@ obj_create(QofBook *book)
 	g->version = 1;
 	g->minor = 1;
 	g->flag = 'n';
-	gnc_engine_gen_event(&g->inst.entity, GNC_EVENT_CREATE);
+	gnc_engine_gen_event(&g->inst.entity, QOF_EVENT_CREATE);
 	return g;
 }
 
