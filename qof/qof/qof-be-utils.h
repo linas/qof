@@ -138,13 +138,29 @@ gboolean qof_commit_edit(QofInstance *inst);
  * @param inst: an instance of QofInstance
  * @param on_error: a function called if there is a backend error.
  *                void (*on_error)(inst, QofBackendError)
- * @param on_done: a function called after the commit is complete 
- *                but before the instect is freed. Perform any other 
- *                operations after the commit.
+ * @param on_done: a function called after the commit is completed 
+ *                successfully for an object which remained valid.
  *                void (*on_done)(inst)
- * @param on_free: a function called if inst->do_free is TRUE. 
+ * @param on_free: a function called if the commit succeeded and the instance
+ *                 is to be freed. 
  *                void (*on_free)(inst)
+ * 
+ * Note that only *one* callback will be called (or zero, if that
+ * callback is NULL).  In particular, 'on_done' will not be called for
+ * an object which is to be freed.
+ *
+ * Returns TRUE, if the commit succeeded, FALSE otherwise.
  */
+gboolean
+qof_commit_edit_part2(QofInstance *inst, 
+                      void (*on_error)(QofInstance *, QofBackendError), 
+                      void (*on_done)(QofInstance *), 
+                      void (*on_free)(QofInstance *));
+
+/** \brief Macro version of ::qof_commit_edit_part2
+
+\note This macro changes programme flow if the instance is freed.
+*/
 #define QOF_COMMIT_EDIT_PART2(inst,on_error,on_done,on_free) {   \
   QofBackend * be;                                               \
                                                                  \
