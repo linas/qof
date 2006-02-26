@@ -1,5 +1,5 @@
 %define name qof
-%define version 0.6.1
+%define version 0.6.2
 %define release 1
 
 Summary: Query Object Framework
@@ -8,7 +8,7 @@ Version: %{version}
 Release: %{release}
 Copyright: GPL
 Group: Libraries
-Source: http://prdownloads.sourceforge.net/qof/qof-0.6.1.tar.gz
+Source: http://prdownloads.sourceforge.net/qof/qof-0.6.2.tar.gz
 URL: http://qof.sourceforge.net/
 # Remember to change the packager string to your details
 Packager: Neil Williams
@@ -44,27 +44,24 @@ make
 %clean
 make uninstall
 
-# Keep the .la in the main package to help
-# portability of the QSF backend.
 # libqofsql is only needed if libgda is not available.
 
 # If you re-package on a system with libgda, (FC4)
 # add a libgda (>= 1.2.0) dependency.
 %files
 %doc AUTHORS README NEWS ChangeLog
-%{_libdir}/libqof.la
 %{_libdir}/libqof.so
-%{_libdir}/libqof.so.1.0.2
+%{_libdir}/libqof.so.1.0.3
 %{_libdir}/libqof.so.1
-%{_libdir}/libqof-backend-qsf.la
 %{_libdir}/libqof-backend-qsf.so
-%{_libdir}/libqof-backend-qsf.so.0.0.1
+%{_libdir}/libqof-backend-qsf.so.0.0.2
 %{_libdir}/libqof-backend-qsf.so.0
-%{_libdir}/libqofsql.la
 %{_libdir}/libqofsql.so
 %{_libdir}/libqofsql.so.1.0.1
 %{_libdir}/libqofsql.so.1
 %{_datadir}/locale/en_GB/LC_MESSAGES/qof.mo
+%{_datadir}/locale/vi/LC_MESSAGES/qof.mo
+%{_datadir}/locale/sv/LC_MESSAGES/qof.mo
 %{_datadir}/xml/qof/qsf/pilot-qsf-GnuCashInvoice.xml
 %{_datadir}/xml/qof/qsf/qsf-map.xsd.xml
 %{_datadir}/xml/qof/qsf/qsf-object.xsd.xml
@@ -72,14 +69,16 @@ make uninstall
 %files devel
 %defattr(-,root,root)
 %doc AUTHORS INSTALL README NEWS ChangeLog TODO
+%{_libdir}/libqof.la
 %{_libdir}/libqof.a
+%{_libdir}/libqofsql.la
 %{_libdir}/libqofsql.a
+%{_libdir}/libqof-backend-qsf.la
 %{_libdir}/libqof-backend-qsf.a
 %{_libdir}/pkgconfig/qof-1.pc
 %{_includedir}/qof/deprecated.h
 %{_includedir}/qof/gnc-date.h
 %{_includedir}/qof/gnc-engine-util.h
-%{_includedir}/qof/gnc-event.h
 %{_includedir}/qof/gnc-numeric.h
 %{_includedir}/qof/guid.h
 %{_includedir}/qof/kvp_frame.h
@@ -94,6 +93,7 @@ make uninstall
 %{_includedir}/qof/qof_book_merge.h
 %{_includedir}/qof/qofclass.h
 %{_includedir}/qof/qofchoice.h
+%{_includedir}/qof/qofevent.h
 %{_includedir}/qof/qofgobj.h
 %{_includedir}/qof/qof.h
 %{_includedir}/qof/qofid.h
@@ -103,7 +103,10 @@ make uninstall
 %{_includedir}/qof/qoflog.h
 %{_includedir}/qof/qofobject.h
 %{_includedir}/qof/qofquerycore.h
+%{_includedir}/qof/qofquerycore-p.h
 %{_includedir}/qof/qofquery.h
+%{_includedir}/qof/qofquery-p.h
+%{_includedir}/qof/qofreference.h
 %{_includedir}/qof/qofsession.h
 %{_includedir}/qof/qofsql.h
 %{_includedir}/qof/sql_parser.h

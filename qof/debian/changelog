@@ -1,3 +1,12 @@
+qof (0.6.2-1) unstable; urgency=low
+
+  * New upstream release.
+    - Fix recursive copying and entity references
+    - GnuCash updates
+    - Replace gnc-event with extensible qofevent.
+
+ -- Neil Williams <linux@codehelp.co.uk>  Mon, 20 Feb 2006 19:43:21 +0000
+
 qof (0.6.1-1) unstable; urgency=low
 
   * New upstream release 
