@@ -82,7 +82,7 @@ qof_event_register_old_handler (GNCEngineEventHandler handler, gpointer user_dat
     PERR ("no handler specified");
     return 0;
   }
-  PWARN (" DEPRECATED handler specified!");
+  PINFO (" deprecated handler specified");
 
   handler_id = find_next_handler_id();
   /* Found one, add the handler */
@@ -125,7 +125,6 @@ qof_event_register_handler (QofEventHandler handler, gpointer user_data)
   hi->handler_id = handler_id;
 
   handlers = g_list_prepend (handlers, hi);
-
   LEAVE ("(handler=%p, data=%p) handler_id=%d", handler, user_data, handler_id);
   return handler_id;
 }
@@ -197,7 +196,8 @@ qof_event_resume (void)
 }
 
 static void
-qof_event_generate_internal (QofEntity *entity, QofEventId event_id)
+qof_event_generate_internal (QofEntity *entity, QofEventId event_id, 
+                            gpointer event_data)
 {
   GList *node;
   GList *next_node = NULL;
@@ -205,7 +205,7 @@ qof_event_generate_internal (QofEntity *entity, QofEventId event_id)
 
   g_return_if_fail(entity);
 
-  if(event_id <= QOF_DEFAULT_LIMIT)
+  if (event_id <= QOF_EVENT_BASE)
   {
 	  use_old_handlers = TRUE;
   }
@@ -216,12 +216,6 @@ qof_event_generate_internal (QofEntity *entity, QofEventId event_id)
 		/* if none, don't log, just return. */
       return;
   }
-    case QOF_EVENT_CREATE :
-    case QOF_EVENT_MODIFY :
-    case QOF_EVENT_DESTROY :
-    case QOF_EVENT_ADD :
-    case QOF_EVENT_REMOVE :
-		break;
   }
 
   handler_run_level++;
@@ -230,17 +224,18 @@ qof_event_generate_internal (QofEntity *entity, QofEventId event_id)
     HandlerInfo *hi = node->data;
 
     next_node = node->next;
-    if ((hi->old_handler)&&(use_old_handlers))
+    if ((hi->old_handler) && (use_old_handlers))
 	{
-    PINFO (" deprecated: id=%d hi=%p han=%p", hi->handler_id, hi, 
+      PINFO(" deprecated: id=%d hi=%p han=%p", hi->handler_id, hi, 
 		   hi->old_handler);
       hi->old_handler ((GUID *)&entity->guid, entity->e_type,
 		   event_id, hi->user_data);
 	}
     if (hi->handler)
 	{
-    PINFO ("id=%d hi=%p han=%p", hi->handler_id, hi, hi->handler);
-      hi->handler (entity, event_id, hi->user_data);
+      PINFO("id=%d hi=%p han=%p data=%p", hi->handler_id, hi, 
+            hi->handler, event_data);
+      hi->handler (entity, event_id, hi->user_data, event_data);
 	}
   }
   handler_run_level--;
@@ -267,16 +262,16 @@ qof_event_generate_internal (QofEntity *entity, QofEventId event_id)
 }
 
 void
-qof_event_force (QofEntity *entity, QofEventId event_id)
+qof_event_force (QofEntity *entity, QofEventId event_id, gpointer event_data)
 {
   if (!entity)
     return;
 
-  qof_event_generate_internal (entity, event_id);
+  qof_event_generate_internal (entity, event_id, event_data);
 }
 
 void
-qof_event_gen (QofEntity *entity, QofEventId event_id)
+qof_event_gen (QofEntity *entity, QofEventId event_id, gpointer event_data)
 {
   if (!entity)
     return;
@@ -284,7 +279,7 @@ qof_event_gen (QofEntity *entity, QofEventId event_id)
   if (suspend_counter)
     return;
 
-  qof_event_generate_internal (entity, event_id);
+  qof_event_generate_internal (entity, event_id, event_data);
 }
 
 /* deprecated */
@@ -297,7 +292,7 @@ qof_event_generate (const GUID *guid, QofIdType e_type,
   ent.e_type = e_type;
   if (suspend_counter) return;
   /* caution: this is an incomplete entity! */
-  qof_event_generate_internal (&ent, event_id);
+  qof_event_generate_internal (&ent, event_id, NULL);
 }
 
 /* =========================== END OF FILE ======================= */
