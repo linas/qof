@@ -6,7 +6,7 @@ Maintainer: Neil Williams <linux@codehelp.co.uk>
 HomePage: http://qof.sourceforge.net/
 License: GPL
 Description: Query Object Framework
-Source-MD5: 586b3025a6b675084b40e462cc304f8c 
+Source-MD5: caab8c1cb8fa3235ebae51eb8d4901cb 
 Depends: qof1-shlibs (= %v-%r)
 BuildDependsOnly: True
 InstallScript: <<
