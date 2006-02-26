@@ -21,7 +21,6 @@ LDADD = \
    ${GMODULE_LIBS} \
    ${GOBJECT_LIBS} \
    ${LIBGDA_LIBS} \
-   -lltdl \
    -lm
 else
 LDADD = \
@@ -31,7 +30,6 @@ LDADD = \
    ${GLIB_LIBS} \
    ${GMODULE_LIBS} \
    ${GOBJECT_LIBS} \
-   -lltdl \
    -lm
 endif
 

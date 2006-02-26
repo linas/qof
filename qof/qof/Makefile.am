@@ -98,10 +98,12 @@ INCLUDES =                     \
    -DDATADIR=\""$(datadir)"\" 
 endif
 
-LDADD = \
+libqof_la_LIBADD = \
   ${LIBGDA_LIBS} \
   ${GMODULE_LIBS} \
-   ${GLIB_LIBS}
+  ${GOBJECT_LIBS} \
+  ${GLIB_LIBS} \
+  -lm
 
 EXTRA_DIST = \
   qofla-dir.h.in \

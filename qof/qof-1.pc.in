@@ -10,5 +10,5 @@ Name: QOF
 Description: QOF Query Object Framework Library.
 Requires: glib-2.0 libxml-2.0 >= 2-2.5.10
 Version: @VERSION@
-Libs: -L${libdir} -lqof ${added_libs}
+Libs: -L${libdir} -lqof -lm ${added_libs}
 Cflags: -I${includedir}/qof
