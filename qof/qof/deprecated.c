@@ -21,6 +21,7 @@
  *                                                                  *
 \********************************************************************/
 
+#include "config.h"
 #include "qof.h"
 
 /* Don't be fooled: gnc_trace_num_spaces has external linkage and
@@ -78,3 +79,28 @@ void gnc_engine_gen_event (QofEntity *entity, GNCEngineEventType event_type)
 {
 	qof_event_gen(entity, event_type, NULL);
 }
+QofBookMergeData*
+qof_book_mergeInit(QofBook *importBook, QofBook *targetBook)
+{
+	return qof_book_merge_init(importBook, targetBook);
+}
+QofBookMergeData*
+qof_book_mergeUpdateResult(QofBookMergeData *mergeData,
+						QofBookMergeResult tag)
+{
+	return qof_book_merge_update_result(mergeData, tag);
+}
+gint
+qof_book_mergeCommit(QofBookMergeData *mergeData )
+{
+	return qof_book_merge_commit(mergeData);
+}
+void 
+qof_book_mergeRuleForeach(QofBookMergeData *mergeData, 
+						  QofBookMergeRuleForeachCB cb, 
+						  QofBookMergeResult mergeResult )
+{
+    qof_book_merge_rule_foreach(mergeData, cb, mergeResult);
+}
+
+/* ==================================================================== */

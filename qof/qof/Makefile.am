@@ -31,7 +31,7 @@ libqof_la_SOURCES =  \
    qofreference.c    \
    qofsession.c      \
    qofsql.c          \
-   qof_book_merge.c  \
+   qofbookmerge.c  \
    deprecated.c
 
 qofincludedir = ${pkgincludedir}
@@ -67,7 +67,7 @@ qofinclude_HEADERS = \
    qofsession.h      \
    qofla-dir.h \
    qofsql.h	     \
-   qof_book_merge.h \
+   qofbookmerge.h \
    deprecated.h
 
 noinst_HEADERS =      \
