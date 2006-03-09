@@ -23,6 +23,7 @@
 
 #define _GNU_SOURCE
 
+#include "config.h"
 #include "qof.h"
 #include "qof-backend-qsf.h"
 #include "qsf-xml.h"
@@ -207,7 +208,7 @@ qsf_session_begin(QofBackend *be, QofSession *session, const char *book_path,
 	p = strchr (book_path, ':');
 	if (p) {
 		path = g_strdup (book_path);
-		if (!g_strncasecmp(path, "file:", 5)) {
+		if (!g_ascii_strncasecmp(path, "file:", 5)) {
 			p = g_new(char, strlen(path) - 5 + 1);
 			strcpy(p, path + 5);
 		}
