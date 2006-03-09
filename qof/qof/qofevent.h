@@ -46,17 +46,24 @@ Used together with QOF_EVENT_BASE to simplify creation
 of application events without interfering with any new
 events added within QOF.
 
-/verbatim
+\verbatim
 #define APP_EVENT_A QOF_MAKE_EVENT(QOF_EVENT_BASE+0)
 #define APP_EVENT_B QOF_MAKE_EVENT(QOF_EVENT_BASE+1)
-/endverbatim
+\endverbatim
 */
-#define QOF_MAKE_EVENT(x)    (1<<x)
+#define QOF_MAKE_EVENT(x)    (1<<(x))
+
+/** Allow scope for more defaults in future. Additional
+event identifiers must be based on this when using QOF_MAKE_EVENT(). */
+#define QOF_EVENT_BASE 8
 
 /** \brief Default events for backwards compatibility.
 
 These defaults merely replicate previous behaviour,
 any process can define their own events. 
+
+\note events 5, 6, and 7 are "undefined" as of v0.6.3
+for future libqof1 or libqof2 usage.
 */
 #define QOF_EVENT_NONE     (0)
 #define QOF_EVENT_CREATE   QOF_MAKE_EVENT(0)
@@ -64,12 +71,8 @@ any process can define their own events.
 #define QOF_EVENT_DESTROY  QOF_MAKE_EVENT(2)
 #define QOF_EVENT_ADD      QOF_MAKE_EVENT(3)
 #define QOF_EVENT_REMOVE   QOF_MAKE_EVENT(4)
-#define QOF_EVENT__LAST    QOF_EVENT_REMOVE 
+#define QOF_EVENT__LAST    QOF_MAKE_EVENT(QOF_EVENT_BASE-1)
 #define QOF_EVENT_ALL      (0xff)
-
-/** Allow scope for more defaults in future. Additional
-event identifiers must be larger than this. */
-#define QOF_EVENT_BASE  QOF_EVENT__LAST
 
 /** \brief Handler invoked when an event is generated.
  *
@@ -101,11 +104,11 @@ void qof_event_unregister_handler (gint handler_id);
 
    Certain default events are used by QOF:
 
--QOF_EVENT_DEFAULT_CREATE events should be generated after the object
+- QOF_EVENT_DEFAULT_CREATE events should be generated after the object
     has been created and registered in the engine entity table.
--QOF_EVENT_DEFAULT_MODIFY events should be generated whenever any data
+- QOF_EVENT_DEFAULT_MODIFY events should be generated whenever any data
      member or submember (i.e., splits) is changed.
--QOF_EVENT_DEFAULT_DESTROY events should be called before the object
+- QOF_EVENT_DEFAULT_DESTROY events should be called before the object
      has been destroyed or removed from the entity table.
 
    Any other events are entirely the concern of the application.
