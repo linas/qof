@@ -1,3 +1,49 @@
+2006-03-09  Neil Williams <linux@codehelp.co.uk>
+
+    * qof/guid.c : Christian Stimming's patch for 
+    easier mingw32 builds. gnucash r13525.
+
+    * qof/qofbackend-p.h : 
+    * qof/gnc-engine-util.h :
+    * qof/kvp-util.h :
+    * qof/kvp-util-p.h : David Hampton's patch to
+    remove use of config.h in a header. gnucash r13549.
+
+    * qof/backend/file/qsf-xml-map.c :
+    * qof/backend/file/qsf-xml.c :
+    * qof/qofchoice.c : 
+    * qof/qofgobj.c :
+    * qof/qofinstance.c :
+    * qof/qofreference.c : David Hampton's patch to
+    keep config.h in C files only. gnucash r13549.
+
+    * qof/qofquery.c : 
+    * qof/qofsession.c : 
+    * qof/qoflog.h : Don't use deprecated code in our 
+    own library.
+
+    * qof/qof_book_merge.h :
+    * qof/qof_book_merge.c : Deprecated to resolve file 
+    naming and function naming conflicts.
+    * qof/qof.h :
+    * qof/qofbookmerge.c : 
+    * qof/qofbookmerge.c : New file, new function names.
+    * qof/deprecated.h :
+    * qof/deprecated.c : Move old functions to deprecated.
+    * qof/test/test-book-merge.c : Use new function names.
+
+    * qof/qofevent.h :
+    * qof/qofevent.c : Derek Atkin's patch to
+    fix the definition of QOF_EVENT_BASE; use 
+    QOF_EVENT__LAST for tests. gnucash r13546. Doxygen 
+    tweak.
+
+    * backend/file/qsf-backend.c : Remove deprecated
+    glib function g_strncasecmp in favour of g_ascii_strncasecmp
+
+    * qof/qofquery-deserial.c : Update status; this
+    file will not exist in libqof2.
+
 2006-02-26  Neil Williams <linux@codehelp.co.uk>
 
     * qof/qof-be-utils.h : Replace macro to restore
