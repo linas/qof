@@ -20,6 +20,7 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02110-1301, USA.
  */
+#ifndef QOF_DISABLE_DEPRECATED 
  
 #ifndef _DEPRECATED_H
 #define _DEPRECATED_H
@@ -147,3 +148,4 @@ gint
 qof_book_mergeCommit(QofBookMergeData *mergeData );
 
 #endif /* _DEPRECATED_H */
+#endif /* QOF_DISABLE_DEPRECATED */
