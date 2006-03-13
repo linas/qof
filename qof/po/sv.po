@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: qof 0.6.1\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-12-31 14:08+0000\n"
+"Report-Msgid-Bugs-To: qof-devel@lists.sourceforge.net\n"
+"POT-Creation-Date: 2006-03-10 21:49+0000\n"
 "PO-Revision-Date: 2006-01-04 17:17+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
@@ -15,18 +15,26 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../backend/file/qsf-backend.c:89
+#: ../backend/file/qsf-backend.c:90
 msgid "Level of compression to use: 0 for none, 9 for highest."
 msgstr "Komprimeringsnivå att använda: 0 för ingen, 9 för högsta."
 
-#: ../backend/file/qsf-backend.c:90
-msgid "QOF can compress QSF XML files using gzip. Note that compression is not used when outputting to STDOUT."
-msgstr "QOF kan komprimera QSF XML-filer med gzip. Notera att komprimering inte används när data skickas till standard ut."
+#: ../backend/file/qsf-backend.c:91
+msgid ""
+"QOF can compress QSF XML files using gzip. Note that compression is not used "
+"when outputting to STDOUT."
+msgstr ""
+"QOF kan komprimera QSF XML-filer med gzip. Notera att komprimering inte "
+"används när data skickas till standard ut."
 
-#: ../backend/file/qsf-backend.c:98
+#: ../backend/file/qsf-backend.c:99
 msgid "List of QSF map files to use for this session."
 msgstr "Lista av QSF-kartfiler att använda för denna session."
 
-#: ../backend/file/qsf-backend.c:99
-msgid "QOF can convert objects within QSF XML files using a map of the changes required."
-msgstr "QOF kan konvertera objekt inom QSF XML-filer med en karta av de ändringar som krävs."
+#: ../backend/file/qsf-backend.c:100
+msgid ""
+"QOF can convert objects within QSF XML files using a map of the changes "
+"required."
+msgstr ""
+"QOF kan konvertera objekt inom QSF XML-filer med en karta av de ändringar "
+"som krävs."

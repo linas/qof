@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: QOF 0.6.1\n"
-"Report-Msgid-Bugs-To: http://lists.sourceforge.net/lists/listinfo/qof-devel\n"
-"POT-Creation-Date: 2005-12-31 13:09+0000\n"
+"Report-Msgid-Bugs-To: qof-devel@lists.sourceforge.net\n"
+"POT-Creation-Date: 2006-03-10 21:49+0000\n"
 "PO-Revision-Date: 2005-12-31 13:15+0000\n"
 "Last-Translator: Neil Williams <linx@codehelp.co.uk>\n"
 "Language-Team: English (British) <en_gb@li.org>\n"
@@ -15,11 +15,11 @@ msgstr ""
 "Content-Type: text/plain; charset=ISO-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../backend/file/qsf-backend.c:89
+#: ../backend/file/qsf-backend.c:90
 msgid "Level of compression to use: 0 for none, 9 for highest."
 msgstr "Level of compression to use: 0 for none, 9 for highest."
 
-#: ../backend/file/qsf-backend.c:90
+#: ../backend/file/qsf-backend.c:91
 msgid ""
 "QOF can compress QSF XML files using gzip. Note that compression is not used "
 "when outputting to STDOUT."
@@ -27,11 +27,11 @@ msgstr ""
 "QOF can compress QSF XML files using gzip. Note that compression is not used "
 "when outputting to STDOUT."
 
-#: ../backend/file/qsf-backend.c:98
+#: ../backend/file/qsf-backend.c:99
 msgid "List of QSF map files to use for this session."
 msgstr "List of QSF map files to use for this session."
 
-#: ../backend/file/qsf-backend.c:99
+#: ../backend/file/qsf-backend.c:100
 msgid ""
 "QOF can convert objects within QSF XML files using a map of the changes "
 "required."

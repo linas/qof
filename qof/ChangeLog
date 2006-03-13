@@ -1,3 +1,31 @@
+2006-03-13  Neil Williams <linux@codehelp.co.uk>
+
+	* configure.in : Check for sys/times.h and langinfo.h
+	* backend/file/pilot-qsf-gncCustomer.xml : add reverse mapping
+	* backend/file/qsf-xml.h : Standardise on gint and gchar.
+	Support iteration over incoming QSF objects inside map operations.
+	Remove gnucash-specific gettext defines.
+	* backend/file/qsf-backend.c : Standardise on gint and gchar. 
+	Skip unregistered objects when processing maps.
+	* backend/file/qsf-xml.c : Standardise on gint and gchar.
+	* backend/file/qsf-xml-map.c : Standardise on gint and gchar. 
+	Correct map handling to allow reverse operations and iteration 
+	over hierarchical objects. Improving debug messages and preventing 
+	a crash when loading a map directly.
+	* backend/file/Makefile.am : add new map file.
+	* backend/file/qsf-map.xsd.xml : allow for iteration of hierarchical 
+	objects
+	* qof/gnc-date.c : Hook langinfo.h check into legacy gnucash macro.
+
+2006-03-09  Neil Williams <linux@codehelp.co.uk>
+
+	* qof/deprecated.h :
+	* qof/deprecated.c : Allow users to skip
+	deprecated code in libqof1.
+	* qof/qofevent.c :
+	* qof/qofevent-p.h : Wrap old event handler
+	code to allow deprecated code to be skipped.
+
 2006-03-09  Neil Williams <linux@codehelp.co.uk>
 
     * qof/guid.c : Christian Stimming's patch for 
