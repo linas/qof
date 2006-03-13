@@ -159,8 +159,8 @@ AC_TYPE_UID_T
 dnl *****************************
 dnl Checks for library functions.
 dnl *****************************
-
 AC_FUNC_STRFTIME
+AC_CHECK_HEADERS(sys/times.h langinfo.h)
 AC_CHECK_FUNCS(getcwd gettimeofday getline getwd stpcpy strdup strtoul)
 AC_REPLACE_FUNCS(strptime localtime_r)
 
