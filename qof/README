@@ -4,6 +4,9 @@
 Packagers and maintainers: Please see the HACKING file
 for specific advice on building against and packaging QOF.
 
+Please see the NEWS file and the ChangeLog for detailed
+information on changes since 0.6.0.
+
 0.6.0 final release - October 2005.
 -----------------------------------
 

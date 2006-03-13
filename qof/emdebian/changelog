@@ -9,15 +9,32 @@ qof (0.6.2-1) unstable; urgency=low
 
 qof (0.6.1-1) unstable; urgency=low
 
-  * New upstream release 
+  * New upstream release.
 
  -- Neil Williams <linux@codehelp.co.uk>  Tue, 20 Dec 2005 21:51:26 +0000
 
+qof (0.6.0-2) unstable; urgency=low
+
+  * Fixed build on amd64, thanks Andreas Jochens for the patch (Closes: #337374).
+
+ -- Goedson Teixeira Paixao <goedson@debian.org>  Thu, 17 Nov 2005 18:44:29 -0200
+
 qof (0.6.0-1) unstable; urgency=low
 
-  * New upstream release
+  * New upstream release.
+  * debian/control:
+    - Changed priority of -dbg package to extra.
+  * debian/libqof1.install:
+    - Added /usr/share/* to the libqof1 package files.
 
- -- Neil Williams <linux@codehelp.co.uk>  Fri, 21 Oct 2005 19:04:14 +0000
+ -- Goedson Teixeira Paixao <goedson@debian.org>  Thu, 27 Oct 2005 13:56:46 -0200
+
+qof (0.5.99+0.6.0pre1-2) experimental; urgency=low
+
+  * debian/control:
+    - Added missing Section field.
+
+ -- Goedson Teixeira Paixao <goedson@debian.org>  Sat, 24 Sep 2005 10:35:14 -0300
 
 qof (0.5.99+0.6.0pre1-1) experimental; urgency=low
 

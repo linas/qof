@@ -1,3 +1,28 @@
+March 2006: Support iteration over incoming QSF objects 
+	inside map operations.
+	Skip unregistered objects when processing maps.
+	Correct map handling to allow reverse operations and 
+	iteration over hierarchical objects. Improving debug 
+	messages and preventing a crash when loading a map 
+	directly.
+	David Hampton's patches to allow users to skip 
+	deprecated code in libqof1 and to remove use of 
+	config.h in a header.
+	qof_book_merge replaced with qofbookmerge, structures
+	and functions renamed according to libqof2 convention.
+	Deprecated old versions and use new calls inside library.
+	Standardise on gint and gchar.
+
+February 2006: Replaced gnc-event.* with qofevent files,
+	in line with naming conventions for libqof2.
+	Corrected QOF_TYPE_COLLECT handling including
+	references and new files: qofreference.c|.h
+	Add error handler for files that cannot be opened.
+	Derek Atkin's patch to improve error handler removal.
+	Deprecating qof_log_set_level_global due to 
+	misleading name.
+	Derek Atkin's fixes for reciprocal numeric handling.
+
 January 2006: Backend loader now less reliant on .la 
 	files - still recommended. Added deprecated.c to
 	preserve deprecated function names into the binary.
