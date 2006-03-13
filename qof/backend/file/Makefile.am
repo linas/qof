@@ -30,7 +30,8 @@ qsfschemadir = $(QSF_SCHEMA_DIR)
 qsfschema_DATA = \
         qsf-object.xsd.xml \
         qsf-map.xsd.xml \
-  pilot-qsf-GnuCashInvoice.xml
+  pilot-qsf-GnuCashInvoice.xml \
+  pilot-qsf-gncCustomer.xml
 
 EXTRA_DIST = \
   $(qsfschema_DATA) \
