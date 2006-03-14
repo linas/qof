@@ -1,5 +1,5 @@
 %define name qof
-%define version 0.6.2
+%define version 0.6.3
 %define release 1
 
 Summary: Query Object Framework
@@ -8,7 +8,7 @@ Version: %{version}
 Release: %{release}
 Copyright: GPL
 Group: Libraries
-Source: http://prdownloads.sourceforge.net/qof/qof-0.6.2.tar.gz
+Source: http://prdownloads.sourceforge.net/qof/qof-0.6.3.tar.gz
 URL: http://qof.sourceforge.net/
 # Remember to change the packager string to your details
 Packager: Neil Williams
@@ -51,10 +51,10 @@ make uninstall
 %files
 %doc AUTHORS README NEWS ChangeLog
 %{_libdir}/libqof.so
-%{_libdir}/libqof.so.1.0.3
+%{_libdir}/libqof.so.1.0.4
 %{_libdir}/libqof.so.1
 %{_libdir}/libqof-backend-qsf.so
-%{_libdir}/libqof-backend-qsf.so.0.0.2
+%{_libdir}/libqof-backend-qsf.so.0.0.3
 %{_libdir}/libqof-backend-qsf.so.0
 %{_libdir}/libqofsql.so
 %{_libdir}/libqofsql.so.1.0.1
@@ -63,6 +63,7 @@ make uninstall
 %{_datadir}/locale/vi/LC_MESSAGES/qof.mo
 %{_datadir}/locale/sv/LC_MESSAGES/qof.mo
 %{_datadir}/xml/qof/qsf/pilot-qsf-GnuCashInvoice.xml
+%{_datadir}/xml/qof/qsf/pilot-qsf-gncCustomer.xml
 %{_datadir}/xml/qof/qsf/qsf-map.xsd.xml
 %{_datadir}/xml/qof/qsf/qsf-object.xsd.xml
 
@@ -90,7 +91,7 @@ make uninstall
 %{_includedir}/qof/qof-be-utils.h
 %{_includedir}/qof/qofla-dir.h
 %{_includedir}/qof/qofbook.h
-%{_includedir}/qof/qof_book_merge.h
+%{_includedir}/qof/qofbookmerge.h
 %{_includedir}/qof/qofclass.h
 %{_includedir}/qof/qofchoice.h
 %{_includedir}/qof/qofevent.h

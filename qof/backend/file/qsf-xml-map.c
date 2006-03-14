@@ -793,7 +793,6 @@ qsf_object_convert(xmlDocPtr mapDoc, xmlNodePtr qsf_root, qsf_param *params)
             /* cur_node describes the target object */
             if(!qof_class_is_registered(BAD_CAST 
                 xmlGetProp(cur_node, MAP_TYPE_ATTR))) { continue; }
-			params->count++;
             qsf_add_object_tag(params, params->count);
 			params->count++;
 			iter.ns = params->map_ns;
@@ -808,7 +807,7 @@ qsf_object_convert(xmlDocPtr mapDoc, xmlNodePtr qsf_root, qsf_param *params)
 	}
 	params->file_type = OUR_QSF_OBJ;
     /* use for debugging */
-/*    xmlSaveFormatFileEnc("-", output_doc, "UTF-8", 1);*/
+	/*    xmlSaveFormatFileEnc("-", output_doc, "UTF-8", 1);*/
 	LEAVE (" ");
 	return output_doc;
 }

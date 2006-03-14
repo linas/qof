@@ -1,3 +1,16 @@
+qof (0.6.3-1) unstable; urgency=low
+
+  * New upstream release.
+    - Support iteration over incoming QSF objects inside map operations.
+    - Correct map handling to allow reverse operations and iteration
+      over hierarchical objects.
+    - Replace qof_book_merge with qofbookmerge.
+    - Remove deprecated glib function g_strncasecmp in favour of 
+      g_ascii_strncasecmp
+    - GnuCash bug fixes.
+
+ -- Neil Williams <linux@codehelp.co.uk>  Mon, 13 Mar 2006 20:13:13 +0000
+
 qof (0.6.2-1) unstable; urgency=low
 
   * New upstream release.
