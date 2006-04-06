@@ -9,7 +9,7 @@ Package: libqof-dev
 Priority: optional
 Section: libdevel
 Architecture: any
-Depends: libqof1 (= ${Source-Version})
+Depends: libqof1 (= ${Source-Version}), libgda2-dev
 Description: Query Object Framework
  A framework to allow the execution of SQL-type queries
  using collections of in-memory objects as 'tables'.
