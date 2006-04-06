@@ -225,11 +225,11 @@ gint qof_util_bool_to_int (const gchar * val);
  * QOF provides a reference counted cache system for the strings, which
  * shares strings whenever possible.
  *
- * Use gnc_string_cache_insert to insert a string into the cache (it
+ * Use qof_util_string_cache_insert to insert a string into the cache (it
  * will return a pointer to the cached string).  Basically you should
  * use this instead of g_strdup.
  *
- * Use gnc_string_cache_remove (giving it a pointer to a cached
+ * Use qof_util_string_cache_remove (giving it a pointer to a cached
  * string) if the string is unused.  If this is the last reference to
  * the string it will be removed from the cache, otherwise it will
  * just decrement the reference count.  Basically you should use this
@@ -246,7 +246,7 @@ gint qof_util_bool_to_int (const gchar * val);
  * The string cache is demand-created on first use.
  *
  **/
-/** Destroy the gnc_string_cache */
+/** Destroy the qof_util_string_cache */
 void qof_util_string_cache_destroy (void);
 
 /** You can use this function as a destroy notifier for a GHashTable

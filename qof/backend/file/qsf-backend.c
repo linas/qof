@@ -67,6 +67,7 @@ static void option_cb (QofBackendOption *option, gpointer data)
 	}
 	if (0 == safe_strcmp(QSF_ENCODING, option->option_name)) {
 		params->encoding = g_strdup(option->value);
+		DEBUG (" encoding=%s", params->encoding);
 	}
 }
 
@@ -931,7 +932,8 @@ write_qsf_from_book(const char *path, QofBook *book, qsf_param *params)
 	be = qof_book_get_backend(book);
 	qsf_doc = qofbook_to_qsf(book, params);
 	write_result = 0;
-	DEBUG (" use_gz_level=%" G_GINT64_FORMAT, params->use_gz_level);
+	DEBUG (" use_gz_level=%" G_GINT64_FORMAT " encoding=%s", 
+		params->use_gz_level, params->encoding);
 	if((params->use_gz_level > 0) && (params->use_gz_level <= 9)) 
 	{
 		xmlSetDocCompressMode(qsf_doc, params->use_gz_level); 
@@ -953,6 +955,8 @@ write_qsf_to_stdout(QofBook *book, qsf_param *params)
 
 	qsf_doc = qofbook_to_qsf(book, params);
 	g_return_if_fail(qsf_is_valid(QSF_SCHEMA_DIR, QSF_OBJECT_SCHEMA, qsf_doc) == TRUE);
+	DEBUG (" use_gz_level=%" G_GINT64_FORMAT " encoding=%s", 
+		params->use_gz_level, params->encoding);
 	xmlSaveFormatFileEnc("-", qsf_doc, params->encoding, 1);
 	fprintf(stdout, "\n");
 	xmlFreeDoc(qsf_doc);

@@ -65,14 +65,14 @@ strcasestr(const gchar *str1, const gchar *str2)
 gint 
 safe_strcmp (const gchar * da, const gchar * db)
 {
-   SAFE_STRCMP (da, db);
+   safe_strcmp (da, db);
    return 0;
 }
 
 gint 
 safe_strcasecmp (const gchar * da, const gchar * db)
 {
-   SAFE_STRCASECMP (da, db);
+   safe_strcasecmp (da, db);
    return 0;
 }
 

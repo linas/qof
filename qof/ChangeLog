@@ -37,6 +37,8 @@
 	then manipulate the option and store the value back into the
 	KvpValue and backend configuration KvpFrame.
 
+	* qof/test/test-querynew.c :
+
 2006-03-13  Neil Williams <linux@codehelp.co.uk>
 
 	* configure.in : Check for sys/times.h and langinfo.h
