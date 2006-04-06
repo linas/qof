@@ -1,5 +1,5 @@
 /********************************************************************\
- * gnc-engine-util.h -- QOF utility functions                       *
+ * qof-util.h -- QOF utility functions                              *
  *                                                                  *
  * This program is free software; you can redistribute it and/or    *
  * modify it under the terms of the GNU General Public License as   *
@@ -21,53 +21,24 @@
 
 /** @addtogroup Utilities
     @{ */
-/** @file gnc-engine-util.h 
+/** @file qof-util.h 
     @brief QOF utility functions
-	(This file is due to be renamed qofutil.h in libqof2.
-	It will remain as a placeholder during libqof1.)
     @author Copyright (C) 1997 Robin D. Clark <rclark@cs.hmc.edu>
     @author Copyright (C) 2000 Bill Gribble <grib@billgribble.com>
     @author Copyright (C) 1997-2002,2004 Linas Vepstas <linas@linas.org>
+    @author Copyright 2006  Neil Williams  <linux@codehelp.co.uk>
 */
 
 #ifndef QOF_UTIL_H
 #define QOF_UTIL_H
 
-#include <glib.h>
 #include <stddef.h>
 #include "qof.h"
-
-/* Macros *****************************************************/
-
-/** \deprecated Use the function versions, safe_strcmp() and
-safe_strcasecmp(). These macros will be made private in libqof2.
-
-If the pointer arguments are equal, the macro does nothing and
-safe_strcmp / safe_strcasecmp return 0.
-
-These macros change program control flow and are not good 
-substitutes for the function equivalents.
-*/
-#define SAFE_STRCMP_REAL(fcn,da,db) {    \
-  if ((da) && (db)) {                    \
-    if ((da) != (db)) {                  \
-      int retval = fcn ((da), (db));     \
-      /* if strings differ, return */    \
-      if (retval) return retval;         \
-    }                                    \
-  } else                                 \
-  if ((!(da)) && (db)) {                 \
-    return -1;                           \
-  } else                                 \
-  if ((da) && (!(db))) {                 \
-    return +1;                           \
-  }                                      \
-}
-
-/** \deprecated use safe_strcmp() */
-#define SAFE_STRCMP(da,db) SAFE_STRCMP_REAL(strcmp,(da),(db))
-/** \deprecated use safe_strcasecmp() */
-#define SAFE_STRCASECMP(da,db) SAFE_STRCMP_REAL(strcasecmp,(da),(db))
+#include "qoflog.h"
+#include "qofutil.h"
+#include "qofbackend-p.h"
+#include "qofbook.h"
+#include "qofinstance.h"
 
 /** \name typedef enum as string macros
 @{
@@ -88,21 +59,21 @@ substitutes for the function equivalents.
     }name;
 
 #define AS_STRING_DEC(name, list)        \
-    const char* name##asString(name n);
+    const gchar* name##asString(name n);
 
-#define AS_STRING_FUNC(name, list)       \
-    const char* name##asString(name n) { \
-        switch (n) {                     \
-            list(AS_STRING_CASE)         \
+#define AS_STRING_FUNC(name, list)        \
+    const gchar* name##asString(name n) { \
+        switch (n) {                      \
+            list(AS_STRING_CASE)          \
             default: return "";  } }
 
 #define FROM_STRING_DEC(name, list)      \
     name name##fromString                \
-    (const char* str);
+    (const gchar* str);
 
 #define FROM_STRING_FUNC(name, list)     \
     name name##fromString                \
-    (const char* str) {                  \
+    (const gchar* str) {                 \
     if(str == NULL) { return 0; }        \
         list(FROM_STRING_CASE)           \
         return 0;  }
@@ -129,22 +100,22 @@ substitutes for the function equivalents.
 
 #define FROM_STRING_DEC_NON_TYPEDEF(name, list)   \
    void name##fromString                          \
-   (const char* str, enum name *type);
+   (const gchar* str, enum name *type);
 
 #define FROM_STRING_CASE_NON_TYPEDEF(name, value) \
    if (strcmp(str, #name) == 0) { *type = name; }
 
 #define FROM_STRING_FUNC_NON_TYPEDEF(name, list)  \
    void name##fromString                          \
-   (const char* str, enum name *type) {           \
+   (const gchar* str, enum name *type) {          \
    if(str == NULL) { return; }                    \
     list(FROM_STRING_CASE_NON_TYPEDEF) }
 
 #define AS_STRING_DEC_NON_TYPEDEF(name, list)     \
-   const char* name##asString(enum name n);
+   const gchar* name##asString(enum name n);
 
 #define AS_STRING_FUNC_NON_TYPEDEF(name, list)    \
-   const char* name##asString(enum name n) {      \
+   const gchar* name##asString(enum name n) {     \
        switch (n) {                               \
            list(AS_STRING_CASE_NON_TYPEDEF)       \
            default: return ""; } }
@@ -153,16 +124,6 @@ substitutes for the function equivalents.
    case name: { return #name; }
 
 /** @} */
-
-/** \deprecated Define the long long int conversion for scanf 
- * HAVE_SCANF_LLD will be removed from libqof2
- * */
-#if HAVE_SCANF_LLD
-# define GNC_SCANF_LLD "%lld" /**< \deprecated 
-	use G_GINT64_FORMAT instead. */
-#else
-# define GNC_SCANF_LLD "%qd"  /**< \deprecated */
-#endif
 
 /** @name Convenience wrappers
    @{
@@ -200,7 +161,7 @@ void qof_close (void);
                    strcmp(da, db).
          If da == NULL && db == NULL, returns 0. 
 */
-int safe_strcmp (const char * da, const char * db);
+gint safe_strcmp (const gchar * da, const gchar * db);
 
 /** case sensitive comparison of strings da and db - either
 may be NULL. A non-NULL string is greater than a NULL string.
@@ -214,46 +175,46 @@ may be NULL. A non-NULL string is greater than a NULL string.
                    strcmp(da, db).
          If da == NULL && db == NULL, returns 0. 
 */
-int safe_strcasecmp (const char * da, const char * db);
+gint safe_strcasecmp (const gchar * da, const gchar * db);
 
 /** The null_strcmp compares strings a and b the same way that strcmp()
  * does, except that either may be null.  This routine assumes that
  * a null string is equal to the empty string.
  */
-int null_strcmp (const char * da, const char * db);
+gint null_strcmp (const gchar * da, const gchar * db);
 
 /** Search for str2 in first nchar chars of str1, ignore case. Return
  * pointer to first match, or null. These are just like that strnstr
  * and the strstr functions, except that they ignore the case. */
-extern char *strncasestr(const unsigned char *str1, const unsigned char *str2, 
+extern gchar *strncasestr(const guchar *str1, const guchar *str2, 
 	size_t len);
-extern char *strcasestr(const char *str1, const char *str2);
+extern gchar *strcasestr(const gchar *str1, const gchar *str2);
 
 /** The ultostr() subroutine is the inverse of strtoul(). It accepts a
  * number and prints it in the indicated base.  The returned string
  * should be g_freed when done.  */
-char * ultostr (unsigned long val, int base);
+gchar * ultostr (unsigned long val, gint base);
 
 /** Returns true if string s is a number, possibly surrounded by
  * whitespace. */
-gboolean gnc_strisnum(const unsigned char *s);
+gboolean gnc_strisnum(const guchar *s);
 
-/** Local copy of stpcpy, used wtih libc's that don't have one. */
-char * gnc_stpcpy (char *dest, const char *src);
+/** Local copy of stpcpy, used wiyh libc's that don't have one. */
+gchar * qof_util_stpcpy (gchar *dest, const gchar *src);
 
 #ifndef HAVE_STPCPY
-#define stpcpy gnc_stpcpy
+#define stpcpy qof_util_stpcpy
 #endif
 
 /** Return NULL if the field is whitespace (blank, tab, formfeed etc.)  
  *  Else return pointer to first non-whitespace character. 
  */
-const char * qof_util_whitespace_filter (const char * val);
+const gchar * qof_util_whitespace_filter (const gchar * val);
 
 /** Return integer 1 if the string starts with 't' or 'T' or 
  *  contains the word 'true' or 'TRUE'; if string is a number, 
  *  return that number. (Leading whitespace is ignored). */
-int qof_util_bool_to_int (const char * val);
+gint qof_util_bool_to_int (const gchar * val);
 
 
 /** The QOF String Cache:
@@ -285,28 +246,21 @@ int qof_util_bool_to_int (const char * val);
  * The string cache is demand-created on first use.
  *
  **/
-
-/** \deprecated use qof_init instead.
-
-Get the gnc_string_cache.  Create it if it doesn't exist already.
-*/
-GCache* gnc_engine_get_string_cache(void);
-
 /** Destroy the gnc_string_cache */
-void gnc_engine_string_cache_destroy (void);
+void qof_util_string_cache_destroy (void);
 
 /** You can use this function as a destroy notifier for a GHashTable
    that uses common strings as keys (or values, for that matter.)
 */
-void gnc_string_cache_remove(gconstpointer key);
+void qof_util_string_cache_remove(gconstpointer key);
 
 /** You can use this function with g_hash_table_insert(), for the key
    (or value), as long as you use the destroy notifier above.
 */
-gpointer gnc_string_cache_insert(gconstpointer key);
+gpointer qof_util_string_cache_insert(gconstpointer key);
 
-#define CACHE_INSERT(str) gnc_string_cache_insert((gconstpointer)(str))
-#define CACHE_REMOVE(str) gnc_string_cache_remove((str))
+#define CACHE_INSERT(str) qof_util_string_cache_insert((gconstpointer)(str))
+#define CACHE_REMOVE(str) qof_util_string_cache_remove((str))
 
 /* Replace cached string currently in 'dst' with string in 'src'.
  * Typical usage:
@@ -316,11 +270,170 @@ gpointer gnc_string_cache_insert(gconstpointer key);
  * It avoids unnecessary ejection by doing INSERT before REMOVE.
 */
 #define CACHE_REPLACE(dst, src) do {               \
-        gpointer tmp = CACHE_INSERT((src));        \
+        gpointer tmp = CACHE_INSERT((src));   \
         CACHE_REMOVE((dst));                       \
-        (dst) = tmp;                               \
+        (dst) = tmp;                                   \
     } while (0)
 
+#define QOF_CACHE_NEW(void) qof_util_string_cache_insert("")
 
+/** begin_edit helper
+ *
+ * @param  inst: an instance of QofInstance
+ *
+ * The caller should use this macro first and then perform any other operations.
+ 
+ Uses newly created functions to allow the macro to be used
+ when QOF is linked as a library. qofbackend-p.h is a private header.
+ */
+
+#define QOF_BEGIN_EDIT(inst)                                        \
+  if (!(inst)) return;                                              \
+                                                                    \
+  (inst)->editlevel++;                                              \
+  if (1 < (inst)->editlevel) return;                                \
+                                                                    \
+  if (0 >= (inst)->editlevel)                                       \
+  {                                                                 \
+    PERR ("unbalanced call - resetting (was %d)", (inst)->editlevel); \
+    (inst)->editlevel = 1;                                          \
+  }                                                                 \
+  ENTER ("(inst=%p)", (inst));                                      \
+                                                                    \
+  /* See if there's a backend.  If there is, invoke it. */          \
+  {                                                                 \
+    QofBackend * be;                                                \
+    be = qof_book_get_backend ((inst)->book);                       \
+      if (be && qof_backend_begin_exists(be)) {                     \
+         qof_backend_run_begin(be, (inst));                         \
+    } else {                                                        \
+      /* We tried and failed to start transaction! */               \
+      (inst)->dirty = TRUE;                                         \
+    }                                                               \
+  }                                                                 \
+  LEAVE (" ");
+
+/** \brief function version of QOF_BEGIN_EDIT
+
+The macro cannot be used in a function that returns a value,
+this function can be used instead.
+*/
+gboolean qof_begin_edit(QofInstance *inst);
+
+/**
+ * commit_edit helpers
+ *
+ * The caller should call PART1 as the first thing, then 
+ * perform any local operations prior to calling the backend.
+ * Then call PART2.  
+ */
+
+/**
+ * part1 -- deal with the editlevel
+ * 
+ * @param inst: an instance of QofInstance
+ */
+
+#define QOF_COMMIT_EDIT_PART1(inst) {                            \
+  if (!(inst)) return;                                           \
+                                                                 \
+  (inst)->editlevel--;                                           \
+  if (0 < (inst)->editlevel) return;                             \
+                                                                 \
+  /* The pricedb suffers from delayed update...     */          \
+  /* This may be setting a bad precedent for other types, I fear. */ \
+  /* Other types probably really should handle begin like this. */ \
+  if ((-1 == (inst)->editlevel) && (inst)->dirty)                \
+  {                                                              \
+    QofBackend * be;                                             \
+    be = qof_book_get_backend ((inst)->book);                    \
+    if (be && qof_backend_begin_exists(be)) {                    \
+      qof_backend_run_begin(be, (inst));                         \
+    }                                                            \
+    (inst)->editlevel = 0;                                       \
+  }                                                              \
+  if (0 > (inst)->editlevel)                                     \
+  {                                                              \
+    PERR ("unbalanced call - resetting (was %d)", (inst)->editlevel); \
+    (inst)->editlevel = 0;                                       \
+  }                                                              \
+  ENTER ("(inst=%p) dirty=%d do-free=%d",                        \
+            (inst), (inst)->dirty, (inst)->do_free);             \
+}
+
+/** \brief function version of QOF_COMMIT_EDIT_PART1
+
+The macro cannot be used in a function that returns a value,
+this function can be used instead. Only Part1 is implemented.
+*/
+gboolean qof_commit_edit(QofInstance *inst);
+
+/**
+ * part2 -- deal with the backend
+ * 
+ * @param inst: an instance of QofInstance
+ * @param on_error: a function called if there is a backend error.
+ *                void (*on_error)(inst, QofBackendError)
+ * @param on_done: a function called after the commit is completed 
+ *                successfully for an object which remained valid.
+ *                void (*on_done)(inst)
+ * @param on_free: a function called if the commit succeeded and the instance
+ *                 is to be freed. 
+ *                void (*on_free)(inst)
+ * 
+ * Note that only *one* callback will be called (or zero, if that
+ * callback is NULL).  In particular, 'on_done' will not be called for
+ * an object which is to be freed.
+ *
+ * Returns TRUE, if the commit succeeded, FALSE otherwise.
+ */
+gboolean
+qof_commit_edit_part2(QofInstance *inst, 
+                      void (*on_error)(QofInstance *, QofBackendError), 
+                      void (*on_done)(QofInstance *), 
+                      void (*on_free)(QofInstance *));
+
+/** \brief Macro version of ::qof_commit_edit_part2
+
+\note This macro changes programme flow if the instance is freed.
+*/
+#define QOF_COMMIT_EDIT_PART2(inst,on_error,on_done,on_free) {   \
+  QofBackend * be;                                               \
+                                                                 \
+  /* See if there's a backend.  If there is, invoke it. */       \
+  be = qof_book_get_backend ((inst)->book);                      \
+  if (be && qof_backend_commit_exists(be))                       \
+  {                                                              \
+    QofBackendError errcode;                                     \
+                                                                 \
+    /* clear errors */                                           \
+    do {                                                         \
+      errcode = qof_backend_get_error (be);                      \
+    } while (ERR_BACKEND_NO_ERR != errcode);                     \
+                                                                 \
+    qof_backend_run_commit(be, (inst));                          \
+    errcode = qof_backend_get_error (be);                        \
+    if (ERR_BACKEND_NO_ERR != errcode)                           \
+    {                                                            \
+      /* XXX Should perform a rollback here */                   \
+      (inst)->do_free = FALSE;                                   \
+                                                                 \
+      /* Push error back onto the stack */                       \
+      qof_backend_set_error (be, errcode);                       \
+      (on_error)((inst), errcode);                               \
+    }                                                            \
+    /* XXX the backend commit code should clear dirty!! */       \
+    (inst)->dirty = FALSE;                                       \
+  }                                                              \
+  (on_done)(inst);                                               \
+                                                                 \
+  LEAVE ("inst=%p, dirty=%d do-free=%d",                         \
+            (inst), (inst)->dirty, (inst)->do_free);             \
+  if ((inst)->do_free) {                                         \
+     (on_free)(inst);                                            \
+     return;                                                     \
+  }                                                              \
+}
+    
 #endif /* QOF_UTIL_H */
 /** @} */

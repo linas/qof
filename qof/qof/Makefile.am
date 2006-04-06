@@ -10,7 +10,6 @@ libqof_la_LDFLAGS= -version-info $(LIBQOF_LIBRARY_VERSION)
 
 libqof_la_SOURCES =  \
    gnc-date.c        \
-   gnc-engine-util.c \
    gnc-numeric.c     \
    qoflog.c         \
    guid.c            \
@@ -31,6 +30,7 @@ libqof_la_SOURCES =  \
    qofreference.c    \
    qofsession.c      \
    qofsql.c          \
+   qofutil.c         \
    qofbookmerge.c  \
    deprecated.c
 
@@ -38,7 +38,6 @@ qofincludedir = ${pkgincludedir}
 
 qofinclude_HEADERS = \
    gnc-date.h        \
-   gnc-engine-util.h \
    gnc-numeric.h     \
    qoflog.h \
    guid.h            \
@@ -46,7 +45,6 @@ qofinclude_HEADERS = \
    kvp-util.h        \
    kvp-util-p.h      \
    qof.h             \
-   qof-be-utils.h    \
    qofbackend.h      \
    qofbackend-p.h    \
    qofclass.h        \
@@ -67,6 +65,7 @@ qofinclude_HEADERS = \
    qofsession.h      \
    qofla-dir.h \
    qofsql.h	     \
+   qofutil.h \
    qofbookmerge.h \
    deprecated.h
 

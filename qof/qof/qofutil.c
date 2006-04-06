@@ -1,7 +1,8 @@
 /********************************************************************\
- * gnc-engine-util.c -- QOF utility functions                       *
+ * qofutil.c -- QOF utility functions                               *
  * Copyright (C) 1997 Robin D. Clark                                *
  * Copyright (C) 1997-2001,2004 Linas Vepstas <linas@linas.org>     *
+ * Copyright 2006  Neil Williams  <linux@codehelp.co.uk>            *
  *                                                                  *
  * This program is free software; you can redistribute it and/or    *
  * modify it under the terms of the GNU General Public License as   *
@@ -31,16 +32,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include "qof.h"
-#include "gnc-engine-util.h"
-
-
-/********************************************************************\
-\********************************************************************/
 
 /* Search for str2 in first nchar chars of str1, ignore case..  Return
  * pointer to first match, or null.  */
-char *
-strncasestr(const unsigned char *str1, const unsigned char *str2, size_t len) 
+gchar *
+strncasestr(const guchar *str1, const guchar *str2, size_t len) 
 {
   while (*str1 && len--) 
   {
@@ -48,7 +44,7 @@ strncasestr(const unsigned char *str1, const unsigned char *str2, size_t len)
     {
       if (strncasecmp(str1,str2,strlen(str2)) == 0) 
       {
-        return (char *) str1;
+        return (gchar *) str1;
       }
     }
     str1++;
@@ -58,33 +54,30 @@ strncasestr(const unsigned char *str1, const unsigned char *str2, size_t len)
 
 /* Search for str2 in str1, ignore case.  Return pointer to first
  * match, or null.  */
-char *
-strcasestr(const char *str1, const char *str2) 
+gchar *
+strcasestr(const gchar *str1, const gchar *str2) 
 {
    size_t len = strlen (str1);
-   char * retval = strncasestr (str1, str2, len);
+   gchar * retval = strncasestr (str1, str2, len);
    return retval;
 }
 
-/********************************************************************\
-\********************************************************************/
-
-int 
-safe_strcmp (const char * da, const char * db)
+gint 
+safe_strcmp (const gchar * da, const gchar * db)
 {
    SAFE_STRCMP (da, db);
    return 0;
 }
 
-int 
-safe_strcasecmp (const char * da, const char * db)
+gint 
+safe_strcasecmp (const gchar * da, const gchar * db)
 {
    SAFE_STRCASECMP (da, db);
    return 0;
 }
 
-int 
-null_strcmp (const char * da, const char * db)
+gint 
+null_strcmp (const gchar * da, const gchar * db)
 {
    if (da && db) return strcmp (da, db);
    if (!da && db && 0==db[0]) return 0;
@@ -94,19 +87,16 @@ null_strcmp (const char * da, const char * db)
    return 0;
 }
 
-/********************************************************************\
-\********************************************************************/
-
 #define MAX_DIGITS 50
 
 /* inverse of strtoul */
-char *
-ultostr (unsigned long val, int base)
+gchar *
+ultostr (gulong val, gint base)
 {
-  char buf[MAX_DIGITS];
-  unsigned long broke[MAX_DIGITS];
-  int i;
-  unsigned long places=0, reval;
+  gchar buf[MAX_DIGITS];
+  gulong broke[MAX_DIGITS];
+  gint i;
+  gulong places=0, reval;
   
   if ((2>base) || (36<base)) return NULL;
 
@@ -128,7 +118,7 @@ ultostr (unsigned long val, int base)
   }
 
   /* print */
-  for (i=0; i<(int)places; i++) {
+  for (i=0; i<(gint)places; i++) {
     if (10>broke[i]) {
        buf[places-1-i] = 0x30+broke[i];  /* ascii digit zero */
     } else {
@@ -140,12 +130,12 @@ ultostr (unsigned long val, int base)
   return g_strdup (buf);
 }
 
-/********************************************************************\
- * returns TRUE if the string is a number, possibly with whitespace
-\********************************************************************/
+/* =================================================================== */
+/* returns TRUE if the string is a number, possibly with whitespace */
+/* =================================================================== */
 
 gboolean
-gnc_strisnum(const unsigned char *s)
+gnc_strisnum(const guchar *s)
 {
   if (s == NULL) return FALSE;
   if (*s == 0) return FALSE;
@@ -169,12 +159,12 @@ gnc_strisnum(const unsigned char *s)
   return FALSE;
 }
 
-/********************************************************************\
- * our own version of stpcpy
-\********************************************************************/
+/* =================================================================== */
+/* our own version of stpcpy */
+/* =================================================================== */
 
-char *
-gnc_stpcpy (char *dest, const char *src)
+gchar *
+qof_util_stpcpy (gchar *dest, const gchar *src)
 {
   strcpy (dest, src);
   return (dest + strlen (src));
@@ -183,9 +173,10 @@ gnc_stpcpy (char *dest, const char *src)
 /* =================================================================== */
 /* Return NULL if the field is whitespace (blank, tab, formfeed etc.)  
  * Else return pointer to first non-whitespace character. */
+/* =================================================================== */
 
-const char *
-qof_util_whitespace_filter (const char * val)
+const gchar *
+qof_util_whitespace_filter (const gchar * val)
 {
 	size_t len;
 	if (!val) return NULL;
@@ -198,11 +189,12 @@ qof_util_whitespace_filter (const char * val)
 /* =================================================================== */
 /* Return integer 1 if the string starts with 't' or 'T' or contains the 
  * word 'true' or 'TRUE'; if string is a number, return that number. */
+/* =================================================================== */
 
-int
-qof_util_bool_to_int (const char * val)
+gint
+qof_util_bool_to_int (const gchar * val)
 {
-	const char * p = qof_util_whitespace_filter (val);
+	const gchar * p = qof_util_whitespace_filter (val);
 	if (!p) return 0;
 	if ('t' == p[0]) return 1;
 	if ('T' == p[0]) return 1;
@@ -215,11 +207,11 @@ qof_util_bool_to_int (const char * val)
 	return atoi (val);
 }
 
-/********************************************************************\
- * The engine string cache
-\********************************************************************/
+/* =================================================================== */
+/* The engine string cache */
+/* =================================================================== */
 
-static GCache * gnc_string_cache = NULL;
+static GCache * qof_string_cache = NULL;
 
 #ifdef THESE_CAN_BE_USEFUL_FOR_DEGUGGING
 static guint g_str_hash_KEY(gconstpointer v) {
@@ -240,17 +232,21 @@ static void g_free_VAL(gpointer v) {
 static void g_free_KEY(gpointer v) {
     return g_free(v);
 }
-static gboolean gnc_str_equal(gconstpointer v, gconstpointer v2)
+static gboolean qof_util_str_equal(gconstpointer v, gconstpointer v2)
 {
     return (v && v2) ? g_str_equal(v, v2) : FALSE;
 }
 #endif
-
+#ifdef QOF_DISABLE_DEPRECATED 
+static GCache*
+qof_util_get_string_cache(void)
+#else
 GCache*
-gnc_engine_get_string_cache(void)
+qof_util_get_string_cache(void)
+#endif    
 {
-    if(!gnc_string_cache) {
-        gnc_string_cache = g_cache_new(
+    if(!qof_string_cache) {
+        qof_string_cache = g_cache_new(
             (GCacheNewFunc) g_strdup, /* value_new_func     */
             g_free,                   /* value_destroy_func */
             (GCacheDupFunc) g_strdup, /* key_dup_func       */
@@ -259,39 +255,36 @@ gnc_engine_get_string_cache(void)
             g_str_hash,               /* hash_value_func    */
             g_str_equal);             /* key_equal_func     */
     }
-    return gnc_string_cache;
+    return qof_string_cache;
 }
 
 void
-gnc_engine_string_cache_destroy (void)
+qof_util_string_cache_destroy (void)
 {
-    if (gnc_string_cache)
-        g_cache_destroy (gnc_string_cache);
-    gnc_string_cache = NULL;
+    if (qof_string_cache)
+        g_cache_destroy (qof_string_cache);
+    qof_string_cache = NULL;
 }
 
 void
-gnc_string_cache_remove(gconstpointer key)
+qof_util_string_cache_remove(gconstpointer key)
 {
     if (key)
-    g_cache_remove(gnc_engine_get_string_cache(), key);
+    g_cache_remove(qof_util_get_string_cache(), key);
 }
 
-/* TODO: It would be better if this returned gpointerconst.  The
-   returned strings really should be treated as const.  Callers must
-   not modify them. */
 gpointer
-gnc_string_cache_insert(gconstpointer key)
+qof_util_string_cache_insert(gconstpointer key)
 {
     if (key)
-        return g_cache_insert(gnc_engine_get_string_cache(), (gpointer)key);
+        return g_cache_insert(qof_util_get_string_cache(), (gpointer)key);
     return NULL;
 }
 
 void
 qof_init (void)
 {
-	gnc_engine_get_string_cache ();
+	qof_util_get_string_cache ();
 	guid_init ();
 	qof_object_initialize ();
 	qof_query_init ();
@@ -304,9 +297,7 @@ qof_close(void)
 	qof_query_shutdown ();
 	qof_object_shutdown ();
 	guid_shutdown ();
-	gnc_engine_string_cache_destroy ();
+	qof_util_string_cache_destroy ();
 }
 
-
-/************************* END OF FILE ******************************\
-\********************************************************************/
+/* ************************ END OF FILE ***************************** */
