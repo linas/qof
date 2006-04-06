@@ -196,9 +196,9 @@ backend is fully configured and ready for use.
 /** A single Backend Configuration Option. */
 typedef struct QofBackendOption_s {
 	KvpValueType type;        /**< Only GINT64, DOUBLE, NUMERIC, STRING and TIMESPEC supported. */
-	const char *option_name;  /**< non-translated, key. */
-	const char *description;  /**< translatable description. */
-	const char *tooltip;      /**< translatable tooltip */
+	const gchar *option_name;  /**< non-translated, key. */
+	const gchar *description;  /**< translatable description. */
+	const gchar *tooltip;      /**< translatable tooltip */
 	gpointer value;           /**< The value of the option. */
 }QofBackendOption;
 
@@ -258,8 +258,8 @@ KvpFrame* qof_backend_get_config(QofBackend *be);
 \return FALSE in case or error, otherwise TRUE.
 */
 gboolean
-qof_load_backend_library (const char *directory, 
-			const char* filename, const char* init_fcn);
+qof_load_backend_library (const gchar *directory, 
+			const gchar* filename, const gchar* init_fcn);
 
 /** \brief Retrieve the backend used by this book */
 QofBackend* qof_book_get_backend (QofBook *book);
