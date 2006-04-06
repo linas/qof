@@ -109,7 +109,7 @@ static void test_class (void)
 						     TEST_PARAM),
 			TEST_CORE) == 0, "qof_class_get_parameter_type");
 
-  do_test (qof_class_get_default_sort (TEST_MODULE_NAME) == test_sort,
+  do_test (qof_class_get_default_sort (TEST_MODULE_NAME) == (QofSortFunc)test_sort,
 	   "qof_class_get_default_sort");
   do_test (qof_class_get_default_sort (NULL) == NULL,
 	   "qof_class_get_default_sort (NULL)");
