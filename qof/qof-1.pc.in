@@ -4,11 +4,14 @@ exec_prefix=@exec_prefix@
 libdir=@libdir@
 includedir=@includedir@
 xmldir=@QSF_SCHEMA_DIR@
-added_libs=@ADD_PKG_LIB@
+gda_libs=@GDA_PKG_LIB@
+qof_sql_libs=@SQL_PKG_LIB@
 
 Name: QOF
 Description: QOF Query Object Framework Library.
-Requires: glib-2.0 libxml-2.0 >= 2-2.5.10
 Version: @VERSION@
-Libs: -L${libdir} -lqof -lm ${added_libs}
+Requires: 
+Requires.private: libxml-2.0 >= 2-2.5.10 glib-2.0
+Libs: -L${libdir} -lqof ${qof_sql_libs}
+Libs.private: -lm ${gda_libs}
 Cflags: -I${includedir}/qof
