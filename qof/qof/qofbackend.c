@@ -193,7 +193,7 @@ void qof_backend_prepare_option(QofBackend *be, QofBackendOption *option)
 	switch (option->type)
 	{
 		case KVP_TYPE_GINT64   : {
-			value = kvp_value_new_gint64(GPOINTER_TO_INT(option->value));
+			value = kvp_value_new_gint64(*(gint64*)&option->value);
 			break; 
 		}
 		case KVP_TYPE_DOUBLE   : { 
@@ -246,6 +246,10 @@ struct config_iterate {
 	KvpFrame          *recursive;
 };
 
+/* Set the option with the default KvpValue,
+manipulate the option in the supplied callback routine
+then set the value of the option into the KvpValue
+in the configuration frame. */
 static void
 config_foreach_cb (const char *key, KvpValue *value, gpointer data)
 {
@@ -268,7 +272,7 @@ config_foreach_cb (const char *key, KvpValue *value, gpointer data)
 	option.type = kvp_value_get_type(value);
 	if(!option.type) { return; }
 	switch (option.type)
-	{
+	{ /* set the KvpFrame value into the option */
 		case KVP_TYPE_GINT64   : {
 			int64 = kvp_value_get_gint64(value);
 			option.value = (gpointer)&int64;
@@ -288,12 +292,12 @@ config_foreach_cb (const char *key, KvpValue *value, gpointer data)
 			option.value = (gpointer)kvp_value_get_string(value);
 			break;
 		}
-		case KVP_TYPE_GUID     : { break; } /* unsupported */
 		case KVP_TYPE_TIMESPEC : {
 			ts = kvp_value_get_timespec(value);
 			option.value = (gpointer)&ts;
 			break;
 		}
+		case KVP_TYPE_GUID     : { break; } /* unsupported */
 		case KVP_TYPE_BINARY   : { break; } /* unsupported */
 		case KVP_TYPE_GLIST    : { break; } /* unsupported */
 		case KVP_TYPE_FRAME    : { break; } /* unsupported */
@@ -303,9 +307,43 @@ config_foreach_cb (const char *key, KvpValue *value, gpointer data)
 	g_free(parent);
 	parent = g_strdup_printf("/%s/%s", QOF_CONFIG_TIP, key);
 	option.tooltip = kvp_frame_get_string(helper->recursive, parent);
+	g_free(parent);
 	helper->count++;
+    /* manipulate the option */
 	helper->fcn (&option, helper->data);
-	LEAVE (" desc=%s tip=%s", option.description, option.tooltip);
+	switch (option.type)
+	{ /* set the option value into the KvpFrame */
+		case KVP_TYPE_GINT64   : {
+			kvp_frame_set_gint64(helper->recursive, key, 
+				(*(gint64*)option.value));
+			break;
+		}
+		case KVP_TYPE_DOUBLE   : {
+			kvp_frame_set_double(helper->recursive, key, 
+				(*(double*)option.value));
+			break; 
+		}
+		case KVP_TYPE_NUMERIC  : {
+			kvp_frame_set_numeric(helper->recursive, key, 
+				(*(gnc_numeric*)option.value));
+			break; 
+		}
+		case KVP_TYPE_STRING   : {
+			kvp_frame_set_string(helper->recursive, key, 
+				(gchar*)option.value);
+			break;
+		}
+		case KVP_TYPE_TIMESPEC : {
+			kvp_frame_set_timespec(helper->recursive, key, 
+				(*(Timespec*)option.value));
+			break;
+		}
+		case KVP_TYPE_GUID     : { break; } /* unsupported */
+		case KVP_TYPE_BINARY   : { break; } /* unsupported */
+		case KVP_TYPE_GLIST    : { break; } /* unsupported */
+		case KVP_TYPE_FRAME    : { break; } /* unsupported */
+	}
+	LEAVE (" ");
 }
 
 void qof_backend_option_foreach(KvpFrame *config, QofBackendOptionCB cb, gpointer data)
