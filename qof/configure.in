@@ -1,16 +1,16 @@
 ## -*-m4-*-
 dnl Process this file with autoconf to produce a configure script.
 
-AC_INIT(qof, 0.6.3, http://lists.sourceforge.net/lists/listinfo/qof-devel)
+AC_INIT(qof, 0.6.4, http://lists.sourceforge.net/lists/listinfo/qof-devel)
 
 AC_PREREQ(2.53)
 
-LIBQOF_LIBRARY_VERSION=1:4:0
-LIBQOF_BACKEND_QSF_LIBRARY_VERSION=0:3:0
+LIBQOF_LIBRARY_VERSION=1:5:0
+LIBQOF_BACKEND_QSF_LIBRARY_VERSION=0:4:0
 AC_SUBST(LIBQOF_LIBRARY_VERSION)
 AC_SUBST(LIBQOF_BACKEND_QSF_LIBRARY_VERSION)
 
-VERSION=0.6.3
+VERSION=0.6.4
 AC_SUBST(VERSION)
 PACKAGE=qof
 AC_SUBST(PACKAGE)
@@ -126,13 +126,13 @@ AC_SUBST(LIBGDA_LIBS)
 if test "x$LIBGDA_LIBS" = x; then
   AC_MSG_RESULT([No, GDA not found; will build using internal SQL library.])
 	LIBQOFSQL_LIBRARY_VERSION=1:1:0
-	ADD_PKG_LIB="-lqofsql"
+	SQL_PKG_LIB="-lqofsql"
 	AC_SUBST(LIBQOFSQL_LIBRARY_VERSION)
 else
     GDA_VERSION=`$PKG_CONFIG --modversion libgda`
     AC_MSG_RESULT([yes, using GDA: ${GDA_VERSION}])
     AC_DEFINE(HAVE_GDA,,[We have found GDA])
-	ADD_PKG_LIB="-lgda-2"
+	GDA_PKG_LIB="-lgda-2"
     HAVE_GDA="use_gda"
 	AC_SUBST(GDA_VERSION)
 fi
@@ -140,7 +140,8 @@ fi
 AM_CONDITIONAL(USE_LIBGDA, [ test x"$HAVE_GDA" != x])
 AM_CONDITIONAL(USE_LIBGDA, [ test "$HAVE_GDA" = "use_gda"])
 AC_SUBST(USE_LIBGDA)
-AC_SUBST(ADD_PKG_LIB)
+AC_SUBST(GDA_PKG_LIB)
+AC_SUBST(SQL_PKG_LIB)
 
 dnl **************************************************************
 dnl Checks for typedefs, structures, and compiler characteristics.

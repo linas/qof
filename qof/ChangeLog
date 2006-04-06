@@ -1,3 +1,42 @@
+2006-04-02  Neil Williams <linux@codehelp.co.uk>
+
+	* backend/file/qof-backend-qsf.h :
+	* backend/file/qsf-backend.c :
+	* backend/file/qsf-xml.h : add encoding backend 
+	option
+	
+	* qof/Makefile.am :
+	* qof/qof.h : remove qof-be-utils.h
+
+2006-03-28  Neil Williams <linux@codehelp.co.uk>
+
+	* doc/gnc-numeric-example.txt : Move example 
+	to a doc file.
+	* deprecated.h : Deprecate the expression of
+	glib.h in the QOF API. libqof2 applications
+	will have to include glib.h directly. Prevents
+	a redundant dependency in qof packages.
+
+2006-03-26  Neil Williams <linux@codehelp.co.uk>
+
+	* configure.in :
+	* qof-1.pc.in : allowing qof_sql to be linked 
+	where libgda is not available.
+
+	* debian/control : Make libqof-dev depend on
+	libgda2-dev. (Vorlon. Prevent QOF applications
+	having to depend on libgda2-* unnecessarily.)
+	* qof-1.pc.in : Use private pkg-config variables
+	to hide libraries that only QOF needs.
+
+	* qof/qofsql.c : Allow INSERT queries to be logged.
+	* backend/file/qsf-xml.h : use gint64 to match internal kvp value.
+	* backend/file/qsf-backend.c : using gint64 so don't use the
+	32bit glib macros, GINT_TO_POINTER and GPOINTER_TO_INT.
+	* qof/qofbackend.c : Set the option using the default KvpValue,
+	then manipulate the option and store the value back into the
+	KvpValue and backend configuration KvpFrame.
+
 2006-03-13  Neil Williams <linux@codehelp.co.uk>
 
 	* configure.in : Check for sys/times.h and langinfo.h
