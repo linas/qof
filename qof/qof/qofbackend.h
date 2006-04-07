@@ -18,6 +18,9 @@
  * Boston, MA  02110-1301,  USA       gnu@gnu.org                   *
  *                                                                  *
 \********************************************************************/
+/** @addtogroup Object
+ @{
+*/
 /** @addtogroup Backend
 
     The QOF Backend is a pseudo-object providing an interface between the
@@ -267,4 +270,5 @@ QofBackend* qof_book_get_backend (QofBook *book);
 void qof_book_set_backend (QofBook *book, QofBackend *);
 
 #endif /* QOF_BACKEND_H */
+/** @} */
 /** @} */
