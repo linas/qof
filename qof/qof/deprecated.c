@@ -110,7 +110,7 @@ gpointer gnc_string_cache_insert(gconstpointer key)
 }
 gchar * gnc_stpcpy (gchar *dest, const gchar *src)
 {
-    return qof_util_stpcpy(dest, src);
+    return g_stpcpy(dest, src);
 }
 GCache* gnc_engine_get_string_cache(void)
 {
