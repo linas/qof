@@ -184,5 +184,7 @@ GCache* qof_util_get_string_cache(void);
 void gnc_engine_string_cache_destroy (void);
 /** \deprecated use qof_util_string_cache_remove instead. */
 void gnc_string_cache_remove(gconstpointer key);
+/** \deprecated no replacement. */
+void qof_book_set_schedxactions( QofBook *book, GList *newList );
 #endif /* _DEPRECATED_H */
 #endif /* QOF_DISABLE_DEPRECATED */
