@@ -40,6 +40,8 @@
 #include "qofbook.h"
 #include "qofinstance.h"
 
+#define QOF_MOD_UTIL "qof-utilities"
+
 /** \name typedef enum as string macros
 @{
 */
@@ -193,17 +195,14 @@ extern gchar *strcasestr(const gchar *str1, const gchar *str2);
 /** The ultostr() subroutine is the inverse of strtoul(). It accepts a
  * number and prints it in the indicated base.  The returned string
  * should be g_freed when done.  */
-gchar * ultostr (unsigned long val, gint base);
+gchar * ultostr (gulong val, gint base);
 
 /** Returns true if string s is a number, possibly surrounded by
  * whitespace. */
 gboolean gnc_strisnum(const guchar *s);
 
-/** Local copy of stpcpy, used wiyh libc's that don't have one. */
-gchar * qof_util_stpcpy (gchar *dest, const gchar *src);
-
 #ifndef HAVE_STPCPY
-#define stpcpy qof_util_stpcpy
+#define stpcpy g_stpcpy
 #endif
 
 /** Return NULL if the field is whitespace (blank, tab, formfeed etc.)  
@@ -216,6 +215,11 @@ const gchar * qof_util_whitespace_filter (const gchar * val);
  *  return that number. (Leading whitespace is ignored). */
 gint qof_util_bool_to_int (const gchar * val);
 
+/** \brief Converts a parameter to a printable string.
+
+The returned string must be freed by the caller.
+*/
+gchar* qof_util_param_as_string(QofEntity *ent, QofParam *param);
 
 /** The QOF String Cache:
  *
