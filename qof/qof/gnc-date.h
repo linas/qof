@@ -141,18 +141,15 @@ gboolean gnc_date_string_to_monthformat(const gchar *format_string,
 
 /* Datatypes *******************************************************/
 
-/** \brief Use a 64-bit signed int timespec
+/** \brief Use a 64-bit unsigned int timespec
  *
  * struct timespec64 is just like the unix 'struct timespec' except 
  * that we use a 64-bit
- * signed int to store the seconds.  This should adequately cover
+ * unsigned int to store the seconds.  This should adequately cover
  * dates in the distant future as well as the distant past, as long as
  * they're not more than a couple dozen times the age of the universe.
- * Note that both gcc and the IBM Toronto xlC compiler (aka CSet,
- * VisualAge, etc) correctly handle long long as a 64 bit quantity,
- * even on the 32-bit Intel x86 and PowerPC architectures.  I'm
- * assuming that all the other modern compilers are clean on this
- * issue too. */
+ * Values of this type can range from 0 to 18,446,744,073,709,551,615.
+ */
 
 #ifndef SWIG   /* swig 1.1p5 can't hack the long long type */
 struct timespec64
@@ -163,14 +160,12 @@ struct timespec64
 #endif /* SWIG */
 
 /** The Timespec is just like the unix 'struct timespec' 
- * except that we use a 64-bit signed int to
+ * except that we use a 64-bit unsigned int to
  * store the seconds.  This should adequately cover dates in the
  * distant future as well as the distant past, as long as they're not
- * more than a couple dozen times the age of the universe.  Note that
- * both gcc and the IBM Toronto xlC compiler (aka CSet, VisualAge,
- * etc) correctly handle long long as a 64 bit quantity, even on the
- * 32-bit Intel x86 and PowerPC architectures.  I'm assuming that all
- * the other modern compilers are clean on this issue too. */
+ * more than a couple dozen times the age of the universe
+ * Values of this type can range from 0 to 18,446,744,073,709,551,615.
+ */
 typedef struct timespec64 Timespec;
 
 
