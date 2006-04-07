@@ -1,3 +1,19 @@
+2006-04-07  Neil Williams <linux@codehelp.co.uk>
+
+	* qof/deprecated.c : Replace gnc_strpcpy.
+	* qof/qofbook-p.h :
+	* qof/deprecated.h : Deprecate 
+	qof_book_set_schedxactions which has no
+	declaration.
+	* qof/qofutil.c :
+	* qof/qofbackend.c : Move the function 
+	versions of the begin_edit and commit_edit
+	routines to the Utilities file alongside
+	the macro versions from qof-be-utils.h
+	* qof/qofbackend.h : Replace Doxygen fix.
+	* qof/qoflog.c : Add Utilities to the default
+	log_module list.
+
 2006-04-02  Neil Williams <linux@codehelp.co.uk>
 
 	* backend/file/qof-backend-qsf.h :
