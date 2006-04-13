@@ -1,5 +1,5 @@
 Package: qof1
-Version: 0.6.3
+Version: 0.6.4
 Revision: 1
 Source: mirror:sourceforge:qof/qof-%v.tar.gz
 Maintainer: Neil Williams <linux@codehelp.co.uk>
@@ -17,9 +17,9 @@ SplitOff: <<
 	Package: %N-shlibs
 	Description: Query Object Framework shared libraries
 	Files: <<
-		lib/libqof.1.0.4.dylib
+		lib/libqof.1.0.5.dylib
 		lib/libqofsql.1.0.1.dylib
-		lib/libqof-backend-qsf.0.0.3.dylib
+		lib/libqof-backend-qsf.0.0.4.dylib
 		lib/libqof.1.dylib
 		lib/libqofsql.1.dylib
 		lib/libqof-backend-qsf.0.dylib
@@ -34,9 +34,9 @@ SplitOff: <<
 	<<
 	DocFiles: COPYING AUTHORS README NEWS
 	Shlibs: <<
-		%p/lib/libqof.1.dylib 1.0.4 %N (>= 0.6.3-1)
-		%p/lib/libqofsql.1.dylib 1.0.1 %N (>= 0.6.3-1)
-		%p/lib/libqof-backend-qsf.0.dylib 0.0.3 %N (>= 0.6.3-1)
+		%p/lib/libqof.1.dylib 1.0.5 %N (>= 0.6.4-1)
+		%p/lib/libqofsql.1.dylib 1.0.1 %N (>= 0.6.4-1)
+		%p/lib/libqof-backend-qsf.0.dylib 0.0.4 %N (>= 0.6.4-1)
 	<<
 <<
 DescDetail: << 
