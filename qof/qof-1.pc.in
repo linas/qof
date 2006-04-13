@@ -10,8 +10,8 @@ qof_sql_libs=@SQL_PKG_LIB@
 Name: QOF
 Description: QOF Query Object Framework Library.
 Version: @VERSION@
-Requires: 
-Requires.private: libxml-2.0 >= 2-2.5.10 glib-2.0
+Requires: glib-2.0
+Requires.private: libxml-2.0 >= 2-2.5.10 
 Libs: -L${libdir} -lqof ${qof_sql_libs}
 Libs.private: -lm ${gda_libs}
 Cflags: -I${includedir}/qof
