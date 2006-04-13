@@ -1,3 +1,21 @@
+2006-04-11  Neil Williams <linux@codehelp.co.uk>
+
+	* qof-1.pc.in : Retain glib-2.0 in Requires.
+	* qof/qof.h :
+	* qof/deprecated.h : Retain glib.h in QOF, not
+	deprecated.
+	* qof/qofutil.h :
+	* qof/deprecated.h : Derek Atkin's patch for a
+	usable replacement for GNC_SCANF_LLD.
+	* qof/qofbookmerge.c : Slightly modified version
+	of Derek's patch to fix memory leaks.
+
+2006-04-08  Neil Williams <linux@codehelp.co.uk>
+
+	* configure.in :
+	* qof/qofutil.h :
+	* qof/qofutil.c : Use strcasestr where available.
+
 2006-04-07  Neil Williams <linux@codehelp.co.uk>
 
 	* qof/deprecated.c : Replace gnc_strpcpy.
