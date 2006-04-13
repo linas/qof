@@ -40,6 +40,13 @@
 #include "qofbook.h"
 #include "qofinstance.h"
 
+/** Do not use these for printf, only scanf */
+#if HAVE_SCANF_LLD
+# define QOF_SCANF_LLD "%lld"
+#else
+# define QOF_SCANF_LLD "%qd"
+#endif
+
 #define QOF_MOD_UTIL "qof-utilities"
 
 /** \name typedef enum as string macros
@@ -190,6 +197,7 @@ gint null_strcmp (const gchar * da, const gchar * db);
  * and the strstr functions, except that they ignore the case. */
 extern gchar *strncasestr(const guchar *str1, const guchar *str2, 
 	size_t len);
+
 extern gchar *strcasestr(const gchar *str1, const gchar *str2);
 
 /** The ultostr() subroutine is the inverse of strtoul(). It accepts a
