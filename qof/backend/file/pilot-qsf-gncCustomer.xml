@@ -2,7 +2,6 @@
 <qsf-map xmlns="http://qof.sourceforge.net/">
   <definition qof_version="3">
     <define e_type="pilot_address"/>
-    <define e_type="gncBillTerm"/>
     <define e_type="gncCustomer"/>
     <define e_type="gncAddress" foreach="true"/>
   </definition>
@@ -55,16 +54,6 @@
       <calculate type="guid" value="owner">
         <set>guid</set>
       </calculate>
-  </object>
-  <object type="gncBillTerm">
-      <calculate type="string" value="description"/>
-      <calculate type="string" value="name"/>
-      <calculate type="string" value="bill type"/>
-      <calculate type="guid" value="guid"/>
-      <calculate type="numeric" value="amount of discount"/>
-      <calculate type="gint32" value="cut off"/>
-      <calculate type="gint32" value="number of days due"/>
-      <calculate type="gint32" value="number of discounted days"/>
   </object>
   <object type="pilot_address">
       <calculate type="string" value="entryCity">
