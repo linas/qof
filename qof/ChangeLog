@@ -1,3 +1,19 @@
+2006-04-14  Neil Williams <linux@codehelp.co.uk>
+
+	* backend/file/pilot-qsf-gncCustomer.xml :
+	remove gncBillTerm - isn't possible to create from 
+	pilot data.
+	* backend/file/qsf-backend.c :
+	* backend/file/qsf-xml-map.c :
+	* backend/file/qsf-xml.c :
+	* backend/file/qsf-xml.h : Add control over status of 
+	various objects during mapping.
+	
+	* qof/test/Makefile.am : Remove unwanted include.
+	* qof/qofbackend.h : 
+	* qof/qofsession.h : Andreas Köhler's changes to
+	add an encoding QofBackendError. r13781.
+
 2006-04-11  Neil Williams <linux@codehelp.co.uk>
 
 	* qof-1.pc.in : Retain glib-2.0 in Requires.
