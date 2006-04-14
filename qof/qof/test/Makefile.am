@@ -1,7 +1,6 @@
 AM_CFLAGS = \
   -I.. -I../.. -I../../.. \
   -I${top_srcdir}/qof \
-  -I${top_srcdir}/backend/file \
    ${LIBXML2_CFLAGS} \
    ${LIBGDA_CFLAGS} \
    ${GLIB_CFLAGS} \
