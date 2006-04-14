@@ -72,11 +72,15 @@ qsf_string_default_handler(const gchar *default_name, GHashTable *qsf_default_ha
 static void
 qsf_map_validation_handler(xmlNodePtr child, xmlNsPtr ns, qsf_validator *valid)
 {
-	xmlChar *qof_version, *match;
+	xmlChar *qof_version, *obj_type;
+	gboolean match, is_registered;
 	GString *buff;
 	xmlNodePtr child_node;
-    QofIdType obj_type;
+	QsfStatus type, incoming_type;
 
+	match = FALSE;
+	is_registered = FALSE;
+	type = QSF_NO_OBJECT;
 	if (qsf_is_element(child, ns, MAP_DEFINITION_TAG)) {
 		qof_version = xmlGetProp(child, BAD_CAST MAP_QOF_VERSION);
 		buff = g_string_new(" ");
@@ -90,32 +94,69 @@ qsf_map_validation_handler(xmlNodePtr child, xmlNsPtr ns, qsf_validator *valid)
 			child_node = child_node->next)
 		{
 			if (qsf_is_element(child_node, ns, MAP_DEFINE_TAG)) {
-				g_hash_table_insert(valid->validation_table,
-					xmlGetProp(child_node, BAD_CAST MAP_E_TYPE),
-					xmlNodeGetContent(child_node));
+				obj_type = xmlGetProp(child_node, MAP_E_TYPE);
+				type = QSF_DEFINED_OBJECT;
+				is_registered = qof_class_is_registered(obj_type);
+				if(is_registered) { type = QSF_REGISTERED_OBJECT; }
+				g_hash_table_insert(valid->map_table, obj_type,
+					GINT_TO_POINTER(type));
 			}
 		}
 	}
 	if(qsf_is_element(child, ns, MAP_OBJECT_TAG)) {
-		match = NULL;
         obj_type = xmlGetProp(child, BAD_CAST MAP_TYPE_ATTR);
-		match = BAD_CAST g_hash_table_lookup( valid->validation_table, obj_type);
-		if(match) {
-			valid->map_calculated_count++;
-            if(TRUE == qof_class_is_registered((QofIdTypeConst) obj_type))
+		/* check each listed object is either registered or calculated. */
+		type = GPOINTER_TO_INT(g_hash_table_lookup(valid->map_table, obj_type));
+		switch(type)
+		{
+			case QSF_DEFINED_OBJECT :
+			/* we have a calculation for an unregistered object. */
+			/* Ignore the calculation that exists to support bidirectional maps. */
+			/* Check that the incoming QSF contains data for this object */
+			{
+				/* lookup the same object in QSF object_table */
+				incoming_type = GPOINTER_TO_INT(g_hash_table_lookup(valid->object_table,
+					obj_type));
+				switch (incoming_type)
+				{
+					case QSF_DEFINED_OBJECT : 
+					{
+						valid->incoming_count++;
+						g_hash_table_insert(valid->map_table, obj_type, 
+							GINT_TO_POINTER(type));
+						break; /* good, proceed. */
+					}
+					default :
+					{
+						PERR (" Missing data: %s", obj_type);
+						type = QSF_INVALID_OBJECT; break;
+					}
+				}
+				break;
+			}
+			case QSF_REGISTERED_OBJECT : /* use this calculation. */
             {
+				type = QSF_CALCULATED_OBJECT;
+				valid->map_calculated_count++;
                 valid->qof_registered_count++;
-                PINFO (" %s is to be calculated", obj_type);
+				/* store the result */
+				g_hash_table_insert(valid->map_table, obj_type, GINT_TO_POINTER(type));
+				break;
+			}
+			default :
+			{
+				type = QSF_INVALID_OBJECT;
+				break;
             }
-            else { PINFO (" %s to be mapped", obj_type); }
 		}
+		PINFO (" final type=%s result=%d", obj_type, type);
+		if(type == QSF_INVALID_OBJECT) { valid->error_state = ERR_QSF_WRONG_MAP; }
 	}
 }
 
 gboolean is_qsf_object_with_map_be(gchar *map_file, qsf_param *params)
 {
 	xmlDocPtr doc, map_doc;
-	gint valid_count, calc_count;
 	struct qsf_node_iterate iter;
 	xmlNodePtr map_root, object_root;
 	xmlNsPtr map_ns;
@@ -124,9 +165,9 @@ gboolean is_qsf_object_with_map_be(gchar *map_file, qsf_param *params)
 	gchar *map_path;
 
 	g_return_val_if_fail((params != NULL),FALSE);
-    PINFO (" mapfile=%s", map_file);
 	path = g_strdup(params->filepath);
 	map_path = g_strdup_printf("%s/%s", QSF_SCHEMA_DIR, map_file);
+	PINFO (" checking map file '%s'", map_path);
 	if(path == NULL) {
 		qof_backend_set_error(params->be, ERR_FILEIO_FILE_NOT_FOUND);
 		return FALSE; 
@@ -145,7 +186,8 @@ gboolean is_qsf_object_with_map_be(gchar *map_file, qsf_param *params)
 		qof_backend_set_error(params->be, ERR_FILEIO_FILE_NOT_FOUND);
 		return FALSE; 
 	}
-	valid.validation_table = g_hash_table_new(g_str_hash, g_str_equal);
+	valid.map_table = g_hash_table_new(g_str_hash, g_str_equal);
+	valid.object_table = g_hash_table_new(g_str_hash, g_str_equal);
 	map_doc = xmlParseFile(map_path);
 	if(map_doc == NULL) {
 		qof_backend_set_error(params->be, ERR_FILEIO_PARSE_ERROR);
@@ -159,6 +201,7 @@ gboolean is_qsf_object_with_map_be(gchar *map_file, qsf_param *params)
 	valid.map_calculated_count = 0;
 	valid.valid_object_count = 0;
 	valid.qof_registered_count = 0;
+	valid.incoming_count = 0;
 	valid.error_state = ERR_BACKEND_NO_ERR;
 	map_ns = map_root->ns;
 	iter.ns = object_root->ns;
@@ -166,43 +209,44 @@ gboolean is_qsf_object_with_map_be(gchar *map_file, qsf_param *params)
 	iter.ns = map_ns;
 	qsf_valid_foreach(map_root, qsf_map_validation_handler, &iter, &valid);
 	if (valid.error_state != ERR_BACKEND_NO_ERR) {
+		PINFO (" Map is wrong. Moving on . . .");
 		qof_backend_set_error(params->be, valid.error_state);
-		g_hash_table_destroy(valid.validation_table);
+		g_hash_table_destroy(valid.object_table);
+		g_hash_table_destroy(valid.map_table);
 		return FALSE;
 	}
-    /* check all counted objects are valid */
-    /* Should be: 
-    the same number of valid object calculations as there are defined in the map.
-    And the number of calculations must match the number of unregistered
-    objects plus the number of registered objects defined. */
-	valid_count = g_hash_table_size(valid.validation_table) - valid.map_calculated_count;
-    calc_count  = valid.map_calculated_count - 
-        (valid.valid_object_count + valid.qof_registered_count);
-	if(valid_count == 0 && calc_count == 0) {
-	g_hash_table_destroy(valid.validation_table);
-		qof_backend_get_error(params->be);
-		return TRUE;
-	}
-	qof_backend_set_error(params->be, ERR_QSF_WRONG_MAP);
-	/* the object is OK, only the map is wrong. */
-    PINFO (" Map is wrong. map:%d object:%d reg:%d size:%d result:%d",
+	/* check all counted objects are valid:
+	Objects to be calculated must also be registered
+	so that new objects can be created and populated
+	from the incoming data: qof_registered_count > 0
+	The incoming data must contain valid objects -
+	not an empty QofBook: valid_object_count > 0
+	The map must contain at least some calculations:
+	map_calculated_count > 0
+	*/
+	if((valid.qof_registered_count < 1) 
+		|| (valid.map_calculated_count < 1)
+		|| (valid.valid_object_count < 1)
+		|| (valid.incoming_count < g_hash_table_size(valid.object_table)))
+	{
+		PINFO (" Map is wrong. map:%d object:%d reg:%d incoming:%d size:%d",
         valid.map_calculated_count, valid.valid_object_count, 
-        valid.qof_registered_count,
-        g_hash_table_size(valid.validation_table), valid_count);
-    if(valid_count != 0) {
-        PINFO (" size - map != 0. actual: %d.", valid_count);
+			valid.qof_registered_count, valid.incoming_count,
+			g_hash_table_size(valid.object_table));
+		valid.error_state = ERR_QSF_WRONG_MAP;
+		qof_backend_set_error(params->be, ERR_QSF_WRONG_MAP);
+		g_hash_table_destroy(valid.object_table);
+		g_hash_table_destroy(valid.map_table);
+		return FALSE;
     }
-    if(calc_count != 0) {
-        PINFO (" map - (object + registered) != 0. Actual: %d.", calc_count);
-    }
-	g_hash_table_destroy(valid.validation_table);
+	g_hash_table_destroy(valid.object_table);
+	g_hash_table_destroy(valid.map_table);
 	return TRUE;
 }
 
 gboolean is_qsf_object_with_map(const gchar *path, gchar *map_file)
 {
 	xmlDocPtr doc, map_doc;
-	gint valid_count;
 	struct qsf_node_iterate iter;
 	xmlNodePtr map_root, object_root;
 	xmlNsPtr map_ns;
@@ -224,7 +268,8 @@ gboolean is_qsf_object_with_map(const gchar *path, gchar *map_file)
 	if(map_path == NULL) {
 		return FALSE; 
 	}
-	valid.validation_table = g_hash_table_new(g_str_hash, g_str_equal);
+	valid.object_table = g_hash_table_new(g_str_hash, g_str_equal);
+	valid.map_table = g_hash_table_new(g_str_hash, g_str_equal);
 	map_doc = xmlParseFile(map_path);
 	if(map_doc == NULL) {
 		return FALSE;
@@ -242,17 +287,22 @@ gboolean is_qsf_object_with_map(const gchar *path, gchar *map_file)
 	iter.ns = object_root->ns;
 	qsf_valid_foreach(object_root, qsf_object_validation_handler, &iter, &valid);
 	if (valid.error_state != ERR_BACKEND_NO_ERR) {
-		g_hash_table_destroy(valid.validation_table);
+		g_hash_table_destroy(valid.object_table);
 		return FALSE;
 	}
-	valid_count = 0 - g_hash_table_size(valid.validation_table);
-	valid_count += valid.map_calculated_count;
-	valid_count += valid.valid_object_count;
-	g_hash_table_destroy(valid.validation_table);
-	if(valid_count == 0) {
-		return TRUE;
-	}
+	if((valid.qof_registered_count < 1) 
+		|| (valid.map_calculated_count < 1)
+		|| (valid.valid_object_count < 1))
+	{
+		PINFO (" Map is wrong. map:%d object:%d reg:%d size:%d",
+			valid.map_calculated_count, valid.valid_object_count, 
+			valid.qof_registered_count,
+			g_hash_table_size(valid.object_table));
+		g_hash_table_destroy(valid.object_table);
 	return FALSE;
+	}
+	g_hash_table_destroy(valid.object_table);
+	return TRUE;
 }
 
 gboolean is_qsf_map_be(qsf_param *params)
@@ -283,16 +333,17 @@ gboolean is_qsf_map_be(qsf_param *params)
 	map_root = xmlDocGetRootElement(doc);
 	map_ns = map_root->ns;
 	iter.ns = map_ns;
-	valid.validation_table = g_hash_table_new(g_str_hash, g_str_equal);
+	valid.object_table = g_hash_table_new(g_str_hash, g_str_equal);
+	valid.map_table = g_hash_table_new(g_str_hash, g_str_equal);
 	valid.error_state = ERR_BACKEND_NO_ERR;
 	qsf_valid_foreach(map_root, qsf_map_validation_handler, &iter, &valid);
 	if (valid.error_state != ERR_BACKEND_NO_ERR) {
 		qof_backend_set_error(params->be, valid.error_state);
-		g_hash_table_destroy(valid.validation_table);
+		g_hash_table_destroy(valid.object_table);
 		return FALSE;
 	}
 	qof_backend_get_error(params->be);
-	g_hash_table_destroy(valid.validation_table);
+	g_hash_table_destroy(valid.object_table);
 	return TRUE;
 }
 
@@ -315,16 +366,15 @@ gboolean is_qsf_map(const gchar *path)
 	map_ns = map_root->ns;
 	iter.ns = map_ns;
 	valid.error_state = ERR_BACKEND_NO_ERR;
-	valid.validation_table = g_hash_table_new(g_str_hash, g_str_equal);
+	valid.map_table = g_hash_table_new(g_str_hash, g_str_equal);
 	qsf_valid_foreach(map_root, qsf_map_validation_handler, &iter, &valid);
 	if (valid.error_state != ERR_BACKEND_NO_ERR) {
-		g_hash_table_destroy(valid.validation_table);
+		g_hash_table_destroy(valid.map_table);
 		return FALSE;
 	}
-	g_hash_table_destroy(valid.validation_table);
+	g_hash_table_destroy(valid.map_table);
 	return TRUE;
 }
-
 
 static void
 qsf_map_default_handler(xmlNodePtr child, xmlNsPtr ns, qsf_param *params )
@@ -609,7 +659,8 @@ qsf_calculate_conditional(xmlNodePtr param_node, xmlNodePtr child, qsf_param *pa
 			/* Is the default set to true? */
 			if( 0 == qsf_compare_tag_strings(output_content, QSF_XML_BOOLEAN_TEST)) 
 			{
-				qsf_boolean_set_value(param_node, params, (gchar*)output_content, params->map_ns);
+				qsf_boolean_set_value(param_node, params, (gchar*)output_content, 
+					params->map_ns);
 				export_node = xmlAddChild(params->lister, xmlNewNode(params->qsf_ns,
 					xmlGetProp(child, BAD_CAST QSF_OBJECT_TYPE)));
 				xmlNewProp(export_node, BAD_CAST QSF_OBJECT_TYPE,
@@ -660,9 +711,10 @@ qsf_map_calculate_output(xmlNodePtr param_node, xmlNodePtr child, qsf_param *par
     /* source refers to the source object that provides the data */
     source = g_list_find_custom(params->qsf_object_list, 
         BAD_CAST xmlGetProp(param_node, MAP_OBJECT_ATTR), identify_source_func);
-    if(!source) return;
+	if(!source) { DEBUG (" no source found in list."); return; }
     params->object_set = source->data;
     node = g_hash_table_lookup(params->object_set->parameters, output_content);
+	DEBUG (" node=%s, %s", node->name, xmlNodeGetContent(node));
     export_node = xmlAddChild(params->lister, xmlNewNode(params->qsf_ns,
         xmlGetProp(child, BAD_CAST QSF_OBJECT_TYPE)));
     xmlNewProp(export_node, BAD_CAST QSF_OBJECT_TYPE,
@@ -780,7 +832,7 @@ qsf_object_convert(xmlDocPtr mapDoc, xmlNodePtr qsf_root, qsf_param *params)
     /* identify the entities of iterator type. */
     iter.ns = params->qsf_ns;
     qsf_node_foreach(qsf_root->children->next, iterator_cb, &iter, params);
-
+	PINFO (" counted %d records", params->foreach_limit);
 	params->count = 0;
 	for(cur_node = map_root->children; cur_node != NULL; cur_node = cur_node->next)
 	{
@@ -790,12 +842,14 @@ qsf_object_convert(xmlDocPtr mapDoc, xmlNodePtr qsf_root, qsf_param *params)
             gint i;
 
 			params->lister = NULL;
+			PINFO (" found an object tag. starting calculation");
             /* cur_node describes the target object */
             if(!qof_class_is_registered(BAD_CAST 
                 xmlGetProp(cur_node, MAP_TYPE_ATTR))) { continue; }
             qsf_add_object_tag(params, params->count);
 			params->count++;
 			iter.ns = params->map_ns;
+			PINFO (" params->foreach_limit=%d", params->foreach_limit);
             for(i = 0; i < params->foreach_limit; i++) 
             {
 			qsf_node_foreach(cur_node, qsf_map_object_handler, &iter, params);
@@ -807,7 +861,7 @@ qsf_object_convert(xmlDocPtr mapDoc, xmlNodePtr qsf_root, qsf_param *params)
 	}
 	params->file_type = OUR_QSF_OBJ;
     /* use for debugging */
-	/*    xmlSaveFormatFileEnc("-", output_doc, "UTF-8", 1);*/
+	xmlSaveFormatFileEnc("-", output_doc, "UTF-8", 1);
 	LEAVE (" ");
 	return output_doc;
 }
