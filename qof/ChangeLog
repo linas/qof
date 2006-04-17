@@ -1,3 +1,8 @@
+2006-04-16  Neil Williams <linux@codehelp.co.uk>
+
+	* src/backend/file/qsf-xml-map.c : Refactoring common 
+	code and fixing QOF_VERSION check.
+
 2006-04-14  Neil Williams <linux@codehelp.co.uk>
 
 	* backend/file/pilot-qsf-gncCustomer.xml :

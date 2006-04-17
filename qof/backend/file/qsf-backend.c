@@ -14,7 +14,7 @@
  *  This program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU Library General Public License for more details.
+ *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
@@ -24,23 +24,24 @@
 #define _GNU_SOURCE
 
 #include "config.h"
+#include <errno.h>
+#include <sys/stat.h>
 #include <glib.h>
-#include "qof.h"
-#include "qof-backend-qsf.h"
 #include <libxml/xmlmemory.h>
 #include <libxml/tree.h>
 #include <libxml/parser.h>
 #include <libxml/xmlschemas.h>
+#include "qof.h"
+#include "qof-backend-qsf.h"
 #include "qsf-xml.h"
 #include "qsf-dir.h"
-#include <errno.h>
-#include <sys/stat.h>
 
 #define QSF_TYPE_BINARY "binary"
 #define QSF_TYPE_GLIST  "glist"
 #define QSF_TYPE_FRAME  "frame"
 
 static QofLogModule log_module = QOF_MOD_QSF;
+
 static void qsf_object_commitCB(gpointer key, gpointer value, gpointer data);
 
 struct QSFBackend_s
@@ -60,14 +61,14 @@ static void option_cb (QofBackendOption *option, gpointer data)
 	g_return_if_fail(params);
 	if(0 == safe_strcmp(QSF_COMPRESS, option->option_name)) {
 		params->use_gz_level = (*(gint64*)option->value);
-        DEBUG (" gz=%" G_GINT64_FORMAT,params->use_gz_level);
+		PINFO (" compression=%" G_GINT64_FORMAT,params->use_gz_level);
 	}
 	if (0 == safe_strcmp(QSF_MAP_FILES, option->option_name)) {
 		params->map_files = g_list_copy((GList*)option->value);
 	}
 	if (0 == safe_strcmp(QSF_ENCODING, option->option_name)) {
 		params->encoding = g_strdup(option->value);
-		DEBUG (" encoding=%s", params->encoding);
+		PINFO (" encoding=%s", params->encoding);
 	}
 }
 
@@ -104,6 +105,7 @@ qsf_get_config(QofBackend *be)
 	option->tooltip = _("QOF can compress QSF XML files using gzip. "
 		"Note that compression is not used when outputting to STDOUT.");
 	option->type = KVP_TYPE_GINT64;
+	/* GINT_TO_POINTER can only be used for 32bit values. */
 	option->value = (gpointer)&params->use_gz_level;
 	qof_backend_prepare_option(be, option);
 	g_free(option);
@@ -132,6 +134,8 @@ qsf_get_config(QofBackend *be)
 GList**
 qsf_map_prepare_list(GList **maps)
 {
+	/* Add new map filenames here. */
+	/** \todo Automate this once map support is stable */
 	*maps = g_list_prepend(*maps, "pilot-qsf-GnuCashInvoice.xml");
 	*maps = g_list_prepend(*maps, "pilot-qsf-gncCustomer.xml");
 	return maps;
@@ -450,8 +454,8 @@ load_our_qsf_object(QofBook *book, const gchar *fullpath, qsf_param *params)
 	match a QSF object.
 
 returns NULL on error, otherwise a pointer to the QofBook. Use
-	the qof_book_merge API to merge the new data into the current
-	QofBook. 
+the qof_book_merge API to merge the new data into the current
+QofBook. 
 */
 static void
 qsf_file_type(QofBackend *be, QofBook *book)
@@ -953,7 +957,7 @@ write_qsf_from_book(const char *path, QofBook *book, qsf_param *params)
 	be = qof_book_get_backend(book);
 	qsf_doc = qofbook_to_qsf(book, params);
 	write_result = 0;
-	DEBUG (" use_gz_level=%" G_GINT64_FORMAT " encoding=%s", 
+	PINFO (" use_gz_level=%" G_GINT64_FORMAT " encoding=%s",
 		params->use_gz_level, params->encoding);
 	if((params->use_gz_level > 0) && (params->use_gz_level <= 9)) 
 	{
@@ -978,7 +982,7 @@ write_qsf_to_stdout(QofBook *book, qsf_param *params)
 	qsf_doc = qofbook_to_qsf(book, params);
 	g_return_if_fail(
 		qsf_is_valid(QSF_SCHEMA_DIR, QSF_OBJECT_SCHEMA, qsf_doc) == TRUE);
-	DEBUG (" use_gz_level=%" G_GINT64_FORMAT " encoding=%s", 
+	PINFO (" use_gz_level=%" G_GINT64_FORMAT " encoding=%s", 
 		params->use_gz_level, params->encoding);
 	xmlSaveFormatFileEnc("-", qsf_doc, params->encoding, 1);
 	fprintf(stdout, "\n");
@@ -1016,41 +1020,54 @@ string_to_kvp_value(const gchar *content, KvpValueType type)
 	time_t      kvp_time_t;
 	Timespec    cm_date;
 
-	switch(type) {
+	switch(type)
+	{
 	  case KVP_TYPE_GINT64:
+		{
 		errno = 0;
 		cm_i64 = strtoll(content, &tail, 0);
 		if(errno == 0) {
 			return kvp_value_new_gint64(cm_i64);
 		}
 		break;
+		}
 	  case KVP_TYPE_DOUBLE:
+		{
   		errno = 0;
 		cm_double = strtod(content, &tail);
 		if(errno == 0) {
 			return kvp_value_new_double(cm_double);
 		}
 		break;
+		}
 	  case KVP_TYPE_NUMERIC:
+		{
 		string_to_gnc_numeric(content, &cm_numeric);
 		return kvp_value_new_gnc_numeric(cm_numeric);
 		break;
+		}
 	  case KVP_TYPE_STRING:
+		{
 		return kvp_value_new_string(content);
 		break;
+		}
 	  case KVP_TYPE_GUID:
+		{
 		cm_guid = g_new(GUID, 1);
 		if(TRUE == string_to_guid(content, cm_guid))
 		{
 			return kvp_value_new_guid(cm_guid);
 		}
 		break;
+		}
 	  case KVP_TYPE_TIMESPEC:
+		{
 		strptime(content, QSF_XSD_TIME, &kvp_time);
 		kvp_time_t = mktime(&kvp_time);
 		timespecFromTime_t(&cm_date, kvp_time_t);
 		return kvp_value_new_timespec(cm_date);
 		break;
+		}
 	  case KVP_TYPE_BINARY:
 //		return kvp_value_new_binary(value->value.binary.data,
 //									value->value.binary.datasize);
