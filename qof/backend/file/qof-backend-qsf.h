@@ -20,7 +20,7 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
- 
+
 /** @addtogroup Backend
     @{ */
 /** @addtogroup QSF QOF Serialisation Format
@@ -108,7 +108,7 @@ QSF is in three sections:
 		qsf-xml.c
 	- QSF Map : Validation, processing and conversion routines.
 		qsf-xml-map.c
-
+		
 To work with QSF, your QOF objects must have:
 	- a create: function in the QofObject definition
 	- a foreach: function in the QofObject definition
@@ -162,7 +162,7 @@ default values for the QofBackendOption KvpFrame.
 Calls gettext because QofBackendOption
 strings are translatable.
 */
-void qsf_provider_init(void);
+void qsf_provider_init (void);
 
 /** \name Supported backend configurations
 @{

@@ -1,6 +1,11 @@
+if USE_LIBGDA
+SUBDIRS = 
+else
+SUBDIRS = libsql
+endif
 
-SUBDIRS =  libsql
- 
-EXTRA_DIST =                   \
+DIST_SUBDIRS = libsql 
+
+EXTRA_DIST = \
         README
 

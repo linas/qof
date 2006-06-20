@@ -7,6 +7,44 @@ for specific advice on building against and packaging QOF.
 Please see the NEWS file and the ChangeLog for detailed
 information on changes since 0.6.0.
 
+0.7.0 release
+-------------
+
+The date and time handlers have been overhauled and
+there are large changes. Timespec has been deprecated 
+and replaced by QofTime which is an opaque type. QofTime 
+has completely replaced the previous code and includes 
+handlers to avoid pitfalls of incompatible date/time format 
+conversions. QofTime only handles times in seconds.
+All date handling is done exclusively in a new type, QofDate,
+an extended version of struct tm. Applications using QOF
+should now use QofTime to replace time_t and QofDate to
+replace struct tm. Functions like localtime, gmtime, mktime
+and time can be used externally - subject to the more limited
+range of values supported in each case.
+
+QOF_TYPE_DATE is now deprecated, to be replaced by
+QOF_TYPE_TIME. This is the first change in the QofObject
+API in libqof1 and requires significant changes within
+all QOF objects to be supported by libqof2. libqof2 will
+therefore use a incremented QOF_OBJECT_VERSION.
+
+QofTime is opaque, firstly, to implement strict validity
+checking and secondly to ensure consistent handling
+within objects. QofTime and QofDate now support all
+times and dates within a couple of dozen times the age of
+the universe by using 64bit values wherever necessary.
+
+The Doxygen documentation is now built automatically -
+depending on your distribution, a libqof-doc package
+should be available to install that will provide the
+HTML at: /usr/share/doc/libqof-doc/html/index.html
+
+0.7.0 introduces strftime and strptime extended code
+based on the Debian coreutils package (specifically the 'date'
+command) and the glibc source code, providing support for 
+nanosecond formats and the full range of QofTime and QofDate.
+
 0.6.0 final release - October 2005.
 -----------------------------------
 

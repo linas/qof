@@ -1,5 +1,11 @@
-For a full list of TODO items, see the Doxygen output.
+For a full list of TODO items, see the Doxygen output in
+the documentation package: doxy/todo.html
 
-cd doc/
-make doc
-lynx html/todo.html
+Typically installed into 
+/usr/share/doc/libqof-doc/html/doxy/todo.html
+or similar, depending on your distribution.
+
+Also take a look at doxy/deprecated.html which
+describes all the functions, objects, values and
+types that need to be replaced in code using QOF
+to make the transition to libqof2.

@@ -21,8 +21,8 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
- #ifndef QSF_XML_H
- #define QSF_XML_H
+#ifndef QSF_XML_H
+#define QSF_XML_H
 
 /** @file qsf-xml.h
     @brief  Private QSF header - not for use by applications
@@ -38,14 +38,15 @@
 #include <libintl.h>
 #define _(String) dgettext (GETTEXT_PACKAGE, String)
 
-typedef enum  {
+typedef enum
+{
 	QSF_UNDEF = 0, /**< Initial undefined value. */
-	IS_QSF_MAP,   /**< A QSF map */
-	IS_QSF_OBJ,   /**< A QSF object without a map - it may or may not need one. */
+	IS_QSF_MAP,	  /**< A QSF map */
+	IS_QSF_OBJ,	  /**< A QSF object without a map - it may or may not need one. */
 	HAVE_QSF_MAP, /**< A QSF object with the map it needs. */
 	OUR_QSF_OBJ,  /**< A QSF object that can be loaded without a map. */
-}qsf_type;
-	
+} qsf_type;
+
 /** \brief Holds a description of the QofObject.
 
 Used when converting QOF objects from another application. The incoming,
@@ -59,7 +60,7 @@ typedef struct qsf_object_set
 	GHashTable *parameters;
 	QofIdType object_type;
 	gint object_count;
-}qsf_objects;
+} qsf_objects;
 
 #define QSF_QOF_VERSION QOF_OBJECT_VERSION /**< QOF Version check.
 
@@ -73,18 +74,18 @@ Make sure the same version of QOF is in use in both applications.
 
 The map namespace is not included as maps are not currently written out by QOF.
 */
-#define QSF_DATE_LENGTH MAX_DATE_LENGTH /**< Max length of QSF_XSD_TIME.
+#define QSF_DATE_LENGTH MAX_DATE_LENGTH	/**< Max length of QSF_XSD_TIME.
 
 MAX_DATE_LENGTH itself is defined in gnc-date.h */
-#define QSF_BOOK_TAG	"book" /**< First level child: book tag - the ::QofBook. */
-#define QSF_BOOK_GUID	"book-guid" /**< QOF GUID tag for the QofBook
+#define QSF_BOOK_TAG	"book"		/**< First level child: book tag - the ::QofBook. */
+#define QSF_BOOK_GUID	"book-guid"	/**< QOF GUID tag for the QofBook
 					described by this QSF object file */
-#define QSF_BOOK_COUNT	"count" /**< Sequential counter of each book in this file */
-#define QSF_OBJECT_TAG	"object" /**< Second level child: object tag */
-#define QSF_OBJECT_TYPE	"type" /**< QSF parameter name for object type specifiers */
-#define QSF_OBJECT_COUNT "count"    /**< Sequential counter for each QSF object
+#define QSF_BOOK_COUNT	"count"		/**< Sequential counter of each book in this file */
+#define QSF_OBJECT_TAG	"object"	/**< Second level child: object tag */
+#define QSF_OBJECT_TYPE	"type"		/**< QSF parameter name for object type specifiers */
+#define QSF_OBJECT_COUNT "count"	/**< Sequential counter for each QSF object
 					in this file */
-#define QSF_XML_VERSION  "1.0"  /**< The current XML version. */
+#define QSF_XML_VERSION  "1.0"		/**< The current XML version. */
 
 /** @} */
 /** @name Representing KVP as XML
@@ -99,14 +100,14 @@ A non-GnuCash example helps:
 A pilot_addr_kvp type KVP parameter located at /user/name containing a guid value.
 @{ */
 
-#define QSF_OBJECT_KVP  "path" /**< The path to this KVP value in the entity frame. */
+#define QSF_OBJECT_KVP   "path"	/**< The path to this KVP value in the entity frame. */
 #define QSF_OBJECT_VALUE "value" /**< The KVP Value. */
 /** @} */
 /** @name QSF Map XML
 
 @{ */
-#define MAP_ROOT_TAG	"qsf-map" /**< Top level root tag for QSF Maps */
-#define MAP_DEFINITION_TAG	"definition" /**< Second level container for defined objects 
+#define MAP_ROOT_TAG     "qsf-map" /**< Top level root tag for QSF Maps */
+#define MAP_DEFINITION_TAG "definition"	/**< Second level container for defined objects 
 
 Attributes: qof_version - Taken from the QOF_OBJECT_VERSION macro in QOF,
 At the time of QSF development, QOF_OBJECT_VERSION is defined as 3. All
@@ -127,7 +128,7 @@ available within the available QSF objects.
 
 Some defaults will relate to how to format descriptive dates, whether discount
 should be considered, which account to use for certain QSF data from applications
-that don't use accounts.
+that do not use accounts.
 
 Some defaults are pre-defined and cannot be over-written:
 - qsf_time_now
@@ -159,7 +160,7 @@ QSF deals with partial QofBooks - each object is fully described but the
 book does not have to contain any specific object types or have any
 particular structure. To merge partial books into usual QofBook data
 sources, the map must deal with entities that need to be referenced in
-the target QofBook but which simply don't exist in the QofBook used to generate
+the target QofBook but which simply do not exist in the QofBook used to generate
 the QSF. e.g. pilot-link knows nothing of Accounts yet when QSF creates
 a gncInvoice from qof-datebook, gncInvoice needs to know the GUID of 
 certain accounts in the target QofBook. This is handled in the map 
@@ -190,7 +191,7 @@ from more than one QSF object, as well as defaults and lookups in the import
 application itself. Conditionals, simple arithmetic and date/time formatting 
 options are also available.
 */
-#define MAP_CALCULATE_TAG	"calculate" /**< One calculation for every parameter
+#define MAP_CALCULATE_TAG	"calculate"	/**< One calculation for every parameter
 that needs to be set.
 
 QSF follows the same rule as qof_book_merge. Only if a getter and a setter
@@ -217,7 +218,7 @@ QSF will allow a conditional to use a parameter of one type to determine the
 value from a parameter of another type, but the final value assigned \b MUST be
 of the same type as the parent calculation.
 */
-#define MAP_VALUE_ATTR	"value" /**< The value of the tag, used in defaults and
+#define MAP_VALUE_ATTR	"value"	/**< The value of the tag, used in defaults and
 calculations.
 
 The value of a default is a string representation of the value to be inserted into
@@ -259,10 +260,10 @@ because the relevant set() function will be called using this value. This may re
 readability of the map but the relevant application could also be modified to support
 a more readable set function.
 */
-#define QSF_CONDITIONAL_ELSE "else" /**< Alternative
+#define QSF_CONDITIONAL_ELSE "else"	/**< Alternative
 
 if(){} else{} is also supported. Nesting of conditionals causes problems for
-validating the final map against any sensible XML Schema and a map that doesn't 
+validating the final map against any sensible XML Schema and a map that does not 
 validate will be rejected. When editing conditionals in a QSF map, ALWAYS 
 validate the map using xmllint. If necessary, define a variable at the foot of 
 the definitions block, using a similar syntax to a default, then use that 
@@ -279,7 +280,7 @@ Use the qsf-object.xsd.xml schema for objects and qsf-map.xsd.xml for map files.
 e.g. xmllint --schema qsf-object.xsd.xml --noout qof-qsf.xml
 
 */
-#define QSF_OPTION "option" /**< enum operator
+#define QSF_OPTION "option"	/**< enum operator
 
 Not implemented yet - may need to change once work starts.
 Theoretically, option will specify when an enumerator value is in use -
@@ -327,7 +328,7 @@ is %F, used when qsf_time_string is set without the format attribute.
 Both defaults use UTC.
 
 */
-#define QSF_XML_BOOLEAN_TEST "true" /**< needs to be lowercase for XML validation */
+#define QSF_XML_BOOLEAN_TEST "true"	/**< needs to be lowercase for XML validation */
 
 #define QSF_OBJECT_SCHEMA "qsf-object.xsd.xml" /**< Name of the QSF Object Schema. */
 #define QSF_MAP_SCHEMA "qsf-map.xsd.xml" /**< Name of the QSF Map Schema. */
@@ -349,16 +350,17 @@ as QSF_REGISTERED_OBJECT when the map validation is complete, the validation
 must fail. The only acceptable end values for QsfStatus are QSF_DEFINED_OBJECT,
 QSF_CALCULATED_OBJECT or QSF_INVALID_OBJECT.
 */
-typedef enum {
-	QSF_NO_OBJECT = 0,     /**< Init value only. */
-	QSF_DEFINED_OBJECT,    /**< The object is unregistered but defined.
+typedef enum
+{
+	QSF_NO_OBJECT = 0,	   /**< Init value only. */
+	QSF_DEFINED_OBJECT,	   /**< The object is unregistered but defined.
 Objects of this type must exist in the incoming QSF and must
 provide data for the calculation of registered objects. */
 	QSF_REGISTERED_OBJECT, /**< Temporary value. The object is registered
 and defined - a calculation is needed but has not been found, yet. */
 	QSF_CALCULATED_OBJECT, /**< The object is registered, defined and can be calculated. */
-	QSF_INVALID_OBJECT     /**< Oops value. */
-}QsfStatus;
+	QSF_INVALID_OBJECT	   /**< Oops value. */
+} QsfStatus;
 
 /** \brief QSF Parameters
 
@@ -368,49 +370,49 @@ here that will finally be removed.
 */
 typedef struct qsf_metadata
 {
-	qsf_type file_type;          /**< what type of file is being handled */
-	qsf_objects *object_set;     /**< current object set for qsf_object_list. */
-	gint count;                  /**< sequential counter for each object in the book */
-	GList *qsf_object_list;      /**< list of qsf_objects */
-	GSList *qsf_sequence;        /**< Parameter list sorted into QSF order */
-	GList *referenceList;        /**< Table of references, ::QofEntityReference. */
-	GHashTable *qsf_parameter_hash; /**< Hashtable of parameters for each object */
+	qsf_type file_type;			 /**< what type of file is being handled */
+	qsf_objects *object_set;	 /**< current object set for qsf_object_list. */
+	gint count;					 /**< sequential counter for each object in the book */
+	GList *qsf_object_list;		 /**< list of qsf_objects */
+	GSList *qsf_sequence;		 /**< Parameter list sorted into QSF order */
+	GList *referenceList;		 /**< Table of references, ::QofEntityReference. */
+	GHashTable *qsf_parameter_hash;	/**< Hashtable of parameters for each object */
 	GHashTable *qsf_calculate_hash, *qsf_default_hash, *qsf_define_hash;
-	GSList *supported_types;     /**< The list of QOF types currently supported,
+	GSList *supported_types;	 /**< The list of QOF types currently supported,
 								in QSF order. */
-	xmlDocPtr input_doc;         /**< Pointer to the input xml document(s). */
-	xmlDocPtr output_doc;        /**< Pointer to the output xml document(s). */
-	xmlNodePtr child_node;       /**< The current child_node. */
-	xmlNodePtr convert_node;     /**< Node in the converted object */
-	xmlNodePtr param_node;       /**< Node for parameter data. */
-	xmlNodePtr output_node;      /**< Node in the output document. */
-	xmlNodePtr output_root;      /**< Root node of the output document. */
-	xmlNodePtr book_node;        /**< Node for the book. */
-	xmlNodePtr lister;           /**< Comparison node for map defaults. */
-	xmlNsPtr qsf_ns, map_ns;     /**< Separate namespaces for QSF objects and QSF maps. */
-	const gchar *qof_type;       /**< Holds details of the QOF_TYPE */
-	QofIdType qof_obj_type;	     /**< current QofObject type (e_type) for the parameters. */
-	QofIdType qof_foreach;       /**< How to iterate over hierarchical entities. */
-	gint foreach_limit;          /**< How many iterations are found in the QSF */
-	QofEntity *qsf_ent;          /**< Current entity in the book. */
-	QofBackend *be;              /**< the current QofBackend for this operation. */
-	gboolean knowntype;          /**< detect references by comparing with known QOF types. */
-	QofParam *qof_param;         /**< used by kvp to handle the frame hash table */
-	QofBook *book;	             /**< the current QofBook.
+	xmlDocPtr input_doc;	 /**< Pointer to the input xml document(s). */
+	xmlDocPtr output_doc;	 /**< Pointer to the output xml document(s). */
+	xmlNodePtr child_node;	 /**< The current child_node. */
+	xmlNodePtr convert_node; /**< Node in the converted object */
+	xmlNodePtr param_node;	 /**< Node for parameter data. */
+	xmlNodePtr output_node;	 /**< Node in the output document. */
+	xmlNodePtr output_root;	 /**< Root node of the output document. */
+	xmlNodePtr book_node;	 /**< Node for the book. */
+	xmlNodePtr lister;		 /**< Comparison node for map defaults. */
+	xmlNsPtr qsf_ns, map_ns; /**< Separate namespaces for QSF objects and QSF maps. */
+	const gchar *qof_type;	 /**< Holds details of the QOF_TYPE */
+	QofIdType qof_obj_type;	 /**< current QofObject type (e_type) for the parameters. */
+	QofIdType qof_foreach;	 /**< How to iterate over hierarchical entities. */
+	gint foreach_limit;		 /**< How many iterations are found in the QSF */
+	QofEntity *qsf_ent;		 /**< Current entity in the book. */
+	QofBackend *be;			 /**< the current QofBackend for this operation. */
+	gboolean knowntype;		 /**< detect references by comparing with known QOF types. */
+	QofParam *qof_param;	 /**< used by kvp to handle the frame hash table */
+	QofBook *book;			 /**< the current QofBook.
 
 		Theoretically, QSF can handle multiple QofBooks - currently limited to 1.
 	*/
 	gint boolean_calculation_done; /**< simple trip once this boolean is complete. */
-	gchar *filepath;              /**< Path to the QSF file. */
-	gchar *map_path;              /**< Path to best match map, if any. */
-	gchar* full_kvp_path;         /**< Full path for each KvpValue written out. */
-	gint64 use_gz_level;          /**< Default compression level. */
-	GList *map_files;             /**< List of selected map files for this session.
+	gchar *filepath;			  /**< Path to the QSF file. */
+	gchar *map_path;			  /**< Path to best match map, if any. */
+	gchar *full_kvp_path;		  /**< Full path for each KvpValue written out. */
+	gint64 use_gz_level;		  /**< Default compression level. */
+	GList *map_files;			  /**< List of selected map files for this session.
 
 	Defaults to the pre-installed QSF maps, currently: pilot-qsf-GnuCashInvoice.xml
 	*/
-	const gchar *encoding;        /**< Backend encoding option - defaults to UTF-8. */ 
-}qsf_param;
+	const gchar *encoding;		  /**< Backend encoding option - defaults to UTF-8. */
+} qsf_param;
 
 /** \brief Validation metadata
 
@@ -424,7 +426,7 @@ typedef struct qsf_validates
 	const gchar *map_path;
 	GHashTable *object_table;  /**< Names of all incoming objects (from the
 								object_type) and status (QOF registration). */
-	GHashTable *map_table;     /**< Names of all defined objects (from the
+	GHashTable *map_table;	   /**< Names of all defined objects (from the
 								define tag) and status (presence of a calculation.)*/
 	/* Need to match object names, not just counts. */
 	gint valid_object_count;   /**< Number of unique incoming objects as 
@@ -433,41 +435,37 @@ typedef struct qsf_validates
 								by this map. ::MAP_OBJECT_TAG. */
 	gint qof_registered_count; /**< Number of objects (in either the QSF 
 								or the map) that are registered with QofObject. */
-	gint incoming_count;       /**< Number of unique objects in the incoming
+	gint incoming_count;	   /**< Number of unique objects in the incoming
 								QSF file. Used to ensure all incoming objects are used.*/
-}qsf_validator;
+} qsf_validator;
 
 /** \brief shorthand function
 
 This may look repetitive but each one is used separately
 as well as in a block.
 */
-gint
-qsf_compare_tag_strings(const xmlChar *node_name, gchar *tag_name);
+gint qsf_compare_tag_strings (const xmlChar * node_name, gchar * tag_name);
 
 /** \brief shorthand function
 
 This may look repetitive but each one is used separately
 as well as in a block.
 */
-gint
-qsf_strings_equal(const xmlChar *node_name, gchar *tag_name);
+gint qsf_strings_equal (const xmlChar * node_name, gchar * tag_name);
 
 /** \brief shorthand function
 
 This may look repetitive but each one is used separately
 as well as in a block.
 */
-gint
-qsf_is_element(xmlNodePtr a, xmlNsPtr ns, gchar *c);
+gint qsf_is_element (xmlNodePtr a, xmlNsPtr ns, gchar * c);
 
 /** \brief shorthand function
 
 This may look repetitive but each one is used separately
 as well as in a block.
 */
-gint
-qsf_check_tag(qsf_param *params, gchar *qof_type);
+gint qsf_check_tag (qsf_param * params, gchar * qof_type);
 
 /** \brief Checks all incoming objects for QOF registration.
 
@@ -475,7 +473,8 @@ Sums all existing objects in the QSF and counts the number of those
 objects that are also registered with QOF in the host application.
 */
 void
-qsf_object_validation_handler(xmlNodePtr child, xmlNsPtr ns, qsf_validator *valid);
+qsf_object_validation_handler (xmlNodePtr child, xmlNsPtr ns,
+							   qsf_validator * valid);
 
 /** \brief Compares an xmlDoc in memory against the schema file.
 
@@ -490,7 +489,8 @@ Incorrect validation will result in output to the terminal window.
 @return TRUE if the doc validates against the assigned schema, otherwise FALSE.
 */
 gboolean
-qsf_is_valid(const gchar *schema_dir, const gchar* schema_filename, xmlDocPtr doc);
+qsf_is_valid (const gchar * schema_dir, const gchar * schema_filename,
+			  xmlDocPtr doc);
 
 /** \brief Prepare the default list of maps.
 
@@ -498,7 +498,7 @@ Prepend the default maps to the supplied GList.
 
 The GList remains the property of the caller.
 */
-GList** qsf_map_prepare_list(GList **maps);
+GList **qsf_map_prepare_list (GList ** maps);
 
 /** \name Why two sets of functions and typedefs?
 
@@ -521,18 +521,19 @@ because validation sometimes needs to be done without qsf_params.
 e.g. when selecting which backend should be used for a particular
 data source where two or more backends share the same access_method.
 */
-typedef void (* qsf_nodeCB)(xmlNodePtr, xmlNsPtr, qsf_param*);
+typedef void (*qsf_nodeCB) (xmlNodePtr, xmlNsPtr, qsf_param *);
 /** \brief validator callback
 
 \todo The need for separate metadata means a separate callback typedef
 	is needed for the validator, but this should be fixed to only need one.
 */
-typedef void (* qsf_validCB)(xmlNodePtr, xmlNsPtr, qsf_validator*);
+typedef void (*qsf_validCB) (xmlNodePtr, xmlNsPtr, qsf_validator *);
 /** \brief One iterator, two typedefs
 
 \todo resolve the two callbacks in ::qsf_node_iterate into one.
 */
-struct qsf_node_iterate {
+struct qsf_node_iterate
+{
 	qsf_nodeCB *fcn;
 	qsf_validCB *v_fcn;
 	xmlNsPtr ns;
@@ -555,7 +556,7 @@ file are defined in the QSF map.
 @return TRUE if the file validates and a QSF map can be found,
 otherwise FALSE.
 */
-gboolean is_qsf_object_be(qsf_param *params);
+gboolean is_qsf_object_be (qsf_param * params);
 /** \brief Validate a QSF file and identify a suitable QSF map
 
 @param	path	Absolute or relative path to the file to be validated.
@@ -573,7 +574,7 @@ file are defined in the QSF map.
 @return TRUE if the file validates and a QSF map can be found,
 otherwise FALSE.
 */
-gboolean is_qsf_object(const gchar *path);
+gboolean is_qsf_object (const gchar * path);
 /** \brief Validate a QSF file and determine type.
 
 @param	params	Pointer to qsf_param context
@@ -588,7 +589,7 @@ for a QSF map.
 @return TRUE if the file validates and all objects pass,
 otherwise FALSE.
 */
-gboolean is_our_qsf_object_be(qsf_param *params);
+gboolean is_our_qsf_object_be (qsf_param * params);
 /** \brief Validate a QSF file.
 
 @param	path	Absolute or relative path to the file to be validated
@@ -603,7 +604,7 @@ for a QSF map.
 @return TRUE if the file validates and all objects pass,
 otherwise FALSE.
 */
-gboolean is_our_qsf_object(const gchar *path);
+gboolean is_our_qsf_object (const gchar * path);
 /** \brief Validate a QSF map file.
 
 @param	params	Pointer to qsf_param context
@@ -615,7 +616,7 @@ user data and are used to import QSF object files.
 
 @return TRUE if the map validates, otherwise FALSE.
 */
-gboolean is_qsf_map_be(qsf_param *params);
+gboolean is_qsf_map_be (qsf_param * params);
 /** \brief Validate a QSF map file.
 
 @param	path	Absolute or relative path to the file to be validated
@@ -632,7 +633,7 @@ user data but are used to import QSF object files from other applications.
 
 @return TRUE if the map validates, otherwise FALSE.
 */
-gboolean is_qsf_map(const gchar *path);
+gboolean is_qsf_map (const gchar * path);
 /** \brief Validate a QSF file and a selected QSF map
 
 @param	map_path	Absolute or relative path to the selected QSF map file
@@ -648,7 +649,7 @@ This backend twin also sets QofBackendError codes.
 @return TRUE if the file validates and the supplied QSF map is usable,
 otherwise FALSE.
 */
-gboolean is_qsf_object_with_map_be(gchar *map_path, qsf_param *params);
+gboolean is_qsf_object_with_map_be (gchar * map_path, qsf_param * params);
 /** \brief Validate a QSF file and a selected QSF map
 
 @param	map_path	Absolute or relative path to the selected QSF map file
@@ -662,7 +663,7 @@ file are defined in the QSF map.
 @return TRUE if the file validates and the supplied QSF map is usable,
 otherwise FALSE.
 */
-gboolean is_qsf_object_with_map(const gchar *path, gchar *map_file);
+gboolean is_qsf_object_with_map (const gchar * path, gchar * map_file);
 
 /** @} */
 
@@ -672,7 +673,8 @@ Reads the book count="" attribute (currently only 1 QofBook is supported per QSF
 Sets the book-guid as the GUID of the current QofBackend QofBook in qsf_param.
 Calls the next handler, qsf_object_node_handler, with the child of the book tag.
 */
-void qsf_book_node_handler(xmlNodePtr child, xmlNsPtr qsf_ns, qsf_param *params);
+void qsf_book_node_handler (xmlNodePtr child, xmlNsPtr qsf_ns,
+							qsf_param * params);
 
 /** \brief Convert a string value into KvpValue
 
@@ -686,8 +688,7 @@ value.
 
 @return KvpValue* or NULL on failure.
 */
-KvpValue*
-string_to_kvp_value(const gchar *content, KvpValueType type);
+KvpValue *string_to_kvp_value (const gchar * content, KvpValueType type);
 
 /** Validate the children of the parent node.
 
@@ -696,8 +697,8 @@ the validation can be run without qsf_param being
 initialized.
 */
 void
-qsf_valid_foreach(xmlNodePtr parent, qsf_validCB cb,
-	struct qsf_node_iterate *iter, qsf_validator *valid);
+qsf_valid_foreach (xmlNodePtr parent, qsf_validCB cb,
+				   struct qsf_node_iterate *iter, qsf_validator * valid);
 
 /** Iterate over the children of the parent node.
 
@@ -705,8 +706,8 @@ Only iterates over the immediate children of the parent -
 this function is \b not recursive.
 */
 void
-qsf_node_foreach(xmlNodePtr parent, qsf_nodeCB cb,
-	struct qsf_node_iterate *iter, qsf_param *params);
+qsf_node_foreach (xmlNodePtr parent, qsf_nodeCB cb,
+				  struct qsf_node_iterate *iter, qsf_param * params);
 
 /** \brief Convert between QSF objects
 
@@ -723,7 +724,8 @@ be loaded into the book.
 
 */
 xmlDocPtr
-qsf_object_convert(xmlDocPtr mapDoc, xmlNodePtr qsf_root, qsf_param *params);
+qsf_object_convert (xmlDocPtr mapDoc, xmlNodePtr qsf_root,
+					qsf_param * params);
 
 /** Despite the name, this function handles the QSF object book tag
 AND the object tags.
@@ -731,7 +733,8 @@ AND the object tags.
 Used to parse object and map files.
 */
 void
-qsf_object_node_handler(xmlNodePtr child, xmlNsPtr qsf_ns, qsf_param *params);
+qsf_object_node_handler (xmlNodePtr child, xmlNsPtr qsf_ns,
+						 qsf_param * params);
 
 /** @} */
 /** @} */

@@ -30,7 +30,10 @@ qof-1.pc
 .DS_Store
 .tm_project.cache
 bin
-qof.prj
-qof.pws
+*.prj
+*.pws
 *.tar.gz
+*.anjuta
+TODO.tasks
+.tm_project2.cache
 

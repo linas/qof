@@ -1,24 +1,22 @@
 
-          Pre-Requesit Libraries
-          ----------------------
+          Prerequisite and Extension Libraries
+          ------------------------------------
 
 This directory contains code that is needed by QOF,
-code that is normally 'external' to QOF, but
-is not generally available as a library or installable
-package.  Thus, the code has been copied here so as to
-simplify the build and installation of QOF.  If/when 
-such libraries become commonly available through 'well-known'
-installable packages, then it should be removed from here.
+but is either not available on all platforms or needs
+to be extended from the "default" version.
 
 Contents:
 ---------
 The libsql directory contains code copied from the
 libgda (http://www.gnome-db.org/) Gnome database system.
 
-The dwi directory contains code copied from the DWI
-project (http://dwi.sourceforge.net)
-
 LibGDA support
 --------------
 The libsql directory is not built if libgda >= 1.2.0 can be
-found on the build system. (August 2005).
+found on the build system. (August 2005). Note: libgda support
+is *limited* to the STABLE libgda releases. v1.3 and 1.9 are
+NOT detected by QOF and should not be used. Patches to support
+the unstable libgda code will be refused. If a stable libgda
+is not available on your platform, let QOF use the internal code
+in lib/libsql instead.

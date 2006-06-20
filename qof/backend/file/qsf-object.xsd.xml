@@ -138,12 +138,12 @@ attributeFormDefault="unqualified" xml:lang="en-GB">
   </xsd:complexType>
   </xsd:element>
   <xsd:element name="choice" minOccurs="0" maxOccurs="unbounded">
-   <xsd:complexType>
-   <xsd:simpleContent>
-     <xsd:extension base="xsd:hexBinary">
-       <xsd:attribute name="type" type="xsd:string" use="required"/>
+  <xsd:complexType>
+  <xsd:simpleContent>
+   <xsd:extension base="xsd:hexBinary">
+     <xsd:attribute name="type" type="xsd:string" use="required"/>
      <xsd:attribute name="name" type="xsd:string" use="required"/>
-     </xsd:extension>
+   </xsd:extension>
   </xsd:simpleContent>
   </xsd:complexType>
   </xsd:element>

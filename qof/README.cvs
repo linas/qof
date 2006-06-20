@@ -19,5 +19,13 @@ Building QOF from CVS.
    If in doubt, you can run autogen.sh, run ./configure --help,
    then re-run autogen.sh with your options.
 
+   To build a distribution tarball from QOF CVS using 'make dist', ensure
+   you have 'bison' and 'flex' installed.
+
+ + The indent style used by QOF is:
+ $ indent -gnu -i4 -ut -ts4 -nsc -bli0 -nlp -l75 -lc75 
+
+
 re-written by Neil Williams
-Dec 21, 2005
+June 2006
+

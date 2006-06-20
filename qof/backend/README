@@ -3,7 +3,7 @@
                             ------------
 
 This directory contains code that implements storage backends for QOF.
-Although GnuCash has five storage backends, QOF only has two, 'dwi' 
+Although GnuCash has five storage backends, QOF only has two, 'dwi'
 and 'QSF'. Each backend is under development.
 
 For more information on DWI, see:

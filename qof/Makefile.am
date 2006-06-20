@@ -1,11 +1,4 @@
-#
-# Makefile.am for libqof
-#
-if USE_LIBGDA
-SUBDIRS = backend qof . po doc
-else
 SUBDIRS = lib backend qof . po doc
-endif
 
 DIST_SUBDIRS = lib backend qof . po doc
 
@@ -26,18 +19,28 @@ pot: Makefile
 	rm -f po/$(PACKAGE).pot
 	make -C po $(PACKAGE).pot
 
-EXTRA_DIST =                   \
+EXTRA_DIST = \
   HACKING \
   make-potfiles.in \
   po/POTFILES.in \
-	intltool-extract.in         \
-	intltool-merge.in           \
-	intltool-update.in          \
-	qof-1.pc.in
+  intltool-extract.in \
+  intltool-merge.in \
+  intltool-update.in \
+  qof-1.pc.in \
+  website/gobj-example.c.html \
+  website/my-obj-example.c.html \
+  website/sflogosm.png \
+  website/sflogolg.png \
+  website/hacking.html \
+  website/qof.css \
+  website/why-qof.html \
+  website/favicon.png \
+  website/index.html \
+  website/qof-logo.jpg
 
 DISTCLEANFILES = \
-	intltool-update \
-	intltool-merge    \
+  intltool-update \
+  intltool-merge    \
   intltool-extract \
   make-potfiles \
   po/POTFILES.in \

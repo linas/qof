@@ -1,3 +1,28 @@
+June 2006: Replaced gnc-date with QofTime and a new
+	QofDate, splitting time handling (seconds) from
+	date handling (calendar). Full 64bit support
+	for all times and dates within a couple dozen
+	times the age of the universe. Handlers to convert
+	to limited types like struct tm, time_t and GDate
+	when within range.
+
+May 2006: Support for undo operations with each QofBook
+	added. Beginning overhaul of gnc-date to QofTime.
+	Add support from coreutils in Debian to support
+	nanosecond time formats.
+	Add automated build of Doxygen documentation to
+	provide a doc package (Toshio's idea.)
+
+April 2006:
+	Add encoding backend option to allow QSF to
+	be written out using a different locale.
+	Improved map handling.
+	Replace gnc-engine-util with qofutil.
+	Move the function versions of the begin_edit 
+	and commit_edit routines to the new Utilities 
+	file alongside the macro versions from 
+	qof-be-utils.h
+
 March 2006: Support iteration over incoming QSF objects 
 	inside map operations.
 	Skip unregistered objects when processing maps.
