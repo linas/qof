@@ -28,10 +28,10 @@
 #include "qofevent-p.h"
 
 /* Static Variables ************************************************/
-static guint  suspend_counter = 0;
-static gint   next_handler_id = 1;
-static guint  handler_run_level = 0;
-static guint  pending_deletes = 0;
+static guint suspend_counter = 0;
+static gint next_handler_id = 1;
+static guint handler_run_level = 0;
+static guint pending_deletes = 0;
 static GList *handlers = NULL;
 
 /* This static indicates the debugging module that this .o belongs to.  */
@@ -40,64 +40,66 @@ static QofLogModule log_module = QOF_MOD_ENGINE;
 /* Implementations *************************************************/
 
 static gint
-find_next_handler_id(void)
+find_next_handler_id (void)
 {
-  HandlerInfo *hi;
-  gint handler_id;
-  GList *node;
+	HandlerInfo *hi;
+	gint handler_id;
+	GList *node;
 
-  /* look for a free handler id */
-  handler_id = next_handler_id;
-  node = handlers;
+	/* look for a free handler id */
+	handler_id = next_handler_id;
+	node = handlers;
 
-  while (node)
-  {
-    hi = node->data;
+	while (node)
+	{
+		hi = node->data;
 
-    if (hi->handler_id == handler_id)
-    {
-      handler_id++;
-      node = handlers;
-      continue;
-    }
+		if (hi->handler_id == handler_id)
+		{
+			handler_id++;
+			node = handlers;
+			continue;
+		}
 
-    node = node->next;
-  }
-  /* Update id for next registration */
-  next_handler_id = handler_id + 1;
-  return handler_id;
+		node = node->next;
+	}
+	/* Update id for next registration */
+	next_handler_id = handler_id + 1;
+	return handler_id;
 }
 
 /* support deprecated code with a private function*/
 #ifndef QOF_DISABLE_DEPRECATED
 gint
-qof_event_register_old_handler (GNCEngineEventHandler handler, gpointer user_data)
+qof_event_register_old_handler (GNCEngineEventHandler handler,
+	gpointer user_data)
 {
-  HandlerInfo *hi;
-  gint handler_id;
+	HandlerInfo *hi;
+	gint handler_id;
 
-  ENTER ("(handler=%p, data=%p)", handler, user_data);
+	ENTER ("(handler=%p, data=%p)", handler, user_data);
 
-  /* sanity check */
-  if (!handler)
-  {
-    PERR ("no handler specified");
-    return 0;
-  }
-  PINFO (" deprecated handler specified");
+	/* sanity check */
+	if (!handler)
+	{
+		PERR ("no handler specified");
+		return 0;
+	}
+	PINFO (" deprecated handler specified");
 
-  handler_id = find_next_handler_id();
-  /* Found one, add the handler */
-  hi = g_new0 (HandlerInfo, 1);
+	handler_id = find_next_handler_id ();
+	/* Found one, add the handler */
+	hi = g_new0 (HandlerInfo, 1);
 
-  hi->old_handler = handler;
-  hi->user_data = user_data;
-  hi->handler_id = handler_id;
+	hi->old_handler = handler;
+	hi->user_data = user_data;
+	hi->handler_id = handler_id;
 
-  handlers = g_list_prepend (handlers, hi);
+	handlers = g_list_prepend (handlers, hi);
 
-  LEAVE (" (handler=%p, data=%p) handler_id=%d", handler, user_data, handler_id);
-  return handler_id;
+	LEAVE (" (handler=%p, data=%p) handler_id=%d", handler, user_data,
+		handler_id);
+	return handler_id;
 
 }
 #endif /* QOF_DISABLE_DEPRECATED */
@@ -105,207 +107,215 @@ qof_event_register_old_handler (GNCEngineEventHandler handler, gpointer user_dat
 gint
 qof_event_register_handler (QofEventHandler handler, gpointer user_data)
 {
-  HandlerInfo *hi;
-  gint handler_id;
+	HandlerInfo *hi;
+	gint handler_id;
 
-  ENTER ("(handler=%p, data=%p)", handler, user_data);
+	ENTER ("(handler=%p, data=%p)", handler, user_data);
 
-  /* sanity check */
-  if (!handler)
-  {
-    PERR ("no handler specified");
-    return 0;
-  }
+	/* sanity check */
+	if (!handler)
+	{
+		PERR ("no handler specified");
+		return 0;
+	}
 
-  /* look for a free handler id */
-  handler_id = find_next_handler_id();
+	/* look for a free handler id */
+	handler_id = find_next_handler_id ();
 
-  /* Found one, add the handler */
-  hi = g_new0 (HandlerInfo, 1);
+	/* Found one, add the handler */
+	hi = g_new0 (HandlerInfo, 1);
 
-  hi->handler = handler;
-  hi->user_data = user_data;
-  hi->handler_id = handler_id;
+	hi->handler = handler;
+	hi->user_data = user_data;
+	hi->handler_id = handler_id;
 
-  handlers = g_list_prepend (handlers, hi);
-  LEAVE ("(handler=%p, data=%p) handler_id=%d", handler, user_data, handler_id);
-  return handler_id;
+	handlers = g_list_prepend (handlers, hi);
+	LEAVE ("(handler=%p, data=%p) handler_id=%d", handler, user_data,
+		handler_id);
+	return handler_id;
 }
 
 void
 qof_event_unregister_handler (gint handler_id)
 {
-  GList *node;
+	GList *node;
 
-  ENTER ("(handler_id=%d)", handler_id);
-  for (node = handlers; node; node = node->next)
-  {
-    HandlerInfo *hi = node->data;
+	ENTER ("(handler_id=%d)", handler_id);
+	for (node = handlers; node; node = node->next)
+	{
+		HandlerInfo *hi = node->data;
 
-    if (hi->handler_id != handler_id)
-      continue;
+		if (hi->handler_id != handler_id)
+			continue;
 
-    /* Normally, we could actually remove the handler's node from the
-       list, but we may be unregistering the event handler as a result
-       of a generated event, such as GNC_EVENT_DESTROY.  In that case,
-       we're in the middle of walking the GList and it is wrong to
-       modify the list. So, instead, we just NULL the handler. */ 
-    if(hi->handler) 
-    LEAVE ("(handler_id=%d) handler=%p data=%p", handler_id,
-	   hi->handler, hi->user_data);
+		/* Normally, we could actually remove the handler's node from the
+		   list, but we may be unregistering the event handler as a result
+		   of a generated event, such as GNC_EVENT_DESTROY.  In that case,
+		   we're in the middle of walking the GList and it is wrong to
+		   modify the list. So, instead, we just NULL the handler. */
+		if (hi->handler)
+			LEAVE ("(handler_id=%d) handler=%p data=%p", handler_id,
+				hi->handler, hi->user_data);
 #ifndef QOF_DISABLE_DEPRECATED
-    if(hi->old_handler) 
-	LEAVE ("(handler_id=%d) handler=%p data=%p", handler_id,
-	   hi->old_handler, hi->user_data);
+		if (hi->old_handler)
+			LEAVE ("(handler_id=%d) handler=%p data=%p", handler_id,
+				hi->old_handler, hi->user_data);
 #endif
 
-    /* safety -- clear the handler in case we're running events now */
-    hi->handler = NULL;
+		/* safety -- clear the handler in case we're running events now */
+		hi->handler = NULL;
 #ifndef QOF_DISABLE_DEPRECATED
-	hi->old_handler = NULL;
+		hi->old_handler = NULL;
 #endif
 
-    if (handler_run_level == 0) {
-      handlers = g_list_remove_link (handlers, node);
-    g_list_free_1 (node);
-    g_free (hi);
-    } else {
-      pending_deletes++;
-    }
+		if (handler_run_level == 0)
+		{
+			handlers = g_list_remove_link (handlers, node);
+			g_list_free_1 (node);
+			g_free (hi);
+		}
+		else
+		{
+			pending_deletes++;
+		}
 
-    return;
-  }
+		return;
+	}
 
-  PERR ("no such handler: %d", handler_id);
+	PERR ("no such handler: %d", handler_id);
 }
 
 void
 qof_event_suspend (void)
 {
-  suspend_counter++;
+	suspend_counter++;
 
-  if (suspend_counter == 0)
-  {
-    PERR ("suspend counter overflow");
-  }
+	if (suspend_counter == 0)
+	{
+		PERR ("suspend counter overflow");
+	}
 }
 
 void
 qof_event_resume (void)
 {
-  if (suspend_counter == 0)
-  {
-    PERR ("suspend counter underflow");
-    return;
-  }
+	if (suspend_counter == 0)
+	{
+		PERR ("suspend counter underflow");
+		return;
+	}
 
-  suspend_counter--;
+	suspend_counter--;
 }
 
 static void
-qof_event_generate_internal (QofEntity *entity, QofEventId event_id, 
-                            gpointer event_data)
+qof_event_generate_internal (QofEntity * entity, QofEventId event_id,
+	gpointer event_data)
 {
-  GList *node;
-  GList *next_node = NULL;
-  gboolean use_old_handlers = FALSE;
+	GList *node;
+	GList *next_node = NULL;
+	gboolean use_old_handlers = FALSE;
 
-  g_return_if_fail(entity);
+	g_return_if_fail (entity);
 
-  if (event_id <= QOF_EVENT__LAST)
-  {
-	  use_old_handlers = TRUE;
-  }
-
-  switch (event_id)
-  {
-    case QOF_EVENT_NONE: { 
-		/* if none, don't log, just return. */
-      return;
-  }
-  }
-
-  handler_run_level++;
-  for (node = handlers; node; node = next_node)
-  {
-    HandlerInfo *hi = node->data;
-
-    next_node = node->next;
-#ifndef QOF_DISABLE_DEPRECATED
-    if ((hi->old_handler) && (use_old_handlers))
+	if (event_id <= QOF_EVENT__LAST)
 	{
-      PINFO(" deprecated: id=%d hi=%p han=%p", hi->handler_id, hi, 
-		   hi->old_handler);
-      hi->old_handler ((GUID *)&entity->guid, entity->e_type,
-		   event_id, hi->user_data);
+		use_old_handlers = TRUE;
 	}
-#endif
-    if (hi->handler)
-	{
-      PINFO("id=%d hi=%p han=%p data=%p", hi->handler_id, hi, 
-            hi->handler, event_data);
-      hi->handler (entity, event_id, hi->user_data, event_data);
-	}
-  }
-  handler_run_level--;
 
-  /* If we're the outtermost event runner and we have pending deletes
-   * then go delete the handlers now.
-   */
-  if (handler_run_level == 0 && pending_deletes)
-  {
-    for (node = handlers; node; node = next_node)
-    {
-      HandlerInfo *hi = node->data;
-      next_node = node->next;
-      if ((hi->handler == NULL)
+	switch (event_id)
+	{
+	case QOF_EVENT_NONE:
+		{
+			/* if none, don't log, just return. */
+			return;
+		}
+	}
+
+	handler_run_level++;
+	for (node = handlers; node; node = next_node)
+	{
+		HandlerInfo *hi = node->data;
+
+		next_node = node->next;
 #ifndef QOF_DISABLE_DEPRECATED
-          &&(hi->old_handler == NULL)
+		if ((hi->old_handler) && (use_old_handlers))
+		{
+			PINFO (" deprecated: id=%d hi=%p han=%p", hi->handler_id, hi,
+				hi->old_handler);
+			hi->old_handler ((GUID *) & entity->guid, entity->e_type,
+				event_id, hi->user_data);
+		}
 #endif
-          )
-      {
-	/* remove this node from the list, then free this node */
-	handlers = g_list_remove_link (handlers, node);
-	g_list_free_1 (node);
-	g_free (hi);
-      }
-    }
-    pending_deletes = 0;
-  }
+		if (hi->handler)
+		{
+			PINFO ("id=%d hi=%p han=%p data=%p", hi->handler_id, hi,
+				hi->handler, event_data);
+			hi->handler (entity, event_id, hi->user_data, event_data);
+		}
+	}
+	handler_run_level--;
+
+	/* If we're the outtermost event runner and we have pending deletes
+	 * then go delete the handlers now.
+	 */
+	if (handler_run_level == 0 && pending_deletes)
+	{
+		for (node = handlers; node; node = next_node)
+		{
+			HandlerInfo *hi = node->data;
+			next_node = node->next;
+			if ((hi->handler == NULL)
+#ifndef QOF_DISABLE_DEPRECATED
+				&& (hi->old_handler == NULL)
+#endif
+				)
+			{
+				/* remove this node from the list, then free this node */
+				handlers = g_list_remove_link (handlers, node);
+				g_list_free_1 (node);
+				g_free (hi);
+			}
+		}
+		pending_deletes = 0;
+	}
 }
 
 void
-qof_event_force (QofEntity *entity, QofEventId event_id, gpointer event_data)
+qof_event_force (QofEntity * entity, QofEventId event_id,
+	gpointer event_data)
 {
-  if (!entity)
-    return;
+	if (!entity)
+		return;
 
-  qof_event_generate_internal (entity, event_id, event_data);
+	qof_event_generate_internal (entity, event_id, event_data);
 }
 
 void
-qof_event_gen (QofEntity *entity, QofEventId event_id, gpointer event_data)
+qof_event_gen (QofEntity * entity, QofEventId event_id,
+	gpointer event_data)
 {
-  if (!entity)
-    return;
+	if (!entity)
+		return;
 
-  if (suspend_counter)
-    return;
+	if (suspend_counter)
+		return;
 
-  qof_event_generate_internal (entity, event_id, event_data);
+	qof_event_generate_internal (entity, event_id, event_data);
 }
 
 /* deprecated */
-void 
-qof_event_generate (const GUID *guid, QofIdType e_type, 
-					QofEventId event_id)
+void
+qof_event_generate (const GUID * guid, QofIdType e_type,
+	QofEventId event_id)
 {
-  QofEntity ent;
-  ent.guid = *guid;
-  ent.e_type = e_type;
-  if (suspend_counter) return;
-  /* caution: this is an incomplete entity! */
-  qof_event_generate_internal (&ent, event_id, NULL);
+	QofEntity ent;
+	ent.guid = *guid;
+	ent.e_type = e_type;
+	if (suspend_counter)
+		return;
+	/* caution: this is an incomplete entity! */
+	qof_event_generate_internal (&ent, event_id, NULL);
 }
 
 /* =========================== END OF FILE ======================= */

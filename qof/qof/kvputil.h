@@ -33,9 +33,10 @@
 #ifndef GNC_KVP_UTIL_H
 #define GNC_KVP_UTIL_H
 
-typedef struct {
-  gpointer key;
-  gpointer value;
+typedef struct
+{
+	gpointer key;
+	gpointer value;
 } GHashTableKVPair;
 
 /** 
@@ -52,8 +53,8 @@ typedef struct {
 
 */
 
-GSList *g_hash_table_key_value_pairs(GHashTable *table);
-void g_hash_table_kv_pair_free_gfunc(gpointer data, gpointer user_data);
+GSList *g_hash_table_key_value_pairs (GHashTable * table);
+void g_hash_table_kv_pair_free_gfunc (gpointer data, gpointer user_data);
 
 /***********************************************************************/
 

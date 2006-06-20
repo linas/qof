@@ -22,7 +22,7 @@
 \********************************************************************/
 
 #ifndef GUID_H
-#define GUID_H 
+#define GUID_H
 
 #include <stddef.h>
 
@@ -37,7 +37,7 @@
     or beyond.
 
     QOF GUID's can be used independently of any other subsystem
-    in QOF.   In particular, they do not require the use of
+    in QOF. In particular, they do not require the use of
     other parts of the object subsystem. New GUID's are usually
     created by initialising a new entity using qof_instance_init,
     rather than calling GUID functions directly.
@@ -52,10 +52,10 @@
 #define GUID_DATA_SIZE	16
 typedef union _GUID
 {
-  guchar data[GUID_DATA_SIZE];
+	guchar data[GUID_DATA_SIZE];
 
-  gint __align_me; /* this just ensures that GUIDs are 32-bit
-                   * aligned on systems that need them to be. */
+	gint __align_me;			/* this just ensures that GUIDs are 32-bit
+								 * aligned on systems that need them to be. */
 } GUID;
 
 
@@ -72,7 +72,7 @@ typedef union _GUID
  *  initialization function a second time will reset the generator and
  *  erase the effect of the first call.
  */
-void guid_init(void);
+void guid_init (void);
 
 /** Initialize the id generator with a variety of random sources. and
  *  with the data given in the salt argument. This argument can be
@@ -87,7 +87,7 @@ void guid_init(void);
  *  initialization function a second time will reset the generator and
  *  erase the effect of the first call.
  */
-void guid_init_with_salt(const void *salt, size_t salt_len);
+void guid_init_with_salt (const void *salt, size_t salt_len);
 
 /** Initialize the id generator with the data given in the salt
  *  argument, but not with any other source. Calling this function with
@@ -103,7 +103,7 @@ void guid_init_with_salt(const void *salt, size_t salt_len);
  *  initialization function a second time will reset the generator and
  *  erase the effect of the first call.
  */
-void guid_init_only_salt(const void *salt, size_t salt_len);
+void guid_init_only_salt (const void *salt, size_t salt_len);
 
 /** Release the memory chunk associated with gui storage. Use this
  *  only when shutting down the program, as it invalidates *all*
@@ -124,7 +124,7 @@ void guid_shutdown (void);
  * you'd still have less than a one-in-a-million chance of coming up 
  * with a duplicate id.  2^128 == 10^38 is a really really big number.)
  */
-void guid_new(GUID *guid);
+void guid_new (GUID * guid);
 
 /** Generate a new id. If no initialization function has been called,
  *  guid_init() will be called before the id is created.
@@ -132,17 +132,17 @@ void guid_new(GUID *guid);
  * @return guid A data structure containing a newly allocated GUID.
  *  Caller is responsible for calling guid_free().
  */
-GUID guid_new_return(void);
+GUID guid_new_return (void);
 
 /** Returns a GUID which is guaranteed
 to never reference any entity. */
-const GUID * guid_null (void);
+const GUID *guid_null (void);
 
 /** Efficiently allocate & free memory for GUIDs */
-GUID * guid_malloc (void);
+GUID *guid_malloc (void);
 
 /* Return a guid set to all zero's */
-void   guid_free (GUID *guid);
+void guid_free (GUID * guid);
 
 /** The guid_to_string() routine returns a null-terminated string 
  *  encoding of the id. String encodings of identifiers are hex 
@@ -159,7 +159,7 @@ void   guid_free (GUID *guid);
  *  returned memory is owned by this routine and may not be freed by
  *  the caller.
  */
-const gchar * guid_to_string (const GUID * guid);
+const gchar *guid_to_string (const GUID * guid);
 
 /** The guid_to_string_buff() routine puts a null-terminated string
  *  encoding of the id into the memory pointed at by buff.  The
@@ -174,7 +174,7 @@ const gchar * guid_to_string (const GUID * guid);
  *
  *  @return A pointer to the terminating null character of the string.
  */
-gchar * guid_to_string_buff (const GUID * guid, gchar *buff);
+gchar *guid_to_string_buff (const GUID * guid, gchar * buff);
 
 
 /** Given a string, decode the id into the guid if guid is non-NULL.
@@ -182,18 +182,18 @@ gchar * guid_to_string_buff (const GUID * guid, gchar *buff);
  * hexadecimal number. This function accepts both upper and lower case
  * hex digits. If the return value is FALSE, the effect on guid is
  * undefined. */
-gboolean string_to_guid(const gchar * string, GUID * guid);
+gboolean string_to_guid (const gchar * string, GUID * guid);
 
 
 /** Given two GUIDs, return TRUE if they are non-NULL and equal.
  * Return FALSE, otherwise. */
-gboolean guid_equal(const GUID *guid_1, const GUID *guid_2);
-gint     guid_compare(const GUID *g1, const GUID *g2);
+gboolean guid_equal (const GUID * guid_1, const GUID * guid_2);
+gint guid_compare (const GUID * g1, const GUID * g2);
 
 /** Given a GUID *, hash it to a guint */
-guint guid_hash_to_guint(gconstpointer ptr);
+guint guid_hash_to_guint (gconstpointer ptr);
 
-GHashTable *guid_hash_table_new(void);
+GHashTable *guid_hash_table_new (void);
 
 /* @} */
 /* @} */

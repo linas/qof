@@ -1,16 +1,10 @@
 AM_CFLAGS = \
   -I.. -I../.. -I../../.. \
   -I${top_srcdir}/qof \
+   ${warnFLAGS} \
    ${LIBXML2_CFLAGS} \
    ${LIBGDA_CFLAGS} \
-   ${GLIB_CFLAGS} \
-  -Werror \
-  -Wmissing-prototypes \
-  -Wmissing-declarations
-
-INCLUDES = \
-   -I. -I../ -I${top_builddir}/qof \
-   -I${top_srcdir}/lib/libsql
+   ${GLIB_CFLAGS}
 
 if USE_LIBGDA
 LDADD = \

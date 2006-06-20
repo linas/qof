@@ -47,7 +47,7 @@
 #include "qofclass.h"
 
 /** Initalize and shut down this subsystem. */
-void qof_gobject_init(void);
+void qof_gobject_init (void);
 void qof_gobject_shutdown (void);
 
 /** Register a GObject class with the QOF subsystem.
@@ -62,7 +62,7 @@ void qof_gobject_shutdown (void);
  *  you must first say:
  *   qof_gobject_register ("MyStuff", gobj_class);
  */
-void qof_gobject_register (QofType type, GObjectClass *obclass);
+void qof_gobject_register (QofType type, GObjectClass * obclass);
 
 /** Register an instance of a GObject with the QOF subsystem.
  *
@@ -79,7 +79,7 @@ void qof_gobject_register (QofType type, GObjectClass *obclass);
  *  you can have multiple disjoint searchable sets of objects.
  */
 
-void qof_gobject_register_instance (QofBook *book, QofType, GObject *);
+void qof_gobject_register_instance (QofBook * book, QofType, GObject *);
 
 #endif /* QOF_GOBJ_H */
 /** @} */

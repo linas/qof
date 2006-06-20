@@ -31,12 +31,12 @@
 typedef struct
 {
 #ifndef QOF_DISABLE_DEPRECATED
-  GNCEngineEventHandler old_handler;        /** \deprecated */
+	GNCEngineEventHandler old_handler;		/** \deprecated */
 #endif
-  QofEventHandler handler;
-  gpointer user_data;
+	QofEventHandler handler;
+	gpointer user_data;
 
-  gint handler_id;
+	gint handler_id;
 } HandlerInfo;
 
 /** \deprecated Prevents handlers locating the QofCollection or casting
@@ -44,10 +44,10 @@ to the QofInstance and locating the book, editlevel or dirty flag.
 Use qof_event_gen instead.
 */
 void
-qof_event_generate (const GUID *guid, QofIdType e_type, 
-					QofEventId event_id);
+qof_event_generate (const GUID * guid, QofIdType e_type, QofEventId event_id);
 
 /* generates an event even when events are suspended! */
-void qof_event_force (QofEntity *entity, QofEventId event_id, gpointer event_data);
+void qof_event_force (QofEntity * entity, QofEventId event_id,
+					  gpointer event_data);
 
 #endif

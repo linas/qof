@@ -19,12 +19,12 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor Boston, MA  02110-1301,  USA
  */
- 
+
 #include <ctype.h>
 #include <glib.h>
-
+#include "qof.h"
 #include "test-stuff.h"
 #include "test-engine-stuff.h"
 #include "qofbook.h"
@@ -33,63 +33,64 @@
 #include "qofsession.h"
 #include "guid.h"
 
-static void test_null_guid(void)
+static void
+test_null_guid (void)
 {
-  GUID g;
-  GUID *gp;
+	GUID g;
+	GUID *gp;
 
-  g = guid_new_return();
-  gp = guid_malloc();
-  guid_new(gp);
+	g = guid_new_return ();
+	gp = guid_malloc ();
+	guid_new (gp);
 
-  do_test(guid_equal(guid_null(), guid_null()), "null guids equal");
-  do_test(!guid_equal(&g, gp), "two guids equal");
+	do_test (guid_equal (guid_null (), guid_null ()), "null guids equal");
+	do_test (!guid_equal (&g, gp), "two guids equal");
 }
 
 static void
 run_test (void)
 {
-  int i;
-  QofSession *sess;
-  QofBook *book;
-  QofEntity *eblk;
-  QofCollection *col;
-  QofIdType type;
+	int i;
+	QofSession *sess;
+	QofBook *book;
+	QofEntity *eblk;
+	QofCollection *col;
+	QofIdType type;
 
-  sess = qof_session_new();
-  book = qof_session_get_book (sess);
-  do_test ((NULL != book), "book not created");
+	sess = qof_session_new ();
+	book = qof_session_get_book (sess);
+	do_test ((NULL != book), "book not created");
 
-  col = qof_book_get_collection (book, "asdf");
-  type = qof_collection_get_type (col);
-  
+	col = qof_book_get_collection (book, "asdf");
+	type = qof_collection_get_type (col);
+
 #define NENT 500123
-  eblk = g_new0(QofEntity, NENT);
-  for (i=0; i<NENT; i++)
-  {
-    QofEntity *ent = &eblk[i];
-    guid_new(&ent->guid);
-    do_test ((NULL == qof_collection_lookup_entity (col, &ent->guid)),
-						  "duplicate guid");
-	 ent->e_type = type;
-	 qof_collection_insert_entity (col, ent);
-  }
+	eblk = g_new0 (QofEntity, NENT);
+	for (i = 0; i < NENT; i++)
+	{
+		QofEntity *ent = &eblk[i];
+		guid_new (&ent->guid);
+		do_test ((NULL == qof_collection_lookup_entity (col, &ent->guid)),
+				 "duplicate guid");
+		ent->e_type = type;
+		qof_collection_insert_entity (col, ent);
+	}
 
-  /* Make valgrind happy -- destroy the session. */
-  qof_session_destroy(sess);
+	/* Make valgrind happy -- destroy the session. */
+	qof_session_destroy (sess);
 }
 
 int
 main (int argc, char **argv)
 {
-  guid_init ();
-  g_log_set_always_fatal( G_LOG_LEVEL_CRITICAL | G_LOG_LEVEL_WARNING );
+	guid_init ();
+	g_log_set_always_fatal (G_LOG_LEVEL_CRITICAL | G_LOG_LEVEL_WARNING);
 
-  test_null_guid();
-  run_test();
+	test_null_guid ();
+	run_test ();
 
-  print_test_results();
-  exit(get_rv());
-  guid_shutdown();
-  return 0;
+	print_test_results ();
+	exit (get_rv ());
+	guid_shutdown ();
+	return 0;
 }

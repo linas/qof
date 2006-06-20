@@ -32,11 +32,12 @@
  * @{
  */
 
-typedef struct {
-  guint64 hi;
-  guint64 lo;
-  short isneg;    /**< sign-bit -- T if number is negative */
-  short isbig;    /**< sizeflag -- T if number won't fit in signed 64-bit */
+typedef struct
+{
+	guint64 hi;
+	guint64 lo;
+	short isneg;  /**< sign-bit -- T if number is negative */
+	short isbig;  /**< sizeflag -- T if number won't fit in signed 64-bit */
 } qofint128;
 
 /** Return true of two numbers are equal */
@@ -75,7 +76,7 @@ inline qofint128 div128 (qofint128 n, gint64 d);
 inline gint64 rem128 (qofint128 n, gint64 d);
 
 /** Return the greatest common factor of two 64-bit numbers */
-inline guint64 gcf64(guint64 num, guint64 denom);
+inline guint64 gcf64 (guint64 num, guint64 denom);
 
 /** Return the least common multiple of two 64-bit numbers. */
 inline qofint128 lcm128 (guint64 a, guint64 b);

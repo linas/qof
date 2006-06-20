@@ -16,9 +16,9 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor Boston, MA  02110-1301,  USA
  */
- 
+
 #include <glib.h>
 #include <stdio.h>
 
@@ -35,92 +35,97 @@
 #define BAD_PARAM		"bad-param"
 
 static void
-obj_foreach (QofCollection *col, QofEntityForeachCB cb, gpointer u_d)
+obj_foreach (QofCollection * col, QofEntityForeachCB cb, gpointer u_d)
 {
-  int *foo = u_d;
+	int *foo = u_d;
 
-  do_test (col != NULL, "foreach: NULL collection");
-  success ("called foreach callback");
+	do_test (col != NULL, "foreach: NULL collection");
+	success ("called foreach callback");
 
-  *foo = 1;
+	*foo = 1;
 }
 
 static const char *
 printable (gpointer obj)
 {
-  do_test (obj != NULL, "printable: object is NULL");
-  success ("called printable callback");
-  return ((const char *)obj);
+	do_test (obj != NULL, "printable: object is NULL");
+	success ("called printable callback");
+	return ((const char *) obj);
 }
 
 static QofObject bus_obj = {
-  interface_version:  QOF_OBJECT_VERSION,
-  e_type:             TEST_MODULE_NAME,
-  type_label:         TEST_MODULE_DESC,
-  create:             NULL,
-  book_begin:         NULL,
-  book_end:           NULL,
-  is_dirty:           NULL,
-  mark_clean:         NULL,
-  foreach:            obj_foreach,
-  printable:          printable,
-  version_cmp:        NULL,
+  interface_version:QOF_OBJECT_VERSION,
+  e_type:TEST_MODULE_NAME,
+  type_label:TEST_MODULE_DESC,
+  create:NULL,
+  book_begin:NULL,
+  book_end:NULL,
+  is_dirty:NULL,
+  mark_clean:NULL,
+  foreach:obj_foreach,
+  printable:printable,
+  version_cmp:NULL,
 };
 
-static int test_sort (gpointer a, gpointer b)
+static int
+test_sort (gpointer a, gpointer b)
 {
-  return 0;
+	return 0;
 }
 
-static int test_core_param (gpointer a)
+static int
+test_core_param (gpointer a)
 {
-  return 0;
+	return 0;
 }
 
-static void test_class (void)
+static void
+test_class (void)
 {
-  static QofParam params[] = {
-    { TEST_PARAM, TEST_CORE, (QofAccessFunc)test_core_param, NULL },
-    { NULL },
-  };
+	static QofParam params[] = {
+		{TEST_PARAM, TEST_CORE, (QofAccessFunc) test_core_param, NULL},
+		{NULL},
+	};
 
-  fprintf (stderr, "\tTesting the qof_query_object interface. \n"
-	   "\tYou may see some \"** CRITICAL **\" messages, which you can safely ignore\n");
-  do_test (qof_object_register (&bus_obj), "register test object");
+	fprintf (stderr, "\tTesting the qof_query_object interface. \n"
+			 "\tYou may see some \"** CRITICAL **\" messages, which you can safely ignore\n");
+	do_test (qof_object_register (&bus_obj), "register test object");
 
-  qof_class_register (TEST_MODULE_NAME, (QofSortFunc)test_sort, params);
+	qof_class_register (TEST_MODULE_NAME, (QofSortFunc) test_sort, params);
 
-  do_test (qof_class_get_parameter (TEST_MODULE_NAME, TEST_PARAM)
-	   == &params[0], "qof_class_get_parameter");
-  do_test (qof_class_get_parameter (NULL, NULL) == NULL,
-	   "qof_class_get_parameter (NULL, NULL)");
-  do_test (qof_class_get_parameter (TEST_MODULE_NAME, NULL) == NULL,
-	   "qof_class_get_parameter (TEST_MODULE_NAME, NULL)");
-  do_test (qof_class_get_parameter (TEST_MODULE_NAME, BAD_PARAM) == NULL,
-	   "qof_class_get_parameter (TEST_MODULE_NAME, BAD_PARAM)");
-  do_test (qof_class_get_parameter (NULL, TEST_PARAM) == NULL,
-	   "qof_class_get_parameter (NULL, TEST_PARAM)");
+	do_test (qof_class_get_parameter (TEST_MODULE_NAME, TEST_PARAM)
+			 == &params[0], "qof_class_get_parameter");
+	do_test (qof_class_get_parameter (NULL, NULL) == NULL,
+			 "qof_class_get_parameter (NULL, NULL)");
+	do_test (qof_class_get_parameter (TEST_MODULE_NAME, NULL) == NULL,
+			 "qof_class_get_parameter (TEST_MODULE_NAME, NULL)");
+	do_test (qof_class_get_parameter (TEST_MODULE_NAME, BAD_PARAM) == NULL,
+			 "qof_class_get_parameter (TEST_MODULE_NAME, BAD_PARAM)");
+	do_test (qof_class_get_parameter (NULL, TEST_PARAM) == NULL,
+			 "qof_class_get_parameter (NULL, TEST_PARAM)");
 
-  do_test (qof_class_get_parameter_getter (TEST_MODULE_NAME, TEST_PARAM)
-	   == (QofAccessFunc)test_core_param,
-	   "qof_class_get_parameter_getter");
+	do_test (qof_class_get_parameter_getter (TEST_MODULE_NAME, TEST_PARAM)
+			 == (QofAccessFunc) test_core_param,
+			 "qof_class_get_parameter_getter");
 
-  do_test (safe_strcmp (qof_class_get_parameter_type (TEST_MODULE_NAME,
-						     TEST_PARAM),
-			TEST_CORE) == 0, "qof_class_get_parameter_type");
+	do_test (safe_strcmp (qof_class_get_parameter_type (TEST_MODULE_NAME,
+														TEST_PARAM),
+						  TEST_CORE) == 0, "qof_class_get_parameter_type");
 
-  do_test (qof_class_get_default_sort (TEST_MODULE_NAME) == (QofSortFunc)test_sort,
-	   "qof_class_get_default_sort");
-  do_test (qof_class_get_default_sort (NULL) == NULL,
-	   "qof_class_get_default_sort (NULL)");
+	do_test (qof_class_get_default_sort (TEST_MODULE_NAME) ==
+			 (QofSortFunc) test_sort, "qof_class_get_default_sort");
+	do_test (qof_class_get_default_sort (NULL) == NULL,
+			 "qof_class_get_default_sort (NULL)");
 }
 
-static void test_query_core (void)
+static void
+test_query_core (void)
 {
 
 }
 
-static void test_querynew (void)
+static void
+test_querynew (void)
 {
 }
 
@@ -132,14 +137,14 @@ main (int argc, char **argv)
 	qof_object_initialize ();
 	qof_book_register ();
 	qof_query_init ();
-	test_query_core();
-	test_class();
-	test_querynew();
-	print_test_results();
-	exit(get_rv());
-	qof_query_shutdown();
-	guid_shutdown();
+	test_query_core ();
+	test_class ();
+	test_querynew ();
+	print_test_results ();
+	exit (get_rv ());
+	qof_query_shutdown ();
+	guid_shutdown ();
 	qof_object_shutdown ();
-	gnc_engine_string_cache_destroy();
+	gnc_engine_string_cache_destroy ();
 	return 0;
 }

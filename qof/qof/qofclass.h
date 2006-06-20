@@ -83,7 +83,7 @@ single reference between two known objects.
  */
 
 #define QOF_TYPE_STRING    "string"
-#define QOF_TYPE_DATE      "date"
+#define QOF_TYPE_TIME      "time"
 #define QOF_TYPE_NUMERIC   "numeric"
 #define QOF_TYPE_DEBCRED   "debcred"
 #define QOF_TYPE_GUID      "guid"
@@ -93,7 +93,7 @@ single reference between two known objects.
 #define QOF_TYPE_BOOLEAN   "boolean"
 #define QOF_TYPE_KVP       "kvp"
 #define QOF_TYPE_CHAR      "character"
-#define QOF_TYPE_COLLECT   "collection" /**< secondary collections
+#define QOF_TYPE_COLLECT   "collection"	/**< secondary collections
 are used for one-to-many references between entities and are
 implemented using ::QofCollection.
 These are \b NOT the same as the main collections in the QofBook.
@@ -101,8 +101,8 @@ These are \b NOT the same as the main collections in the QofBook.
 -# Each ::QofCollection contains one or many entities - *all* of a single type.
 -# The entity type within the collection can be determined at run time.
 -# Easy conversions to GList or whatever in the param_setfcn handler.
--# Each parameter can have it's own collection.
--# Each entity can have a different *type* of collection to it's siblings, 
+-# Each parameter can have its own collection.
+-# Each entity can have a different *type* of collection to its siblings, 
 provided that it is acceptable to the set function.
 -# Each object decides which types are acceptable for which parameter in the 
 set functions. This is then part of the API for that object.
@@ -123,7 +123,7 @@ n.b. Always subject to each collection holding only one type at runtime.
 */
 /** @} */
 /** Type of Paramters (String, Date, Numeric, GUID, etc.) */
-typedef const char * QofType;
+typedef const char *QofType;
 
 typedef struct _QofParam QofParam;
 
@@ -142,7 +142,7 @@ typedef struct _QofParam QofParam;
  * also provides a place for the user to hang additional user-defined
  * data.
  */
-typedef gpointer (*QofAccessFunc)(gpointer object, const QofParam *param);
+typedef gpointer (*QofAccessFunc) (gpointer object, const QofParam * param);
 
 /** The QofSetterFunc defines an function pointer for parameter
  *  setters. Real functions must be of the form:
@@ -168,17 +168,17 @@ typedef void (*QofSetterFunc) (gpointer, gpointer);
  * the param memory is freed, the callback can be used to release the 
  * user-defined data.
  */
-struct _QofParam 
+struct _QofParam
 {
-  const char       * param_name;
-  QofType            param_type;
-  QofAccessFunc      param_getfcn;
-  QofSetterFunc      param_setfcn;
-  gpointer           param_userdata;
+	const char *param_name;
+	QofType param_type;
+	QofAccessFunc param_getfcn;
+	QofSetterFunc param_setfcn;
+	gpointer param_userdata;
 };
 
 /** This function is the default sort function for a particular object type */
-typedef int (*QofSortFunc)(gconstpointer, gconstpointer);
+typedef int (*QofSortFunc) (gconstpointer, gconstpointer);
 
 /** This function registers a new object class with the Qof subsystem.
  *  In particular, it registers the set of setters and getters for
@@ -194,21 +194,21 @@ typedef int (*QofSortFunc)(gconstpointer, gconstpointer);
  *  It may be NULL if there are no parameters to be registered.
  */
 void qof_class_register (QofIdTypeConst obj_name,
-                         QofSortFunc default_sort_fcn,
-                         const QofParam *params);
+						 QofSortFunc default_sort_fcn,
+						 const QofParam * params);
 
 /** An example:
  *
  * #define MY_OBJ_MEMO     "memo"
  * #define MY_OBJ_VALUE    "value"
- * #define MY_OBJ_DATE     "date"
+ * #define MY_OBJ_TIME     "time"
  * #define MY_OBJ_ACCOUNT  "account"
  * #define MY_OBJ_TRANS    "trans"
  *
  * static QofParam myParams[] = {
  * { MY_OBJ_MEMO, QOF_TYPE_STRING, myMemoGetter, NULL },
  * { MY_OBJ_VALUE, QOF_TYPE_NUMERIC, myValueGetter, NULL },
- * { MY_OBJ_DATE, QOF_TYPE_DATE, myDateGetter, NULL },
+ * { MY_OBJ_TIME, QOF_TYPE_TIME, myTimeGetter, NULL },
  * { MY_OBJ_ACCOUNT, GNC_ID_ACCOUNT, myAccountGetter, NULL },
  * { MY_OBJ_TRANS, GNC_ID_TRANS, myTransactionGetter, NULL },
  * NULL };
@@ -223,19 +223,19 @@ gboolean qof_class_is_registered (QofIdTypeConst obj_name);
 
 /** Return the core datatype of the specified object's parameter */
 QofType qof_class_get_parameter_type (QofIdTypeConst obj_name,
-                                      const char *param_name);
+									  const char *param_name);
 
 /** Return the registered Parameter Definition for the requested parameter */
-const QofParam * qof_class_get_parameter (QofIdTypeConst obj_name,
-                                          const char *parameter);
+const QofParam *qof_class_get_parameter (QofIdTypeConst obj_name,
+										 const char *parameter);
 
 /** Return the object's parameter getter function */
 QofAccessFunc qof_class_get_parameter_getter (QofIdTypeConst obj_name,
-                                              const char *parameter);
+											  const char *parameter);
 
 /** Return the object's parameter setter function */
 QofSetterFunc qof_class_get_parameter_setter (QofIdTypeConst obj_name,
-                                              const char *parameter);
+											  const char *parameter);
 
 /** Type definition for the class callback function. */
 typedef void (*QofClassForeachCB) (QofIdTypeConst, gpointer);
@@ -252,7 +252,7 @@ typedef void (*QofParamForeachCB) (QofParam *, gpointer user_data);
  *  object class.  The 'user_data' is passed back to the callback.
  */
 void qof_class_param_foreach (QofIdTypeConst obj_name,
-                              QofParamForeachCB, gpointer user_data);
+							  QofParamForeachCB, gpointer user_data);
 
 /** \brief List of the parameters that could be references.
 
@@ -260,7 +260,7 @@ Simple check to return a GList of all parameters
 of this object type that are not known QOF data types.
 Used for partial QofBook support, see ::QofEntityReference
 */
-GList* qof_class_get_referenceList(QofIdTypeConst type);
+GList *qof_class_get_referenceList (QofIdTypeConst type);
 
 
 #endif /* QOF_CLASS_H */

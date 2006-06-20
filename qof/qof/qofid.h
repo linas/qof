@@ -21,7 +21,7 @@
 \********************************************************************/
 
 #ifndef QOF_ID_H
-#define QOF_ID_H 
+#define QOF_ID_H
 
 /** @addtogroup Entity 
     @{ */
@@ -77,11 +77,11 @@
 #include "guid.h"
 
 /** QofIdType declaration */
-typedef const gchar * QofIdType;
+typedef const gchar *QofIdType;
 /** QofIdTypeConst declaration */
-typedef const gchar * QofIdTypeConst;
+typedef const gchar *QofIdTypeConst;
 /** QofLogModule declaration */
-typedef const gchar* QofLogModule;
+typedef const gchar *QofLogModule;
 
 #define QOF_ID_NONE           NULL
 #define QOF_ID_NULL           "null"
@@ -94,7 +94,7 @@ typedef const gchar* QofLogModule;
 
 /** Inline string comparision; compiler will optimize away most of this */
 #define QSTRCMP(da,db) ({                \
-  gint val = 0;                           \
+  gint val = 0;                          \
   if ((da) && (db)) {                    \
     if ((da) != (db)) {                  \
       val = strcmp ((da), (db));         \
@@ -145,48 +145,48 @@ typedef struct QofCollection_s QofCollection;
 
 struct QofEntity_s
 {
-   QofIdType        e_type;
-	GUID             guid;
-	QofCollection  * collection;
+	QofIdType e_type;
+	GUID guid;
+	QofCollection *collection;
 };
 
 /** @name QOF Entity Initialization & Shutdown 
  @{ */
 /** Initialise the memory associated with an entity */
 void qof_entity_init (QofEntity *, QofIdType, QofCollection *);
-                                                                                
+
 /** Release the data associated with this entity. Dont actually free
  * the memory associated with the instance. */
 void qof_entity_release (QofEntity *);
 /** @} */
 
 /** Return the GUID of this entity */
-const GUID * qof_entity_get_guid (QofEntity *);
+const GUID *qof_entity_get_guid (QofEntity *);
 
 /** @name Collections of Entities 
  @{ */
 
 /** create a new collection of entities of type */
-QofCollection * qof_collection_new (QofIdType type);
+QofCollection *qof_collection_new (QofIdType type);
 
 /** return the number of entities in the collection. */
-guint qof_collection_count (QofCollection *col);
+guint qof_collection_count (QofCollection * col);
 
 /** destroy the collection */
-void qof_collection_destroy (QofCollection *col);
+void qof_collection_destroy (QofCollection * col);
 
 /** return the type that the collection stores */
 QofIdType qof_collection_get_type (QofCollection *);
 
 /** Find the entity going only from its guid */
-QofEntity * qof_collection_lookup_entity (QofCollection *, const GUID *);
+QofEntity *qof_collection_lookup_entity (QofCollection *, const GUID *);
 
 /** Callback type for qof_entity_foreach */
 typedef void (*QofEntityForeachCB) (QofEntity *, gpointer user_data);
 
 /** Call the callback for each entity in the collection. */
-void qof_collection_foreach (QofCollection *, QofEntityForeachCB, 
-                             gpointer user_data);
+void qof_collection_foreach (QofCollection *, QofEntityForeachCB,
+							 gpointer user_data);
 
 /** Store and retreive arbitrary object-defined data 
  *
@@ -194,11 +194,11 @@ void qof_collection_foreach (QofCollection *, QofEntityForeachCB,
  * destroyed, so that the user has a chance to clean up anything
  * that was put in the 'data' member here.
  */
-gpointer qof_collection_get_data (QofCollection *col);
-void qof_collection_set_data (QofCollection *col, gpointer user_data);
+gpointer qof_collection_get_data (QofCollection * col);
+void qof_collection_set_data (QofCollection * col, gpointer user_data);
 
 /** Return value of 'dirty' flag on collection */
-gboolean qof_collection_is_dirty (QofCollection *col);
+gboolean qof_collection_is_dirty (QofCollection * col);
 
 /** @name QOF_TYPE_COLLECT: Linking one entity to many of one type
 
@@ -220,8 +220,7 @@ will not be removed from the original collection as they would
 by using ::qof_entity_insert_entity or ::qof_entity_remove_entity. 
 
 */
-gboolean
-qof_collection_add_entity (QofCollection *coll, QofEntity *ent);
+gboolean qof_collection_add_entity (QofCollection * coll, QofEntity * ent);
 
 /** \brief Merge two QOF_TYPE_COLLECT of the same type.
 
@@ -233,8 +232,7 @@ original collection as when using ::qof_entity_insert_entity
 or ::qof_entity_remove_entity.
 
 */
-gboolean
-qof_collection_merge (QofCollection *target, QofCollection *merge);
+gboolean qof_collection_merge (QofCollection * target, QofCollection * merge);
 
 /** \brief Compare two secondary collections.
 
@@ -247,8 +245,7 @@ GUID or if the types of the two collections do not match,
 or +1 if merge is NULL or if any entity exists in one collection but
 not in the other.
 */
-gint
-qof_collection_compare (QofCollection *target, QofCollection *merge);
+gint qof_collection_compare (QofCollection * target, QofCollection * merge);
 
 /** \brief Create a secondary collection from a GList
 
@@ -260,8 +257,7 @@ qof_collection_compare (QofCollection *target, QofCollection *merge);
 	QofCollection type, else a pointer to the collection
 	on success.
 */
-QofCollection*
-qof_collection_from_glist (QofIdType type, GList *glist);
+QofCollection *qof_collection_from_glist (QofIdType type, GList * glist);
 
 /** @} */
 /** @} */

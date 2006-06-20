@@ -40,6 +40,6 @@ no longer included in the QOF library. It remains in CVS for now.*/
  *  The DTD used will be a very qofquery specific DTD
  *  This is NOT the XQuery XML.
  */
-xmlNodePtr qof_query_to_xml (QofQuery *q);
+xmlNodePtr qof_query_to_xml (QofQuery * q);
 
 #endif /* QOF_QUERY_SERIALIZE_H */

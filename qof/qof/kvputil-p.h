@@ -68,16 +68,16 @@
  *  NULL if an error occured.
  */
 
-KvpFrame * gnc_kvp_bag_add (KvpFrame *kvp_root, const char *path, time_t secs, 
-                     const char *first_name, ...);
+KvpFrame *gnc_kvp_bag_add (KvpFrame * kvp_root, const char *path, time_t secs,
+						   const char *first_name, ...);
 
 
 /** The gnc_kvp_bag_merge() routine will move the bag contents from
  *    the 'kvp_from', to the 'into' bag.  It will then delete the 
  *    'from' bag from the kvp tree.
  */
-void gnc_kvp_bag_merge (KvpFrame *kvp_into, const char *intopath, 
-                        KvpFrame *kvp_from, const char *frompath);
+void gnc_kvp_bag_merge (KvpFrame * kvp_into, const char *intopath,
+						KvpFrame * kvp_from, const char *frompath);
 
 /** The gnc_kvp_bag_find_by_guid() routine examines the bag pointed
  *    located at root.  It looks for a frame in that bag that has the
@@ -87,8 +87,9 @@ void gnc_kvp_bag_merge (KvpFrame *kvp_into, const char *intopath,
  *    is any other error, NULL is returned.
  */
 
-KvpFrame * gnc_kvp_bag_find_by_guid (KvpFrame *root,  const char * path,
-                         const char *guid_name, GUID *desired_guid);
+KvpFrame *gnc_kvp_bag_find_by_guid (KvpFrame * root, const char *path,
+									const char *guid_name,
+									GUID * desired_guid);
 
 
 /** Remove the given frame from the bag.  The frame is removed,
@@ -98,8 +99,8 @@ KvpFrame * gnc_kvp_bag_find_by_guid (KvpFrame *root,  const char * path,
  *  some copy of the frame.
  */
 
-void gnc_kvp_bag_remove_frame (KvpFrame *root, const char *path,
-                               KvpFrame *fr);
+void gnc_kvp_bag_remove_frame (KvpFrame * root, const char *path,
+							   KvpFrame * fr);
 
 /** @} */
 /** @} */

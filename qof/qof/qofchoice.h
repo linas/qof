@@ -113,10 +113,10 @@ parameters contain any data.
 @return TRUE if one or more choice parameters has been
 registered using the object definition, otherwise FALSE.
 */
-gboolean qof_object_is_choice(QofIdType type);
+gboolean qof_object_is_choice (QofIdType type);
 
 /** \brief Set an object as using QOF_TYPE_CHOICE. */
-gboolean  qof_choice_create(char* type);
+gboolean qof_choice_create (char *type);
 
 /** \brief Add the choices for this parameter to the object.
 
@@ -127,7 +127,7 @@ gboolean  qof_choice_create(char* type);
 @return FALSE if object is not a choice object or on error
 	otherwise TRUE.
 */
-gboolean qof_choice_add_class(char* choice, char* add, char* param_name);
+gboolean qof_choice_add_class (char *choice, char *add, char *param_name);
 
 /** \brief Return the list of all object types usable with this parameter.
 
@@ -139,7 +139,7 @@ gboolean qof_choice_add_class(char* choice, char* add, char* param_name);
 	otherwise a GList of all QofIdType object type(s) available
 	via this choice object using this parameter.
 */
-GList* qof_object_get_choices(QofIdType type, QofParam *param);
+GList *qof_object_get_choices (QofIdType type, QofParam * param);
 
 /** \brief Is the choice valid for this param_name?
 
@@ -150,7 +150,7 @@ GList* qof_object_get_choices(QofIdType type, QofParam *param);
 @return TRUE if choice is found in the list of allowed choices for
 this parameter of this object. Otherwise, FALSE
 */
-gboolean qof_choice_check(char* choice_obj, char *param_name, char* choice);
+gboolean qof_choice_check (char *choice_obj, char *param_name, char *choice);
 /** @} */
 
 /** @} */

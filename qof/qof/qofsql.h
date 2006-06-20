@@ -128,14 +128,14 @@ typedef struct _QofSqlQuery QofSqlQuery;
 
 /** Create a new SQL-syntax query machine.
  */
-QofSqlQuery * qof_sql_query_new (void);
+QofSqlQuery *qof_sql_query_new (void);
 void qof_sql_query_destroy (QofSqlQuery *);
 
 /** Set the book to be searched (you can search multiple books)
  *  If no books are set, no results will be returned (since there
  *  is nothing to search over).
  */
-void qof_sql_query_set_book (QofSqlQuery *q, QofBook *book);
+void qof_sql_query_set_book (QofSqlQuery * q, QofBook * book);
 
 /** \brief Perform the query, return the results.
 
@@ -149,17 +149,17 @@ void qof_sql_query_set_book (QofSqlQuery *q, QofBook *book);
  *
  */
 
-GList * qof_sql_query_run (QofSqlQuery *query, const gchar * str);
+GList *qof_sql_query_run (QofSqlQuery * query, const gchar * str);
 
 /** Same ::qof_sql_query_run, but just parse/pre-process the query; do
   not actually run it over the dataset.  The QofBook does not
   need to be set before calling this function.
 */
 
-void qof_sql_query_parse (QofSqlQuery *query, const gchar * str);
+void qof_sql_query_parse (QofSqlQuery * query, const gchar * str);
 
 /** Return the QofQuery form of the previously parsed query. */
-QofQuery * qof_sql_query_get_query (QofSqlQuery *);
+QofQuery *qof_sql_query_get_query (QofSqlQuery *);
 
 /** Run the previously parsed query.  The QofBook must be set 
  *  before this function can be called.  Note, teh QofBook can
@@ -167,7 +167,7 @@ QofQuery * qof_sql_query_get_query (QofSqlQuery *);
  *  This routine can be called after either qof_sql_query_parse()
  *  or qof_sql_query_run() because both will set up the parse.
  */
-GList * qof_sql_query_rerun (QofSqlQuery *query);
+GList *qof_sql_query_rerun (QofSqlQuery * query);
 
 /** 
  * Set the kvp frame to be used for formulating 'indirect' predicates.

@@ -18,10 +18,10 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02110-1301, USA.
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-#ifndef QOF_DISABLE_DEPRECATED 
- 
+#ifndef QOF_DISABLE_DEPRECATED
+
 #ifndef _DEPRECATED_H
 #define _DEPRECATED_H
 #include "qof.h"
@@ -30,19 +30,19 @@
 	@brief transitional header from libqof1 to libqof2
 */
 
-/** \deprecated use QofLogLevel instead */
+/** \deprecated use ::QofLogLevel instead */
 #define gncLogLevel QofLogLevel
 
-/** \deprecated use qof_log_init_filename instead */
+/** \deprecated use ::qof_log_init_filename instead */
 void gnc_log_init (void);
 
-/** \deprecated use qof_log_set_level insead. */
-void gnc_set_log_level(QofLogModule module, gncLogLevel level);
+/** \deprecated use ::qof_log_set_level insead. */
+void gnc_set_log_level (QofLogModule module, gncLogLevel level);
 
-/** \deprecated use qof_log_set_level_registered instead. */
-void gnc_set_log_level_global(gncLogLevel level);
+/** \deprecated use ::qof_log_set_level_registered instead. */
+void gnc_set_log_level_global (gncLogLevel level);
 
-/** \deprecated use qof_log_set_level_registered instead.
+/** \deprecated use ::qof_log_set_level_registered instead.
 
 This function has been deprecated because the function name
 is very misleading. It may, in future, be modified to be
@@ -54,99 +54,104 @@ preserve the effect of qof_log_set_level_registered and the advantages
 of silent log_modules for those programs that do not use _global. Support
 could be required for removing log_modules from the hashtable.
 */
-void qof_log_set_level_global(QofLogLevel level);
+void qof_log_set_level_global (QofLogLevel level);
 
-/** \deprecated use qof_log_set_file instead. */
-void gnc_set_logfile (FILE *outfile);
+/** \deprecated use ::qof_log_set_file instead. */
+void gnc_set_logfile (FILE * outfile);
 
-/** \deprecated use qof_log_prettify instead. */
-const char * gnc_log_prettify (const char *name);
+/** \deprecated use ::qof_log_prettify instead. */
+const char *gnc_log_prettify (const char *name);
 
-/** \deprecated use qof_log_check instead. */
-gboolean gnc_should_log(QofLogModule log_module, gncLogLevel log_level);
+/** \deprecated use ::qof_log_check instead. */
+gboolean gnc_should_log (QofLogModule log_module, gncLogLevel log_level);
 
-/** \deprecated */
+/** \deprecated use ::QOF_LOG_FATAL */
 #define GNC_LOG_FATAL   QOF_LOG_FATAL
-/** \deprecated */
+/** \deprecated use ::QOF_LOG_ERROR */
 #define GNC_LOG_ERROR   QOF_LOG_ERROR
-/** \deprecated */
+/** \deprecated use ::QOF_LOG_WARNING */
 #define GNC_LOG_WARNING QOF_LOG_WARNING
-/** \deprecated */
+/** \deprecated use ::QOF_LOG_INFO */
 #define GNC_LOG_INFO    QOF_LOG_INFO
-/** \deprecated */
+/** \deprecated use ::QOF_LOG_DEBUG */
 #define GNC_LOG_DEBUG   QOF_LOG_DEBUG
-/** \deprecated */
+/** \deprecated use ::QOF_LOG_DETAIL */
 #define GNC_LOG_DETAIL  QOF_LOG_DETAIL
-/** \deprecated */
+/** \deprecated use ::QOF_LOG_TRACE */
 #define GNC_LOG_TRACE   QOF_LOG_TRACE
 
-/** \deprecated use qof_start_clock */
-void gnc_start_clock (int, QofLogModule, gncLogLevel, const char*, const char*, ...);
-/** \deprecated use qof_report_clock */
-void gnc_report_clock (int, QofLogModule, gncLogLevel, const char*, const char*, ...);
-/** \deprecated use qof_report_clock_total */
-void gnc_report_clock_total (int, QofLogModule, gncLogLevel, const char*, const char*, ...);
+/** \deprecated use ::qof_start_clock */
+void gnc_start_clock (int, QofLogModule, gncLogLevel, const char *,
+					  const char *, ...);
+/** \deprecated use ::qof_report_clock */
+void gnc_report_clock (int, QofLogModule, gncLogLevel, const char *,
+					   const char *, ...);
+/** \deprecated use ::qof_report_clock_total */
+void gnc_report_clock_total (int, QofLogModule, gncLogLevel, const char *,
+							 const char *, ...);
 
-/** \deprecated use QOF_EVENT_NONE instead. */
+/** \deprecated use ::QOF_EVENT_NONE instead. */
 #define  GNC_EVENT_NONE   QOF_EVENT_NONE
-/** \deprecated use QOF_EVENT_CREATE instead. */
+/** \deprecated use ::QOF_EVENT_CREATE instead. */
 #define  GNC_EVENT_CREATE QOF_EVENT_CREATE
-/** \deprecated use QOF_EVENT_MODIFY instead. */
+/** \deprecated use ::QOF_EVENT_MODIFY instead. */
 #define  GNC_EVENT_MODIFY QOF_EVENT_MODIFY
-/** \deprecated use QOF_EVENT_DESTROY instead. */
+/** \deprecated use ::QOF_EVENT_DESTROY instead. */
 #define  GNC_EVENT_DESTROY QOF_EVENT_DESTROY
-/** \deprecated use QOF_EVENT_ADD instead. */
+/** \deprecated use ::QOF_EVENT_ADD instead. */
 #define  GNC_EVENT_ADD    QOF_EVENT_ADD
-/** \deprecated use QOF_EVENT_REMOVE instead. */
+/** \deprecated use ::QOF_EVENT_REMOVE instead. */
 #define GNC_EVENT_REMOVE  QOF_EVENT_REMOVE
-/** \deprecated */
+/** \deprecated use ::QOF_EVENT_ALL */
 #define GNC_EVENT_ALL     QOF_EVENT_ALL
-/** \deprecated use QofEventName instead. */
+/** \deprecated use ::QofEventName instead. */
 #define GNCEngineEventType QofEventId
-/** \deprecated use QofEventHandler instead. */
-typedef void (*GNCEngineEventHandler) (GUID *entity, QofIdType type,
-                                       GNCEngineEventType event_type,
-                                       gpointer user_data);
+/** \deprecated use ::QofEventHandler instead. */
+typedef void (*GNCEngineEventHandler) (GUID * entity, QofIdType type,
+									   GNCEngineEventType event_type,
+									   gpointer user_data);
 /** \deprecated For backwards compatibility - New code must not use
 this function. The function and the handler prototype will be remove
 from qofevent.c in libqoqf2 */
-gint qof_event_register_old_handler(GNCEngineEventHandler old_handler,
-									gpointer user_data);
-/** \deprecated use qof_event_register_handler instead. */
+gint qof_event_register_old_handler (GNCEngineEventHandler old_handler,
+									 gpointer user_data);
+/** \deprecated use ::qof_event_register_handler instead. */
 gint gnc_engine_register_event_handler (GNCEngineEventHandler handler,
-                                   gpointer user_data);
-/** \deprecated use qof_event_unregister_handler instead. */
+										gpointer user_data);
+/** \deprecated use ::qof_event_unregister_handler instead. */
 void gnc_engine_unregister_event_handler (gint handler_id);
-/** \deprecated use qof_event_gen instead. */
-void gnc_engine_gen_event (QofEntity *entity, GNCEngineEventType event_type);
-/** \deprecated use qof_event_suspend instead. */
+/** \deprecated use ::qof_event_gen instead. */
+void gnc_engine_gen_event (QofEntity * entity, GNCEngineEventType event_type);
+/** \deprecated use ::qof_event_suspend instead. */
 void gnc_engine_suspend_events (void);
-/** \deprecated use qof_event_resume instead. */
+/** \deprecated use ::qof_event_resume instead. */
 void gnc_engine_resume_events (void);
-/** \deprecated use qof_event_generate instead. */
-void gnc_engine_generate_event (const GUID *guid, QofIdType e_type, 
-         GNCEngineEventType event_type);
-/** \deprecated use QofBookMergeResult instead. */
+/** \deprecated use ::qof_event_generate instead. */
+void gnc_engine_generate_event (const GUID * guid, QofIdType e_type,
+								GNCEngineEventType event_type);
+/** \deprecated use ::QofBookMergeResult instead. */
 #define qof_book_mergeResult QofBookMergeResult
-/** \deprecated use QofBookMergeRule instead. */
+/** \deprecated use ::QofBookMergeRule instead. */
 #define qof_book_mergeRule QofBookMergeRule
-/** \deprecated use QofBookMergeData instead. */
+/** \deprecated use ::QofBookMergeData instead. */
 #define qof_book_mergeData QofBookMergeData
-/** \deprecated use qof_book_merge_init instead. */
-QofBookMergeData* qof_book_mergeInit( QofBook *importBook, QofBook *targetBook);
-/** \deprecated use QofBookMergeRuleForeachCB instead. */
-typedef void (* qof_book_mergeRuleForeachCB)(QofBookMergeData*, QofBookMergeRule*, guint);
-/** \deprecated use qof_book_merge_rule_foreach instead. */
-void qof_book_mergeRuleForeach(QofBookMergeData* mergeData,
-                               QofBookMergeRuleForeachCB callback , 
-                               QofBookMergeResult mergeResult);
-/** \deprecated use qof_book_merge_update_result instead. */
-QofBookMergeData* qof_book_mergeUpdateResult(QofBookMergeData *mergeData,
-                                QofBookMergeResult tag);
-/** \deprecated use qof_book_merge_commit instead. */
-gint qof_book_mergeCommit(QofBookMergeData *mergeData );
-/** \deprecated Use the function versions, safe_strcmp() and
-safe_strcasecmp() instead. */
+/** \deprecated use ::qof_book_merge_init instead. */
+QofBookMergeData *qof_book_mergeInit (QofBook * importBook,
+									  QofBook * targetBook);
+/** \deprecated use ::QofBookMergeRuleForeachCB instead. */
+typedef void (*qof_book_mergeRuleForeachCB) (QofBookMergeData *,
+											 QofBookMergeRule *, guint);
+/** \deprecated use ::qof_book_merge_rule_foreach instead. */
+void qof_book_mergeRuleForeach (QofBookMergeData * mergeData,
+								QofBookMergeRuleForeachCB callback,
+								QofBookMergeResult mergeResult);
+/** \deprecated use ::qof_book_merge_update_result instead. */
+QofBookMergeData *qof_book_mergeUpdateResult (QofBookMergeData * mergeData,
+											  QofBookMergeResult tag);
+/** \deprecated use ::qof_book_merge_commit instead. */
+gint qof_book_mergeCommit (QofBookMergeData * mergeData);
+/** \deprecated Use the function versions, ::safe_strcmp() and
+::safe_strcasecmp() instead. */
 #define SAFE_STRCMP_REAL(fcn,da,db) {    \
   if ((da) && (db)) {                    \
     if ((da) != (db)) {                  \
@@ -162,24 +167,184 @@ safe_strcasecmp() instead. */
     return +1;                           \
   }                                      \
 }
-/** \deprecated use safe_strcmp() */
+/** \deprecated use ::safe_strcmp() */
 #define SAFE_STRCMP(da,db) SAFE_STRCMP_REAL(strcmp,(da),(db))
-/** \deprecated use safe_strcasecmp() */
+/** \deprecated use ::safe_strcasecmp() */
 #define SAFE_STRCASECMP(da,db) SAFE_STRCMP_REAL(strcasecmp,(da),(db))
-/** \deprecated use qof_util_string_cache_insert instead. */
-gpointer gnc_string_cache_insert(gconstpointer key);
-#define GNC_SCANF_LLD QOF_SCANF_LLD /**< \deprecated use QOF_SCANF_LLD instead. */
-/** \deprecated use qof_util_stpcpy instead. */
-gchar * gnc_stpcpy (gchar *dest, const gchar *src);
-/** \deprecated use qof_init instead. */
-GCache* gnc_engine_get_string_cache(void);
-/** \deprecated use qof_init instead. */
-GCache* qof_util_get_string_cache(void);
-/** \deprecated use qof_close instead. */
+/** \deprecated use ::qof_util_string_cache_insert instead. */
+gpointer gnc_string_cache_insert (gconstpointer key);
+/** \deprecated use ::QOF_SCANF_LLD instead. */
+#define GNC_SCANF_LLD QOF_SCANF_LLD
+/** \deprecated use ::qof_util_stpcpy instead. */
+gchar *gnc_stpcpy (gchar * dest, const gchar * src);
+/** \deprecated use ::qof_init instead. */
+GCache *gnc_engine_get_string_cache (void);
+/** \deprecated use ::qof_init instead. */
+GCache *qof_util_get_string_cache (void);
+/** \deprecated use ::qof_close instead. */
 void gnc_engine_string_cache_destroy (void);
-/** \deprecated use qof_util_string_cache_remove instead. */
-void gnc_string_cache_remove(gconstpointer key);
+/** \deprecated use ::qof_util_string_cache_remove instead. */
+void gnc_string_cache_remove (gconstpointer key);
 /** \deprecated no replacement. */
-void qof_book_set_schedxactions( QofBook *book, GList *newList );
+void qof_book_set_schedxactions (QofBook * book, GList * newList);
+/** \deprecated use QofDateMonthFormat instead. */
+typedef enum
+{
+	GNCDATE_MONTH_NUMBER,
+						/**< \deprecated use ::QOF_DATE_MONTH_NUMBER. */
+	GNCDATE_MONTH_ABBREV,
+						/**< \deprecated use ::QOF_DATE_MONTH_ABBREV. */
+	GNCDATE_MONTH_NAME	/**< \deprecated use ::QOF_DATE_MONTH_NAME. */
+} GNCDateMonthFormat;
+/** \deprecated use ::qof_date_format_to_name. */
+const gchar* gnc_date_dateformat_to_string(QofDateFormat format);
+/** \deprecated no replacement. */
+const gchar* gnc_date_monthformat_to_string(GNCDateMonthFormat format);
+/** \deprecated use ::qof_date_format_from_name.
+ 
+QofDateFormat qof_date_format_from_name ( const gchar * name )
+
+\note The prototype of ::qof_date_string_to_format is not the
+same as gnc_date_string_to_dateformat! The format argument type
+and the return value have been changed.
+*/
+gboolean gnc_date_string_to_dateformat (const gchar * format_string,
+										QofDateFormat * format);
+/** \deprecated no replacement. */
+gboolean gnc_date_string_to_monthformat (const gchar * format_string,
+										 GNCDateMonthFormat * format);
+/** \deprecated use ::QofTime. */
+/*typedef struct timespec64
+{
+   guint64 tv_sec;     
+   glong tv_nsec;
+}Timespec;*/
+/** \deprecated use ::qof_time_equal. */
+gboolean timespec_equal (const Timespec * ta, const Timespec * tb);
+/** \deprecated use ::qof_time_cmp. */
+gint timespec_cmp (const Timespec * ta, const Timespec * tb);
+/** \deprecated use ::qof_time_diff. */
+Timespec timespec_diff (const Timespec * ta, const Timespec * tb);
+/** \deprecated use ::qof_time_abs. */
+Timespec timespec_abs (const Timespec * t);
+/** \deprecated use ::qof_time_canonical_day_time. */
+Timespec timespecCanonicalDayTime (Timespec t);
+/** \deprecated use ::qof_time_to_time_t. */
+time_t timespecToTime_t (Timespec ts);
+/** \deprecated use ::qof_time_from_time_t instead */
+void timespecFromTime_t (Timespec * ts, time_t t);
+/** \deprecated use GDate instead. */
+Timespec gnc_dmy2timespec (gint day, gint month, gint year);
+/** \deprecated use GDate instead. */
+Timespec gnc_dmy2timespec_end (gint day, gint month, gint year);
+/** \deprecated set ::QOF_DATE_FORMAT_ISO8601 and call ::qof_date_time_scan */
+Timespec gnc_iso8601_to_timespec_gmt (const gchar *);
+/** \deprecated set ::QOF_DATE_FORMAT_ISO8601 and call ::qof_date_time_stamp */
+gchar *gnc_timespec_to_iso8601_buff (Timespec ts, gchar * buff);
+/** \deprecated use GDate instead. */
+void gnc_timespec2dmy (Timespec ts, gint * day, gint * month, gint * year);
+/** \deprecated use ::qof_date_time_add_months. */
+void date_add_months (struct tm *tm, gint months, gboolean track_last_day);
+
+
+gboolean qof_date_add_days(Timespec *ts, gint days);
+
+gboolean qof_date_add_months(Timespec *ts, gint months, gboolean track_last_day);
+
+const gchar *qof_date_format_get_string(QofDateFormat df);
+
+
+/** \deprecated use ::qof_date_dmy_to_sec. */
+time_t xaccDMYToSec (gint day, gint month, gint year);
+/** \deprecated no replacement */
+glong gnc_timezone (struct tm *tm);
+/** \deprecated use ::qof_date_format_get_current */
+QofDateFormat qof_date_format_get(void);
+/** \deprecated use ::qof_date_format_set_current. */
+void qof_date_format_set(QofDateFormat df);
+/** \deprecated use ::qof_date_format_get_format */
+const gchar *qof_date_text_format_get_string(QofDateFormat df);
+/** \deprecated use ::qof_date_format_get_date_separator */
+char dateSeparator (void);
+/** \deprecated returns incorrect values for dates before 1970.
+use ::qof_date_time_to_gdate.*/
+time_t qof_date_dmy_to_sec (gint day, gint month, gint year);
+/** \deprecated no replacement. */
+size_t qof_print_hours_elapsed_buff (char *buff, size_t len, int secs,
+									 gboolean show_secs);
+/** \deprecated no replacement. */
+size_t qof_print_minutes_elapsed_buff (char *buff, size_t len, int secs,
+									   gboolean show_secs);
+/** \deprecated no replacement. */
+size_t qof_print_time_buff (char *buff, size_t len, time_t secs);
+/** \deprecated no replacement. */
+size_t qof_print_date_time_buff (char *buff, size_t len, time_t secs);
+/** \deprecated no replacement */
+gboolean qof_is_same_day (time_t, time_t);
+/** \deprecated no replacement. */
+void gnc_tm_get_day_start (struct tm *tm, time_t time_val);
+/** \deprecated use ::qof_time_set_day_start instead. */
+void gnc_tm_set_day_start (struct tm *tm);
+/** \deprecated use ::qof_time_set_day_middle instead. */
+void gnc_tm_set_day_middle (struct tm *tm);
+/** \deprecated use ::qof_time_set_day_end instead. */
+void gnc_tm_set_day_end (struct tm *tm);
+/** \deprecated no replacement. */
+void gnc_tm_get_day_end (struct tm *tm, time_t time_val);
+/** \deprecated no replacement. */
+time_t gnc_timet_get_day_start (time_t time_val);
+/** \deprecated no replacement. */
+time_t gnc_timet_get_day_end (time_t time_val);
+/** \deprecated no replacement. */
+void gnc_tm_get_today_start (struct tm *tm);
+/** \deprecated no replacement */
+void gnc_tm_get_today_end (struct tm *tm);
+/** \deprecated no replacement */
+time_t gnc_timet_get_today_start (void);
+/** \deprecated no replacement. */
+time_t gnc_timet_get_today_end (void);
+#ifndef GNUCASH_MAJOR_VERSION
+/** @deprecated no replacement*/
+time_t gnc_timet_get_day_start_gdate (GDate * date);
+/**  @deprecated no replacement*/
+time_t gnc_timet_get_day_end_gdate (GDate * date);
+#endif /* GNUCASH_MAJOR_VERSION */
+/** \deprecated use g_date_get_days_in_month instead. */
+int date_get_last_mday (struct tm *tm);
+/** \deprecated use g_date_get_days_in_month instead. */
+gboolean date_is_last_mday (struct tm *tm);
+/** \deprecated use g_date_get_days_in_month instead. */
+int gnc_date_my_last_mday (int month, int year);
+/** \deprecated use g_date_get_days_in_month instead. */
+int gnc_timespec_last_mday (Timespec ts);
+/** \deprecated use qof_time_stamp_now */
+char * xaccDateUtilGetStampNow (void);
+/** \deprecated no direct replacement, use a QofDateFormat */
+char *xaccDateUtilGetStamp (time_t thyme);
+/** \deprecated no replacement. */
+size_t qof_print_date_dmy_buff (gchar * buff, size_t buflen,
+								gint day, gint month, gint year);
+/** \deprecated no replacement. */
+size_t qof_print_date_buff (char *buff, size_t buflen, time_t secs);
+/** \deprecated no replacement */
+size_t qof_print_gdate (char *buf, size_t bufflen, GDate * gd);
+/** \deprecated no replacement */
+char *qof_print_date (time_t secs);
+/** \deprecated no replacement */
+const char *gnc_print_date (Timespec ts);
+/** \deprecated use ::qof_date_time_scan */
+gboolean qof_scan_date (const char *buff, int *day, int *month, int *year);
+/** \deprecated no replacement */
+gboolean qof_scan_date_secs (const char *buff, time_t * secs);
+/** @deprecated use qof_entity_set_guid instead but only in
+backends (when reading the GUID from the data source). */
+#define qof_book_set_guid(book,guid)    \
+         qof_entity_set_guid(QOF_ENTITY(book), guid)
+/** \deprecated use QOF_TYPE_TIME instead */
+#define QOF_TYPE_DATE      "date"
+Timespec qof_instance_get_last_update (QofInstance * inst);
+void qof_instance_set_last_update (QofInstance * inst, Timespec ts);
+
+
 #endif /* _DEPRECATED_H */
 #endif /* QOF_DISABLE_DEPRECATED */

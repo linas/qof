@@ -81,8 +81,8 @@ for future libqof1 or libqof2 usage.
  * @param handler_data:   data supplied when handler was registered.
  * @param event_data:   data to be supplied when handler is invoked.
  */
-typedef void (*QofEventHandler) (QofEntity *ent,  QofEventId event_type,
-                               gpointer handler_data, gpointer event_data);
+typedef void (*QofEventHandler) (QofEntity * ent, QofEventId event_type,
+								 gpointer handler_data, gpointer event_data);
 
 /** \brief Register a handler for events.
  *
@@ -91,7 +91,8 @@ typedef void (*QofEventHandler) (QofEntity *ent,  QofEventId event_type,
  *
  * @return id identifying handler
  */
-gint qof_event_register_handler (QofEventHandler handler, gpointer handler_data);
+gint qof_event_register_handler (QofEventHandler handler,
+								 gpointer handler_data);
 
 /** \brief Unregister an event handler.
  *
@@ -120,8 +121,8 @@ void qof_event_unregister_handler (gint handler_id);
  @param event_data: Data to be passed to the event handler just for
  this one event. Can be NULL.
 */
-void qof_event_gen (QofEntity *entity, QofEventId event_type, 
-                    gpointer event_data);
+void qof_event_gen (QofEntity * entity, QofEventId event_type,
+					gpointer event_data);
 
 /** \brief  Suspend all engine events.
  *

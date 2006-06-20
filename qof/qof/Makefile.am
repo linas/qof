@@ -1,7 +1,3 @@
-#
-# Makefile.am for the libqof sources
-#
-
 SUBDIRS = . test
 
 lib_LTLIBRARIES = libqof.la
@@ -9,9 +5,8 @@ lib_LTLIBRARIES = libqof.la
 libqof_la_LDFLAGS= -version-info $(LIBQOF_LIBRARY_VERSION) 
 
 libqof_la_SOURCES =  \
-   gnc-date.c        \
    gnc-numeric.c     \
-   qoflog.c         \
+   qoflog.c          \
    guid.c            \
    kvp_frame.c       \
    kvp-util.c        \
@@ -31,58 +26,68 @@ libqof_la_SOURCES =  \
    qofsession.c      \
    qofsql.c          \
    qofutil.c         \
-   qofbookmerge.c  \
-   deprecated.c
+   qofbookmerge.c    \
+   qofdate.c         \
+   qoftime.c         \
+   qofstrftime.c     \
+   qofstrptime.c     \
+   qofundo.c         \
+   deprecated.c     \
+   qofdate-p.h 
 
 qofincludedir = ${pkgincludedir}
 
 qofinclude_HEADERS = \
-   gnc-date.h        \
-   gnc-numeric.h     \
+   gnc-numeric.h \
    qoflog.h \
-   guid.h            \
-   kvp_frame.h       \
-   kvp-util.h        \
-   kvp-util-p.h      \
-   qof.h             \
-   qofbackend.h      \
-   qofbackend-p.h    \
-   qofclass.h        \
-   qofchoice.h       \
+   guid.h \
+   kvp_frame.h \
+   kvp-util.h  \
+   kvp-util-p.h \
+   qof.h \
+   qofbackend.h \
+   qofbackend-p.h \
+   qofclass.h  \
+   qofchoice.h \
    qofevent.h \
-   qofgobj.h         \
-   qofid.h           \
-   qofid-p.h         \
-   qofinstance-p.h   \
-   qofinstance.h     \
-   qofquery.h        \
+   qofgobj.h \
+   qofid.h \
+   qofid-p.h \
+   qofinstance-p.h \
+   qofinstance.h \
+   qofquery.h \
    qofquery-p.h \
-   qofbook.h         \
-   qofobject.h       \
-   qofquerycore.h    \
+   qofbook.h  \
+   qofobject.h \
+   qofquerycore.h \
    qofquerycore-p.h \
    qofreference.h \
-   qofsession.h      \
+   qofsession.h \
    qofla-dir.h \
-   qofsql.h	     \
+   qofsql.h	\
    qofutil.h \
    qofbookmerge.h \
+   qofdate.h \
+   qoftime.h \
+   qofundo.h \
    deprecated.h
 
-noinst_HEADERS =      \
-   md5.h              \
-   qofclass-p.h       \
+noinst_HEADERS = \
+   md5.h  \
+   qofclass-p.h  \
    qofevent-p.h \
    qofmath128.h  \
-   qofquery-deserial.h     \
-   qofquery-serialize.h    \
-   qofbook-p.h        \
-   qofobject-p.h      \
-   qofsession-p.h
+   qofquery-deserial.h \
+   qofquery-serialize.h \
+   qofbook-p.h  \
+   qofdate-p.h \
+   qofobject-p.h  \
+   qofsession-p.h \
+   qofundo-p.h
 
-AM_CFLAGS = -g        \
+AM_CFLAGS = -g \
   ${warnFLAGS} \
-	${LIBXML2_CFLAGS}  \
+  ${LIBXML2_CFLAGS} \
   ${LIBGDA_CFLAGS} \
   ${GLIB_CFLAGS} 
 
@@ -91,10 +96,10 @@ INCLUDES = \
   -DPREFIX=\""$(prefix)"\"  \
   -DDATADIR=\""$(datadir)"\"
 else
-INCLUDES =                     \
-   -I${top_srcdir}/lib/libsql             \
-   -DPREFIX=\""$(prefix)"\"    \
-   -DDATADIR=\""$(datadir)"\" 
+INCLUDES = \
+  -I${top_srcdir}/lib/libsql  \
+  -DPREFIX=\""$(prefix)"\" \
+  -DDATADIR=\""$(datadir)"\"
 endif
 
 libqof_la_LIBADD = \
@@ -106,5 +111,5 @@ libqof_la_LIBADD = \
 
 EXTRA_DIST = \
   qofla-dir.h.in \
-  qofmath128.c \
-  deprecated.h
+  qofmath128.c
+

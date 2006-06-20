@@ -21,7 +21,7 @@
 \********************************************************************/
 /*
  * Object instance holds many common fields that most
- * gnucash objects use.
+ * QofObjects use.
  * 
  * Copyright (C) 2003 Linas Vepstas <linas@linas.org>
  */
@@ -39,36 +39,36 @@
  */
 struct QofInstance_s
 {
-   /* Globally unique id identifying this instance */
-   QofEntity entity;
+	/* Globally unique id identifying this instance */
+	QofEntity entity;
 
-   /* The entity_table in which this instance is stored */
-   QofBook * book;
+	/* The entity_table in which this instance is stored */
+	QofBook *book;
 
-  /* kvp_data is a key-value pair database for storing arbirtary
-   * information associated with this instance.  
-   * See src/engine/kvp_doc.txt for a list and description of the 
-   * important keys. */
-   KvpFrame *kvp_data;
+	/* kvp_data is a key-value pair database for storing arbirtary
+	 * information associated with this instance.  
+	 * See src/engine/kvp_doc.txt for a list and description of the 
+	 * important keys. */
+	KvpFrame *kvp_data;
 
-   /*  Timestamp used to track the last modification to this 
-    *  instance.  Typically used to compare two versions of the
-    *  same object, to see which is newer.  When used with the 
-    *  SQL backend, this field is reserved for SQL use, to compare
-    *  the version in local memory to the remote, server version.
-    */
-   Timespec last_update;
+	/*  Timestamp used to track the last modification to this 
+	 *  instance.  Typically used to compare two versions of the
+	 *  same object, to see which is newer.  When used with the 
+	 *  SQL backend, this field is reserved for SQL use, to compare
+	 *  the version in local memory to the remote, server version.
+	 */
+	QofTime *last_update;
 
-   /*  Keep track of nesting level of begin/end edit calls */
-   int    editlevel;
+	/*  Keep track of nesting level of begin/end edit calls */
+	gint editlevel;
 
-   /*  In process of being destroyed */
-   gboolean  do_free;
+	/*  In process of being destroyed */
+	gboolean do_free;
 
-   /*  dirty/clean flag. If dirty, then this instance has been modified,
-    * but has not yet been written out to storage (file/database)
-    */
-   gboolean  dirty;
+	/*  dirty/clean flag. If dirty, then this instance has been modified,
+	 *  but has not yet been written out to storage (file/database)
+	 */
+	gboolean dirty;
 };
 
 /* reset the dirty flag */
@@ -78,8 +78,8 @@ void qof_instance_set_slots (QofInstance *, KvpFrame *);
 
 /*  Set the last_update time. Reserved for use by the SQL backend;
  *  used for comparing version in local memory to that in remote 
- *  server. 
+ *  server. The QofTime becomes the property of the instance.
  */
-void qof_instance_set_last_update (QofInstance *inst, Timespec ts);
+void qof_instance_set_update_time (QofInstance * inst, QofTime * time);
 
 #endif /* QOF_INSTANCE_P_H */

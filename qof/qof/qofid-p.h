@@ -28,7 +28,7 @@
     @{ */
 
 #ifndef QOF_ID_P_H
-#define QOF_ID_P_H 
+#define QOF_ID_P_H
 
 #include "qofid.h"
 
@@ -38,7 +38,7 @@
 /** Set the ID of the entity, over-riding the previous ID. 
  *  Very dangerous, use only for file i/o work. 
  */
-void qof_entity_set_guid (QofEntity *ent, const GUID *guid);
+void qof_entity_set_guid (QofEntity * ent, const GUID * guid);
 
 /** Take entity, remove it from whatever collection its currently
  *  in, and place it in a new collection.  To be used only for

@@ -32,7 +32,7 @@
 #include "qofquerycore.h"
 
 /* Initalize the Query Core registry and install the default type handlers */
-void qof_query_core_init(void);
+void qof_query_core_init (void);
 void qof_query_core_shutdown (void);
 
 /* 
@@ -42,23 +42,23 @@ void qof_query_core_shutdown (void);
  * predicate data.
  */
 typedef gint (*QofQueryPredicateFunc) (gpointer object,
-			       QofParam *getter,
-			       QofQueryPredData *pdata);
+									   QofParam * getter,
+									   QofQueryPredData * pdata);
 
 /* A callback for how to compare two (same-type) objects based on a
  * common getter (parameter member), using the provided comparison
  * options (which are the type-specific options).
  */
 typedef gint (*QofCompareFunc) (gpointer a, gpointer b,
-                              gint compare_options,
-                              QofParam *getter);
+								gint compare_options, QofParam * getter);
 
 /* Lookup functions */
 QofQueryPredicateFunc qof_query_core_get_predicate (gchar const *type);
 QofCompareFunc qof_query_core_get_compare (gchar const *type);
 
 /* Compare two predicates */
-gboolean qof_query_core_predicate_equal (QofQueryPredData *p1, QofQueryPredData *p2);
+gboolean qof_query_core_predicate_equal (QofQueryPredData * p1,
+										 QofQueryPredData * p2);
 
 /* Predicate Data Structures:
  *
@@ -70,76 +70,88 @@ gboolean qof_query_core_predicate_equal (QofQueryPredData *p1, QofQueryPredData 
  * Query.
  */
 
-typedef struct {
-  QofQueryPredData	pd;
-  QofStringMatch	options;
-  gboolean		is_regex;
-  gchar *		matchstring;
-  regex_t		compiled;
+typedef struct
+{
+	QofQueryPredData pd;
+	QofStringMatch options;
+	gboolean is_regex;
+	gchar *matchstring;
+	regex_t compiled;
 } query_string_def, *query_string_t;
 
-typedef struct {
-  QofQueryPredData	pd;
-  QofDateMatch	options;
-  Timespec	date;
+typedef struct
+{
+	QofQueryPredData pd;
+	QofDateMatch options;
+	Timespec date;
 } query_date_def, *query_date_t;
 
-typedef struct {
-  QofQueryPredData	pd;
-  QofNumericMatch	options;
-  gnc_numeric		amount;
+typedef struct
+{
+	QofQueryPredData pd;
+	QofNumericMatch options;
+	gnc_numeric amount;
 } query_numeric_def, *query_numeric_t;
 
-typedef struct {
-  QofQueryPredData	pd;
-  QofGuidMatch	options;
-  GList *	guids;
+typedef struct
+{
+	QofQueryPredData pd;
+	QofGuidMatch options;
+	GList *guids;
 } query_guid_def, *query_guid_t;
 
-typedef struct {
-  QofQueryPredData	pd;
-  gint32	val;
+typedef struct
+{
+	QofQueryPredData pd;
+	gint32 val;
 } query_int32_def, *query_int32_t;
 
-typedef struct {
-  QofQueryPredData	pd;
-  gint64	val;
+typedef struct
+{
+	QofQueryPredData pd;
+	gint64 val;
 } query_int64_def, *query_int64_t;
 
-typedef struct {
-  QofQueryPredData	pd;
-  double	val;
+typedef struct
+{
+	QofQueryPredData pd;
+	double val;
 } query_double_def, *query_double_t;
 
-typedef struct {
-  QofQueryPredData	pd;
-  gboolean	val;
+typedef struct
+{
+	QofQueryPredData pd;
+	gboolean val;
 } query_boolean_def, *query_boolean_t;
 
-typedef struct {
-  QofQueryPredData	pd;
-  QofCharMatch	options;
-  gchar *	char_list;
+typedef struct
+{
+	QofQueryPredData pd;
+	QofCharMatch options;
+	gchar *char_list;
 } query_char_def, *query_char_t;
 
-typedef struct {
-  QofQueryPredData	pd;
-  GSList *	path;
-  KvpValue *	value;
+typedef struct
+{
+	QofQueryPredData pd;
+	GSList *path;
+	KvpValue *value;
 } query_kvp_def, *query_kvp_t;
 
-typedef struct {
+typedef struct
+{
 	QofQueryPredData pd;
-	QofGuidMatch  options;
+	QofGuidMatch options;
 	QofCollection *coll;
 	GList *guids;
 } query_coll_def, *query_coll_t;
 
-typedef struct {
+typedef struct
+{
 	QofQueryPredData pd;
 	QofGuidMatch options;
 	const GUID *guid;
-	GList * guids;
+	GList *guids;
 } query_choice_def, *query_choice_t;
 
 #endif /* QOF_QUERYCOREP_H */

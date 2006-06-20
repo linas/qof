@@ -39,25 +39,24 @@ static QofLogModule log_module = QOF_MOD_ENGINE;
 
 /* ========================================================== */
 
-QofInstance*
-qof_instance_create (QofIdType type, QofBook *book)
+QofInstance *
+qof_instance_create (QofIdType type, QofBook * book)
 {
 	QofInstance *inst;
 
-	inst = g_new0(QofInstance, 1);
-	qof_instance_init(inst, type, book);
+	inst = g_new0 (QofInstance, 1);
+	qof_instance_init (inst, type, book);
 	return inst;
 }
 
 void
-qof_instance_init (QofInstance *inst, QofIdType type, QofBook *book)
+qof_instance_init (QofInstance * inst, QofIdType type, QofBook * book)
 {
 	QofCollection *col;
 
 	inst->book = book;
-	inst->kvp_data = kvp_frame_new();
-	inst->last_update.tv_sec = 0;
-	inst->last_update.tv_nsec = -1;
+	inst->kvp_data = kvp_frame_new ();
+	inst->last_update = qof_time_new ();
 	inst->editlevel = 0;
 	inst->do_free = FALSE;
 	inst->dirty = FALSE;
@@ -67,7 +66,7 @@ qof_instance_init (QofInstance *inst, QofIdType type, QofBook *book)
 }
 
 void
-qof_instance_release (QofInstance *inst)
+qof_instance_release (QofInstance * inst)
 {
 	kvp_frame_delete (inst->kvp_data);
 	inst->editlevel = 0;
@@ -77,87 +76,100 @@ qof_instance_release (QofInstance *inst)
 }
 
 const GUID *
-qof_instance_get_guid (QofInstance *inst)
+qof_instance_get_guid (QofInstance * inst)
 {
-	if (!inst) return NULL;
+	if (!inst)
+		return NULL;
 	return &inst->entity.guid;
 }
 
 QofBook *
-qof_instance_get_book (QofInstance *inst)
+qof_instance_get_book (QofInstance * inst)
 {
-	if (!inst) return NULL;
+	if (!inst)
+		return NULL;
 	return inst->book;
 }
 
-KvpFrame*
-qof_instance_get_slots (QofInstance *inst)
+KvpFrame *
+qof_instance_get_slots (QofInstance * inst)
 {
-  if (!inst) return NULL;
-  return inst->kvp_data;
+	if (!inst)
+		return NULL;
+	return inst->kvp_data;
 }
 
-Timespec
-qof_instance_get_last_update (QofInstance *inst)
+QofTime *
+qof_instance_get_update_time (QofInstance * inst)
 {
 	if (!inst)
 	{
-		Timespec ts = {0,-1};
-		return ts;
+		QofTime *time;
+
+		time = qof_time_new ();
+		return time;
 	}
 	return inst->last_update;
 }
 
 int
-qof_instance_version_cmp (QofInstance *left, QofInstance *right)
+qof_instance_version_cmp (QofInstance * left, QofInstance * right)
 {
-	if (!left && !right) return 0;
-	if (!left) return -1;
-	if (!right) return +1;
-	if (left->last_update.tv_sec < right->last_update.tv_sec) return -1;
-	if (left->last_update.tv_sec > right->last_update.tv_sec) return +1;
-	if (left->last_update.tv_nsec < right->last_update.tv_nsec) return -1;
-	if (left->last_update.tv_nsec > right->last_update.tv_nsec) return +1;
-	return 0;
+	if (!left && !right)
+		return 0;
+	if (!left)
+		return -1;
+	if (!right)
+		return +1;
+	return qof_time_cmp (left->last_update, right->last_update);
 }
 
 gboolean
-qof_instance_is_dirty (QofInstance *inst)
+qof_instance_is_dirty (QofInstance * inst)
 {
 	QofCollection *coll;
 
-	if (!inst) { return FALSE; }
+	if (!inst)
+	{
+		return FALSE;
+	}
 	coll = inst->entity.collection;
-	if(qof_collection_is_dirty(coll)) { return inst->dirty; }
+	if (qof_collection_is_dirty (coll))
+	{
+		return inst->dirty;
+	}
 	inst->dirty = FALSE;
 	return FALSE;
 }
 
 void
-qof_instance_set_dirty(QofInstance* inst)
+qof_instance_set_dirty (QofInstance * inst)
 {
 	QofCollection *coll;
 
 	inst->dirty = TRUE;
 	coll = inst->entity.collection;
-	qof_collection_mark_dirty(coll);
+	qof_collection_mark_dirty (coll);
 }
 
 gboolean
-qof_instance_check_edit(QofInstance *inst)
+qof_instance_check_edit (QofInstance * inst)
 {
-	if(inst->editlevel > 0) { return TRUE; }
+	if (inst->editlevel > 0)
+	{
+		return TRUE;
+	}
 	return FALSE;
 }
 
 gboolean
-qof_instance_do_free(QofInstance *inst)
+qof_instance_do_free (QofInstance * inst)
 {
 	return inst->do_free;
 }
 
 void
-qof_instance_mark_free(QofInstance *inst)
+qof_instance_mark_free (QofInstance * inst)
 {
 	inst->do_free = TRUE;
 }
@@ -166,70 +178,74 @@ qof_instance_mark_free(QofInstance *inst)
 /* setters */
 
 void
-qof_instance_mark_clean (QofInstance *inst)
+qof_instance_mark_clean (QofInstance * inst)
 {
-  if(!inst) return;
-  inst->dirty = FALSE;
+	if (!inst)
+		return;
+	inst->dirty = FALSE;
 }
 
 void
-qof_instance_set_slots (QofInstance *inst, KvpFrame *frm)
+qof_instance_set_slots (QofInstance * inst, KvpFrame * frm)
 {
-  if (!inst) return;
-  if (inst->kvp_data && (inst->kvp_data != frm))
-  {
-    kvp_frame_delete(inst->kvp_data);
-  }
+	if (!inst)
+		return;
+	if (inst->kvp_data && (inst->kvp_data != frm))
+	{
+		kvp_frame_delete (inst->kvp_data);
+	}
 
-  inst->dirty = TRUE;
-  inst->kvp_data = frm;
+	inst->dirty = TRUE;
+	inst->kvp_data = frm;
 }
 
 void
-qof_instance_set_last_update (QofInstance *inst, Timespec ts)
+qof_instance_set_update_time (QofInstance * inst, QofTime * time)
 {
-  if (!inst) return;
-  inst->last_update = ts;
+	if (!inst)
+		return;
+	qof_time_free (inst->last_update);
+	inst->last_update = time;
 }
 
 /* ========================================================== */
 
 void
-qof_instance_gemini (QofInstance *to, QofInstance *from)
+qof_instance_gemini (QofInstance * to, QofInstance * from)
 {
-  time_t now;
+	time_t now;
 
-  /* Books must differ for a gemini to be meaningful */
-  if (!from || !to || (from->book == to->book)) return;
+	/* Books must differ for a gemini to be meaningful */
+	if (!from || !to || (from->book == to->book))
+		return;
 
-  now = time(0);
+	now = time (0);
 
-  /* Make a note of where the copy came from */
-  gnc_kvp_bag_add (to->kvp_data, "gemini", now,
-                                  "inst_guid", &from->entity.guid,
-                                  "book_guid", &from->book->inst.entity.guid,
-                                  NULL);
-  gnc_kvp_bag_add (from->kvp_data, "gemini", now,
-                                  "inst_guid", &to->entity.guid,
-                                  "book_guid", &to->book->inst.entity.guid,
-                                  NULL);
+	/* Make a note of where the copy came from */
+	gnc_kvp_bag_add (to->kvp_data, "gemini", now,
+		"inst_guid", &from->entity.guid,
+		"book_guid", &from->book->inst.entity.guid, NULL);
+	gnc_kvp_bag_add (from->kvp_data, "gemini", now,
+		"inst_guid", &to->entity.guid,
+		"book_guid", &to->book->inst.entity.guid, NULL);
 
-  to->dirty = TRUE;
+	to->dirty = TRUE;
 }
 
 QofInstance *
-qof_instance_lookup_twin (QofInstance *src, QofBook *target_book)
+qof_instance_lookup_twin (QofInstance * src, QofBook * target_book)
 {
 	QofCollection *col;
 	KvpFrame *fr;
-	GUID * twin_guid;
-	QofInstance * twin;
+	GUID *twin_guid;
+	QofInstance *twin;
 
-	if (!src || !target_book) return NULL;
+	if (!src || !target_book)
+		return NULL;
 	ENTER (" ");
 
 	fr = gnc_kvp_bag_find_by_guid (src->kvp_data, "gemini",
-	                             "book_guid", &target_book->inst.entity.guid);
+		"book_guid", &target_book->inst.entity.guid);
 
 	twin_guid = kvp_frame_get_guid (fr, "inst_guid");
 

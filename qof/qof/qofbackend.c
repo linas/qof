@@ -22,7 +22,6 @@
  *                                                                  *
 \********************************************************************/
 
-#define _GNU_SOURCE
 #include "config.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -43,207 +42,258 @@ static QofLogModule log_module = QOF_MOD_BACKEND;
  * error handling                                                   *
 \********************************************************************/
 
-void 
-qof_backend_set_error (QofBackend *be, QofBackendError err)
+void
+qof_backend_set_error (QofBackend * be, QofBackendError err)
 {
-   if (!be) return;
+	if (!be)
+		return;
 
-   /* use stack-push semantics. Only the earliest error counts */
-   if (ERR_BACKEND_NO_ERR != be->last_err) return;
-   be->last_err = err;
+	/* use stack-push semantics. Only the earliest error counts */
+	if (ERR_BACKEND_NO_ERR != be->last_err)
+		return;
+	be->last_err = err;
 }
 
-QofBackendError 
-qof_backend_get_error (QofBackend *be)
+QofBackendError
+qof_backend_get_error (QofBackend * be)
 {
-   QofBackendError err;
-   if (!be) return ERR_BACKEND_NO_BACKEND;
+	QofBackendError err;
+	if (!be)
+		return ERR_BACKEND_NO_BACKEND;
 
-   /* use 'stack-pop' semantics */
-   err = be->last_err;
-   be->last_err = ERR_BACKEND_NO_ERR;
-   return err;
+	/* use 'stack-pop' semantics */
+	err = be->last_err;
+	be->last_err = ERR_BACKEND_NO_ERR;
+	return err;
 }
 
 void
-qof_backend_set_message (QofBackend *be, const char *format, ...) 
+qof_backend_set_message (QofBackend * be, const gchar * format, ...)
 {
-   va_list args;
-   char * buffer;
-   
-   if (!be) return;
-  
-   /* If there's already something here, free it */
-   if (be->error_msg) g_free(be->error_msg);
+	va_list args;
+	gchar *buffer;
 
-   if (!format) {
-       be->error_msg = NULL;
-       return;
-   }
+	if (!be)
+		return;
 
-   va_start(args, format);
-   buffer = (char *)g_strdup_vprintf(format, args);
-   va_end(args);
+	/* If there's already something here, free it */
+	if (be->error_msg)
+		g_free (be->error_msg);
 
-   be->error_msg = buffer;
+	if (!format)
+	{
+		be->error_msg = NULL;
+		return;
+	}
+
+	va_start (args, format);
+	buffer = (gchar *) g_strdup_vprintf (format, args);
+	va_end (args);
+
+	be->error_msg = buffer;
 }
 
-char *
-qof_backend_get_message (QofBackend *be) 
+gchar *
+qof_backend_get_message (QofBackend * be)
 {
-   char * msg;
-   
-   if (!be) return g_strdup("ERR_BACKEND_NO_BACKEND");
-   if (!be->error_msg) return NULL;
+	gchar *msg;
 
-   /* 
-    * Just return the contents of the error_msg and then set it to
-    * NULL.  This is necessary, because the Backends don't seem to
-    * have a destroy_backend function to take care of freeing stuff
-    * up.  The calling function should free the copy.
-    * Also, this is consistent with the qof_backend_get_error() popping.
-    */
+	if (!be)
+		return g_strdup ("ERR_BACKEND_NO_BACKEND");
+	if (!be->error_msg)
+		return NULL;
 
-   msg = be->error_msg;
-   be->error_msg = NULL;
-   return msg;
+	/* 
+	 * Just return the contents of the error_msg and then set it to
+	 * NULL. This is necessary, because the Backends don't seem to
+	 * have a destroy_backend function to take care of freeing stuff
+	 * up. The calling function should free the copy.
+	 * Also, this is consistent with the qof_backend_get_error() popping.
+	 */
+
+	msg = be->error_msg;
+	be->error_msg = NULL;
+	return msg;
 }
 
 /***********************************************************************/
 /* Get a clean backend */
 void
-qof_backend_init(QofBackend *be)
+qof_backend_init (QofBackend * be)
 {
-    be->session_begin = NULL;
-    be->session_end = NULL;
-    be->destroy_backend = NULL;
-
-    be->load = NULL;
-
-    be->begin = NULL;
-    be->commit = NULL;
-    be->rollback = NULL;
-
-    be->compile_query = NULL;
-    be->free_query = NULL;
-    be->run_query = NULL;
-
-    be->sync = NULL;
+	be->session_begin = NULL;
+	be->session_end = NULL;
+	be->destroy_backend = NULL;
+	be->load = NULL;
+	be->begin = NULL;
+	be->commit = NULL;
+	be->rollback = NULL;
+	be->compile_query = NULL;
+	be->free_query = NULL;
+	be->run_query = NULL;
+	be->sync = NULL;
 	be->load_config = NULL;
+	be->events_pending = NULL;
+	be->process_events = NULL;
+	be->last_err = ERR_BACKEND_NO_ERR;
+	if (be->error_msg)
+		g_free (be->error_msg);
+	be->error_msg = NULL;
+	be->percentage = NULL;
+	be->backend_configuration = kvp_frame_new ();
 
-    be->events_pending = NULL;
-    be->process_events = NULL;
-
-    be->last_err = ERR_BACKEND_NO_ERR;
-    if (be->error_msg) g_free (be->error_msg);
-    be->error_msg = NULL;
-    be->percentage = NULL;
-	be->backend_configuration = kvp_frame_new();
-
-	/* to be removed */
-    be->price_lookup = NULL;
-    be->export = NULL;
+	/** \deprecated */
+	be->price_lookup = NULL;
+	/** \deprecated */
+	be->export = NULL;
 }
 
 void
-qof_backend_run_begin(QofBackend *be, QofInstance *inst)
+qof_backend_run_begin (QofBackend * be, QofInstance * inst)
 {
-	if(!be || !inst) { return; }
-	if(!be->begin) { return; }
+	if (!be || !inst)
+	{
+		return;
+	}
+	if (!be->begin)
+	{
+		return;
+	}
 	(be->begin) (be, inst);
 }
 
 gboolean
-qof_backend_begin_exists(QofBackend *be)
+qof_backend_begin_exists (QofBackend * be)
 {
-	if(be->begin) { return TRUE; }
-	else { return FALSE; }
+	if (be->begin)
+	{
+		return TRUE;
+	}
+	else
+	{
+		return FALSE;
+	}
 }
 
 void
-qof_backend_run_commit(QofBackend *be, QofInstance *inst)
+qof_backend_run_commit (QofBackend * be, QofInstance * inst)
 {
-	if(!be || !inst) { return; }
-	if(!be->commit) { return; }
+	if (!be || !inst)
+	{
+		return;
+	}
+	if (!be->commit)
+	{
+		return;
+	}
 	(be->commit) (be, inst);
 }
 
 /* =========== Backend Configuration ================ */
 
-void qof_backend_prepare_frame(QofBackend *be)
+void
+qof_backend_prepare_frame (QofBackend * be)
 {
-	g_return_if_fail(be);
-	if(!kvp_frame_is_empty(be->backend_configuration)) {
-		kvp_frame_delete(be->backend_configuration);
-		be->backend_configuration = kvp_frame_new();
+	g_return_if_fail (be);
+	if (!kvp_frame_is_empty (be->backend_configuration))
+	{
+		kvp_frame_delete (be->backend_configuration);
+		be->backend_configuration = kvp_frame_new ();
 	}
 	be->config_count = 0;
 }
 
-void qof_backend_prepare_option(QofBackend *be, QofBackendOption *option)
+void
+qof_backend_prepare_option (QofBackend * be, QofBackendOption * option)
 {
 	KvpValue *value;
 	gchar *temp;
 	gint count;
 
-	g_return_if_fail(be || option);
+	g_return_if_fail (be || option);
 	count = be->config_count;
 	count++;
 	value = NULL;
 	switch (option->type)
 	{
-		case KVP_TYPE_GINT64   : {
-			value = kvp_value_new_gint64(*(gint64*)option->value);
-			break; 
-		}
-		case KVP_TYPE_DOUBLE   : { 
-			value = kvp_value_new_double(*(double*)option->value);
-			break; 
-		}
-		case KVP_TYPE_NUMERIC  : {
-			value = kvp_value_new_numeric(*(gnc_numeric*)option->value);
-			break; 
-		}
-		case KVP_TYPE_STRING   : {
-			value = kvp_value_new_string((const char*)option->value);
+	case KVP_TYPE_GINT64:
+		{
+			value = kvp_value_new_gint64 (*(gint64 *) option->value);
 			break;
 		}
-		case KVP_TYPE_GUID     : { break; } /* unsupported */
-		case KVP_TYPE_TIMESPEC : {
-			value = kvp_value_new_timespec(*(Timespec*)option->value);
+	case KVP_TYPE_DOUBLE:
+		{
+			value = kvp_value_new_double (*(double *) option->value);
 			break;
 		}
-		case KVP_TYPE_BINARY   : { break; } /* unsupported */
-		case KVP_TYPE_GLIST    : { break; } /* unsupported */
-		case KVP_TYPE_FRAME    : { break; } /* unsupported */
+	case KVP_TYPE_NUMERIC:
+		{
+			value = kvp_value_new_numeric (*(gnc_numeric *) option->value);
+			break;
+		}
+	case KVP_TYPE_STRING:
+		{
+			value = kvp_value_new_string ((const char *) option->value);
+			break;
+		}
+	case KVP_TYPE_GUID:
+		{
+			break;
+		}						/* unsupported */
+	case KVP_TYPE_TIMESPEC:
+		{
+			value = kvp_value_new_timespec (*(Timespec *) option->value);
+			break;
+		}
+	case KVP_TYPE_BINARY:
+		{
+			break;
+		}						/* unsupported */
+	case KVP_TYPE_GLIST:
+		{
+			break;
+		}						/* unsupported */
+	case KVP_TYPE_FRAME:
+		{
+			break;
+		}						/* unsupported */
 	}
-	if(value) {
-		temp = g_strdup_printf("/%s", option->option_name);
-		kvp_frame_set_value(be->backend_configuration, temp, value);
-		g_free(temp);
-		temp = g_strdup_printf("/%s/%s", QOF_CONFIG_DESC, option->option_name);
-		kvp_frame_set_string(be->backend_configuration, temp, option->description);
-		g_free(temp);
-		temp = g_strdup_printf("/%s/%s", QOF_CONFIG_TIP, option->option_name);
-		kvp_frame_set_string(be->backend_configuration, temp, option->tooltip);
-		g_free(temp);
+	if (value)
+	{
+		temp = g_strdup_printf ("/%s", option->option_name);
+		kvp_frame_set_value (be->backend_configuration, temp, value);
+		g_free (temp);
+		temp =
+			g_strdup_printf ("/%s/%s", QOF_CONFIG_DESC,
+			option->option_name);
+		kvp_frame_set_string (be->backend_configuration, temp,
+			option->description);
+		g_free (temp);
+		temp =
+			g_strdup_printf ("/%s/%s", QOF_CONFIG_TIP,
+			option->option_name);
+		kvp_frame_set_string (be->backend_configuration, temp,
+			option->tooltip);
+		g_free (temp);
 		/* only increment the counter if successful */
 		be->config_count = count;
 	}
 }
 
-KvpFrame* qof_backend_complete_frame(QofBackend *be)
+KvpFrame *
+qof_backend_complete_frame (QofBackend * be)
 {
-	g_return_val_if_fail(be, NULL);
+	g_return_val_if_fail (be, NULL);
 	be->config_count = 0;
 	return be->backend_configuration;
 }
 
-struct config_iterate {
+struct config_iterate
+{
 	QofBackendOptionCB fcn;
-	gpointer           data;
-	gint               count;
-	KvpFrame          *recursive;
+	gpointer data;
+	gint count;
+	KvpFrame *recursive;
 };
 
 /* Set the option with the default KvpValue,
@@ -251,7 +301,7 @@ manipulate the option in the supplied callback routine
 then set the value of the option into the KvpValue
 in the configuration frame. */
 static void
-config_foreach_cb (const char *key, KvpValue *value, gpointer data)
+config_foreach_cb (const gchar * key, KvpValue * value, gpointer data)
 {
 	QofBackendOption option;
 	gint64 int64;
@@ -261,143 +311,217 @@ config_foreach_cb (const char *key, KvpValue *value, gpointer data)
 	gchar *parent;
 	struct config_iterate *helper;
 
-	g_return_if_fail(key || value || data);
-	helper = (struct config_iterate*)data;
-	if(!helper->recursive) { PERR (" no parent frame"); return;	}
+	g_return_if_fail (key || value || data);
+	helper = (struct config_iterate *) data;
+	if (!helper->recursive)
+	{
+		PERR (" no parent frame");
+		return;
+	}
 	// skip the presets.
-	if(0 == safe_strcmp(key, QOF_CONFIG_DESC)) { return; }
-	if(0 == safe_strcmp(key, QOF_CONFIG_TIP)) { return; }
+	if (0 == safe_strcmp (key, QOF_CONFIG_DESC))
+	{
+		return;
+	}
+	if (0 == safe_strcmp (key, QOF_CONFIG_TIP))
+	{
+		return;
+	}
 	ENTER (" key=%s", key);
 	option.option_name = key;
-	option.type = kvp_value_get_type(value);
-	if(!option.type) { return; }
-	switch (option.type)
-	{ /* set the KvpFrame value into the option */
-		case KVP_TYPE_GINT64   : {
-			int64 = kvp_value_get_gint64(value);
-			option.value = (gpointer)&int64;
-			break; 
-		}
-		case KVP_TYPE_DOUBLE   : {
-			db = kvp_value_get_double(value);
-			option.value = (gpointer)&db;
-			break; 
-		}
-		case KVP_TYPE_NUMERIC  : {
-			num = kvp_value_get_numeric(value);
-			option.value = (gpointer)&num;
-			break; 
-		}
-		case KVP_TYPE_STRING   : {
-			option.value = (gpointer)kvp_value_get_string(value);
-			break;
-		}
-		case KVP_TYPE_TIMESPEC : {
-			ts = kvp_value_get_timespec(value);
-			option.value = (gpointer)&ts;
-			break;
-		}
-		case KVP_TYPE_GUID     : { break; } /* unsupported */
-		case KVP_TYPE_BINARY   : { break; } /* unsupported */
-		case KVP_TYPE_GLIST    : { break; } /* unsupported */
-		case KVP_TYPE_FRAME    : { break; } /* unsupported */
+	option.type = kvp_value_get_type (value);
+	if (!option.type)
+	{
+		return;
 	}
-	parent = g_strdup_printf("/%s/%s", QOF_CONFIG_DESC, key);
-	option.description = kvp_frame_get_string(helper->recursive, parent);
-	g_free(parent);
-	parent = g_strdup_printf("/%s/%s", QOF_CONFIG_TIP, key);
-	option.tooltip = kvp_frame_get_string(helper->recursive, parent);
-	g_free(parent);
+	switch (option.type)
+	{							/* set the KvpFrame value into the option */
+	case KVP_TYPE_GINT64:
+		{
+			int64 = kvp_value_get_gint64 (value);
+			option.value = (gpointer) & int64;
+			break;
+		}
+	case KVP_TYPE_DOUBLE:
+		{
+			db = kvp_value_get_double (value);
+			option.value = (gpointer) & db;
+			break;
+		}
+	case KVP_TYPE_NUMERIC:
+		{
+			num = kvp_value_get_numeric (value);
+			option.value = (gpointer) & num;
+			break;
+		}
+	case KVP_TYPE_STRING:
+		{
+			option.value = (gpointer) kvp_value_get_string (value);
+			break;
+		}
+	case KVP_TYPE_TIMESPEC:
+		{
+			ts = kvp_value_get_timespec (value);
+			option.value = (gpointer) & ts;
+			break;
+		}
+	case KVP_TYPE_GUID:
+		{
+			break;
+		}						/* unsupported */
+	case KVP_TYPE_BINARY:
+		{
+			break;
+		}						/* unsupported */
+	case KVP_TYPE_GLIST:
+		{
+			break;
+		}						/* unsupported */
+	case KVP_TYPE_FRAME:
+		{
+			break;
+		}						/* unsupported */
+	}
+	parent = g_strdup_printf ("/%s/%s", QOF_CONFIG_DESC, key);
+	option.description = kvp_frame_get_string (helper->recursive, parent);
+	g_free (parent);
+	parent = g_strdup_printf ("/%s/%s", QOF_CONFIG_TIP, key);
+	option.tooltip = kvp_frame_get_string (helper->recursive, parent);
+	g_free (parent);
 	helper->count++;
-    /* manipulate the option */
+	/* manipulate the option */
 	helper->fcn (&option, helper->data);
 	switch (option.type)
-	{ /* set the option value into the KvpFrame */
-		case KVP_TYPE_GINT64   : {
-			kvp_frame_set_gint64(helper->recursive, key, 
-				(*(gint64*)option.value));
+	{							/* set the option value into the KvpFrame */
+	case KVP_TYPE_GINT64:
+		{
+			kvp_frame_set_gint64 (helper->recursive, key,
+				(*(gint64 *) option.value));
 			break;
 		}
-		case KVP_TYPE_DOUBLE   : {
-			kvp_frame_set_double(helper->recursive, key, 
-				(*(double*)option.value));
-			break; 
-		}
-		case KVP_TYPE_NUMERIC  : {
-			kvp_frame_set_numeric(helper->recursive, key, 
-				(*(gnc_numeric*)option.value));
-			break; 
-		}
-		case KVP_TYPE_STRING   : {
-			kvp_frame_set_string(helper->recursive, key, 
-				(gchar*)option.value);
+	case KVP_TYPE_DOUBLE:
+		{
+			kvp_frame_set_double (helper->recursive, key,
+				(*(double *) option.value));
 			break;
 		}
-		case KVP_TYPE_TIMESPEC : {
-			kvp_frame_set_timespec(helper->recursive, key, 
-				(*(Timespec*)option.value));
+	case KVP_TYPE_NUMERIC:
+		{
+			kvp_frame_set_numeric (helper->recursive, key,
+				(*(gnc_numeric *) option.value));
 			break;
 		}
-		case KVP_TYPE_GUID     : { break; } /* unsupported */
-		case KVP_TYPE_BINARY   : { break; } /* unsupported */
-		case KVP_TYPE_GLIST    : { break; } /* unsupported */
-		case KVP_TYPE_FRAME    : { break; } /* unsupported */
+	case KVP_TYPE_STRING:
+		{
+			kvp_frame_set_string (helper->recursive, key,
+				(gchar *) option.value);
+			break;
+		}
+	case KVP_TYPE_TIMESPEC:
+		{
+			kvp_frame_set_timespec (helper->recursive, key,
+				(*(Timespec *) option.value));
+			break;
+		}
+	case KVP_TYPE_GUID:
+		{
+			break;
+		}						/* unsupported */
+	case KVP_TYPE_BINARY:
+		{
+			break;
+		}						/* unsupported */
+	case KVP_TYPE_GLIST:
+		{
+			break;
+		}						/* unsupported */
+	case KVP_TYPE_FRAME:
+		{
+			break;
+		}						/* unsupported */
 	}
 	LEAVE (" ");
 }
 
-void qof_backend_option_foreach(KvpFrame *config, QofBackendOptionCB cb, gpointer data)
+void
+qof_backend_option_foreach (KvpFrame * config, QofBackendOptionCB cb,
+	gpointer data)
 {
 	struct config_iterate helper;
 
-	if(!config || !cb) { return; }
+	if (!config || !cb)
+	{
+		return;
+	}
 	ENTER (" ");
 	helper.fcn = cb;
 	helper.count = 1;
 	helper.data = data;
 	helper.recursive = config;
-	kvp_frame_for_each_slot(config, config_foreach_cb, &helper);
+	kvp_frame_for_each_slot (config, config_foreach_cb, &helper);
 	LEAVE (" ");
 }
 
 void
-qof_backend_load_config(QofBackend *be, KvpFrame *config)
+qof_backend_load_config (QofBackend * be, KvpFrame * config)
 {
-	if(!be || !config) { return; }
-	if(!be->load_config) { return; }
+	if (!be || !config)
+	{
+		return;
+	}
+	if (!be->load_config)
+	{
+		return;
+	}
 	(be->load_config) (be, config);
 }
 
-KvpFrame*
-qof_backend_get_config(QofBackend *be)
+KvpFrame *
+qof_backend_get_config (QofBackend * be)
 {
-	if(!be) { return NULL; }
-	if(!be->get_config) { return NULL; }
+	if (!be)
+	{
+		return NULL;
+	}
+	if (!be->get_config)
+	{
+		return NULL;
+	}
 	return (be->get_config) (be);
 }
 
 gboolean
-qof_backend_commit_exists(QofBackend *be)
+qof_backend_commit_exists (QofBackend * be)
 {
-	if(!be) { return FALSE; }
-	if(be->commit) { return TRUE; }
-	else { return FALSE; }
+	if (!be)
+	{
+		return FALSE;
+	}
+	if (be->commit)
+	{
+		return TRUE;
+	}
+	else
+	{
+		return FALSE;
+	}
 }
 
 gboolean
-qof_load_backend_library (const char *directory, 
-				const char* filename, const char* init_fcn)
+qof_load_backend_library (const gchar * directory,
+	const gchar * filename, const gchar * init_fcn)
 {
 	gchar *fullpath;
-	typedef void (* backend_init) (void);
+	typedef void (*backend_init) (void);
 	GModule *backend;
 	backend_init gmod_init;
 	gpointer g;
 
-	g_return_val_if_fail(g_module_supported(), FALSE);
-	fullpath = g_module_build_path(directory, filename);
-	backend = g_module_open(fullpath, G_MODULE_BIND_LAZY);
-	if(!backend) { 
+	g_return_val_if_fail (g_module_supported (), FALSE);
+	fullpath = g_module_build_path (directory, filename);
+	backend = g_module_open (fullpath, G_MODULE_BIND_LAZY);
+	if (!backend)
+	{
 		g_message ("%s: %s\n", PACKAGE, g_module_error ());
 		return FALSE;
 	}
@@ -407,8 +531,8 @@ qof_load_backend_library (const char *directory,
 		g_message ("%s: %s\n", PACKAGE, g_module_error ());
 		return FALSE;
 	}
-	g_module_make_resident(backend);
-	gmod_init();
+	g_module_make_resident (backend);
+	gmod_init ();
 	return TRUE;
 }
 

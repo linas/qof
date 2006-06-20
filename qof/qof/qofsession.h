@@ -107,17 +107,17 @@
 
 /* PROTOTYPES ******************************************************/
 
-typedef struct _QofSession    QofSession;
+typedef struct _QofSession QofSession;
 
-QofSession * qof_session_new (void);
-void         qof_session_destroy (QofSession *session);
-QofSession * qof_session_get_current_session (void);
-void	       qof_session_set_current_session (QofSession *session);
+QofSession *qof_session_new (void);
+void qof_session_destroy (QofSession * session);
+QofSession *qof_session_get_current_session (void);
+void qof_session_set_current_session (QofSession * session);
 
 /** The qof_session_swap_data () method swaps the book of
  *    the two given sessions. It is useful
  *    for 'Save As' type functionality. */
-void qof_session_swap_data (QofSession *session_1, QofSession *session_2);
+void qof_session_swap_data (QofSession * session_1, QofSession * session_2);
 
 /** The qof_session_begin () method begins a new session.
  *    It takes as an argument the book id. The book id must be a string
@@ -146,8 +146,8 @@ void qof_session_swap_data (QofSession *session_1, QofSession *session_2);
  *    If an error occurs, it will be pushed onto the session error
  *    stack, and that is where it should be examined.
  */
-void qof_session_begin (QofSession *session, const char * book_id,
-                         gboolean ignore_lock, gboolean create_if_nonexistent);
+void qof_session_begin (QofSession * session, const char *book_id,
+						gboolean ignore_lock, gboolean create_if_nonexistent);
 
 
 /**
@@ -164,16 +164,16 @@ void qof_session_begin (QofSession *session, const char * book_id,
  * session.
  */
 typedef void (*QofPercentageFunc) (const char *message, double percent);
-void qof_session_load (QofSession *session,
-		       QofPercentageFunc percentage_func);
+void qof_session_load (QofSession * session,
+					   QofPercentageFunc percentage_func);
 
 /** @name Session Errors 
  @{ */
 /** The qof_session_get_error() routine can be used to obtain the reason
  *    for any failure.  Calling this routine returns the current error.
  */
-QofBackendError qof_session_get_error (QofSession *session);
-const char * qof_session_get_error_message(QofSession *session);
+QofBackendError qof_session_get_error (QofSession * session);
+const char *qof_session_get_error_message (QofSession * session);
 
 /**
  * The qof_session_pop_error() routine can be used to obtain the reason
@@ -185,7 +185,7 @@ const char * qof_session_get_error_message(QofSession *session);
  *
  *    See qofbackend.h for a listing of returned errors.
  */
-QofBackendError qof_session_pop_error (QofSession *session);
+QofBackendError qof_session_pop_error (QofSession * session);
 /** @} */
 
 /** The qof_session_add_book() allows additional books to be added to
@@ -195,9 +195,9 @@ QofBackendError qof_session_pop_error (QofSession *session);
  * XXX Only one open book at a time per session is allowed!?
  * XXX each book gets its own unique backend ???
  */
-void qof_session_add_book (QofSession *session, QofBook *book);
+void qof_session_add_book (QofSession * session, QofBook * book);
 
-QofBook * qof_session_get_book (QofSession *session);
+QofBook *qof_session_get_book (QofSession * session);
 
 /**
  *    The qof_session_get_file_path() routine returns the fully-qualified file
@@ -209,22 +209,22 @@ QofBook * qof_session_get_book (QofSession *session);
  *    filepath is derived from the url by substituting commas for
  *    slashes).
  *
- * The qof_session_get_url() routine returns the url that was opened.
+ *    The qof_session_get_url() routine returns the url that was opened.
  *    URL's for local files take the form of 
  *    file:/some/where/some/file.gml
  */
-const char * qof_session_get_file_path (QofSession *session);
+const char *qof_session_get_file_path (QofSession * session);
 
-const char * qof_session_get_url (QofSession *session);
+const char *qof_session_get_url (QofSession * session);
 
 /**
  * The qof_session_not_saved() subroutine will return TRUE
  *    if any data in the session hasn't been saved to long-term storage.
  */
-gboolean qof_session_not_saved(QofSession *session);
+gboolean qof_session_not_saved (QofSession * session);
 
 /** Allows the backend to warn the user if a dataset already exists. */
-gboolean qof_session_save_may_clobber_data (QofSession *session);
+gboolean qof_session_save_may_clobber_data (QofSession * session);
 
 /** The qof_session_save() method will commit all changes that have been
  *    made to the session. For the file backend, this is nothing
@@ -232,8 +232,8 @@ gboolean qof_session_save_may_clobber_data (QofSession *session);
  *    For the SQL backend, this is typically a no-op (since all data
  *    has already been written out to the database.
  */
-void     qof_session_save (QofSession *session,
-			   QofPercentageFunc percentage_func);
+void qof_session_save (QofSession * session,
+					   QofPercentageFunc percentage_func);
 /**
  * The qof_session_end() method will release the session lock. For the
  *    file backend, it will *not* save the data to a file. Thus, 
@@ -242,7 +242,7 @@ void     qof_session_save (QofSession *session,
  *    been written out before this, and so this routines wouldn't 
  *    roll-back anything; it would just shut the connection.
  */
-void     qof_session_end  (QofSession *session);
+void qof_session_end (QofSession * session);
 
 /** @name Copying entities between sessions.
 
@@ -291,7 +291,8 @@ the GUID of the source entity.
 with the same GUID already, otherwise TRUE.
 */
 
-gboolean qof_entity_copy_to_session(QofSession* new_session, QofEntity* original);
+gboolean qof_entity_copy_to_session (QofSession * new_session,
+									 QofEntity * original);
 
 /** @brief Copy a GList of entities to another session
 
@@ -311,7 +312,7 @@ unique, the list can be copied.
 with the same GUID. Otherwise TRUE.
 
 */
-gboolean qof_entity_copy_list(QofSession *new_session, GList *entity_list);
+gboolean qof_entity_copy_list (QofSession * new_session, GList * entity_list);
 
 /** @brief Copy a QofCollection of entities.
 
@@ -326,7 +327,8 @@ no support for handling collisions - instead, use \ref BookMerge
 with the same GUID. Otherwise TRUE.
 */
 
-gboolean qof_entity_copy_coll(QofSession *new_session, QofCollection *entity_coll);
+gboolean qof_entity_copy_coll (QofSession * new_session,
+							   QofCollection * entity_coll);
 
 /** \brief Recursively copy a collection of entities to a session.
 
@@ -357,7 +359,7 @@ one of the references fails to copy.
 
 */
 gboolean
-qof_entity_copy_coll_r(QofSession *new_session, QofCollection *coll);
+qof_entity_copy_coll_r (QofSession * new_session, QofCollection * coll);
 
 /** \brief Recursively copy a single entity to a new session.
 
@@ -378,8 +380,7 @@ the top level entity has no references, this is identical to
 <b>Note</b> : Some entities may have been copied successfully even if
 one of the references fails to copy.
 */
-gboolean
-qof_entity_copy_one_r(QofSession *new_session, QofEntity *ent);
+gboolean qof_entity_copy_one_r (QofSession * new_session, QofEntity * ent);
 
 /** @} 
 */
@@ -408,13 +409,13 @@ backends may return a ::QofBackendError.
  *  backend has pending events which must be processed to bring 
  *  the engine up to date with the backend.
  */
-gboolean qof_session_events_pending (QofSession *session);
+gboolean qof_session_events_pending (QofSession * session);
 
 /**  The qof_session_process_events() method will process any events
  *   indicated by the qof_session_events_pending() method. It returns 
  *   TRUE if the engine was modified while engine events were suspended.
  */
-gboolean qof_session_process_events (QofSession *session);
+gboolean qof_session_process_events (QofSession * session);
 /** @} */
 
 /** Register a function to be called just before a session is closed.
@@ -429,7 +430,7 @@ void qof_session_add_close_hook (GFunc fn, gpointer data);
  *  specified session is about to be closed.
  *
  *  @param session A pointer to the session being closed. */
-void qof_session_call_close_hooks (QofSession *session);
+void qof_session_call_close_hooks (QofSession * session);
 
 #endif /* QOF_SESSION_H */
 /** @} */

@@ -1,5 +1,5 @@
 /********************************************************************\
- * qof-util.h -- QOF utility functions                              *
+ * qofutil.h -- QOF utility functions                              *
  *                                                                  *
  * This program is free software; you can redistribute it and/or    *
  * modify it under the terms of the GNU General Public License as   *
@@ -21,7 +21,7 @@
 
 /** @addtogroup Utilities
     @{ */
-/** @file qof-util.h 
+/** @file qofutil.h 
     @brief QOF utility functions
     @author Copyright (C) 1997 Robin D. Clark <rclark@cs.hmc.edu>
     @author Copyright (C) 2000 Bill Gribble <grib@billgribble.com>
@@ -35,6 +35,7 @@
 #include <stddef.h>
 #include "qof.h"
 #include "qoflog.h"
+#include "qofdate.h"
 #include "qofutil.h"
 #include "qofbackend-p.h"
 #include "qofbook.h"
@@ -137,7 +138,7 @@
 /** @name Convenience wrappers
    @{
 */
-   
+
 /** \brief Initialise the Query Object Framework 
 
 Use in place of separate init functions (like guid_init()
@@ -195,19 +196,19 @@ gint null_strcmp (const gchar * da, const gchar * db);
 /** Search for str2 in first nchar chars of str1, ignore case. Return
  * pointer to first match, or null. These are just like that strnstr
  * and the strstr functions, except that they ignore the case. */
-extern gchar *strncasestr(const guchar *str1, const guchar *str2, 
-	size_t len);
+extern gchar *strncasestr (const guchar * str1, const guchar * str2,
+						   size_t len);
 
-extern gchar *strcasestr(const gchar *str1, const gchar *str2);
+extern gchar *strcasestr (const gchar * str1, const gchar * str2);
 
 /** The ultostr() subroutine is the inverse of strtoul(). It accepts a
  * number and prints it in the indicated base.  The returned string
  * should be g_freed when done.  */
-gchar * ultostr (gulong val, gint base);
+gchar *ultostr (gulong val, gint base);
 
 /** Returns true if string s is a number, possibly surrounded by
  * whitespace. */
-gboolean gnc_strisnum(const guchar *s);
+gboolean gnc_strisnum (const guchar * s);
 
 #ifndef HAVE_STPCPY
 #define stpcpy g_stpcpy
@@ -216,7 +217,7 @@ gboolean gnc_strisnum(const guchar *s);
 /** Return NULL if the field is whitespace (blank, tab, formfeed etc.)  
  *  Else return pointer to first non-whitespace character. 
  */
-const gchar * qof_util_whitespace_filter (const gchar * val);
+const gchar *qof_util_whitespace_filter (const gchar * val);
 
 /** Return integer 1 if the string starts with 't' or 'T' or 
  *  contains the word 'true' or 'TRUE'; if string is a number, 
@@ -227,7 +228,7 @@ gint qof_util_bool_to_int (const gchar * val);
 
 The returned string must be freed by the caller.
 */
-gchar* qof_util_param_as_string(QofEntity *ent, QofParam *param);
+gchar *qof_util_param_as_string (QofEntity * ent, QofParam * param);
 
 /** The QOF String Cache:
  *
@@ -264,12 +265,12 @@ void qof_util_string_cache_destroy (void);
 /** You can use this function as a destroy notifier for a GHashTable
    that uses common strings as keys (or values, for that matter.)
 */
-void qof_util_string_cache_remove(gconstpointer key);
+void qof_util_string_cache_remove (gconstpointer key);
 
 /** You can use this function with g_hash_table_insert(), for the key
    (or value), as long as you use the destroy notifier above.
 */
-gpointer qof_util_string_cache_insert(gconstpointer key);
+gpointer qof_util_string_cache_insert (gconstpointer key);
 
 #define CACHE_INSERT(str) qof_util_string_cache_insert((gconstpointer)(str))
 #define CACHE_REMOVE(str) qof_util_string_cache_remove((str))
@@ -281,10 +282,10 @@ gpointer qof_util_string_cache_insert(gconstpointer key);
  *     }
  * It avoids unnecessary ejection by doing INSERT before REMOVE.
 */
-#define CACHE_REPLACE(dst, src) do {               \
+#define CACHE_REPLACE(dst, src) do {          \
         gpointer tmp = CACHE_INSERT((src));   \
-        CACHE_REMOVE((dst));                       \
-        (dst) = tmp;                                   \
+        CACHE_REMOVE((dst));                  \
+        (dst) = tmp;                          \
     } while (0)
 
 #define QOF_CACHE_NEW(void) qof_util_string_cache_insert("")
@@ -330,7 +331,7 @@ gpointer qof_util_string_cache_insert(gconstpointer key);
 The macro cannot be used in a function that returns a value,
 this function can be used instead.
 */
-gboolean qof_begin_edit(QofInstance *inst);
+gboolean qof_begin_edit (QofInstance * inst);
 
 /**
  * commit_edit helpers
@@ -378,7 +379,7 @@ gboolean qof_begin_edit(QofInstance *inst);
 The macro cannot be used in a function that returns a value,
 this function can be used instead. Only Part1 is implemented.
 */
-gboolean qof_commit_edit(QofInstance *inst);
+gboolean qof_commit_edit (QofInstance * inst);
 
 /**
  * part2 -- deal with the backend
@@ -400,10 +401,10 @@ gboolean qof_commit_edit(QofInstance *inst);
  * Returns TRUE, if the commit succeeded, FALSE otherwise.
  */
 gboolean
-qof_commit_edit_part2(QofInstance *inst, 
-                      void (*on_error)(QofInstance *, QofBackendError), 
-                      void (*on_done)(QofInstance *), 
-                      void (*on_free)(QofInstance *));
+qof_commit_edit_part2 (QofInstance * inst,
+					   void (*on_error) (QofInstance *, QofBackendError),
+					   void (*on_done) (QofInstance *),
+					   void (*on_free) (QofInstance *));
 
 /** \brief Macro version of ::qof_commit_edit_part2
 
@@ -446,6 +447,6 @@ qof_commit_edit_part2(QofInstance *inst,
      return;                                                     \
   }                                                              \
 }
-    
+
 #endif /* QOF_UTIL_H */
 /** @} */

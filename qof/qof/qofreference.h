@@ -20,7 +20,7 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
- 
+
 #ifndef _QOFREFERENCE_H
 #define _QOFREFERENCE_H
 
@@ -102,17 +102,18 @@ It is used by the entity copy functions and by the QSF backend.
 Creates a GList stored in the Book hashtable to contain
 repeated references for a single entity.
 */
-typedef struct qof_entity_reference {
-	QofIdType       choice_type;/**< Used when the reference is a QOF_TYPE_CHOICE type
+typedef struct qof_entity_reference
+{
+	QofIdType choice_type;		/**< Used when the reference is a QOF_TYPE_CHOICE type
 	- stores the actual type of the reference from the list of available choices. */
-	QofIdType       type;       /**< The type of the original entity -
+	QofIdType type;				/**< The type of the original entity -
 	use the param->param_type to obtain the type of the reference entity.
 	For a QOF_TYPE_COLLECT, obtain the collection and get the type from that. */
-	GUID            *ref_guid;  /**< The GUID of the REFERENCE entity */
-	const QofParam  *param;      /**< The parameter of the original entity to use 
+	GUID *ref_guid;				/**< The GUID of the REFERENCE entity */
+	const QofParam *param;		 /**< The parameter of the original entity to use 
 	to get or set the reference. */
-	const GUID      *ent_guid;   /**< The GUID of the original entity. */
-}QofEntityReference;
+	const GUID *ent_guid;		 /**< The GUID of the original entity. */
+} QofEntityReference;
 
 /** \brief Adds a new reference to the partial book data hash.
 
@@ -122,7 +123,8 @@ If the book is not already marked as partial, it will be marked as
 partial.
 */
 void
-qof_session_update_reference_list(QofSession *session, QofEntityReference *reference);
+qof_session_update_reference_list (QofSession * session,
+								   QofEntityReference * reference);
 
 /** Used as the key value for the QofBook data hash.
  *
@@ -165,7 +167,7 @@ is not updated. The referenceList is unchanged (in case the child is added
 later).
 
 */
-void qof_book_set_references(QofBook *book);
+void qof_book_set_references (QofBook * book);
 
 /** \brief Get a reference from this entity to another entity.
 
@@ -201,8 +203,8 @@ the integrity of the partial book during sequential copy operations.
 
 @return FALSE on error, otherwise a pointer to the QofEntityReference.
 */
-QofEntityReference*
-qof_entity_get_reference_from(QofEntity *ent, const QofParam *param);
+QofEntityReference *qof_entity_get_reference_from (QofEntity * ent,
+												   const QofParam * param);
 
 /** @} */
 /** @} */

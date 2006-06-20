@@ -28,7 +28,7 @@
 
     @{ */
 /** @file qofinstance.h 
- *  @brief Object instance holds common fields that most gnucash objects use.
+ *  @brief Object instance holds common fields that most QofObjects use.
  * 
  *  @author Copyright (C) 2003,2004 Linas Vepstas <linas@linas.org>
  */
@@ -37,10 +37,10 @@
 #define QOF_INSTANCE_H
 
 #include "guid.h"
-#include "gnc-date.h"
-#include "kvp_frame.h"
 #include "qofbook.h"
 #include "qofid.h"
+#include "qoftime.h"
+#include "kvp_frame.h"
 
 /* --- type macros --- */
 /* cheesy, but will do for now, eventually should be more gtk-like, handle
@@ -54,16 +54,16 @@ void qof_instance_init (QofInstance *, QofIdType, QofBook *);
 
 /** release the data associated with this instance. Dont actually free 
  * the memory associated with the instance. */
-void qof_instance_release (QofInstance *inst);
+void qof_instance_release (QofInstance * inst);
 
 /** Return the book pointer */
-QofBook * qof_instance_get_book (QofInstance *);
+QofBook *qof_instance_get_book (QofInstance *);
 
 /** Return the GUID of this instance */
-const GUID * qof_instance_get_guid (QofInstance *);
+const GUID *qof_instance_get_guid (QofInstance *);
 
 /** Return the pointer to the kvp_data */
-KvpFrame* qof_instance_get_slots (QofInstance *);
+KvpFrame *qof_instance_get_slots (QofInstance *);
 
 /** Return the last time this instance was modified.  If QofInstances
  *  are used with the QofObject storage backends, then the instance
@@ -71,7 +71,7 @@ KvpFrame* qof_instance_get_slots (QofInstance *);
  *  multi-user updates.  Non-backend code should not set the update 
  *  times. 
  */
-Timespec qof_instance_get_last_update (QofInstance *inst);
+QofTime *qof_instance_get_update_time (QofInstance * inst);
 
 /** Compare two instances, based on thier last update times. 
  *  Returns a negative, zero or positive value, respectively, 
@@ -79,7 +79,7 @@ Timespec qof_instance_get_last_update (QofInstance *inst);
  *  Accepts NULL pointers, NULL's are by definition earlier
  *  than any value.
  */
-int qof_instance_version_cmp (QofInstance *left, QofInstance *right);
+gint qof_instance_version_cmp (QofInstance * left, QofInstance * right);
 
 /** Return value of is_dirty flag */
 gboolean qof_instance_is_dirty (QofInstance *);
@@ -88,15 +88,15 @@ gboolean qof_instance_is_dirty (QofInstance *);
 
 Sets this instance AND the collection as dirty.
 */
-void qof_instance_set_dirty(QofInstance* inst);
+void qof_instance_set_dirty (QofInstance * inst);
 
-gboolean qof_instance_check_edit(QofInstance *inst);
+gboolean qof_instance_check_edit (QofInstance * inst);
 
-gboolean qof_instance_do_free(QofInstance *inst);
+gboolean qof_instance_do_free (QofInstance * inst);
 
-void qof_instance_mark_free(QofInstance *inst);
+void qof_instance_mark_free (QofInstance * inst);
 
-QofInstance* qof_instance_create (QofIdType type, QofBook *book);
+QofInstance *qof_instance_create (QofIdType type, QofBook * book);
 
 /** Pair things up.  This routine inserts a kvp value into each instance
  *  containing the guid of the other.  In this way, if one has one of the
@@ -107,7 +107,7 @@ QofInstance* qof_instance_create (QofIdType type, QofBook *book);
  *  the gemini kvp includes the book guid as well, so that the right book can
  *  be found.
  */
-void qof_instance_gemini (QofInstance *to, QofInstance *from);
+void qof_instance_gemini (QofInstance * to, QofInstance * from);
 
 /** The qof_instance_lookup_twin() routine will find the "twin" of this
  *    instance 'src' in the given other 'book' (if the twin exists).
@@ -123,7 +123,7 @@ void qof_instance_gemini (QofInstance *to, QofInstance *from);
  *    in 'book', and return it.  If not found, it returns NULL.  This
  *    routine uses the 'gemini' kvp values to do its work. 
  */
-QofInstance * qof_instance_lookup_twin (QofInstance *src, QofBook *book);
+QofInstance *qof_instance_lookup_twin (QofInstance * src, QofBook * book);
 
 /* @} */
 /* @} */
