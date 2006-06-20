@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: QOF 0.6.4\n"
 "Report-Msgid-Bugs-To: qof-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2006-04-11 20:17+0100\n"
+"POT-Creation-Date: 2006-05-13 21:10+0100\n"
 "PO-Revision-Date: 2006-04-11 20:22+0100\n"
 "Last-Translator: Neil Williams <linux@codehelp.co.uk>\n"
 "Language-Team: English (British) <en_gb@li.org>\n"
@@ -16,11 +16,11 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms:  nplurals=2; plural=(n != 1);\n"
 
-#: ../backend/file/qsf-backend.c:103
+#: ../backend/file/qsf-backend.c:102
 msgid "Level of compression to use: 0 for none, 9 for highest."
 msgstr "Level of compression to use: 0 for none, 9 for highest."
 
-#: ../backend/file/qsf-backend.c:104
+#: ../backend/file/qsf-backend.c:103
 msgid ""
 "QOF can compress QSF XML files using gzip. Note that compression is not used "
 "when outputting to STDOUT."
@@ -51,4 +51,3 @@ msgid ""
 msgstr ""
 "QSF defaults to UTF-8. Other encodings are supported by passing the encoding "
 "string in this option."
-

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: qof-0.6.1\n"
 "Report-Msgid-Bugs-To: qof-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2006-03-10 21:49+0000\n"
+"POT-Creation-Date: 2006-05-13 21:10+0100\n"
 "PO-Revision-Date: 2006-01-11 14:58+1030\n"
 "Last-Translator: Clytie Siddall <clytie@riverland.net.au>\n"
 "Language-Team: Vietnamese <gnomevi-list@lists.sourceforge.net>\n"
@@ -16,11 +16,11 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0\n"
 "X-Generator: LocFactoryEditor 1.6b23\n"
 
-#: ../backend/file/qsf-backend.c:90
+#: ../backend/file/qsf-backend.c:102
 msgid "Level of compression to use: 0 for none, 9 for highest."
 msgstr "Mức độ nén cần dùng: từ 0 (không có) đến 9 (cao nhất)."
 
-#: ../backend/file/qsf-backend.c:91
+#: ../backend/file/qsf-backend.c:103
 msgid ""
 "QOF can compress QSF XML files using gzip. Note that compression is not used "
 "when outputting to STDOUT."
@@ -28,14 +28,24 @@ msgstr ""
 "QOF có thể nén tập tin XML QSF bằng gzip. Hãy ghi chú rằng không nén gì khi "
 "xuất ra thiết bị xuất chuẩn."
 
-#: ../backend/file/qsf-backend.c:99
+#: ../backend/file/qsf-backend.c:112
 msgid "List of QSF map files to use for this session."
 msgstr "Danh sách tập tin ánh xạ QSF cần dùng trong phiên chạy này."
 
-#: ../backend/file/qsf-backend.c:100
+#: ../backend/file/qsf-backend.c:113
 msgid ""
 "QOF can convert objects within QSF XML files using a map of the changes "
 "required."
 msgstr ""
 "QOF có thể chuyển đổi đối tượng ở trong tập tin XML QSF, bằng ánh xạ các "
 "thay đổi."
+
+#: ../backend/file/qsf-backend.c:121
+msgid "Encoding string to use when writing the XML file."
+msgstr ""
+
+#: ../backend/file/qsf-backend.c:122
+msgid ""
+"QSF defaults to UTF-8. Other encodings are supported by passing the encoding "
+"string in this option."
+msgstr ""

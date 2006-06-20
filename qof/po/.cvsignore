@@ -6,4 +6,6 @@ POTFILES.in
 stamp-it
 *.pot
 *.gmo
+messages.mo
+missing
 

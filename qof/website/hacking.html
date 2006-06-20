@@ -12,14 +12,14 @@ title="Query Object Framework">QOF</acronym></h1>
 <div id="resource">
 <ul>
 <li><a href="index.html#intro">Introduction</a></li>
+<li><a href="#roadmap">Roadmap</a></li>
+<li><a href="#libsql">QOF and libgda</a></li>
+<li><a href="#docs">Packaging documentation.</a></li>
 <li><a href="http://sourceforge.net/projects/qof/">SourceForge</a></li>
 <li><a href="index.html#docs">Documentation</a></li>
 <li><a href="index.html#download">Downloads</a></li>
 <li><a href="index.html#devel">Development</a></li>
-<li><a href="index.html#example">Examples</a><ul>
-<li><a href="index.html#generate">Generating</a></li>
-<li><a href="index.html#online">Online</a></li></ul>
-</li>
+<li><a href="index.html#online">Online</a></li>
 <li><a href="index.html#origins">Origins</a></li>
 <li><a href="index.html#functions">Function</a></li>
 <li><a href="index.html#goals">Goals</a></li>
@@ -33,7 +33,7 @@ title="Query Object Framework">QOF</acronym></h1>
 symbol of the same name"></div>
 
 <h2>Advice for packagers / maintainers</h2>
-<h3>Updated March 2006 for QOF 0.6.3</h3>
+<h3>Updated May 2006 for QOF 0.7.0</h3>
 
 <ul>
 <li>Building against QOF
@@ -53,7 +53,6 @@ symbol of the same name"></div>
 </ul>
 </li>
 <li><a href="#dev">Using libqof-dev</a></li>
-<li><a href="#libsql">lib/libsql</a></li>
 </ul>
 
 <h2>BUILDING AGAINST QOF</h2>
@@ -113,11 +112,11 @@ http://linux.codehelp.co.uk/cashutil/</a></p>
 <h3 id="libqof1">libqof1 API/ABI compatibility.</h3>
 
 <div>
-<p>During the life of the QOF 0.6.x tree, various functions will be
-deprecated and renamed - leaving a #define to support the old name. New
-code will be expected to use the new name and old code the #define
-version. Then when all such code has been sorted out, applications have
-two choices:</p>
+<p>During the life of the QOF the 0.6.x, 0.7.x and 0.8.x trees, various 
+functions will be deprecated and renamed - leaving a #define or deprecated
+version to support the old name. New code will be expected to use the new 
+name and old code the deprecated version. Then when all such code has been 
+sorted out, applications have two choices:</p>
 <ol>
 <li>Move to the new API with the library, or</li>
 <li>Integrate the #define's in a header of their own.</li>
@@ -177,6 +176,10 @@ export PAGER="less -s"
 
 <p>To only use these for this one build, create a bash script and export
 the variables before calling ./autogen.sh</p>
+
+<p>QOF is no longer routinely built on OSX. If you encounter problems, post
+the '<code>config.h</code>' file from the top directory of your build to
+the QOF-devel mailing list.<p>
 </div>
 <hr>
 <h2>PACKAGING QOF</h2>
@@ -221,6 +224,7 @@ need to only use qof.h to avoid problems moving to libqof2.</p>
 <hr>
 
 <h3 id="libsql">Replacement of lib/libsql</h3>
+<h4>Updated!</h4>
 <div>
 <p>
 The code in lib/libsql came from the libgda package
@@ -228,31 +232,132 @@ at about v1.0.3 and is now commonly available, including
 on Mac OSX via fink - albeit at only v1.0.4-3.</p>
 
 <p>Fedora Core 3 has 1.0.4, Fedora Core 4 has 1.2.0 and Debian
-has 1.2.1-2.</p>
+has 1.2.2.</p>
 
-<p>Therefore, libgda will be used wherever possible and lib/libsql
-will eventually be reserved only for systems that cannot use libgda.</p>
+<p>libgda comes in stable and unstable releases. At time of
+writing, the stable release is 1.2.2 (libgda2-3 in Debian).
+<b>QOF does not support the unstable libgda releases.</b>
+If your distribution has libgda 1.3.x or 1.9.x, please do <b>not</b>
+patch QOF to use the unstable code. Instead, let QOF use it's internal
+code. QOF currently uses a fraction of the libgda codebase and until
+a full QOF/GDA backend is available, QOF will not be supporting
+any of the unstable libgda releases.
+</p>
 
 <p>This also helps complete the CashUtil project that will need the
 SQL handling in QOF and GnuCash itself which is likely to use more
 SQL directly in the future.</p>
 </div>
+
+<h3 id="roadmap">Roadmap</h3>
+<div>
+<p>Outline plan of the next few releases. All items are subject to change,
+but this is how it looks so far.</p>
+
+<h4>QOF 0.7.0</h4>
+
+<ol><li>QOF 0.6.5 is reserved in case there are critical bugs besides the
+64bit issue already patched.</li>
+
+<li>The next release is intended to be QOF 0.7.0 which will include
+QofUndo from CashUtil and an overhaul of the QOF date handling. 0.7.0
+will replace the test-date.c check code completely - implementing a new
+and more robust check.</li>
+
+<li>There will be a delay before the 0.7.0 release - I expect it to be
+ready in July or August.</li>
+
+<li>Changes from 0.6.4 to 0.7.0 will primarily be made to provide support
+and bug fixes for CashUtil and pilot-qof, including QofLogic at some
+point during the life of 0.7.x.</li>
+
+<li>When pilot-link 0.12 is finally released, an interim release of
+pilot-qof will follow (the much awaited 0.1.x series). This will occur
+with or without QOF 0.7.0, depending on exactly when pilot-link 0.12 is
+released.</li>
+
+<li>QOF 0.7.x will still be libqof1 - the same API, same SONAME - in
+0.7.0 deprecated gnc-date.c code will be moved into deprecated.c as before.</li>
+</ol>
+<h4>Plans beyond 0.7.0</h4>
+
+<ol>
+<li><h4>QofNumeric</h4><p>
+The next section to be converted to the QOF naming conventions will be
+gnc_numeric (QofNumeric) - this will be a simple change of struct and
+function names. <b>Expected : 0.7.1, September 2006.</b></p></li>
+
+<li><h4>QSQLBackend</h4><p>
+Embedded users of libqof1 will benefit from a SQLite compatible backend.
+This will be a GModule that can replace the QSF Backend for embedded
+systems that cannot use the ever expanding libxml2. QSQL will only be
+suitable for embedded systems - it is not intended for use on larger
+systems. In particular, it might not support the full range of QOF
+operations. <b>Possibly in 0.7.0, otherwise 0.7.1, September 2006.</b></p></li>
+
+<li><h4>QOF/GDA Backend</h4><p>
+A more comprehensive backend based on libgda is planned, supporting
+various databases via GnomeDB plugins. This will not be implemented
+directly on embedded systems. This could be a relatively large amount of
+new code, expect for early 2007. <b>Likely to take QOF to 0.8.0, still as
+libqof1.</b></p></li>
+
+<li><h4>QofKvp</h4><p>
+Various Kvp functions need to be reviewed, a KVP_TYPE_BOOLEAN is long
+overdue and the split between public and private Kvp functions needs to
+be completely redone. <b>Expected: Late 2006, early 2007.</b></p></li>
+
+<li><h4>libqof2</h4><p>
+Once these steps are complete, the rest of QOF will be reviewed -
+including moving certain sections of code around within the codebase to
+make the overview clearer and the library easier to follow. A series of
+pre-releases for libqof2 can then begin. <b>Expect pre-releases Summer 2007
+and libqof2, QOF 1.0.0, Autumn 2007.</b> Note that libqof2 will start with
+the last release of libqof1 but with all deprecated code removed. Users
+who migrate with libqof1 will be able to transfer to libqof2 without
+problems. The libqof2 API will then remain stable, just as with libqof1.</p></li>
+</ol>
+<p>Support for GLib GObject mapping (qofgobj.c) is not currently
+anticipated before QOF 0.8.0. If everything else is ready for libqof2,
+libqof2 will proceed without GLib Gobject mapping.</p>
+
+</div>
+
+<h3 id="docs">Packaging documentation</h3>
+<div>
+The <i>doxy</i> symlink in the website directory is provided for CVS users and 
+the main SourceForge site. When packaging the website HTML alongside
+the Doxygen output, ignore the symlink and just package the Doxygen output:
+
+<ul>
+<li><code>doc/html/*</code> <b>=&gt;</b> <code>/usr/share/doc/libqof-doc/html/doxy/</code></li>
+</ul>
+and the website content:
+<ul>
+<li><code>website/*.html</code> <b>=&gt;</b> <code>/usr/share/doc/libqof-doc/html/</code></li>
+<li><code>website/*.css</code> <b>=&gt;</b> <code>/usr/share/doc/libqof-doc/html/</code></li>
+<li><code>website/*.png</code> <b>=&gt;</b> <code>/usr/share/doc/libqof-doc/html/</code></li>
+<li><code>website/*.jpg</code> <b>=&gt;</b> <code>/usr/share/doc/libqof-doc/html/</code></li>
+</ul>
+
+</div>
+
 <hr>
 <div><p>Written by Neil Williams &lt;linux@codehelp.co.uk&gt; December 2005.
-</p><p>Last updated by Neil Williams &lt;linux@codehelp.co.uk&gt; March 2006.
+</p><p>Last updated by Neil Williams &lt;linux@codehelp.co.uk&gt; May 2006.
 </p></div>
 <hr>
-<div><a href="http://sourceforge.net">
-<img src="http://sourceforge.net/sflogo.php?group_id=83302&amp;type=5"
-id="sflogo" alt="SourceForge Logo"></a></div>
+<div><a href="http://sourceforge.net/projects/qof/">
+<img src="sflogolg.png" id="sflogo" alt="SourceForge Logo"></a></div>
 <div id="licence">
 <p>The copyright licensing notice below applies to this text.</p>
 <p>Copyright &copy; 2005,2006 Neil Williams</p>
 <p>Permission is granted to copy, distribute, and/or modify this document under
-the terms of the GNU Free Documentation License, Version 1.1 or any later
+the terms of the GNU Free Documentation License, Version 1.2 or any later
 version published by the Free Software Foundation; with no Invariant Sections, 
-with no Front-Cover Texts, and with no Back-Cover Texts. A copy of this license is
-included in the file <a href="copying.txt">copying.txt</a></p>
+with no Front-Cover Texts, and with no Back-Cover Texts. 
+In installed versions, the licence can be found in the 
+<a href="../copyright">copyright</a> file.</p>
 </div>
 </body>
 </html>
