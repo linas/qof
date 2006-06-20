@@ -42,11 +42,5 @@ The "backend" subdirectory contains example code showing how a QOF
 object can use the DWI backend to save and restore itself from
 an SQL database.
 
-There are also two test programs that also serve as examples:
-
-"test-book-merge" simulates creating and merging two books.
-
-"test-qsf" populates, saves and loads data using the QSF XML backend.
-
 ------end------
 

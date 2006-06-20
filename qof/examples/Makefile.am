@@ -14,26 +14,26 @@ SUBDIRS = $(EXAMPLES) backend
 test_book_merge_SOURCES = test-book-merge.c
 
 query_example_SOURCES = \
-	query-example.c      \
-	my-object.c 
+  query-example.c \
+  my-object.c 
 
 sql_example_SOURCES = \
-	sql-example.c      \
-	my-object.c 
+  sql-example.c \
+  my-object.c 
 
 test_qsf_SOURCES = test-qsf.c
 
 noinst_PROGRAMS = \
-	test-book-merge \
-	query-example  \
-	sql-example \
-	test-qsf
+  test-book-merge \
+  query-example  \
+  sql-example \
+  test-qsf
 
 noinst_HEADERS = \
-	my-object.h
+  my-object.h
 
-EXTRA_DIST =     \
-	README
+EXTRA_DIST = \
+  README
 
 AM_CFLAGS =  \
   -I.. -I../.. -I../../.. \
@@ -47,7 +47,7 @@ AM_CFLAGS =  \
 if USE_LIBGDA
 test_qsf_LDADD = \
   ${top_builddir}/backend/file/libqof-backend-qsf.la \
-  ${top_builddir}/qof/libqof.la           \
+  ${top_builddir}/qof/libqof.la \
   ${LIBXML2_LIBS} \
   ${LIBGDA_LIBS} \
   ${GLIB_LIBS}   \
@@ -56,20 +56,20 @@ test_qsf_LDADD = \
 else
 test_qsf_LDADD = \
   ${top_builddir}/backend/file/libqof-backend-qsf.la \
-  ${top_builddir}/qof/libqof.la           \
+  ${top_builddir}/qof/libqof.la \
   ${top_builddir}/lib/libsql/libqofsql.la \
-  ${LIBXML2_LIBS}                         \
+  ${LIBXML2_LIBS} \
   ${LIBGDA_LIBS} \
-  ${GLIB_LIBS}                            \
+  ${GLIB_LIBS}   \
   ${GMODULE_LIBS} \
   -lltdl
 endif
 
 if USE_LIBGDA
 test_book_merge_LDADD = \
-  ${top_builddir}/qof/qof_book_merge.lo    \
+  ${top_builddir}/qof/qof_book_merge.lo \
   ${top_builddir}/backend/file/libqof-backend-qsf.la \
-  ${top_builddir}/qof/libqof.la           \
+  ${top_builddir}/qof/libqof.la \
   ${LIBXML2_LIBS} \
   ${LIBGDA_LIBS} \
   ${GLIB_LIBS}   \
@@ -79,11 +79,11 @@ else
 test_book_merge_LDADD = \
   ${top_builddir}/qof/qof_book_merge.lo    \
   ${top_builddir}/backend/file/libqof-backend-qsf.la \
-  ${top_builddir}/qof/libqof.la           \
+  ${top_builddir}/qof/libqof.la \
   ${top_builddir}/lib/libsql/libqofsql.la \
-  ${LIBXML2_LIBS}                         \
+  ${LIBXML2_LIBS} \
   ${LIBGDA_LIBS} \
-  ${GLIB_LIBS}                            \
+  ${GLIB_LIBS}   \
   ${GMODULE_LIBS} \
   -lltdl
 endif
@@ -97,12 +97,12 @@ LDADD =   \
   ${GMODULE_LIBS} \
   -lltdl -lm
 else
-LDADD =                                   \
-  ${top_builddir}/qof/libqof.la           \
+LDADD =  \
+  ${top_builddir}/qof/libqof.la \
   ${top_builddir}/lib/libsql/libqofsql.la \
-  ${LIBXML2_LIBS}                         \
+  ${LIBXML2_LIBS} \
   ${LIBGDA_LIBS} \
-  ${GLIB_LIBS}                            \
+  ${GLIB_LIBS}   \
   ${GMODULE_LIBS} \
   -lltdl -lm
 endif
