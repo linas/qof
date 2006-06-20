@@ -1,0 +1,10 @@
+*.gif
+*.png
+*.css
+*.html
+*.php
+installdox
+*.idx
+Makefile
+Makefile.in
+

@@ -41,7 +41,7 @@ The backend query API is broken into three pieces:
 
 \subsection queryfree Free the query
 \verbatim
-    void (*query_free)(Backend* be, gpointer query);
+	void (*query_free)(Backend* be, gpointer query);
 \endverbatim
 	frees the compiled Query (obtained from the query_compile method).
 
@@ -70,7 +70,7 @@ acknowledged up front.
 \section backendload When to load data?
 
 Data loads into the engine at two times, at start time and at query
-time.  Loading data during queries is discussed above.  This section
+time. Loading data during queries is discussed above.  This section
 discusses data loaded at startup.
 
 \verbatim
@@ -80,4 +80,4 @@ discusses data loaded at startup.
 This one API loads all the necessary "start-time" data, There is no
 need to have multiple APIs for each of the data types loaded at start-time.
 */
-============================== END OF DOCUMENT ===================== 
+============================== END OF DOCUMENT =====================

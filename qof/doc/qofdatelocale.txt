@@ -1,0 +1,76 @@
+/** \page datelocales QofDate and locales.
+
+\section daterange QofDate range.
+
+A ::QofDate is theoretically able to go forward to the year 
+292,471,206,707 AD and back to the year 292,471,206,708 BC (excluding
+leap years). Whether such dates actually exist is outside the scope 
+of this documentation.
+
+Year Zero does not exist in the Christian Era, the Gregorian calendar 
+or the Julian calendar. A year zero does exist in ISO 8601:2004 and in 
+the astronomical year numbering with a defined year zero equal to 1 BC, 
+as well as in some Buddhist and Hindu lunar calendars. 
+
+In QofDate, 1BC is immediately followed by 1AD and months are numbered 
+from 1 to 12, not from zero.
+
+\section locales Support for locales.
+
+QofDate supports a wider range of dates than either strftime or GDate and 
+supports all non-locale-specific strftime format specifiers - including 
+GNU extensions like '%N' for nanoseconds - over the full range of QofDate.
+
+However, locale-specific formats cannot be extended to the full range of 
+QofDate dates because the locale data for these formats is only available 
+to the underlying strftime implementation. The formats affected are those 
+involving the %E and %O modifiers and other format specifiers that use 
+the current locale. e.g. Japanese Emperor reigns, local numeric specifiers, 
+translated days of the week / month etc. If these are used, only dates within 
+the range of the locale-sensitive strftime on that platform can be supported 
+(either inside or outside QofDate). This is not a restriction enforced by
+QOF, it is a gap in the libc API.
+
+ The full list of affected format specifiers is:
+
+ \verbatim
+ '%a', '%A', '%b', '%h', '%B', '%c', '%C', '%x', '%p', '%P', '%r', '%X', '%E' '%O'.
+ \endverbatim
+
+ (Capital letter O, not zero: 0)
+
+ QofDate will attempt to fallback to a usable format if the date is out of 
+ range of the underlying strftime.
+ e.g. ::QOF_DATE_FORMAT_UTC, ::QOF_DATE_FORMAT_UK, 
+ ::QOF_DATE_FORMAT_US, ::QOF_DATE_FORMAT_CE or ::QOF_DATE_FORMAT_ISO.
+
+ ::QOF_DATE_FORMAT_LOCALE and ::QOF_DATE_FORMAT_CUSTOM include
+ locale-specific format specifiers.
+
+ \note It is not particularly sensible to write locale-sensitive 
+ date strings to any kind of permanent storage. Locale-specific
+ format specifiers should only be used for displaying dates to
+ the user.
+
+\section otherhandlers Using QofDate with other date handlers.
+ 
+ Whilst you can use QofDateFormat strings with strftime / strptime and GDate, 
+ you must check that the QofDate falls within the range supported by the 
+ tool you choose to use and that the format itself is supported:
+
+- To validate a GDate, call g_date_valid.
+- To use strftime / strptime, check that qd_year < G_MAXINT
+- g_date_strftime does not support time formats.
+- strftime does not support nanoseconds.
+
+For comparison:
+
+- To validate a QofDate call ::qof_date_valid.
+- To use strftime / strptime, just avoid using locale-sensitive format
+specifiers.
+- QofDate supports all time formats, including the '%N' nanoseconds
+GNU extension.
+- Locale-specific formats are restricted to the range supported
+by the user platform.
+
+*/

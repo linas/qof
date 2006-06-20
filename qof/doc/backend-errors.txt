@@ -1,8 +1,8 @@
 /** \page backenderrors  Handling Backend Communications Errors
 
-                  Architectural Discussion 
-                        December 2001
-     Proposed/Reviewed, Linas Vepstas, Dave Peticolas
+  Architectural Discussion
+  December 2001
+  Proposed/Reviewed, Linas Vepstas, Dave Peticolas
 
   Updated and adapted for general QOF usage, May 2005
   Neil Williams <linux@codehelp.co.uk>
@@ -56,7 +56,7 @@ Alternative 2) throw an error, let some much higher layer catch it.
 Well, approach 1) seems reasonable... until you think about what happens
 if three retries doesn't cut it:  then you have to throw an error
 anyway, and hope the higher layer deals with it.   So even if you
-implement 1), you *still* have to implement 2) anyway.  
+implement 1), you *still* have to implement 2) anyway.
 
 So my attitude is to skip doing 1 for now (maybe we can add it later)
 and just make sure that when we "throw" the error, it really does behave
@@ -78,10 +78,10 @@ continue to work.
 How would the engine->GUI error reporting happen? A direct callback?
 Or having the GUI always check for session errors?
 
-We should use the session error mechanism for reporting these errors.  
+We should use the session error mechanism for reporting these errors.
 Note that the API allows a simple 'try-throw-catch' style error
-handling in C.  Because we don't/can't unwind the stack as a true 
-'throw' would, we need to make sure that when we "throw" the error, 
+handling in C.  Because we don't/can't unwind the stack as a true
+'throw' would, we need to make sure that when we "throw" the error,
 it emulates this as best it can:  it short-cuts its way up and out of
 the engine, to where its caught in the GUI.
 
@@ -89,4 +89,4 @@ If there are a *lot* of places where these calls are
 issued, simplify things by implementing your own callback mechanism.
 */
 
-============================== END OF DOCUMENT ===================== 
+============================== END OF DOCUMENT =====================

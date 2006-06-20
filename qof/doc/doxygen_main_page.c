@@ -1,11 +1,14 @@
 /*! \mainpage QOF design and developers reference
 
-This is the new developer and design manual for the Query Object
+This is the developer and design manual for the Query Object
 Framework. Previous documentation has been integrated into this 
 and it should always be up to date since it is generated directly 
 from the source files using Doxygen.
 
 \section changes Future changes within QOF
+
+QOF v0.7.0 introduces a complete rewrite of the date and time
+handling to fully support the 64bit internal math. See ::QofTime.
 
 QOF v0.6.0 introduces \b libqof1 which will remain API compatible
 until all the changes below can be folded into libqof2:
@@ -17,7 +20,6 @@ until all the changes below can be folded into libqof2:
 		-# filenames: qof<module>.c|h
 		-# functions: qof_<module>_<function>_ ... 
 		\n e.g.
-			-# gnc_date.h becomes qofdate.h
 			-# qof_book_mergeInit becomes qof_book_merge_init
 			-# gnc_numeric_zero becomes qof_numeric_zero
 			-# gnc_set_logfile becomes qof_log_setfile.
@@ -45,42 +47,56 @@ until all the changes below can be folded into libqof2:
 - \ref backenderrors
 - \ref qsfmaps
 
+<a href="../index.html">main QOF website content</a>
+(local)
+
 General information on merging QofBooks:\n
 http://code.neil.williamsleesmill.me.uk/
 
 General information on the QSF XML backend for QOF and maps:\n
 http://code.neil.williamsleesmill.me.uk/qsf.html
 
+Other QOF-related content:\n
+http://www.linux.codehelp.co.uk/
+
 \section hacking Hacking on this documentation
 
 There is the beginning of a style guide for documenting under
 \ref tipshints.
 
-The Book Merge files are an attempt to document "by the book". 
+The Book Merge files are an attempt to document "by the book".
 \ref BookMerge\n
-Feel free to start documenting or playing with doxygen configuration. 
+Feel free to start documenting or playing with doxygen configuration.
 This main page can be found in src/doc/doxygen_main_page.c .
-
-Each doxygen section must be within a single comment block although 
-large comment blocks can be split into separate pages:
-\ref stylediscussion.
 
 This main page is just an introduction to doxygen markup, see the
 Doxygen manual for the full command set.
 
 - \ref tipshints Tips and hints for using doxygen
-- \ref stylediscussion Long comments, pages, editors
 - \ref reference Links to the Doxygen manual
+
+\section licence Licence for this documentation.
+
+The copyright licensing notice below applies to this text.
+
+Copyright &copy; 2005-2006 Neil Williams
+
+Permission is granted to copy, distribute, and/or modify this 
+document under the terms of the GNU Free Documentation License, 
+Version 1.2 or any later version published by the Free Software 
+Foundation; with no Invariant Sections, with no Front-Cover Texts, 
+and with no Back-Cover Texts. 
+A copy of this license is available at
+http://qof.sourceforge.net/copying.txt or installed alongside
+this documentation in the &quot;copyright&quot; file.
 
 */
 /** \page tipshints Useful tips for doxygen in C files
 
- - \ref index Introduction
- - \ref stylediscussion Long comments, pages, editors
  - \ref reference The Doxygen manual
- 
+
 \section tips An introduction to doxygen markup
- 
+
 \subsection Locations What to document
 
 All declarations for:
@@ -95,13 +111,13 @@ every time the type is used in a function - very helpful to new developers.
 
 \subsection Files Private files
 
-If your declarations are in separate files, like private header files, 
+If your declarations are in separate files, like private header files,
 a simple block can still be linked into doxygen as long as the file is
 identified to doxygen using a '\\file' section:
 
  \\file filename.h\n
-	\\brief one-liner summary of the file purpose\n
-	\\author the usual copyright statement
+ \\brief one-liner summary of the file purpose\n
+ \\author the usual copyright statement
 
 \subsection Methods How to document
 
@@ -109,7 +125,7 @@ Every doxygen comment block starts with an adapted comment marker.
 You can use an extra slash /// or an extra asterisk. Blocks end
 in the usual way. Doxygen accepts commands using a backslash.
 
-To put a description with each function or structure, use '\\brief' 
+To put a description with each function or structure, use '\\brief'
 End the brief description with a blank line. The rest of the documentation will
 then be shown in the body of the doxygen page.
 
@@ -124,7 +140,7 @@ nesting of the list:
 		- revert to previous list
 
 	End the list with a blank line.
-Use :: at the start of a function or structure to link to the page 
+Use :: at the start of a function or structure to link to the page
 for that function in the doxygen documentation. e.g. ::qof_class_foreach
 
 Use the param command to describe function parameters in the text.
@@ -144,45 +160,10 @@ doxywizard doxygen.cfg &
 
 */
 
-/** \page stylediscussion Style discussion
-
-- \ref index Introduction
-- \ref tipshints Tips and hints for using doxygen
-- \ref reference Links to the Doxygen manual
-
-[codehelpgpg 2004-07-25] Doxygen now copes with addgroup and this page
-can be handled more easily by splitting the old single comment into
-repeated comments, split into pages. I've worked on doxygen files in
-Kate, KWrite and XCode (MacOSX) and the comment higlighting works fine.
-If you do have problems, particularly when you start a new line within
-an existing comment, enter a character at the end of the last
-highlighted line to refresh the highlighting. Some editors have a
-specific refresh option.
-
-[cstim 2003-03-25] The "Data Structures" page of doxygen doesn't show
-anything useful for gnucash. Obviously doxygen only accepts "real" C
-struct definitions for inclusion on that page. However, all gnucash
-data structures are defined somewhere in private headers, and only the
-typedefs are publically visible. Isn't there a way to have doxygen
-show the documentation for the <i>typedefs</i> on the "Data
-Structures" page? Unfortunately I don't know how.
-
-[codehelpgpg 2004-07-25] Yes, there is a way of linking to these data
-structures.
-Make sure that the private header is included in the documentation by
-including a
-\\file command in the private header file. Then include a short doxygen
-comment above the declaration. Doxygen will accept both valid C struct
-definition formats.
-
-*/
-
 /*! \page reference Doxygen reference documentation
 
-- \ref index Introduction
 - \ref tipshints Tips and hints for using doxygen
-- \ref stylediscussion Long comments, pages, editors
-	
+
 The Doxygen web site (http://www.stack.nl/~dimitri/doxygen/) has a
 complete user manual.  For the impatient, here are the most
 interesting sections:
@@ -198,13 +179,21 @@ blocks: http://www.stack.nl/~dimitri/doxygen/commands.html
 
 \section contact Contacts
 
-\subsection web Web Site
-News about GnuCash as well as the latest version can always be found at
-http://www.gnucash.org/
+\subsection web QOF Web Site
+News about QOF as well as the latest version can always be found at
+http://qof.sourceforge.net/
+
+Other projects using QOF include
+- pilot-qof http://pilot-qof.sourceforge.net/
+- gnotime http://gttr.sourceforge.net/
+- qof-gen http://qof-gen.sourceforge.net/
+- cashutil http://cashutil.sourceforge.net/
+- gnucash http://www.gnucash.org/
 
 \subsection email Email
 If you have any suggestions concerning this documentation, do not hesitate to
-send suggestions to gnucash-devel (see http://www.gnucash.org/en/lists.phtml
+send suggestions to the QOF-devel mailing list.
+(see http://lists.sourceforge.net/lists/listinfo/qof-devel
 for details)
 
  */
