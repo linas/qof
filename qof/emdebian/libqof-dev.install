@@ -1,5 +1,8 @@
 debian/tmp/usr/lib/*.so
 debian/tmp/usr/lib/*.a
 debian/tmp/usr/lib/libqof.la
+debian/tmp/usr/lib/qof/libqofstrftime.la
+debian/tmp/usr/lib/qof/*.so
+debian/tmp/usr/lib/qof/*.a
 debian/tmp/usr/include/qof/*
 debian/tmp/usr/lib/pkgconfig/*

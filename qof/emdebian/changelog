@@ -1,3 +1,20 @@
+qof (0.7.0-1) unstable; urgency=low
+
+  * New upstream release.
+  - Rewrite date and time handling.
+  - Undo and redo handling.
+  - New QOF extension for strftime, as used in coreutils.
+  - Package QOF Doxygen HTML reference.
+  - Upgrade to debhelper compat 5, standards version 3.7.2
+
+ -- Neil Williams <linux@codehelp.co.uk>  Thu, 18 May 2006 23:40:47 +0100
+
+qof (0.6.4-2) unstable; urgency=low
+
+  * Fixed compilation in 64bit architectures (Closes: #364048).
+
+ -- Goedson Teixeira Paixao <goedson@debian.org>  Tue, 25 Apr 2006 16:28:30 -0300 
+
 qof (0.6.4-1) unstable; urgency=low
 
   * New upstream release.

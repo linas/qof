@@ -2,20 +2,22 @@ Source: qof
 Priority: optional
 Maintainer: Debian QOF packaging team <pkg-qof-maintainers@lists.alioth.debian.org>
 Uploaders: Goedson Teixeira Paixao <goedson@debian.org>, Neil Williams <linux@codehelp.co.uk>
-Build-Depends: debhelper (>= 4.1.46), cdbs, autotools-dev, libltdl3-dev, libglib2.0-dev, libxml2-dev (>= 2.5.10), binutils (>= 2.14.90.0.7), libgda2-dev, libxml-parser-perl
-Standards-Version: 3.6.2
+Build-Depends: debhelper (>= 5), cdbs, autotools-dev, libglib2.0-dev, libxml2-dev (>= 2.5.10), binutils (>= 2.14.90.0.7), libgda2-dev, libxml-parser-perl, doxygen
+Standards-Version: 3.7.2
 
 Package: libqof-dev
 Priority: optional
 Section: libdevel
 Architecture: any
-Depends: libqof1 (= ${Source-Version})
-Description: Query Object Framework
+Depends: libqof1 (= ${Source-Version}), libgda2-dev
+Description: Query Object Framework - development
  A framework to allow the execution of SQL-type queries
  using collections of in-memory objects as 'tables'.
  .
  This package provides the files needed to develop 
  applications using QOF.
+ .
+  Homepage: http://qof.sourceforge.net/
 
 Package: libqof1
 Priority: optional
@@ -29,4 +31,6 @@ Description: Query Object Framework
  This package provides the shared libraries needed 
  to run programs developed using QOF, the XML schemas
  to validate files and the QSF XML backend module.
+ .
+  Homepage: http://qof.sourceforge.net/
 

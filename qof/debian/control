@@ -1,16 +1,18 @@
 Source: qof
+Section: libs
 Priority: optional
 Maintainer: Debian QOF packaging team <pkg-qof-maintainers@lists.alioth.debian.org>
 Uploaders: Goedson Teixeira Paixao <goedson@debian.org>, Neil Williams <linux@codehelp.co.uk>
-Build-Depends: debhelper (>= 4.1.46), cdbs, autotools-dev, libltdl3-dev, libglib2.0-dev, libxml2-dev (>= 2.5.10), binutils (>= 2.14.90.0.7), libgda2-dev, libxml-parser-perl
-Standards-Version: 3.6.2
+Build-Depends: debhelper (>= 5), cdbs, autotools-dev, libglib2.0-dev, libxml2-dev (>= 2.5.10), binutils (>= 2.14.90.0.7), libgda2-dev, libxml-parser-perl, doxygen
+Standards-Version: 3.7.2
 
 Package: libqof-dev
 Priority: optional
 Section: libdevel
 Architecture: any
+Suggests: libqof-doc
 Depends: libqof1 (= ${Source-Version}), libgda2-dev
-Description: Query Object Framework
+Description: Query Object Framework - development headers
  A framework to allow the execution of SQL-type queries
  using collections of in-memory objects as 'tables'.
  .
@@ -38,13 +40,32 @@ Package: libqof1-dbg
 Priority: extra
 Section: libs
 Architecture: any
+Recommends: libqof-doc
 Depends: libqof1 (= ${Source-Version})
 Description: Query Object Framework - debug symbols
  A framework to allow the execution of SQL-type queries
  using collections of in-memory objects as 'tables'.
  .
- This package provides the files needed to develop 
- applications using QOF.
+ This package provides the debugging symbols that may be
+ useful when developing applications using QOF.
  .
   Homepage: http://qof.sourceforge.net/
+
+Package: libqof-doc
+Priority: optional
+Section: doc
+Architecture: all
+Recommends: firefox|www-browser, dwww
+Description: Query Object Framework - HTML Developer Docs
+ A framework to allow the execution of SQL-type queries
+ using collections of in-memory objects as tables.
+ .
+ This package provides the HTML content of the QOF 
+ homepage in
+ /usr/share/doc/libqof-doc/html/
+ and the documentation of the QOF API produced using 
+ Doxygen in 
+ /usr/share/doc/libqof-doc/html/doxy/
+ .
+  Homepage: http://qof.sourceforge.net/doxy/
 

@@ -1,0 +1,5 @@
+debian/tmp/usr/share/doc/qof/html/doxy/* usr/share/doc/libqof-doc/html/doxy/
+website/*.html /usr/share/doc/libqof-doc/html/
+website/*.css /usr/share/doc/libqof-doc/html/
+website/*.png /usr/share/doc/libqof-doc/html/
+website/*.jpg /usr/share/doc/libqof-doc/html/

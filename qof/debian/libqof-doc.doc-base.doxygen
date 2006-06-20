@@ -1,0 +1,20 @@
+Document: qof
+Title: Query Object Framework Developer Reference
+Author: Neil Williams
+Abstract: Query Object Framework Developer Reference
+  QOF, the Query Object Framework, provides a set of C
+  Language utilities for performing generic structured complex
+  queries on a set of data held by a set of C/C++ objects. This
+  framework is unique in that it does NOT require SQL or any
+  database at all to perform the query. Thus, it allows programmers
+  to add query support to their applications without having to hook
+  into an SQL Database.
+  .
+  This manual describes the full QOF API to develop applications
+  using libqof1.
+Section: Libdevel
+
+Format: HTML
+Index: /usr/share/doc/libqof-doc/html/doxy/index.html
+Files: /usr/share/doc/libqof-doc/html/doxy/*
+

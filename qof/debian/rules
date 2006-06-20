@@ -1,5 +1,6 @@
 #!/usr/bin/make -f
 # Copyright 2003 Goedson Teixeira Paixao <goedson@debian.org>
+# Copyright 2006 Neil Williams <linux@codehelp.co.uk>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
@@ -19,7 +20,4 @@
 include /usr/share/cdbs/1/rules/debhelper.mk
 include /usr/share/cdbs/1/class/autotools.mk
 include /usr/share/cdbs/1/rules/simple-patchsys.mk
-
-DEB_DH_STRIP_ARGS=--dbg-package=libqof1
-
 
