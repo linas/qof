@@ -369,6 +369,8 @@ qof_date_parse (const gchar * str, QofDateFormat df)
 	if (error != ERR_NO_ERROR)
 	{
 		qof_date_free (date);
+		fprintf (stderr, "strptime %s\n", 
+			QofDateErrorasString (error));
 		LEAVE (" date is null");
 		return NULL;
 	}

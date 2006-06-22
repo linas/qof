@@ -107,22 +107,26 @@ check_date_cycles (gpointer data, gpointer user_data)
 			base.tm_min  = base.tm_hour = base.tm_gmtoff = 0;
 			base.tm_sec  = base.tm_isdst = 0;
 			result = 0;
-			h = qof_date_parse (cmp, i);
-			do_test ((h != NULL), "no date could be parsed");
-			if (!h)
-				fprintf (stderr, "h failed for str=%s, %d\n",
-					cmp, i);
-			t = qof_date_format_get_format (i);
-			strptime (cmp, t, &base);
-			j = qof_date_from_struct_tm (&base);
-			do_test ((j != NULL), "no value from struct tm");
-			if (h)
+			/** \todo allow parsing of BC date strings. */
+			if (d->date->qd_year > 0)
 			{
-				j->qd_nanosecs = h->qd_nanosecs;
-				result = qof_date_compare (h, j);
-				do_test ((0 == qof_date_compare (h, j)),
-					"compare with strptime");
-			}
+				h = qof_date_parse (cmp, i);
+				do_test ((h != NULL), "no date could be parsed");
+				if (!h)
+					fprintf (stderr, "h failed for str=%s, "
+						"cmp=%s, %d\n",
+						str, cmp, i);
+				t = qof_date_format_get_format (i);
+				strptime (cmp, t, &base);
+				j = qof_date_from_struct_tm (&base);
+				do_test ((j != NULL), "no value from struct tm");
+				if (h)
+				{
+					j->qd_nanosecs = h->qd_nanosecs;
+					result = qof_date_compare (h, j);
+					do_test ((0 == qof_date_compare (h, j)),
+						"compare with strptime");
+				}
 
 			if (h && (result != 0))
 			{
@@ -164,6 +168,7 @@ check_date_cycles (gpointer data, gpointer user_data)
 
 			if (h)
 				qof_date_free (h);
+			}
 		}
 	}
 	qof_date_format_set_current (df);
@@ -309,6 +314,50 @@ test_date_init (void)
 	{
 		QTestDate *td = g_new0 (QTestDate, 1);
 		td->time = qof_time_new ();
+		qof_time_set_secs (td->time, 699378323);
+		qof_time_set_nanosecs (td->time, 0);
+		td->date = qof_date_new ();
+		td->date->qd_year = 1992;
+		td->date->qd_mon  = 2;
+		td->date->qd_mday = 29;
+		td->date->qd_hour = 15;
+		td->date->qd_min  = 45;
+		td->date->qd_sec  = G_GINT64_CONSTANT(23);
+		td->string_list = NULL;
+		td->string_list = g_list_prepend (td->string_list, "02/29/1992");
+		td->string_list = g_list_prepend (td->string_list, "29/02/1992");
+		td->string_list = g_list_prepend (td->string_list, "29.02.1992");
+		td->string_list = g_list_prepend (td->string_list, "1992-02-29");
+		td->string_list = g_list_prepend (td->string_list, "1992-02-29T15:45:23Z");
+		td->string_list = g_list_reverse (td->string_list);
+		td->id = "29th February 1992";
+		test_data = g_list_prepend (test_data, td);
+	}
+	{
+		QTestDate *td = g_new0 (QTestDate, 1);
+		td->time = qof_time_new ();
+		qof_time_set_secs (td->time, -1);
+		qof_time_set_nanosecs (td->time, 0);
+		td->date = qof_date_new ();
+		td->date->qd_year = 1969;
+		td->date->qd_mon  = 12;
+		td->date->qd_mday = 31;
+		td->date->qd_hour = 23;
+		td->date->qd_min  = 59;
+		td->date->qd_sec  = G_GINT64_CONSTANT(59);
+		td->string_list = NULL;
+		td->string_list = g_list_prepend (td->string_list, "12/31/1969");
+		td->string_list = g_list_prepend (td->string_list, "31/12/1969");
+		td->string_list = g_list_prepend (td->string_list, "31.12.1969");
+		td->string_list = g_list_prepend (td->string_list, "1969-12-31");
+		td->string_list = g_list_prepend (td->string_list, "1969-12-31T23:59:59Z");
+		td->string_list = g_list_reverse (td->string_list);
+		td->id = "epoch eve";
+		test_data = g_list_prepend (test_data, td);
+	}
+	{
+		QTestDate *td = g_new0 (QTestDate, 1);
+		td->time = qof_time_new ();
 		qof_time_set_secs (td->time, -192776400);
 		qof_time_set_nanosecs (td->time, 0);
 		td->date = qof_date_new ();
@@ -375,6 +424,29 @@ test_date_init (void)
 	{
 		QTestDate *td = g_new0 (QTestDate, 1);
 		td->time = qof_time_new ();
+		qof_time_set_secs (td->time, 
+			G_GINT64_CONSTANT(-2208988801));
+		qof_time_set_nanosecs (td->time, 0);
+		td->date = qof_date_new ();
+		td->date->qd_year = 1899;
+		td->date->qd_mon  = 12;
+		td->date->qd_mday = 31;
+		td->date->qd_hour = 23;
+		td->date->qd_min  = 59;
+		td->date->qd_sec  = G_GINT64_CONSTANT(59);
+		td->string_list = NULL;
+		td->string_list = g_list_prepend (td->string_list, "12/31/1899");
+		td->string_list = g_list_prepend (td->string_list, "31/12/1899");
+		td->string_list = g_list_prepend (td->string_list, "31.12.1899");
+		td->string_list = g_list_prepend (td->string_list, "1899-12-31");
+		td->string_list = g_list_prepend (td->string_list, "1899-12-31T23:59:59Z");
+		td->string_list = g_list_reverse (td->string_list);
+		td->id = "19th century Millenium Eve";
+		test_data = g_list_prepend (test_data, td);
+	}
+	{
+		QTestDate *td = g_new0 (QTestDate, 1);
+		td->time = qof_time_new ();
 		qof_time_set_secs (td->time, G_GINT64_CONSTANT(-28502726400));
 		qof_time_set_nanosecs (td->time, 0);
 		td->date = qof_date_new ();
@@ -393,60 +465,80 @@ test_date_init (void)
 		td->string_list = g_list_reverse (td->string_list);
 		td->id = "Battle of Hastings, 1066";
 		test_data = g_list_prepend (test_data, td);
-	}/*
+	}
 	{
 		QTestDate *td = g_new0 (QTestDate, 1);
 		td->time = qof_time_new ();
-		qof_time_set_secs (td->time, G_GINT64_CONSTANT(-63512071200));
+		qof_time_set_secs (td->time, G_GINT64_CONSTANT(-60798160800));
 		qof_time_set_nanosecs (td->time, 0);
 		td->date = qof_date_new ();
-		td->date->qd_year = -43;
+		td->date->qd_year = 43;
 		td->date->qd_mon  = 5;
 		td->date->qd_mday = 20;
 		td->date->qd_hour = 14;
 		td->date->qd_min  = 0;
 		td->date->qd_sec  = G_GINT64_CONSTANT(0);
 		td->string_list = NULL;
-		td->string_list = g_list_prepend (td->string_list, "05/20/-043");
-		td->string_list = g_list_prepend (td->string_list, "20/05/-043");
-		td->string_list = g_list_prepend (td->string_list, "20.05.-043");
-		td->string_list = g_list_prepend (td->string_list, "-043-05-20");
-		td->string_list = g_list_prepend (td->string_list, "-043-05-20T14:00:00Z");
+		td->string_list = g_list_prepend (td->string_list, "05/20/0043");
+		td->string_list = g_list_prepend (td->string_list, "20/05/0043");
+		td->string_list = g_list_prepend (td->string_list, "20.05.0043");
+		td->string_list = g_list_prepend (td->string_list, "0043-05-20");
+		td->string_list = g_list_prepend (td->string_list, "0043-05-20T14:00:00Z");
 		td->string_list = g_list_reverse (td->string_list);
-		td->id = "approx Roman invasion, 43BC";
+		td->id = "approx Roman invasion, 43AD";
 		test_data = g_list_prepend (test_data, td);
-	}*/
+	}
+	/** \todo BC dates are very difficult to parse 
+	because a minus sign is also a valid date separator.
+	BC can be handled directly and printed, some 
+	restrictions are inevitable to parse BC date strings. */
+	{
+		QTestDate *td = g_new0 (QTestDate, 1);
+		td->time = qof_time_new ();
+		qof_time_set_secs (td->time, G_GINT64_CONSTANT(-62167824001));
+		qof_time_set_nanosecs (td->time, 0);
+		td->date = qof_date_new ();
+		td->date->qd_year = -1;
+		td->date->qd_mon  = 12;
+		td->date->qd_mday = 24;
+		td->date->qd_hour = 23;
+		td->date->qd_min  = 59;
+		td->date->qd_sec  = G_GINT64_CONSTANT(59);
+		td->string_list = NULL;
+		td->string_list = g_list_prepend (td->string_list, "12/24/-001");
+		td->string_list = g_list_prepend (td->string_list, "24/12/-001");
+		td->string_list = g_list_prepend (td->string_list, "24.12.-001");
+		td->string_list = g_list_prepend (td->string_list, "-001-12-24");
+		td->string_list = g_list_prepend (td->string_list, "-001-12-24T23:59:59Z");
+		td->string_list = g_list_reverse (td->string_list);
+		td->id = "Xmas eve, 1BC";
+		test_data = g_list_prepend (test_data, td);
+	}
+	/* now test far future dates */
+	{
+		QTestDate *td = g_new0 (QTestDate, 1);
+		td->time = qof_time_new ();
+		qof_time_set_secs (td->time, G_GINT64_CONSTANT(32679095666));
+		qof_time_set_nanosecs (td->time, 0);
+		td->date = qof_date_new ();
+		td->date->qd_year = 3005;
+		td->date->qd_mon  = 7;
+		td->date->qd_mday = 24;
+		td->date->qd_hour = 6;
+		td->date->qd_min  = 34;
+		td->date->qd_sec  = G_GINT64_CONSTANT(26);
+		td->string_list = NULL;
+		td->string_list = g_list_prepend (td->string_list, "07/24/3005");
+		td->string_list = g_list_prepend (td->string_list, "24/07/3005");
+		td->string_list = g_list_prepend (td->string_list, "24.07.3005");
+		td->string_list = g_list_prepend (td->string_list, "3005-07-24");
+		td->string_list = g_list_prepend (td->string_list, "3005-07-24T06:34:26Z");
+		td->string_list = g_list_reverse (td->string_list);
+		td->id = "24th July 3005";
+		test_data = g_list_prepend (test_data, td);
+	}
 /*
 //	scan_and_stamp ("-0751-05-20 00:00:00 +0000", 12, fails to parse with date.
-		qd->qd_year = 3005;
-		qd->qd_mon = 07;
-		qd->qd_mday = 24;
-		qd->qd_hour = 06;
-		qd->qd_min  = 34;
-		qd->qd_sec  = 26;
-		qt = qof_date_to_qtime (qd);
-		do_test ((0 == safe_strcasecmp ("07/24/3005",
-			qofstrftime (QOF_DATE_FORMAT_US, qd))), 
-			"strftime:US:forward");
-		do_test ((0 == safe_strcasecmp ("24/07/3005",
-			qofstrftime (QOF_DATE_FORMAT_UK, qd))), 
-			"strftime:UK:forward");
-		do_test ((0 == safe_strcasecmp ("24.07.3005",
-			qofstrftime (QOF_DATE_FORMAT_CE, qd))), 
-			"strftime:CE:forward");
-		do_test ((0 == safe_strcasecmp ("3005-07-24",
-			qofstrftime (QOF_DATE_FORMAT_ISO, qd))), 
-			"strftime:ISO:forward");
-		do_test ((0 == safe_strcasecmp ("3005-07-24T06:34:26Z",
-			qofstrftime (QOF_DATE_FORMAT_UTC, qd))), 
-			"strftime:UTC:forward");
-		do_test ((0 != safe_strcasecmp (NULL,
-			qofstrftime (QOF_DATE_FORMAT_LOCALE, qd))), 
-			"strftime:LOCALE:forward:inrange");
-		do_test ((0 != safe_strcasecmp (NULL,
-			qofstrftime (QOF_DATE_FORMAT_CUSTOM, qd))), 
-			"strftime:CUSTOM:forward:inrange");
-		qof_date_free (qd);
 		qd = qof_date_new ();
 		qd->qd_year = 4500;
 		qd->qd_mon = 07;
@@ -508,38 +600,6 @@ test_date_init (void)
 			"strftime:CUSTOM:forward2:outofrange");
 		qof_date_free (qd);
 		qd = qof_date_new ();
-		qd->qd_year = 1914;
-		qd->qd_mon = 11;
-		qd->qd_mday = 11;
-		qd->qd_hour = 11;
-		qt = qof_date_to_qtime (qd);
-		fprintf (stderr, "%s\n", qof_date_time_stamp (qt));
-		fprintf (stderr, "should have been %s\n",
-			"1914-11-11T11:00:00Z");
-		do_test ((0 == safe_strcasecmp ("11/11/1914",
-			qofstrftime (QOF_DATE_FORMAT_US, qd))), 
-			"strftime:US:second");
-		do_test ((0 == safe_strcasecmp ("11/11/1914",
-			qofstrftime (QOF_DATE_FORMAT_UK, qd))), 
-			"strftime:UK:second");
-		do_test ((0 == safe_strcasecmp ("11.11.1914",
-			qofstrftime (QOF_DATE_FORMAT_CE, qd))), 
-			"strftime:CE:second");
-		do_test ((0 == safe_strcasecmp ("1914-11-11",
-			qofstrftime (QOF_DATE_FORMAT_ISO, qd))), 
-			"strftime:ISO:second");
-		do_test ((0 == safe_strcasecmp ("1914-11-11T11:00:00Z",
-			qofstrftime (QOF_DATE_FORMAT_UTC, qd))), 
-			"strftime:UTC:second");
-		do_test ((0 != safe_strcasecmp (NULL,
-			qofstrftime (QOF_DATE_FORMAT_LOCALE, qd))), 
-			"strftime:LOCALE:second:inrange");
-		do_test ((0 != safe_strcasecmp (NULL,
-			qofstrftime (QOF_DATE_FORMAT_CUSTOM, qd))), 
-			"strftime:CUSTOM:second:inrange");
-		qof_date_free (qd);
-		qof_time_free (qt);
-		qd = qof_date_new ();
 		qd->qd_year = 1812;
 		qd->qd_mon = 07;
 		qd->qd_mday = 24;
@@ -568,36 +628,6 @@ test_date_init (void)
 		do_test ((0 == safe_strcasecmp (NULL,
 			qofstrftime (QOF_DATE_FORMAT_CUSTOM, qd))), 
 			"strftime:CUSTOM:third:outofrange");
-		qof_date_free (qd);
-		qd = qof_date_new ();
-		qd->qd_year = 1066;
-		qd->qd_mon = 07;
-		qd->qd_mday = 24;
-		qd->qd_hour = 06;
-		qd->qd_min  = 34;
-		qd->qd_sec  = 26;
-		qt = qof_date_to_qtime (qd);
-		do_test ((0 == safe_strcasecmp ("07/24/1066",
-			qofstrftime (QOF_DATE_FORMAT_US, qd))), 
-			"strftime:US:fourth");
-		do_test ((0 == safe_strcasecmp ("24/07/1066",
-			qofstrftime (QOF_DATE_FORMAT_UK, qd))), 
-			"strftime:UK:fourth");
-		do_test ((0 == safe_strcasecmp ("24.07.1066",
-			qofstrftime (QOF_DATE_FORMAT_CE, qd))), 
-			"strftime:CE:fourth");
-		do_test ((0 == safe_strcasecmp ("1066-07-24",
-			qofstrftime (QOF_DATE_FORMAT_ISO, qd))), 
-			"strftime:ISO:fourth");
-		do_test ((0 == safe_strcasecmp ("1066-07-24T06:34:26Z",
-			qofstrftime (QOF_DATE_FORMAT_UTC, qd))), 
-			"strftime:UTC:fourth");
-		do_test ((0 == safe_strcasecmp (NULL,
-			qofstrftime (QOF_DATE_FORMAT_LOCALE, qd))), 
-			"strftime:LOCALE:fourth:outofrange");
-		do_test ((0 == safe_strcasecmp (NULL,
-			qofstrftime (QOF_DATE_FORMAT_CUSTOM, qd))), 
-			"strftime:CUSTOM:fourth:outofrange");
 		qof_date_free (qd);
 		qd = qof_date_new ();
 		qd->qd_year = -45;

@@ -50,32 +50,33 @@ AS_STRING_FUNC (QofDateError , ENUM_ERR_LIST)
 /* We intentionally do not use isdigit() for testing because this will
    lead to problems with the wide character version.  */
 #define get_number(from, to, n) 						\
-  do {													\
-    gint __n = n;										\
-    val = 0;											\
-    while (*rp == ' ')									\
-      ++rp;												\
-    if (*rp < '0' || *rp > '9')							\
-	{  													\
+	do {												\
+	gint __n = n;										\
+	val = 0;											\
+	while (*rp == ' ')									\
+		++rp;											\
+	if (*rp < '0' || *rp > '9')							\
+	{													\
 		*error = ERR_OUT_OF_RANGE; 						\
 		PERR (" error=%s", QofDateErrorasString (*error)); \
 		return NULL;									\
 	}  													\
-    do {												\
-      val *= 10;										\
-      val += *rp++ - '0';								\
-    } while (--__n > 0 && val * 10 <= to && *rp >= '0' && *rp <= '9');	\
-    if (val < from || val > to)							\
+	do {												\
+		val *= 10;										\
+		val += *rp++ - '0';								\
+	}													\
+	while (--__n > 0 && val * 10 <= to && *rp >= '0' && *rp <= '9');	\
+	if (val < from || val > to)							\
 	{ 													\
 		*error = ERR_INVALID_DELIMITER; 				\
 		PERR (" error=%s", QofDateErrorasString (*error)); \
-      return NULL;										\
+		return NULL;									\
 	} 													\
-  } while (0)
+	} while (0)
 
+/* If we don't have the alternate representation.  */
 # define get_alt_number(from, to, n) \
-  /* We don't have the alternate representation.  */			\
-  get_number(from, to, n)
+	get_number(from, to, n)
 
 #define recursive(new_fmt) \
   (*(new_fmt) != '\0' && (rp = strptime_internal (rp, (new_fmt), qd, error)) != NULL)
@@ -116,8 +117,8 @@ static void
 day_of_the_week (QofDate * qd)
 {
 	/* We know that January 1st 1970 was a Thursday (= 4).  Compute the
-	   the difference between this data in the one on TM and so determine
-	   the weekday.  */
+	the difference between this data in the one on TM and so determine
+	the weekday.  */
 	gint corr_year = qd->qd_year - (qd->qd_mon < 2);
 	gint wday = (-473
 		+ (365 * (qd->qd_year - 70))
@@ -141,17 +142,11 @@ strptime_internal (const gchar * rp, const gchar * fmt,
 	QofDate * qd, QofDateError * error)
 {
 	const gchar *rp_backup;
-	gint cnt, decided, era_cnt;
 	size_t val;
-	gint have_I, is_pm;
 	gint64 century, want_century;
-	gint want_era;
-	gint have_wday, want_xday;
-	gint have_yday;
-	gint have_mon, have_mday;
-	gint have_uweek, have_wweek;
-	gint week_no;
-//  size_t num_eras;
+	gint want_era, have_wday, want_xday, have_yday;
+	gint have_mon, have_mday, have_uweek, have_wweek;
+	gint week_no, have_I, is_pm, cnt, decided, era_cnt;
 	struct era_entry *era;
 
 	have_I = is_pm = 0;
@@ -312,7 +307,6 @@ strptime_internal (const gchar * rp, const gchar * fmt,
 		case 'm':
 			/* Match number of month.  */
 			get_number (1, 12, 2);
-//			qd->qd_mon = val - 1;
 			qd->qd_mon = val;
 			have_mon = 1;
 			want_xday = 1;
@@ -443,11 +437,10 @@ strptime_internal (const gchar * rp, const gchar * fmt,
 			have_wday = 1;
 			break;
 		case 'y':
-			//  match_year_in_century:
 			/* Match year within century.  */
 			get_number (0, 99, 2);
 			/* The "Year 2000: The Millennium Rollover" paper suggests that
-			   values in the range 69-99 refer to the twentieth century.  */
+			values in the range 69-99 refer to the twentieth century.  */
 			qd->qd_year = val >= 69 ? val : val + 100;
 			/* Indicate that we want to use the century, if specified.  */
 			want_century = 1;
@@ -457,7 +450,6 @@ strptime_internal (const gchar * rp, const gchar * fmt,
 			/* Match year including century number.  */
 			get_number (0, 9999, 4);
 			qd->qd_year = val;
-			/** \todo decide on year base */
 			want_century = 0;
 			want_xday = 1;
 			break;
