@@ -1,3 +1,8 @@
+2006-06-22 Neil Williams <linux@codehelp.co.uk>
+
+	* qof/qofdate.c,
+	qof/test/test-date.c : Fixing a few more tests.
+
 2006-06-20 Neil Williams <linux@codehelp.co.uk>
 
 	* qof/test/test-date.c : Comment out failing

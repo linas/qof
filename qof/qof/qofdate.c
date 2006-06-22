@@ -692,7 +692,7 @@ qof_date_offset (const QofTime *time, glong offset, QofDate *qd)
 {
 	glong days;
 	gint64 rem, y, yg;
-	const gushort *ip;
+	const guint16 *ip;
 	QofTimeSecs t;
 
 	g_return_if_fail (qd);
@@ -720,9 +720,7 @@ qof_date_offset (const QofTime *time, glong offset, QofDate *qd)
 	if (qd->qd_wday < 0)
 		qd->qd_wday += 7;
 	y = 1970;
-	/** \todo is this wrong? */
-	while ((days >= (qof_date_isleap (y) ? 366 : 365)) ||
-			(days <= (qof_date_isleap (y) ? -366 : -365)))
+	while (days < 0 || days >= (__isleap (y) ? 366 : 365))
 	{
 		/* Guess a corrected year, assuming 365 days per year.  */
 		yg = y + days / 365 - (days % 365 < 0);
@@ -735,7 +733,7 @@ qof_date_offset (const QofTime *time, glong offset, QofDate *qd)
 	qd->qd_year = y;
 	qd->qd_yday = days;
 	ip = days_in_year[qof_date_isleap(y)];
-	for (y = 11; days < (glong) ip[y]; --y)
+	for (y = 12; days < (glong) ip[y]; --y)
 		continue;
 	days -= ip[y];
 	qd->qd_mon = y;

@@ -285,11 +285,9 @@ test_date_init (void)
 		test_data = g_list_prepend (test_data, td);
 	}
 	{
-/*		QTestDate *td = g_new0 (QTestDate, 1);
-		td->time = qof_time_new ();*/
-/* normalising error - causes seg fault!??! */
-/*		qof_time_set_secs (td->time, 946684799);
-// rest is OK.
+		QTestDate *td = g_new0 (QTestDate, 1);
+		td->time = qof_time_new ();
+		qof_time_set_secs (td->time, 946684799);
 		qof_time_set_nanosecs (td->time, 0);
 		td->date = qof_date_new ();
 		td->date->qd_year = 1999;
@@ -302,11 +300,11 @@ test_date_init (void)
 		td->string_list = g_list_prepend (td->string_list, "12/31/1999");
 		td->string_list = g_list_prepend (td->string_list, "31/12/1999");
 		td->string_list = g_list_prepend (td->string_list, "31.12.1999");
-		td->string_list = g_list_prepend (td->string_list, "1980-01-01");
-		td->string_list = g_list_prepend (td->string_list, "1980-01-01T00:00:00Z");
+		td->string_list = g_list_prepend (td->string_list, "1999-12-31");
+		td->string_list = g_list_prepend (td->string_list, "1999-12-31T23:59:59Z");
 		td->string_list = g_list_reverse (td->string_list);
-		td->id = "New Year's Day 1980 - repeat";
-		test_data = g_list_prepend (test_data, td);*/
+		td->id = "Millenium Eve";
+		test_data = g_list_prepend (test_data, td);
 	}
 	{
 		QTestDate *td = g_new0 (QTestDate, 1);
@@ -1002,12 +1000,11 @@ run_qofdate_test (void)
 	{
 		QofDate *qd;
 		QofTime *qt;
+		gchar *str1;
 
 		qd = qof_date_new ();
 		qd->qd_year = 2006;
 		qd->qd_mon = 5;
-		/* normalising mishandles qd_yday as
-		qd_mday and then messes that up too */
 		qd->qd_mday = 30;
 		qd->qd_hour = 18;
 		qd->qd_min = 24;
@@ -1015,10 +1012,9 @@ run_qofdate_test (void)
 		qd->qd_nanosecs = 123456789;
 		do_test ((qof_date_valid (qd)), "date not valid");
 		qt = qof_date_to_qtime (qd);
-		fprintf (stderr, "%s\n", qof_date_print (qd, 
-			QOF_DATE_FORMAT_UTC));
-		fprintf (stderr, "should have been %s\n",
-			"2006-05-30T18:24:17Z");
+		str1 = qof_date_print (qd, QOF_DATE_FORMAT_UTC);
+		do_test ((0 == safe_strcasecmp (str1, 
+			"2006-05-30T18:24:17Z")), "with nanosecs");
 		do_test ((qof_time_get_nanosecs (qt) ==
 			123456789L), "nanosecs mismatched.");
 		do_test ((0 == safe_strcasecmp ("05/30/2006",
@@ -1135,16 +1131,16 @@ run_qofdate_test (void)
 			qof_date_print (qd, QOF_DATE_FORMAT_CUSTOM))), 
 			"strftime:CUSTOM:forward2:outofrange");
 		qof_date_free (qd);
+		g_free (str1);
 		qd = qof_date_new ();
 		qd->qd_year = 1914;
 		qd->qd_mon = 11;
 		qd->qd_mday = 11;
 		qd->qd_hour = 11;
 		qt = qof_date_to_qtime (qd);
-		fprintf (stderr, "%s\n", qof_date_print (qd, 
-			QOF_DATE_FORMAT_UTC));
-		fprintf (stderr, "should have been %s\n",
-			"1914-11-11T11:00:00Z");
+		str1 = qof_date_print (qd, QOF_DATE_FORMAT_UTC);
+		do_test ((0 == safe_strcasecmp (str1,
+			"1914-11-11T11:00:00Z")), "armistice day");
 		do_test ((0 == safe_strcasecmp ("11/11/1914",
 			qof_date_print (qd, QOF_DATE_FORMAT_US))), 
 			"strftime:US:second");
