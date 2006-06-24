@@ -1,3 +1,12 @@
+2006-06-24 Neil Williams <linux@codehelp.co.uk>
+
+	* qof/qofdate-p.h,
+	qof/qofdate.c,
+	qof/qofdate.h,
+	qof/qofstrptime.c,
+	qof/test/test-date.c : Standardise yday and wday handling
+	and add tests for yday and wday.
+
 2006-06-22 Neil Williams <linux@codehelp.co.uk>
 
 	* qof/qofdate.c,

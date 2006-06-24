@@ -105,36 +105,27 @@ static gchar const ab_month_name[][4] = {
 # define HERE_T_FMT "%H:%M:%S"
 #define raw 1;
 
-static const gushort __mon_yday[2][13] = {
-	/* Normal years.  */
+/* retained for a few areas where qd_mon and qd_mday are unknown.
+*/
+static const gushort yeardays[2][13] = {
 	{0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365},
-	/* Leap years.  */
 	{0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335, 366}
 };
 
 /* Compute the day of the week.  */
-static void
-day_of_the_week (QofDate * qd)
+void
+set_day_of_the_week (QofDate * qd)
 {
-	/* We know that January 1st 1970 was a Thursday (= 4).  Compute the
-	the difference between this data in the one on TM and so determine
-	the weekday.  */
-	gint corr_year = qd->qd_year - (qd->qd_mon < 2);
-	gint wday = (-473
-		+ (365 * (qd->qd_year - 70))
-		+ (corr_year / 4)
-		- ((corr_year / 4) / 25) + ((corr_year / 4) % 25 < 0)
-		+ (((corr_year / 4) / 25) / 4)
-		+ __mon_yday[0][qd->qd_mon] + qd->qd_mday - 1);
-	qd->qd_wday = ((wday % 7) + 7) % 7;
-}
-
-/* Compute the day of the year.  */
-static void
-day_of_the_year (QofDate * qd)
-{
-	qd->qd_yday = (__mon_yday[qof_date_isleap (qd->qd_year)][qd->qd_mon]
-		+ (qd->qd_mday - 1));
+	gint64 days;
+	/* We know that January 1st 1970 was a Thursday (= 4). */
+	days = days_between (1970, qd->qd_year);
+	/* qd_wday is always positive. */
+	if (days < 0)
+		days *= -1;
+	days--;
+	days += qof_date_get_yday (qd->qd_mday, 
+		qd->qd_mon, qd->qd_year) + 4;
+	qd->qd_wday = ((days % 7) + 7) % 7;
 }
 
 gchar *
@@ -164,8 +155,8 @@ strptime_internal (const gchar * rp, const gchar * fmt,
 
 	while (*fmt != '\0')
 	{
-		/* A white space in the format string matches 0 more or white
-		   space in the input string.  */
+		/* A white space in the format string matches 0 more 
+		or white space in the input string.  */
 		if (isspace (*fmt))
 		{
 			while (isspace (*rp))
@@ -174,8 +165,8 @@ strptime_internal (const gchar * rp, const gchar * fmt,
 			continue;
 		}
 
-		/* Any character but `%' must be matched by the same character
-		   in the iput string.  */
+		/* Any character but `%' must be matched by the 
+		same character in the iput string. */
 		if (*fmt != '%')
 		{
 			match_char (*fmt++, *rp++);
@@ -249,7 +240,6 @@ strptime_internal (const gchar * rp, const gchar * fmt,
 			break;
 		case 'C':
 			/* Match century number.  */
-			//  match_century:
 			get_number (0, 99, 2);
 			century = val;
 			want_xday = 1;
@@ -285,15 +275,15 @@ strptime_internal (const gchar * rp, const gchar * fmt,
 			break;
 		case 'k':
 		case 'H':
-			/* Match hour in 24-hour clock.  */
+			/* Match hour in 24-hour clock. */
 			get_number (0, 23, 2);
 			qd->qd_hour = val;
 			have_I = 0;
 			break;
 		case 'l':
-			/* Match hour in 12-hour clock.  GNU extension.  */
+			/* Match hour in 12-hour clock. GNU extension. */
 		case 'I':
-			/* Match hour in 12-hour clock.  */
+			/* Match hour in 12-hour clock. */
 			get_number (1, 12, 2);
 			qd->qd_hour = val % 12;
 			have_I = 1;
@@ -354,11 +344,11 @@ strptime_internal (const gchar * rp, const gchar * fmt,
 			break;
 		case 's':
 			{
-				/* The number of seconds may be very high so we cannot use
-				   the `get_number' macro.  Instead read the number
-				   character for character and construct the result while
-				   doing this.  */
-//				QofTimeSecs secs = 0;
+				/* The number of seconds may be very high so we 
+				cannot use the `get_number' macro.  Instead read 
+				the number character for character and construct 
+				the result while doing this. */
+				QofTimeSecs secs = 0;
 				if (*rp < '0' || *rp > '9')
 					/* We need at least one digit.  */
 				{
@@ -366,17 +356,16 @@ strptime_internal (const gchar * rp, const gchar * fmt,
 					PERR (" error=%s", QofDateErrorasString (*error));
 					return NULL;
 				}
-
-/*	    do
-	      {
-		secs *= 10;
-		secs += *rp++ - '0';
-	      }*/
-/*	    while (*rp >= '0' && *rp <= '9');*/
-		/** \todo replace with qof_time */
-/*	    if (localtime_r (&secs, qd) == NULL)*/
-				/* Error in function.  */
-/*	      return NULL;*/
+				do
+				{
+					secs *= 10;
+					secs += *rp++ - '0';
+				}
+				while (*rp >= '0' && *rp <= '9');
+				/** \todo implement a test for %s */
+				qd->qd_sec = secs;
+				if (!qof_date_valid (qd))
+					return NULL;
 			}
 			break;
 		case 'S':
@@ -409,8 +398,8 @@ strptime_internal (const gchar * rp, const gchar * fmt,
 				PERR (" error=%s", QofDateErrorasString (*error));
 				return NULL;
 			}
-			/* XXX Ignore the number since we would need some more
-			   information to compute a real date.  */
+			/* XXX Ignore the number since we would need 
+			some more information to compute a real date. */
 			do
 				++rp;
 			while (*rp >= '0' && *rp <= '9');
@@ -427,8 +416,8 @@ strptime_internal (const gchar * rp, const gchar * fmt,
 			break;
 		case 'V':
 			get_number (0, 53, 2);
-			/* XXX This cannot determine any field in TM without some
-			   information.  */
+			/* XXX This cannot determine any field without some
+			information. */
 			break;
 		case 'w':
 			/* Match number of weekday.  */
@@ -458,8 +447,8 @@ strptime_internal (const gchar * rp, const gchar * fmt,
 			break;
 		case 'z':
 			/* We recognize two formats: if two digits are given, these
-			   specify hours.  If fours digits are used, minutes are
-			   also specified.  */
+			specify hours. If fours digits are used, minutes are
+			also specified. */
 			{
 				gboolean neg;
 				gint n;
@@ -483,7 +472,7 @@ strptime_internal (const gchar * rp, const gchar * fmt,
 					val *= 100;
 				else if (n != 4)
 				{
-					/* Only two or four digits recognized.  */
+					/* Only two or four digits recognized. */
 					*error = ERR_YEAR_DIGITS;
 					PERR (" error=%s", QofDateErrorasString (*error));
 					return NULL;
@@ -511,8 +500,8 @@ strptime_internal (const gchar * rp, const gchar * fmt,
 			}
 			break;
 		case 'E':
-			/* We have no information about the era format.  Just use
-			   the normal format.  */
+			/* We have no information about the era format. 
+			Just use the normal format. */
 			if (*fmt != 'c' && *fmt != 'C' && *fmt != 'y' && *fmt != 'Y'
 				&& *fmt != 'x' && *fmt != 'X')
 			{
@@ -535,21 +524,21 @@ strptime_internal (const gchar * rp, const gchar * fmt,
 				want_xday = 1;
 				break;
 			case 'H':
-				/* Match hour in 24-hour clock using alternate numeric
-				   symbols.  */
+				/* Match hour in 24-hour clock using alternate 
+				numeric symbols. */
 				get_alt_number (0, 23, 2);
 				qd->qd_hour = val;
 				have_I = 0;
 				break;
 			case 'I':
-				/* Match hour in 12-hour clock using alternate numeric
-				   symbols.  */
+				/* Match hour in 12-hour clock using alternate 
+				numeric symbols. */
 				get_alt_number (1, 12, 2);
 				qd->qd_hour = val % 12;
 				have_I = 1;
 				break;
 			case 'm':
-				/* Match month using alternate numeric symbols.  */
+				/* Match month using alternate numeric symbols. */
 				get_alt_number (1, 12, 2);
 				qd->qd_mon = val - 1;
 				have_mon = 1;
@@ -577,17 +566,17 @@ strptime_internal (const gchar * rp, const gchar * fmt,
 				break;
 			case 'V':
 				get_alt_number (0, 53, 2);
-				/* XXX This cannot determine any field in TM without
-				   further information.  */
+				/* XXX This cannot determine any field without
+				further information.  */
 				break;
 			case 'w':
-				/* Match number of weekday using alternate numeric symbols.  */
+				/* Match number of weekday using alternate numeric symbols. */
 				get_alt_number (0, 6, 1);
 				qd->qd_wday = val;
 				have_wday = 1;
 				break;
 			case 'y':
-				/* Match year within century using alternate numeric symbols.  */
+				/* Match year within century using alternate numeric symbols. */
 				get_alt_number (0, 99, 2);
 				qd->qd_year = val >= 69 ? val : val + 100;
 				want_xday = 1;
@@ -626,26 +615,18 @@ strptime_internal (const gchar * rp, const gchar * fmt,
 
 	if (era_cnt != -1)
 	{
-//      era = _nl_select_era_entry (era_cnt HELPER_LOCALE_ARG);
 		if (era == NULL)
 		{
 			*error = ERR_INVALID_ERA;
 			PERR (" error=%s", QofDateErrorasString (*error));
 			return NULL;
 		}
-//      if (want_era)
-/*	qd->qd_year = (era->start_date[0]
-		       + ((qd->qd_year - era->offset)
-			  * era->absolute_direction));*/
-//      else
-		/* Era start year assumed.  */
-/*	qd->qd_year = era->start_date[0];*/
 	}
 	else if (want_era)
 	{
-		/* No era found but we have seen an E modifier.  Rectify some
-		   values.  */
-	   /** \todo oops! this could be bad! */
+	/* No era found but we have seen an E modifier.
+	Rectify some values. */
+	/** \todo oops! this could be bad! */
 		if (want_century && century == -1 && qd->qd_year < 69)
 			qd->qd_year += 100;
 	}
@@ -654,24 +635,24 @@ strptime_internal (const gchar * rp, const gchar * fmt,
 	{
 		if (!(have_mon && have_mday) && have_yday)
 		{
-			/* We don't have tm_mon and/or tm_mday, compute them.  */
+			/* We don't have qd_mon and/or qd_mday, compute them.  */
 			gint t_mon = 0;
-			while (__mon_yday[qof_date_isleap (qd->qd_year)][t_mon] <=
+			gint leap = qof_date_isleap (qd->qd_year);
+			while (yeardays[leap][t_mon] <=
 				qd->qd_yday)
 				t_mon++;
 			if (!have_mon)
-				qd->qd_mon = t_mon - 1;
+				qd->qd_mon = t_mon;
 			if (!have_mday)
-				qd->qd_mday =
-					(qd->qd_yday
-					- __mon_yday[qof_date_isleap (qd->qd_year)][t_mon -
-						1] + 1);
+				qd->qd_mday = qd->qd_yday - 
+					yeardays[leap][t_mon - 1] + 1;
 		}
-		day_of_the_week (qd);
+		set_day_of_the_week (qd);
 	}
 
 	if (want_xday && !have_yday)
-		day_of_the_year (qd);
+		qd->qd_yday = qof_date_get_yday (qd->qd_mday,
+			qd->qd_mon, qd->qd_year);
 
 	if ((have_uweek || have_wweek) && have_wday)
 	{
@@ -682,7 +663,7 @@ strptime_internal (const gchar * rp, const gchar * fmt,
 
 		qd->qd_mday = 1;
 		qd->qd_mon = 0;
-		day_of_the_week (qd);
+		set_day_of_the_week (qd);
 		if (have_mday)
 			qd->qd_mday = save_mday;
 		if (have_mon)
@@ -696,15 +677,14 @@ strptime_internal (const gchar * rp, const gchar * fmt,
 		{
 			gint t_mon = 0;
 
-			while (__mon_yday[qof_date_isleap (qd->qd_year)][t_mon]
-				<= qd->qd_yday)
+			while (qof_date_get_yday (1, t_mon, qd->qd_year) <=
+				qd->qd_yday)
 				t_mon++;
 			if (!have_mon)
 				qd->qd_mon = t_mon - 1;
 			if (!have_mday)
-				qd->qd_mday = (qd->qd_yday
-					- __mon_yday[qof_date_isleap (qd->qd_year)][t_mon -
-						1] + 1);
+				qd->qd_mday = (qd->qd_yday -
+					qof_date_get_yday (1, t_mon, qd->qd_year));
 		}
 
 		qd->qd_wday = save_wday;

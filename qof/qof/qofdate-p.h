@@ -112,4 +112,13 @@ gchar *
 strptime_internal (const gchar * rp, const gchar * fmt, 
 	QofDate * qd, QofDateError * error);
 
+/* get the number of days between 1st Jan of year1 
+and 1st Jan of year2. */
+gint64
+days_between (gint64 year1, gint64 year2);
+
+/* set the qd_wday of the QofDate */
+void
+set_day_of_the_week (QofDate * qd);
+
 #endif /* _QOFDATE_P_H */ 

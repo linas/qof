@@ -1531,6 +1531,60 @@ run_qoftime_test (void)
 		mday = qof_time_last_mday (time);
 		do_test ((mday == 31), " wrong last day of May");
 	}
+	/* qof_date_get_mday and qof_date_get_yday tests */
+	{
+		QofDate *d;
+		/* Wed 3rd Sep 2003 = 246. */
+		do_test ((246 == qof_date_get_yday (3, 9, 2003)),
+			"get year day test, September");
+		d = qof_date_new ();
+		d->qd_mday = 3;
+		d->qd_mon  = 9;
+		d->qd_year = 2003;
+		do_test ((TRUE == qof_date_valid (d)),
+			"3/9/2003 not valid");
+		do_test ((3 == d->qd_wday), "not Wednesday");
+		qof_date_free (d);
+		/* Fri 3rd Sep 2004 = 247. */
+		do_test ((247 == qof_date_get_yday (3, 9, 2004)),
+			"get year day test, leap year");
+		d = qof_date_new ();
+		d->qd_mday = 3;
+		d->qd_mon  = 9;
+		d->qd_year = 2004;
+		do_test ((TRUE == qof_date_valid (d)),
+			"3/9/2003 not valid");
+		do_test ((5 == d->qd_wday), "not Friday");
+		qof_date_free (d);
+		/* Sun 19th May 2002 = 139. */
+		do_test ((139 == qof_date_get_yday (19, 5, 2002)),
+			"get year day test, May");
+		d = qof_date_new ();
+		d->qd_mday = 19;
+		d->qd_mon  = 5;
+		d->qd_year = 2002;
+		do_test ((TRUE == qof_date_valid (d)),
+			"3/9/2003 not valid");
+		do_test ((0 == d->qd_wday), "not Sunday");
+		qof_date_free (d);
+		/* Wed 19th May 2004 = 140. */
+		do_test ((140 == qof_date_get_yday (19, 5, 2004)),
+			"get year day test, May");
+		d = qof_date_new ();
+		d->qd_mday = 19;
+		d->qd_mon  = 5;
+		d->qd_year = 2004;
+		do_test ((TRUE == qof_date_valid (d)),
+			"3/9/2003 not valid");
+		do_test ((3 == d->qd_wday), "not Wednesday, May");
+		qof_date_free (d);
+		/* Nov 2003 = 30 */
+		do_test ((30 == qof_date_get_mday (11, 2003)),
+			"get days in month, non-leap");
+		/* Feb 2004 = 29 */
+		do_test ((29 == qof_date_get_mday (2, 2004)),
+			"get days in month, leap year");
+	}
 	/* time to dmy test */
 	{
 		gboolean success;

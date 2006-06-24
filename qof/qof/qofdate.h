@@ -482,6 +482,29 @@ Normalising a QofDate tries to use sensible defaults:
 gboolean
 qof_date_valid (QofDate *date);
 
+/** full range version of g_date_get_day_of_year 
+
+ \param mday Any valid QofDate qd_mday, 1 to 31.
+ \param month Any valid QofDate qd_mon, 1 to 12.
+ \param year Any valid QofDate qd_year.
+
+ \return 0 if error, otherwise the day of the year, 
+ where Jan 1 is 1, the first day of the year.
+*/
+guint16
+qof_date_get_yday (gint mday, gint month, gint64 year);
+
+/** full range version of g_date_get_days_in_month 
+
+ \param month Any valid QofDate qd_mon, 1 to 12.
+ \param year Any valid QofDate qd_year.
+
+ \return 0 on error, otherwise the number of days in the
+specified month, taking leap years into account.
+*/
+guint8
+qof_date_get_mday (gint month, gint64 year);
+
 /** @} */
 
 /** \name Conversion handlers for QofDate

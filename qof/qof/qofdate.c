@@ -52,6 +52,30 @@ static const guint8 days_in_months[2][13] =
   {  0, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 } /* leap year */
 };
 
+guint16
+qof_date_get_yday (gint mday, gint month, gint64 year)
+{
+	guint8 leap;
+
+	g_return_val_if_fail (mday  != 0, 0);
+	g_return_val_if_fail (month != 0, 0);
+	g_return_val_if_fail (month <= 12, 0);
+	g_return_val_if_fail (month >= 1, 0);
+	g_return_val_if_fail (year  != 0, 0);
+	leap = qof_date_isleap (year);
+	return days_in_year[leap][month] + mday;
+}
+
+guint8
+qof_date_get_mday (gint month, gint64 year)
+{
+	g_return_val_if_fail (month !=  0, 0);
+	g_return_val_if_fail (month <= 12, 0);
+	g_return_val_if_fail (month >=  1, 0);
+	g_return_val_if_fail (year  !=  0, 0);
+	return days_in_months[qof_date_isleap (year)][month];
+}
+
 /* A single Date Format Entry. */
 typedef struct QofDateEntry_s
 {
@@ -537,6 +561,7 @@ date_normalise (QofDate * date)
 	/* use days_in_year to set yday */
 	date->qd_yday = (date->qd_mday - 1) + 
 		days_in_year[qof_date_isleap(date->qd_year)][date->qd_mon];
+	set_day_of_the_week (date);
 	/* qd_year has no realistic limits */
 	date->qd_valid = TRUE;
 	return date;
@@ -795,7 +820,7 @@ qof_date_from_qtime (const QofTime *qt)
 	return qd;
 }
 
-static gint64
+gint64
 days_between (gint64 year1, gint64 year2)
 {
 	gint64 i, start, end, l;
