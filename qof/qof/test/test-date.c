@@ -32,8 +32,6 @@
 
 static gboolean test_data_is_init = FALSE;
 static GList *test_data = NULL;
-/** \todo reset debug to false for release */
-static gboolean debug = TRUE;
 
 typedef struct
 {
@@ -57,45 +55,19 @@ check_date_cycles (gpointer data, gpointer user_data)
 
 	d = (QTestDate*)data;
 	df = qof_date_format_get_current ();
+	/* test qof_date_to_qtime and qof_date_from_qtime */
+	{
+		do_test ((0 == qof_time_cmp (qof_date_to_qtime (d->date), 
+			d->time)), d->id);
+		do_test ((0 == qof_date_compare (qof_date_from_qtime (d->time), 
+			d->date)), d->id);
+	}
 	/* don't test locale-sensitive formats, yet. */
 	for (i = 1; i <= 5; i++)
 	{
 		str = qof_date_print (d->date, i);
 		cmp = (gchar*)g_list_nth_data (d->string_list, (i - 1));
 		do_test ((0 == safe_strcasecmp (str, cmp)), d->id);
-		if (debug && (0 != safe_strcasecmp (str, cmp)))
-		{
-			fprintf (stderr, "DEBUG: str=%s\ncmp=%s\n", str, cmp);
-			fprintf (stderr, "DEBUG: expect:%" G_GINT64_FORMAT "/%d/%d\n",
-				d->date->qd_year, d->date->qd_mon, d->date->qd_mday);
-		}
-		do_test ((0 == qof_time_cmp (qof_date_to_qtime (d->date), d->time)), d->id);
-		{
-			QofTime *f = qof_date_to_qtime (d->date);
-			do_test ((0 == qof_time_cmp (
-				qof_date_to_qtime (d->date), d->time)),
-				"convert date to time");
-			if ((debug) && (0 != qof_time_cmp (
-				qof_date_to_qtime (d->date), d->time))) 
-			{
-				fprintf (stderr, "DEBUG: diff=%" G_GINT64_FORMAT 
-					" real=%" G_GINT64_FORMAT " source=%" G_GINT64_FORMAT "\n", 
-					qof_time_get_secs(qof_time_diff (d->time, f)),
-					qof_time_get_secs(f), qof_time_get_secs (d->time));
-				fprintf (stderr, "DEBUG: year=%" G_GINT64_FORMAT " month=%d"
-					" day=%d hour=%d min=%d sec=%" G_GINT64_FORMAT "\n",
-					d->date->qd_year, d->date->qd_mon, d->date->qd_mday,
-					d->date->qd_hour, d->date->qd_min, d->date->qd_sec);
-			}
-			qof_time_free (f);
-		}
-		{
-			QofDate *e = qof_date_from_qtime (d->time);
-			if ((debug) && (0 != qof_date_compare (e, d->date)))
-				fprintf (stderr, "compare=%d\n", qof_date_compare(e, d->date));
-			do_test ((0 == qof_date_compare (e, d->date)), d->id);
-			qof_date_free (e);
-		}
 		/* now test qofstrptime */
 		{
 			gint result;
@@ -129,45 +101,6 @@ and far future dates beyond 31/12/9999. */
 					do_test ((0 == qof_date_compare (h, j)),
 						"compare with strptime");
 				}
-/** \todo remove / shorten debug code */
-			if (h && (result != 0))
-			{
-				fprintf (stderr, "format=%s\n", t);
-
-				fprintf (stderr, "h->qd_year=%" G_GINT64_FORMAT " ", h->qd_year);
-				fprintf (stderr, "h->qd_mon=%d ",  h->qd_mon);
-				fprintf (stderr, "h->qd_mday=%d ", h->qd_mday);
-				fprintf (stderr, "h->qd_hour=%d ", h->qd_hour);
-				fprintf (stderr, "h->qd_min=%d ", h->qd_min);
-				fprintf (stderr, "h->qd_sec=%" G_GINT64_FORMAT " ", h->qd_sec);
-				fprintf (stderr, "h->qd_nanosecs=%ld\n", h->qd_nanosecs);
-
-				fprintf (stderr, "j->qd_year=%" G_GINT64_FORMAT " ", j->qd_year);
-				fprintf (stderr, "j->qd_mon=%d ",  j->qd_mon);
-				fprintf (stderr, "j->qd_mday=%d ", j->qd_mday);
-				fprintf (stderr, "j->qd_hour=%d ", j->qd_hour);
-				fprintf (stderr, "j->qd_min=%d ", j->qd_min);
-				fprintf (stderr, "j->qd_sec=%" G_GINT64_FORMAT " ", j->qd_sec);
-				fprintf (stderr, "j->qd_nanosecs=%ld\n", j->qd_nanosecs);
-
-				fprintf (stderr, "d->qd_year=%" G_GINT64_FORMAT " ", d->date->qd_year);
-				fprintf (stderr, "d->qd_mon=%d ",  d->date->qd_mon);
-				fprintf (stderr, "d->qd_mday=%d ", d->date->qd_mday);
-				fprintf (stderr, "d->qd_hour=%d ", d->date->qd_hour);
-				fprintf (stderr, "d->qd_min=%d ", d->date->qd_min);
-				fprintf (stderr, "d->qd_sec=%" G_GINT64_FORMAT "\n", d->date->qd_sec);
-
-				fprintf (stderr, "tm.tm_year=%d ", base.tm_year + 1900);
-				fprintf (stderr, "tm.tm_mon=%d ", base.tm_mon + 1);
-				fprintf (stderr, "tm.tm_mday=%d ", base.tm_mday);
-				fprintf (stderr, "tm.tm_hour=%d ", base.tm_hour);
-				fprintf (stderr, "tm.tm_min=%d ", base.tm_min);
-				fprintf (stderr, "tm.tm_sec=%d\n", base.tm_sec);
-
-				fprintf (stderr, "strptime compare=%d\n", qof_date_compare(h, d->date));
-				fprintf (stderr, "strptime compare (2)=%d\n", qof_date_compare(h, j));
-			}
-
 			if (h)
 				qof_date_free (h);
 			}
@@ -700,68 +633,6 @@ test_date_init (void)
 		td->id = "far, far future";
 		test_data = g_list_prepend (test_data, td);
 	}
-/*
-		qd = qof_date_new ();
-		qd->qd_year = -4500;
-		qd->qd_mon = 07;
-		qd->qd_mday = 24;
-		qd->qd_hour = 06;
-		qd->qd_min  = 34;
-		qd->qd_sec  = 26;
-		qt = qof_date_to_qtime (qd);
-		do_test ((0 == safe_strcasecmp ("07/24/-4500",
-			qofstrftime (QOF_DATE_FORMAT_US, qd))), 
-			"strftime:US:sixth");
-		do_test ((0 == safe_strcasecmp ("24/07/-4500",
-			qofstrftime (QOF_DATE_FORMAT_UK, qd))), 
-			"strftime:UK:sixth");
-		do_test ((0 == safe_strcasecmp ("24.07.-4500",
-			qofstrftime (QOF_DATE_FORMAT_CE, qd))), 
-			"strftime:CE:sixth");
-		do_test ((0 == safe_strcasecmp ("-4500-07-24",
-			qofstrftime (QOF_DATE_FORMAT_ISO, qd))), 
-			"strftime:ISO:sixth");
-		do_test ((0 == safe_strcasecmp ("-4500-07-24T06:34:26Z",
-			qofstrftime (QOF_DATE_FORMAT_UTC, qd))), 
-			"strftime:UTC:sixth");
-		do_test ((0 == safe_strcasecmp (NULL,
-			qofstrftime (QOF_DATE_FORMAT_LOCALE, qd))), 
-			"strftime:LOCALE:sixth:outofrange");
-		do_test ((0 == safe_strcasecmp (NULL,
-			qofstrftime (QOF_DATE_FORMAT_CUSTOM, qd))), 
-			"strftime:CUSTOM:sixth:outofrange");
-		qof_date_free (qd);
-		qd = qof_date_new ();
-		qd->qd_year = -4500000;
-		qd->qd_mon = 07;
-		qd->qd_mday = 24;
-		qd->qd_hour = 06;
-		qd->qd_min  = 34;
-		qd->qd_sec  = 26;
-		qt = qof_date_to_qtime (qd);
-		do_test ((0 == safe_strcasecmp ("07/24/-4500000",
-			qofstrftime (QOF_DATE_FORMAT_US, qd))), 
-			"strftime:US:seventh");
-		do_test ((0 == safe_strcasecmp ("24/07/-4500000",
-			qofstrftime (QOF_DATE_FORMAT_UK, qd))), 
-			"strftime:UK:seventh");
-		do_test ((0 == safe_strcasecmp ("24.07.-4500000",
-			qofstrftime (QOF_DATE_FORMAT_CE, qd))), 
-			"strftime:CE:seventh");
-		do_test ((0 == safe_strcasecmp ("-4500000-07-24",
-			qofstrftime (QOF_DATE_FORMAT_ISO, qd))), 
-			"strftime:ISO:seventh");
-		do_test ((0 == safe_strcasecmp ("-4500000-07-24T06:34:26Z",
-			qofstrftime (QOF_DATE_FORMAT_UTC, qd))), 
-			"strftime:UTC:seventh");
-		do_test ((0 == safe_strcasecmp (NULL,
-			qofstrftime (QOF_DATE_FORMAT_LOCALE, qd))), 
-			"strftime:LOCALE:seventh:outofrange");
-		do_test ((0 == safe_strcasecmp (NULL,
-			qofstrftime (QOF_DATE_FORMAT_CUSTOM, qd))), 
-			"strftime:CUSTOM:seventh:outofrange");
-		qof_date_free (qd);
-*/
 }
 
 static void
@@ -786,22 +657,24 @@ test_date_close (void)
 static void
 scan_and_stamp (const gchar * str, QofDateFormat df, QofTimeSecs check)
 {
-	QofDateFormat old;
 	QofTime *scan;
 	gchar *stamp;
 
-	old = qof_date_format_get_current ();
-	qof_date_format_set_current (df);
 	scan = qof_date_to_qtime (qof_date_parse (str, df));
 	do_test ((scan != NULL), "scan failed");
 	if (scan == NULL)
 		return;
 	do_test ((qof_time_get_secs (scan) == check), "wrong time value");
+	if (qof_time_get_secs (scan) != check)
+		fprintf (stderr, "wrong time value %"
+			G_GINT64_FORMAT " %" G_GINT64_FORMAT " diff=%"
+			G_GINT64_FORMAT " df=%d str=%s\n",
+			qof_time_get_secs (scan), check,
+			qof_time_get_secs (scan) - check, df, str);
 	stamp = qof_date_print (qof_date_from_qtime(scan), df);
 	do_test ((stamp != NULL), "stamp failed");
 	/* timezone tests mean stamp cannot be compared to str */
 	qof_time_free (scan);
-	qof_date_format_set_current (old);
 }
 
 static void
@@ -836,14 +709,11 @@ stamp_and_scan (QofTimeSecs start, glong nanosecs,
 	test that the returned stamp is the same. */
 	str2 = qof_date_print (qof_date_from_qtime (scan), df);
 	/* 2 digit year errors with format 6  */
-	if (str2 == NULL)
-		fprintf (stderr, "str2 is null if str1=%s df=%d\n", 
-			str1, df);
-	if (qof_date_from_qtime (scan) == NULL)
-		fprintf (stderr, "from_qtime failed\n");
-/*	do_test ((str2 != NULL), "print failed");
+	do_test ((str2 != NULL), "printed string is null");
+	do_test ((qof_date_from_qtime (scan) != NULL),
+		"from_qtime failed");
 	do_test ((0 == safe_strcasecmp (str1, str2)), 
-		"stamp different to scan");*/
+		"stamp different to scan");
 	qof_time_free (scan);
 	qof_time_free (time);
 	g_free (str1);
@@ -881,17 +751,20 @@ run_print_scan_tests (void)
 		stamp_and_scan (1143943200 + (7 * 60 * 60), 0, i);
 		stamp_and_scan (1143943200 + (8 * 60 * 60), 0, i);
 		stamp_and_scan (1841443200, 0, i);
-		/* work with early dates */
 
+		/* work with early dates */
 		stamp_and_scan (G_GINT64_CONSTANT (-796179600),   0, i);
 		stamp_and_scan (G_GINT64_CONSTANT (-152098136),   0, i);
 		stamp_and_scan (G_GINT64_CONSTANT (-1143943200),  0, i);
 		stamp_and_scan (G_GINT64_CONSTANT (-1964049931),  0, i);
 		stamp_and_scan (G_GINT64_CONSTANT (-2463880447),  0, i);
+		stamp_and_scan (G_GINT64_CONSTANT (-22905158401), 0, i);
 		stamp_and_scan (G_GINT64_CONSTANT (-28502726400), 0, i);
 		stamp_and_scan (G_GINT64_CONSTANT (-60798211200), 0, i);
 		stamp_and_scan (G_GINT64_CONSTANT (-32727638740), 0, i);
-//		stamp_and_scan (G_GINT64_CONSTANT (-86956848000), 0, i);
+		/*
+		stamp_and_scan (G_GINT64_CONSTANT (-86956848000), 0, i);
+		*/
 		stamp_and_scan (secs, 0, i);
 		/* Wed 29 Jan 2048 03:14:07 UTC */
 		secs = G_GINT64_CONSTANT (2463880447);
@@ -944,36 +817,45 @@ run_print_scan_tests (void)
 	scan_and_stamp ("1980-01-01 08:30:00 +0830", 12, 315532800);
 	/* pre-1970 dates */
 	/* enable once time_t replaced */
-//	scan_and_stamp ("1963-11-22 14:00:00 -0500", 12, -192776400);
-//	scan_and_stamp ("1945-09-08 11:02:00 +0900", 12, -767311080);
+	scan_and_stamp ("1963-11-22 14:00:00 -0500", 12, -192776400);
+	scan_and_stamp ("1945-09-08 11:02:00 +0900", 12, -767311080);
 	scan_and_stamp ("1918-11-11 11:00:00 +0000", 12, -1613826000);
 	/* work with really early dates */
 	/* 14th October 1066 (time is just a guess) */
 	scan_and_stamp ("1066-10-14 08:00:00 +0000", 12, 
 		G_GINT64_CONSTANT (-28502726400));
 	/* May 43AD Roman invasion (day and time guessed) */
-/*	scan_and_stamp ("0043-05-20 14:00:00 +0000", 12, 
-		G_GINT64_CONSTANT (-60798211200));*/
+	scan_and_stamp ("0043-05-20 14:00:00 +0000", 12, 
+		G_GINT64_CONSTANT (-60798160800));
 	/* 751BC - end of the Bronze Age. (day and time arbitrary) */
 /*	scan_and_stamp ("-0751-05-20 00:00:00 +0000", 12, fails to parse with date.*/
 	/* should be around -86956848000 */
 	{
-		QofTime *time;
+		QofDate *qd;
+		QofTime *qt;
 		gint64 secs;
 
-		time = qof_time_new ();
-		qof_time_set_secs (time, 1147186210);
-		do_test ((qof_date_time_add_days (time, 45) == TRUE),
+		qt = qof_time_new ();
+		qof_time_set_secs (qt, 1147186210);
+		qd = qof_date_from_qtime (qt);
+		do_test ((qof_date_adddays (qd, 45) == TRUE),
 				 "add_days failed");
 		secs = 1147186210 + (45 * SECS_PER_DAY);
-		do_test ((secs == qof_time_get_secs (time)),
+		qof_time_free (qt);
+		qt = qof_date_to_qtime (qd);
+		qof_date_free (qd);
+		do_test ((secs == qof_time_get_secs (qt)),
 				 "add_days gave incorrect result.");
-		qof_time_set_secs (time, 1147186210);
-		do_test ((qof_date_time_add_months (time, 50, TRUE) == TRUE),
+		qof_time_set_secs (qt, 1147186210);
+		qd = qof_date_from_qtime (qt);
+		do_test ((qof_date_addmonths (qd, 50, TRUE) == TRUE),
 				 "add_months failed");
-		do_test ((1278687010 == qof_time_get_secs (time)),
+		qof_time_free (qt);
+		qt = qof_date_to_qtime (qd);
+		do_test ((1278687010 == qof_time_get_secs (qt)),
 				 "add_months gave incorrect result.");
-		qof_time_free (time);
+		qof_time_free (qt);
+		qof_date_free (qd);
 	}
 }
 
@@ -1069,6 +951,7 @@ run_qofdate_test (void)
 		do_test ((date->qd_min == 3),  "doxygen min example incorrect - 2");
 	}
 	/* run tests against QofDate<->QofTime conversions. */
+	/* opposite direction compared to the tests above. */
 	{
 		QofDate *qd;
 		QofTime *qt;

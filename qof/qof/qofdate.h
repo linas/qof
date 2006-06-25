@@ -438,9 +438,13 @@ qof_date_format_set_date_separator (const gchar sep, QofDateFormat df);
 /** \name QofDate handlers
  @{
 */
-/** create a new QofDate */
+/** create a new, empty, QofDate */
 QofDate *
 qof_date_new (void);
+
+/** create a new QofDate from basic calendar data. */
+QofDate *
+qof_date_new_dmy (gint day, gint month, gint64 year);
 
 /** free a QofDate */
 void 
@@ -449,6 +453,34 @@ qof_date_free (QofDate * date);
 /** Calculate the QofTime between two QofDates */ 
 QofTime*
 qof_date_time_difference (QofDate * date1, QofDate * date2);
+
+/** Checks if QofDate the last day of the month.
+
+ The QofDate will be normalised before checking.
+
+ \return TRUE if qd_mday is the last day of qd_mon in qd_year
+*/
+gboolean
+qof_date_is_last_mday (QofDate *qd);
+
+/** Add (or subtract) months from a QofDate
+
+Optionally tracks the last day of the month so that
+if the original QofDate is the last day of the month in
+the specified year, the updated QofDate will also be the
+last day of the updated month in the updated year.
+
+ \param qd A QofDate which will be normalised before
+ calculations begin.
+ \param months Number of months to add (or subtract if
+ months is negative).
+
+ \return FALSE on error, otherwise TRUE.
+*/
+gboolean
+qof_date_addmonths (QofDate * qd, gint months,
+	gboolean track_last_day);
+
 
 /** Check two QofDates for equality */
 gboolean
@@ -568,29 +600,25 @@ Shorthand routines to modify a QofTime using date-type values,
 instead of having to always use seconds.
  @{
 */
-/** \brief Add a number of days to a QofTime and normalise.
+/** \brief Add a number of days to a QofDate and normalise.
 
-Together with qof_date_time_add_months, replaces date_add_months.
-
- \return FALSE on error, otherwise TRUE.
-*/
-gboolean 
-qof_date_time_add_days (QofTime * ts, gint days);
-
-/** \brief Add a number of months to a QofTime.
-
-Optionally track the last day of the month so that adding one
-month to 31st January returns 28th February 
-(29th in a leap year) and adding three months returns 
-30th April.
-
-Safe for all dates within the range of GDate.
+ \param qd A valid QofDate.
+ \param days Number of days to add - use negative value to
+ subtract.
 
  \return FALSE on error, otherwise TRUE.
 */
 gboolean 
-qof_date_time_add_months (QofTime * ts, guint8 months,
-			gboolean track_last_day);
+qof_date_adddays (QofDate * qd, gint days);
+
+gboolean
+qof_date_set_day_end (QofDate * qd);
+
+gboolean
+qof_date_set_day_start (QofDate * qd);
+
+gboolean
+qof_date_set_day_middle (QofDate * qd);
 
 /**@} */
 

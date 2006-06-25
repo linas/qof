@@ -185,6 +185,13 @@ qof_time_abs (QofTime * time)
 	return time_normalize (time);
 }
 
+gboolean
+qof_time_is_valid (const QofTime * qt)
+{
+	g_return_val_if_fail (qt, FALSE);
+	return qt->valid;
+}
+
 QofTime *
 qof_time_set (QofTimeSecs t, glong nanosecs)
 {

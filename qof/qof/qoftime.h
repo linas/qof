@@ -215,6 +215,9 @@ qof_time_diff (const QofTime * ta, const QofTime * tb);
 QofTime *
 qof_time_abs (QofTime * t);
 
+gboolean
+qof_time_is_valid (const QofTime * qt);
+
 /** Turns a time_t into a QofTime
 
  \note On some platforms, time_t is only 32bit. Use

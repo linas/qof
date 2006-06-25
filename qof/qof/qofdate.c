@@ -52,30 +52,6 @@ static const guint8 days_in_months[2][13] =
   {  0, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 } /* leap year */
 };
 
-guint16
-qof_date_get_yday (gint mday, gint month, gint64 year)
-{
-	guint8 leap;
-
-	g_return_val_if_fail (mday  != 0, 0);
-	g_return_val_if_fail (month != 0, 0);
-	g_return_val_if_fail (month <= 12, 0);
-	g_return_val_if_fail (month >= 1, 0);
-	g_return_val_if_fail (year  != 0, 0);
-	leap = qof_date_isleap (year);
-	return days_in_year[leap][month] + mday;
-}
-
-guint8
-qof_date_get_mday (gint month, gint64 year)
-{
-	g_return_val_if_fail (month !=  0, 0);
-	g_return_val_if_fail (month <= 12, 0);
-	g_return_val_if_fail (month >=  1, 0);
-	g_return_val_if_fail (year  !=  0, 0);
-	return days_in_months[qof_date_isleap (year)][month];
-}
-
 /* A single Date Format Entry. */
 typedef struct QofDateEntry_s
 {
@@ -167,6 +143,39 @@ qof_date_close (void)
 		g_hash_table_destroy (DateFormatTable);
 	}
 	QofDateInit = FALSE;
+}
+
+guint16
+qof_date_get_yday (gint mday, gint month, gint64 year)
+{
+	guint8 leap;
+
+	g_return_val_if_fail (mday  != 0, 0);
+	g_return_val_if_fail (month != 0, 0);
+	g_return_val_if_fail (month <= 12, 0);
+	g_return_val_if_fail (month >= 1, 0);
+	g_return_val_if_fail (year  != 0, 0);
+	leap = qof_date_isleap (year);
+	return days_in_year[leap][month] + mday;
+}
+
+guint8
+qof_date_get_mday (gint month, gint64 year)
+{
+	g_return_val_if_fail (month !=  0, 0);
+	g_return_val_if_fail (month <= 12, 0);
+	g_return_val_if_fail (month >=  1, 0);
+	g_return_val_if_fail (year  !=  0, 0);
+	return days_in_months[qof_date_isleap (year)][month];
+}
+
+gboolean
+qof_date_is_last_mday (QofDate *qd)
+{
+	g_return_val_if_fail (qd, FALSE);
+	g_return_val_if_fail (qof_date_valid (qd), FALSE);
+	return (qd->qd_mday == 
+		qof_date_get_mday (qd->qd_mon, qd->qd_year));
 }
 
 gboolean
@@ -438,6 +447,20 @@ qof_date_new (void)
 	return d;
 }
 
+QofDate *
+qof_date_new_dmy (gint day, gint month, gint64 year)
+{
+	QofDate *qd;
+
+	qd = g_new0 (QofDate, 1);
+	qd->qd_mday = day;
+	qd->qd_mon  = month;
+	qd->qd_year = year;
+	if(!qof_date_valid (qd))
+		return NULL;
+	return qd;
+}
+
 void
 qof_date_free (QofDate * date)
 {
@@ -631,33 +654,33 @@ qof_date_compare (const QofDate * d1, const QofDate * d2)
 }
 
 QofDate *
-qof_date_from_struct_tm (struct tm *tm)
+qof_date_from_struct_tm (struct tm *stm)
 {
 	QofDate *d;
 
-	g_return_val_if_fail (tm, NULL);
+	g_return_val_if_fail (stm, NULL);
 	d = g_new0 (QofDate, 1);
-	d->qd_sec = tm->tm_sec;
-	d->qd_min = tm->tm_min;
-	d->qd_hour = tm->tm_hour;
-	d->qd_mday = tm->tm_mday;
-	d->qd_mon = tm->tm_mon + 1;
-	d->qd_year = tm->tm_year + 1900;
-	d->qd_wday = tm->tm_wday;
-	d->qd_yday = tm->tm_yday;
-	d->qd_is_dst = tm->tm_isdst;
-	d->qd_gmt_off = tm->tm_gmtoff;
-	d->qd_zone = tm->tm_zone;
+	d->qd_sec  = stm->tm_sec;
+	d->qd_min  = stm->tm_min;
+	d->qd_hour = stm->tm_hour;
+	d->qd_mday = stm->tm_mday;
+	d->qd_mon  = stm->tm_mon + 1;
+	d->qd_year = stm->tm_year + 1900;
+	d->qd_wday = stm->tm_wday;
+	d->qd_yday = stm->tm_yday;
+	d->qd_is_dst = stm->tm_isdst;
+	d->qd_gmt_off = stm->tm_gmtoff;
+	d->qd_zone = stm->tm_zone;
 	d->qd_valid = TRUE;
 	d = date_normalise(d);
 	return d;
 }
 
 gboolean
-qof_date_to_struct_tm (QofDate * qt, struct tm * tm, glong *nanosecs)
+qof_date_to_struct_tm (QofDate * qt, struct tm * stm, glong *nanosecs)
 {
 	g_return_val_if_fail (qt, FALSE);
-	g_return_val_if_fail (tm, FALSE);
+	g_return_val_if_fail (stm, FALSE);
 	g_return_val_if_fail (qt->qd_valid, FALSE);
 	qt = date_normalise (qt);
 	if ((qt->qd_year > G_MAXINT) || (qt->qd_year < 1900))
@@ -665,17 +688,17 @@ qof_date_to_struct_tm (QofDate * qt, struct tm * tm, glong *nanosecs)
 		PERR (" date too large for struct tm");
 		return FALSE;
 	}
-	tm->tm_sec = qt->qd_sec;
-	tm->tm_min = qt->qd_min;
-	tm->tm_hour = qt->qd_hour;
-	tm->tm_mday = qt->qd_mday;
-	tm->tm_mon = qt->qd_mon;
-	tm->tm_year = qt->qd_year - 1900;
-	tm->tm_wday = qt->qd_wday;
-	tm->tm_yday = qt->qd_yday;
-	tm->tm_isdst = qt->qd_is_dst;
-	tm->tm_gmtoff = qt->qd_gmt_off;
-	tm->tm_zone = qt->qd_zone;
+	stm->tm_sec = qt->qd_sec;
+	stm->tm_min = qt->qd_min;
+	stm->tm_hour = qt->qd_hour;
+	stm->tm_mday = qt->qd_mday;
+	stm->tm_mon = qt->qd_mon;
+	stm->tm_year = qt->qd_year - 1900;
+	stm->tm_wday = qt->qd_wday;
+	stm->tm_yday = qt->qd_yday;
+	stm->tm_isdst = qt->qd_is_dst;
+	stm->tm_gmtoff = qt->qd_gmt_off;
+	stm->tm_zone = qt->qd_zone;
 	*nanosecs = qt->qd_nanosecs;
 	return TRUE;
 }
@@ -713,7 +736,6 @@ qof_date_from_gdate (GDate *date)
 	return qd;
 }
 
-/** \todo rationalise this and date_normalise */
 static void
 qof_date_offset (const QofTime *time, glong offset, QofDate *qd)
 {
@@ -780,8 +802,11 @@ count_leapseconds (time_t interval)
 	altered = mktime (&utc);
 	/** \todo check not a negative value */
 	return altered - interval;
+/*	return ((altered - interval) < 0) ? (interval - altered) :
+		(altered - interval);*/
 }
 
+/*static inline gint*/
 static gint
 extract_interval (const QofTime *qt)
 {
@@ -806,9 +831,12 @@ qof_date_from_qtime (const QofTime *qt)
 	QofDate *qd;
 	gint leap_extra_secs;
 
+	/* may not want to create a new time or date - it
+	complicates memory management. */
 	g_return_val_if_fail (qt, NULL);
-	/** \todo add check for qt validity */
+	g_return_val_if_fail (qof_time_is_valid (qt), NULL);
 	qd = qof_date_new ();
+	leap_extra_secs = 0;
 	tzset();
 	leap_extra_secs = extract_interval (qt);
 	qof_date_offset (qt, leap_extra_secs, qd);
@@ -840,13 +868,13 @@ days_between (gint64 year1, gint64 year2)
 QofTime*
 qof_date_to_qtime (QofDate *qd)
 {
-	QofTime *time;
+	QofTime *qt;
 	QofTimeSecs c;
 
 	g_return_val_if_fail (qd, NULL);
 	g_return_val_if_fail (qof_date_valid(qd), NULL);
-	time = qof_time_new ();
 	c = 0;
+	qt = NULL;
 	if (qd->qd_year < 1970)
 	{
 		c = qd->qd_sec;
@@ -854,8 +882,8 @@ qof_date_to_qtime (QofDate *qd)
 		c += QOF_HOUR_TO_SEC(qd->qd_hour);
 		c += QOF_DAYS_TO_SEC(qd->qd_yday);
 		c -= QOF_DAYS_TO_SEC(days_between (1970, qd->qd_year));
-		c += qd->qd_gmt_off;
-		time = qof_time_set (c, qd->qd_nanosecs);
+		c -= qd->qd_gmt_off;
+		qt = qof_time_set (c, qd->qd_nanosecs);
 	}
 	if (qd->qd_year >= 1970)
 	{
@@ -865,87 +893,20 @@ qof_date_to_qtime (QofDate *qd)
 		c += QOF_DAYS_TO_SEC(qd->qd_yday);
 		c += QOF_DAYS_TO_SEC(days_between (1970, qd->qd_year));
 		c -= qd->qd_gmt_off;
-		time = qof_time_set (c, qd->qd_nanosecs);
+		qt = qof_time_set (c, qd->qd_nanosecs);
 	}
-	return time;
-}
-
-static inline gint64
-calc_julian_days (QofDate *date)
-{
-	gint64 days, leap;
-
-	/*  Used when a GDate is out of range.
-	From glib: 
-	multiply years * 365 days in the year,
-	add the number of years divided by 4, subtract the number of
-	years divided by 100 and add the number of years divided by 400,
-	which accounts for leap year stuff. Code from Steffen Beyer's
-	DateCalc. 
-	*/
-	days = date->qd_year * 365;
-	leap = g_date_is_leap_year (date->qd_year);
-	if (date->qd_year > 0)
-	{
-	/* if year > G_MAXUINT16 */
-		/* divide by 4 and add 
-		(every fourth year is leap so add a day for each.) */
-		days += (date->qd_year >>= 2);
-		/* divides original # years by 100 
-		(turn of century years are not leap) */
-		days -= (date->qd_year /= 25);
-		/* divides by 4, which divides original by 400.
-		(turn of millenium years are leap) */
-		days += date->qd_year >> 2;
-		days += days_in_year[leap][date->qd_mon];
-		days += date->qd_mday;
-	}
-	if (date->qd_year < 0)
-	{
-		/* divide by 4 and subtract */
-		days -= (date->qd_year >>= 2);
-		/* divides original # years by 100 */		
-		days += (date->qd_year /= 25);
-		/* divides by 4, which divides original by 400 */
-		days -= date->qd_year >> 2;
-		days -= days_in_year[leap][date->qd_mon];
-		days -= date->qd_mday;
-	}
-	return days;
+	return qt;
 }
 
 QofTime *
 qof_date_time_difference (QofDate * date1, QofDate * date2)
 {
-	GDate *d1, *d2;
-	gint64 days_between, julian_days;
+	gint64 days;
 	QofTime *secs;
-	gboolean use_local;
 
-	d1 = g_date_new ();
-	d2 = g_date_new ();
-	use_local = FALSE;
-	julian_days = 0;
 	secs = qof_time_new ();
-	if(!qof_date_to_gdate (date1, d1))
-	{
-		use_local = TRUE;
-		julian_days = calc_julian_days (date1);
-	}
-	if(!qof_date_to_gdate (date2, d2) || use_local == TRUE)
-	{
-		use_local = TRUE;
-		julian_days -= calc_julian_days (date2);
-	}
-	if(!use_local)
-	{
-		days_between = g_date_days_between (d1, d2);
-	}
-	else
-	{
-		days_between = julian_days;
-	}
-	secs = qof_time_add_secs(secs, QOF_DAYS_TO_SEC(days_between));
+	days = days_between (date1->qd_year, date2->qd_year);
+	secs = qof_time_add_secs(secs, QOF_DAYS_TO_SEC(days));
 	if (days_between >= 0)
 	{
 		/* positive value, add date2 secs, subtract date1 */
@@ -978,34 +939,61 @@ qof_date_time_difference (QofDate * date1, QofDate * date2)
 }
 
 gboolean
-qof_date_time_add_days (QofTime * qt, gint days)
+qof_date_adddays (QofDate * qd, gint days)
 {
-	g_return_val_if_fail (qt, FALSE);
-	qt = qof_time_add_secs (qt, days * SECS_PER_DAY);
-	return TRUE;
+	g_return_val_if_fail (qd, FALSE);
+	g_return_val_if_fail (qof_date_valid (qd), FALSE);
+	qd->qd_mday += days;
+	return qof_date_valid (qd);
 }
 
 gboolean
-qof_date_time_add_months (QofTime * qt, guint8 months,
+qof_date_addmonths (QofDate * qd, gint months,
 	gboolean track_last_day)
 {
-	GDateDay new_last_mday;
-	GDate *d, *earlier;
-	gint gap;
-
-	g_return_val_if_fail (qt, FALSE);
-	d = qof_time_to_gdate (qt);
-	earlier = qof_time_to_gdate (qt);
-	g_date_add_months (d, months);
-	if (track_last_day && g_date_is_last_of_month (d))
+	g_return_val_if_fail (qd, FALSE);
+	g_return_val_if_fail (qof_date_valid (qd), FALSE);
+	qd->qd_mon += months % 12;
+	qd->qd_year += months / 12;
+	g_return_val_if_fail (qof_date_valid (qd), FALSE);
+	if (track_last_day && qof_date_is_last_mday (qd))
 	{
-		new_last_mday = g_date_get_days_in_month (g_date_get_month (d),
-			g_date_get_year (d));
-		g_date_set_day (d, new_last_mday);
+		qd->qd_mday = qof_date_get_mday (qd->qd_mon,
+			qd->qd_year);
 	}
-	gap = g_date_days_between (earlier, d);
-	qof_date_time_add_days (qt, gap);
 	return TRUE;
 }
 
-/********************** END OF FILE *********************************/
+inline gboolean
+qof_date_set_day_end (QofDate * qd)
+{
+	qd->qd_hour = 23;
+	qd->qd_min  = 59;
+	qd->qd_sec  = 59;
+	qd->qd_nanosecs = (QOF_NSECS - 1);
+	return qof_date_valid (qd);
+}
+
+inline gboolean
+qof_date_set_day_start (QofDate * qd)
+{
+	g_return_val_if_fail (qd, FALSE);
+	qd->qd_hour = 0;
+	qd->qd_min  = 0;
+	qd->qd_sec  = 0;
+	qd->qd_nanosecs = G_GINT64_CONSTANT(0);
+	return qof_date_valid (qd);
+}
+
+inline gboolean
+qof_date_set_day_middle (QofDate * qd)
+{
+	g_return_val_if_fail (qd, FALSE);
+	qd->qd_hour = 12;
+	qd->qd_min  = 0;
+	qd->qd_sec = 0;
+	qd->qd_nanosecs = G_GINT64_CONSTANT(0);
+	return qof_date_valid (qd);
+}
+
+/******************** END OF FILE *************************/

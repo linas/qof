@@ -1,3 +1,17 @@
+2006-06-25 Neil Williams  <linux@codehelp.co.uk>
+
+	* qof/deprecated.c,
+	qof/qofdate.c,
+	qof/qofdate.h,
+	qof/qofstrftime.c,
+	qof/qoftime.c,
+	qof/qoftime.h,
+	qof/test/test-date.c : Rationalise addmonths
+	and adddays and fix deprecated and test code.
+	Simplify day_end, day_start and day_middle.
+	Implement and test qof_date_from_qtime and
+	qof_date_to_qtime. Add a few more tests - 1550.
+
 2006-06-24 Neil Williams <linux@codehelp.co.uk>
 
 	* qof/qofdate-p.h,

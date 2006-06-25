@@ -331,28 +331,33 @@ timespec_abs (const Timespec * t)
 Timespec
 timespecCanonicalDayTime (Timespec t)
 {
-	Timespec ts;
-	QofTime *time;
+	struct tm tm, *result;
+	Timespec retval;
 
-	time = timespecToQofTime (t);
-	qof_time_set_day_middle (time);
-	ts = qof_time_to_Timespec (time);
-	qof_time_free (time);
-	return ts;
+	time_t t_secs = t.tv_sec + (t.tv_nsec / QOF_NSECS);
+	result = localtime(&t_secs);
+	tm = *result;
+	gnc_tm_set_day_middle(&tm);
+	retval.tv_sec = mktime(&tm);
+	retval.tv_nsec = 0;
+	return retval;
 }
 
 time_t
 qof_date_dmy_to_sec (gint day, gint month, gint year)
 {
-	QofTime *t;
-	GDate *gd;
+	QofTime *qt;
+	QofDate *qd;
 	time_t retval;
 
-	t = qof_time_new ();
-	gd = g_date_new_dmy (day, month, year);
-	t = qof_time_from_gdate (gd);
-	retval = qof_time_get_secs (t);
-	qof_time_free (t);
+	qd = qof_date_new ();
+	qd->qd_mday = day;
+	qd->qd_mon  = month;
+	qd->qd_year = year;
+	qt = qof_date_to_qtime (qd);
+	retval = qof_time_get_secs (qt);
+	qof_time_free (qt);
+	qof_date_free (qd);
 	return retval;
 }
 
@@ -732,13 +737,13 @@ size_t
 qof_print_gdate (gchar * buf, size_t len, GDate * gd)
 {
 	QofDateFormat df;
-	QofTime *time;
+	QofDate *qd;
 	gchar *str;
 
 	df = qof_date_format_get_current ();
-	time = qof_time_from_gdate (gd);
-	str = qof_date_print (qof_date_from_qtime (time), df);
-	qof_time_free (time);
+	qd = qof_date_from_gdate (gd);
+	str = qof_date_print (qd, df);
+	qof_date_free (qd);
 	g_stpcpy (buf, str);
 	g_free (str);
 	return strlen (buf);
@@ -778,21 +783,18 @@ gboolean
 qof_scan_date (const gchar * buff, gint * day, gint * month, gint * year)
 {
 	QofDateFormat df;
-	QofTime *time;
-	GDate *d;
+	QofDate *qd;
 
 	df = qof_date_format_get_current ();
-	time = qof_date_to_qtime (qof_date_parse (buff, df));
-	if (!time)
+	qd = qof_date_parse (buff, df);
+	if (!qd)
 		return FALSE;
-	d = qof_time_to_gdate (time);
-	qof_time_free (time);
 	if (day)
-		*day = g_date_get_day (d);
+		*day = qd->qd_mday;
 	if (month)
-		*month = g_date_get_month (d);
-	if (year)
-		*year = g_date_get_year (d);
+		*month = qd->qd_mon;
+	if ((year) && (qd->qd_year > 0) && (qd->qd_year < G_MAXINT))
+			*year = (gint)qd->qd_year;
 	return TRUE;
 }
 
@@ -818,15 +820,19 @@ Timespec
 gnc_dmy2timespec (gint day, gint month, gint year)
 {
 	Timespec ts;
-	GDate *date;
-	QofTime *time;
+	QofTime *qt;
+	QofDate *qd;
 
 	if (!g_date_valid_dmy (day, month, year))
 		return null_timespec ();
-	date = g_date_new_dmy (day, month, year);
-	time = qof_time_from_gdate (date);
-	ts = qof_time_to_Timespec (time);
-	qof_time_free (time);
+	qd = qof_date_new ();
+	qd->qd_mday = day;
+	qd->qd_mon  = month;
+	qd->qd_year = year;
+	qt = qof_date_to_qtime (qd);
+	ts = qof_time_to_Timespec (qt);
+	qof_time_free (qt);
+	qof_date_free (qd);
 	return ts;
 }
 
@@ -834,17 +840,20 @@ Timespec
 gnc_dmy2timespec_end (gint day, gint month, gint year)
 {
 	Timespec ts;
-	GDate *date;
-	QofTime *time;
+	QofTime *qt;
+	QofDate *qd;
 
 	if (!g_date_valid_dmy (day, month, year))
 		return null_timespec ();
-	date = g_date_new_dmy (day, month, year);
-	time = qof_time_from_gdate (date);
-	if (!qof_time_set_day_end (time))
-		return null_timespec ();
-	ts = qof_time_to_Timespec (time);
-	qof_time_free (time);
+	qd = qof_date_new ();
+	qd->qd_mday = day;
+	qd->qd_mon  = month;
+	qd->qd_year = year;
+	qof_date_set_day_end (qd);
+	qt = qof_date_to_qtime (qd);
+	ts = qof_time_to_Timespec (qt);
+	qof_time_free (qt);
+	qof_date_free (qd);
 	return ts;
 }
 
@@ -1079,17 +1088,17 @@ void
 gnc_timespec2dmy (Timespec ts, gint * day, gint * month, gint * year)
 {
 	QofTime *time;
-	GDate *d;
+	QofDate *qd;
 
 	time = timespecToQofTime (ts);
-	d = qof_time_to_gdate (time);
+	qd = qof_date_from_qtime (time);
 	qof_time_free (time);
 	if (day)
-		*day = g_date_get_day (d);
+		*day = qd->qd_mday;
 	if (month)
-		*month = g_date_get_month (d);
-	if (year)
-		*year = g_date_get_year (d);
+		*month = qd->qd_mon;
+	if ((year) && (qd->qd_year < 0) && (qd->qd_year > G_MAXINT))
+		*year = (gint)qd->qd_year;
 }
 
 glong
