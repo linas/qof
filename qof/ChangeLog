@@ -1,3 +1,10 @@
+2006-06-26 Neil Williams  <linux@codehelp.co.uk>
+
+	* qof/qofdate.c,
+	qof/qofdate.h,
+	qof/test/test-date.c : Use const pointers where
+	possible and make date validation more consistent.
+
 2006-06-25 Neil Williams  <linux@codehelp.co.uk>
 
 	* qof/deprecated.c,

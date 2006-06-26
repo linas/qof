@@ -126,6 +126,10 @@ always (and only) relates to seconds, a QofDate always
 relates to how that number of seconds can be represented
 as a sequence of days, months, years etc.
 
+ \note Although values can be set directly,
+::qof_date_valid should be called before attempting to
+manipulate a QofDate.
+
  \todo Reorganise the qof_time_* functions to reflect this
 statement. qof_time_set_day_end should be qof_date_set_day_end
 and the various qof_date_time functions need to be reviewed.
@@ -208,7 +212,10 @@ validate the QofDate to get UTC.
 	/** \brief If the QofDate is valid or merely initialised. 
 
 Some QofDate values are invalid when initialised
-to zero (e.g. qm_mday).
+to zero (e.g. qm_mday). Avoid setting this value manually
+(just because it can be done, does not mean doing it is a
+good idea). Use ::qof_date_valid to ensure that values like
+qd_wday, qd_yday, qd_gmt_off and qd_is_dst are set correctly.
 */
 	gboolean qd_valid;
 } QofDate;
@@ -452,16 +459,17 @@ qof_date_free (QofDate * date);
 
 /** Calculate the QofTime between two QofDates */ 
 QofTime*
-qof_date_time_difference (QofDate * date1, QofDate * date2);
+qof_date_time_difference (const QofDate * date1, const QofDate * date2);
 
 /** Checks if QofDate the last day of the month.
 
- The QofDate will be normalised before checking.
+ \param qd A \b valid QofDate.
 
- \return TRUE if qd_mday is the last day of qd_mon in qd_year
+ \return TRUE if qd_mday is the last day of qd_mon in qd_year,
+otherwise (or on error), FALSE.
 */
 gboolean
-qof_date_is_last_mday (QofDate *qd);
+qof_date_is_last_mday (const QofDate *qd);
 
 /** Add (or subtract) months from a QofDate
 
@@ -474,13 +482,13 @@ last day of the updated month in the updated year.
  calculations begin.
  \param months Number of months to add (or subtract if
  months is negative).
+ \param track_last_day Whether to track the last day.
 
  \return FALSE on error, otherwise TRUE.
 */
 gboolean
 qof_date_addmonths (QofDate * qd, gint months,
 	gboolean track_last_day);
-
 
 /** Check two QofDates for equality */
 gboolean
@@ -542,21 +550,21 @@ qof_date_get_mday (gint month, gint64 year);
 /** \name Conversion handlers for QofDate
  @{
 */
-/** Return a QofDate from a QofTime in UTC */
+/** Return a QofDate in UTC from a QofTime. */
 QofDate *
 qof_date_from_qtime (const QofTime *qt);
 
-/** not const because validation normalises date */
+/** Return a valid QofTime from a valid QofDate. */
 QofTime *
-qof_date_to_qtime (QofDate *qd);
+qof_date_to_qtime (const QofDate *qd);
 
 /** \brief Convert a struct tm to a QofDate.
 
- \param tm A pointer to a valid struct tm.
+ \param stm A pointer to a valid struct tm.
  \return Newly allocated QofDate or NULL if tm is NULL.
 */
 QofDate *
-qof_date_from_struct_tm (struct tm *tm);
+qof_date_from_struct_tm (const struct tm *stm);
 
 /** \brief Convert a QofDate to a struct tm
 
@@ -565,33 +573,39 @@ a larger range than a struct tm. The struct tm
 will be unchanged if a conversion would have been
 out of range.
 
- \todo return nanoseconds to prevent data loss.
-
-The QofDate will be normalised before conversion.
-
  \param qt A valid QofDate.
- \param tm Pointer to a struct tm to store the result.
+ \param stm Pointer to a struct tm to store the result.
  \param nanosecs Pointer to a glong to store the nanoseconds.
- \return FALSE on error or if the QofDate is out of the
-range of a struct tm, otherwise TRUE.
+
+ \return FALSE on error or if the QofDate is invalid or out of
+the range of a struct tm, otherwise TRUE.
 */
 gboolean 
-qof_date_to_struct_tm (QofDate * qt, struct tm *tm, glong * nanosecs);
-
-/** \brief Convert a GDate to a QofDate
-
- \param qd a new QofDate to store the converted value
- \param gd a valid GDate
-*/
-gboolean
-qof_date_to_gdate (QofDate *qd, GDate *gd);
+qof_date_to_struct_tm (const QofDate * qt, struct tm *stm, glong * nanosecs);
 
 /** \brief Convert a QofDate to a GDate
 
+ \param qd a valid QofDate
+ \param gd a new GDate to store the converted value.
+
+ \return FALSE on error, if the QofDate is out
+of range of a GDate or if QofDate is not valid,
+otherwise TRUE.
+*/
+gboolean
+qof_date_to_gdate (const QofDate *qd, GDate *gd);
+
+/** \brief Create a QofDate from a GDate.
+
 A GDate is always within the range of a QofDate.
+
+ \param gd A valid GDate.
+
+ \return NULL on error, otherwise a newly allocated, 
+valid, QofDate.
 */
 QofDate *
-qof_date_from_gdate (GDate *gd);
+qof_date_from_gdate (const GDate *gd);
 
 /** @} */
 /** \name Manipulate QofTime as a date
@@ -686,7 +700,7 @@ in any registered QofDateFormat.
 when no longer needed.
 */
 gchar *
-qof_date_print (QofDate * date, QofDateFormat df);
+qof_date_print (const QofDate * date, QofDateFormat df);
 
 /** \brief Convert a timestamp to a QofTime
 

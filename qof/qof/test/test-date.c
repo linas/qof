@@ -127,6 +127,7 @@ test_date_init (void)
 		td->date->qd_hour = 15;
 		td->date->qd_min  = 45;
 		td->date->qd_sec  = G_GINT64_CONSTANT(50);
+		qof_date_valid (td->date);
 		td->string_list = NULL;
 		td->string_list = g_list_append (td->string_list, "05/14/2006");
 		td->string_list = g_list_append (td->string_list, "14/05/2006");
@@ -148,6 +149,7 @@ test_date_init (void)
 		td->date->qd_hour = 0;
 		td->date->qd_min  = 0;
 		td->date->qd_sec  = G_GINT64_CONSTANT(0);
+		qof_date_valid (td->date);
 		td->string_list = NULL;
 		td->string_list = g_list_prepend (td->string_list, "05/09/2006");
 		td->string_list = g_list_prepend (td->string_list, "09/05/2006");
@@ -170,6 +172,7 @@ test_date_init (void)
 		td->date->qd_hour = 14;
 		td->date->qd_min  = 49;
 		td->date->qd_sec  = G_GINT64_CONSTANT(4);
+		qof_date_valid (td->date);
 		td->string_list = NULL;
 		td->string_list = g_list_prepend (td->string_list, "05/09/2006");
 		td->string_list = g_list_prepend (td->string_list, "09/05/2006");
@@ -192,6 +195,7 @@ test_date_init (void)
 		td->date->qd_hour = 15;
 		td->date->qd_min  = 0;
 		td->date->qd_sec  = G_GINT64_CONSTANT(0);
+		qof_date_valid (td->date);
 		td->string_list = NULL;
 		td->string_list = g_list_prepend (td->string_list, "12/31/1971");
 		td->string_list = g_list_prepend (td->string_list, "31/12/1971");
@@ -214,6 +218,7 @@ test_date_init (void)
 		td->date->qd_hour = 0;
 		td->date->qd_min  = 0;
 		td->date->qd_sec  = G_GINT64_CONSTANT(0);
+		qof_date_valid (td->date);
 		td->string_list = NULL;
 		td->string_list = g_list_prepend (td->string_list, "01/01/1980");
 		td->string_list = g_list_prepend (td->string_list, "01/01/1980");
@@ -236,6 +241,7 @@ test_date_init (void)
 		td->date->qd_hour = 23;
 		td->date->qd_min  = 59;
 		td->date->qd_sec  = G_GINT64_CONSTANT(59);
+		qof_date_valid (td->date);
 		td->string_list = NULL;
 		td->string_list = g_list_prepend (td->string_list, "12/31/1999");
 		td->string_list = g_list_prepend (td->string_list, "31/12/1999");
@@ -258,6 +264,7 @@ test_date_init (void)
 		td->date->qd_hour = 15;
 		td->date->qd_min  = 45;
 		td->date->qd_sec  = G_GINT64_CONSTANT(23);
+		qof_date_valid (td->date);
 		td->string_list = NULL;
 		td->string_list = g_list_prepend (td->string_list, "02/29/1992");
 		td->string_list = g_list_prepend (td->string_list, "29/02/1992");
@@ -280,6 +287,7 @@ test_date_init (void)
 		td->date->qd_hour = 23;
 		td->date->qd_min  = 59;
 		td->date->qd_sec  = G_GINT64_CONSTANT(59);
+		qof_date_valid (td->date);
 		td->string_list = NULL;
 		td->string_list = g_list_prepend (td->string_list, "12/31/1969");
 		td->string_list = g_list_prepend (td->string_list, "31/12/1969");
@@ -302,6 +310,7 @@ test_date_init (void)
 		td->date->qd_hour = 19;
 		td->date->qd_min  = 0;
 		td->date->qd_sec  = G_GINT64_CONSTANT(0);
+		qof_date_valid (td->date);
 		td->string_list = NULL;
 		td->string_list = g_list_prepend (td->string_list, "11/22/1963");
 		td->string_list = g_list_prepend (td->string_list, "22/11/1963");
@@ -324,6 +333,7 @@ test_date_init (void)
 		td->date->qd_hour = 2;
 		td->date->qd_min  = 2;
 		td->date->qd_sec  = G_GINT64_CONSTANT(0);
+		qof_date_valid (td->date);
 		td->string_list = NULL;
 		td->string_list = g_list_prepend (td->string_list, "09/08/1945");
 		td->string_list = g_list_prepend (td->string_list, "08/09/1945");
@@ -346,6 +356,7 @@ test_date_init (void)
 		td->date->qd_hour = 11;
 		td->date->qd_min  = 0;
 		td->date->qd_sec  = G_GINT64_CONSTANT(0);
+		qof_date_valid (td->date);
 		td->string_list = NULL;
 		td->string_list = g_list_prepend (td->string_list, "11/11/1918");
 		td->string_list = g_list_prepend (td->string_list, "11/11/1918");
@@ -369,6 +380,7 @@ test_date_init (void)
 		td->date->qd_hour = 23;
 		td->date->qd_min  = 59;
 		td->date->qd_sec  = G_GINT64_CONSTANT(59);
+		qof_date_valid (td->date);
 		td->string_list = NULL;
 		td->string_list = g_list_prepend (td->string_list, "12/31/1899");
 		td->string_list = g_list_prepend (td->string_list, "31/12/1899");
@@ -392,6 +404,7 @@ test_date_init (void)
 		td->date->qd_hour = 0;
 		td->date->qd_min  = 0;
 		td->date->qd_sec  = G_GINT64_CONSTANT(1);
+		qof_date_valid (td->date);
 		td->string_list = NULL;
 		td->string_list = g_list_prepend (td->string_list, "02/29/1548");
 		td->string_list = g_list_prepend (td->string_list, "29/02/1548");
@@ -414,6 +427,7 @@ test_date_init (void)
 		td->date->qd_hour = 8;
 		td->date->qd_min  = 0;
 		td->date->qd_sec  = G_GINT64_CONSTANT(0);
+		qof_date_valid (td->date);
 		td->string_list = NULL;
 		td->string_list = g_list_prepend (td->string_list, "10/14/1066");
 		td->string_list = g_list_prepend (td->string_list, "14/10/1066");
@@ -437,6 +451,7 @@ test_date_init (void)
 		td->date->qd_hour = 0;
 		td->date->qd_min  = 0;
 		td->date->qd_sec  = G_GINT64_CONSTANT(1);
+		qof_date_valid (td->date);
 		td->string_list = NULL;
 		td->string_list = g_list_prepend (td->string_list, "12/25/0815");
 		td->string_list = g_list_prepend (td->string_list, "25/12/0815");
@@ -459,6 +474,7 @@ test_date_init (void)
 		td->date->qd_hour = 14;
 		td->date->qd_min  = 0;
 		td->date->qd_sec  = G_GINT64_CONSTANT(0);
+		qof_date_valid (td->date);
 		td->string_list = NULL;
 		td->string_list = g_list_prepend (td->string_list, "05/20/0043");
 		td->string_list = g_list_prepend (td->string_list, "20/05/0043");
@@ -485,6 +501,7 @@ test_date_init (void)
 		td->date->qd_hour = 23;
 		td->date->qd_min  = 59;
 		td->date->qd_sec  = G_GINT64_CONSTANT(59);
+		qof_date_valid (td->date);
 		td->string_list = NULL;
 		td->string_list = g_list_prepend (td->string_list, "12/24/-001");
 		td->string_list = g_list_prepend (td->string_list, "24/12/-001");
@@ -508,6 +525,7 @@ test_date_init (void)
 		td->date->qd_hour = 23;
 		td->date->qd_min  = 59;
 		td->date->qd_sec  = G_GINT64_CONSTANT(59);
+		qof_date_valid (td->date);
 		td->string_list = NULL;
 		td->string_list = g_list_prepend (td->string_list, "12/31/-4499");
 		td->string_list = g_list_prepend (td->string_list, "31/12/-4499");
@@ -531,6 +549,7 @@ test_date_init (void)
 		td->date->qd_hour = 23;
 		td->date->qd_min  = 59;
 		td->date->qd_sec  = G_GINT64_CONSTANT(59);
+		qof_date_valid (td->date);
 		td->string_list = NULL;
 		td->string_list = g_list_prepend (td->string_list, "12/31/-64499");
 		td->string_list = g_list_prepend (td->string_list, "31/12/-64499");
@@ -554,6 +573,7 @@ test_date_init (void)
 		td->date->qd_hour = 6;
 		td->date->qd_min  = 34;
 		td->date->qd_sec  = G_GINT64_CONSTANT(26);
+		qof_date_valid (td->date);
 		td->string_list = NULL;
 		td->string_list = g_list_prepend (td->string_list, "07/24/3005");
 		td->string_list = g_list_prepend (td->string_list, "24/07/3005");
@@ -577,6 +597,7 @@ test_date_init (void)
 		td->date->qd_hour = 23;
 		td->date->qd_min  = 59;
 		td->date->qd_sec  = G_GINT64_CONSTANT(59);
+		qof_date_valid (td->date);
 		td->string_list = NULL;
 		td->string_list = g_list_prepend (td->string_list, "12/31/4499");
 		td->string_list = g_list_prepend (td->string_list, "31/12/4499");
@@ -600,6 +621,7 @@ test_date_init (void)
 		td->date->qd_hour = 23;
 		td->date->qd_min  = 59;
 		td->date->qd_sec  = G_GINT64_CONSTANT(59);
+		qof_date_valid (td->date);
 		td->string_list = NULL;
 		td->string_list = g_list_prepend (td->string_list, "12/31/14499");
 		td->string_list = g_list_prepend (td->string_list, "31/12/14499");
@@ -623,6 +645,7 @@ test_date_init (void)
 		td->date->qd_hour = 23;
 		td->date->qd_min  = 59;
 		td->date->qd_sec  = G_GINT64_CONSTANT(59);
+		qof_date_valid (td->date);
 		td->string_list = NULL;
 		td->string_list = g_list_prepend (td->string_list, "12/31/2374499");
 		td->string_list = g_list_prepend (td->string_list, "31/12/2374499");
@@ -1002,6 +1025,7 @@ run_qofdate_test (void)
 		qd->qd_hour = 06;
 		qd->qd_min  = 34;
 		qd->qd_sec  = 26;
+		do_test ((qof_date_valid (qd)), "date not valid");
 		qt = qof_date_to_qtime (qd);
 		do_test ((0 == safe_strcasecmp ("07/24/3005",
 			qof_date_print (qd, QOF_DATE_FORMAT_US))), 
@@ -1032,6 +1056,7 @@ run_qofdate_test (void)
 		qd->qd_hour = 06;
 		qd->qd_min  = 34;
 		qd->qd_sec  = 26;
+		do_test ((qof_date_valid (qd)), "date not valid");
 		qt = qof_date_to_qtime (qd);
 		do_test ((0 == safe_strcasecmp ("07/24/4500",
 			qof_date_print (qd, QOF_DATE_FORMAT_US))), 
@@ -1063,6 +1088,7 @@ run_qofdate_test (void)
 		qd->qd_hour = 06;
 		qd->qd_min  = 34;
 		qd->qd_sec  = 26;
+		do_test ((qof_date_valid (qd)), "date not valid");
 		qt = qof_date_to_qtime (qd);
 		do_test ((0 == safe_strcasecmp ("07/24/45000",
 			qof_date_print (qd, QOF_DATE_FORMAT_US))), 
@@ -1092,6 +1118,7 @@ run_qofdate_test (void)
 		qd->qd_mon = 11;
 		qd->qd_mday = 11;
 		qd->qd_hour = 11;
+		do_test ((qof_date_valid (qd)), "date not valid");
 		qt = qof_date_to_qtime (qd);
 		str1 = qof_date_print (qd, QOF_DATE_FORMAT_UTC);
 		do_test ((0 == safe_strcasecmp (str1,
@@ -1126,6 +1153,7 @@ run_qofdate_test (void)
 		qd->qd_hour = 06;
 		qd->qd_min  = 34;
 		qd->qd_sec  = 26;
+		do_test ((qof_date_valid (qd)), "date not valid");
 		qt = qof_date_to_qtime (qd);
 		do_test ((0 == safe_strcasecmp ("07/24/1812",
 			qof_date_print (qd, QOF_DATE_FORMAT_US))), 
@@ -1156,6 +1184,7 @@ run_qofdate_test (void)
 		qd->qd_hour = 06;
 		qd->qd_min  = 34;
 		qd->qd_sec  = 26;
+		do_test ((qof_date_valid (qd)), "date not valid");
 		qt = qof_date_to_qtime (qd);
 		do_test ((0 == safe_strcasecmp ("07/24/1066",
 			qof_date_print (qd, QOF_DATE_FORMAT_US))), 
@@ -1186,6 +1215,7 @@ run_qofdate_test (void)
 		qd->qd_hour = 06;
 		qd->qd_min  = 34;
 		qd->qd_sec  = 26;
+		do_test ((qof_date_valid (qd)), "date not valid");
 		qt = qof_date_to_qtime (qd);
 		do_test ((0 == safe_strcasecmp ("07/24/-045",
 			qof_date_print (qd, QOF_DATE_FORMAT_US))), 
@@ -1216,6 +1246,7 @@ run_qofdate_test (void)
 		qd->qd_hour = 06;
 		qd->qd_min  = 34;
 		qd->qd_sec  = 26;
+		do_test ((qof_date_valid (qd)), "date not valid");
 		qt = qof_date_to_qtime (qd);
 		do_test ((0 == safe_strcasecmp ("07/24/-4500",
 			qof_date_print (qd, QOF_DATE_FORMAT_US))), 
@@ -1246,6 +1277,7 @@ run_qofdate_test (void)
 		qd->qd_hour = 06;
 		qd->qd_min  = 34;
 		qd->qd_sec  = 26;
+		do_test ((qof_date_valid (qd)), "date not valid");
 		qt = qof_date_to_qtime (qd);
 		do_test ((0 == safe_strcasecmp ("07/24/-4500000",
 			qof_date_print (qd, QOF_DATE_FORMAT_US))), 

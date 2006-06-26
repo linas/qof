@@ -170,10 +170,10 @@ qof_date_get_mday (gint month, gint64 year)
 }
 
 gboolean
-qof_date_is_last_mday (QofDate *qd)
+qof_date_is_last_mday (const QofDate *qd)
 {
 	g_return_val_if_fail (qd, FALSE);
-	g_return_val_if_fail (qof_date_valid (qd), FALSE);
+	g_return_val_if_fail (qd->qd_valid, FALSE);
 	return (qd->qd_mday == 
 		qof_date_get_mday (qd->qd_mon, qd->qd_year));
 }
@@ -385,90 +385,6 @@ qof_date_format_from_name (const gchar * name)
 	return i.df;
 }
 
-QofDate *
-qof_date_parse (const gchar * str, QofDateFormat df)
-{
-	const gchar *format;
-	QofDateError error;
-	QofDate *date;
-	gchar *check;
-
-	ENTER (" ");
-	check = NULL;
-	error = ERR_NO_ERROR;
-	date = qof_date_new ();
-	format = qof_date_format_get_format (df);
-	check = strptime_internal (str, format, date, &error);
-	if (error != ERR_NO_ERROR)
-	{
-		qof_date_free (date);
-		fprintf (stderr, "strptime %s\n", 
-			QofDateErrorasString (error));
-		LEAVE (" date is null");
-		return NULL;
-	}
-	LEAVE (" valid date parsed.");
-	return date;
-}
-
-gchar *
-qof_date_print (QofDate * date, QofDateFormat df)
-{
-	size_t result;
-	gchar temp[MAX_DATE_BUFFER];
-	QofDateEntry *d;
-
-	g_return_val_if_fail (QofDateInit, NULL);
-	g_return_val_if_fail (date, NULL);
-	d = g_hash_table_lookup (DateFormatTable, 
-		GINT_TO_POINTER (df));
-	g_return_val_if_fail (d, NULL);
-	ENTER (" ");
-	temp[0] = '\1';
-	result = strftime_case (FALSE, temp, MAX_DATE_BUFFER, 
-		d->format, date, 1, date->qd_nanosecs);
-	if (result == 0 && temp[0] != '\0')
-	{
-		LEAVE (" qof extended strftime failed");
-		return NULL;
-	}
-	LEAVE (" ");
-	return g_strndup(temp, result);
-}
-
-/* QofDate handlers */
-
-QofDate *
-qof_date_new (void)
-{
-	QofDate *d;
-
-	d = g_new0 (QofDate, 1);
-	return d;
-}
-
-QofDate *
-qof_date_new_dmy (gint day, gint month, gint64 year)
-{
-	QofDate *qd;
-
-	qd = g_new0 (QofDate, 1);
-	qd->qd_mday = day;
-	qd->qd_mon  = month;
-	qd->qd_year = year;
-	if(!qof_date_valid (qd))
-		return NULL;
-	return qd;
-}
-
-void
-qof_date_free (QofDate * date)
-{
-	g_return_if_fail (date);
-	g_free (date);
-	date = NULL;
-}
-
 static QofDate*
 date_normalise (QofDate * date)
 {
@@ -590,6 +506,92 @@ date_normalise (QofDate * date)
 	return date;
 }
 
+QofDate *
+qof_date_parse (const gchar * str, QofDateFormat df)
+{
+	const gchar *format;
+	QofDateError error;
+	QofDate *date;
+	gchar *check;
+
+	ENTER (" ");
+	check = NULL;
+	error = ERR_NO_ERROR;
+	date = qof_date_new ();
+	format = qof_date_format_get_format (df);
+	check = strptime_internal (str, format, date, &error);
+	if (error != ERR_NO_ERROR)
+	{
+		qof_date_free (date);
+		fprintf (stderr, "strptime %s\n", 
+			QofDateErrorasString (error));
+		LEAVE (" date is null");
+		return NULL;
+	}
+	LEAVE (" valid date parsed.");
+	date = date_normalise (date);
+	return date;
+}
+
+gchar *
+qof_date_print (const QofDate * date, QofDateFormat df)
+{
+	size_t result;
+	gchar temp[MAX_DATE_BUFFER];
+	QofDateEntry *d;
+
+	g_return_val_if_fail (QofDateInit, NULL);
+	g_return_val_if_fail (date, NULL);
+	g_return_val_if_fail (date->qd_valid, NULL);
+	d = g_hash_table_lookup (DateFormatTable, 
+		GINT_TO_POINTER (df));
+	g_return_val_if_fail (d, NULL);
+	ENTER (" ");
+	temp[0] = '\1';
+	result = strftime_case (FALSE, temp, MAX_DATE_BUFFER, 
+		d->format, date, 1, date->qd_nanosecs);
+	if (result == 0 && temp[0] != '\0')
+	{
+		LEAVE (" qof extended strftime failed");
+		return NULL;
+	}
+	LEAVE (" ");
+	return g_strndup(temp, result);
+}
+
+/* QofDate handlers */
+
+QofDate *
+qof_date_new (void)
+{
+	QofDate *d;
+
+	d = g_new0 (QofDate, 1);
+	return d;
+}
+
+QofDate *
+qof_date_new_dmy (gint day, gint month, gint64 year)
+{
+	QofDate *qd;
+
+	qd = g_new0 (QofDate, 1);
+	qd->qd_mday = day;
+	qd->qd_mon  = month;
+	qd->qd_year = year;
+	if(!qof_date_valid (qd))
+		return NULL;
+	return qd;
+}
+
+void
+qof_date_free (QofDate * date)
+{
+	g_return_if_fail (date);
+	g_free (date);
+	date = NULL;
+}
+
 gboolean
 qof_date_valid (QofDate *date)
 {
@@ -654,7 +656,7 @@ qof_date_compare (const QofDate * d1, const QofDate * d2)
 }
 
 QofDate *
-qof_date_from_struct_tm (struct tm *stm)
+qof_date_from_struct_tm (const struct tm *stm)
 {
 	QofDate *d;
 
@@ -677,38 +679,37 @@ qof_date_from_struct_tm (struct tm *stm)
 }
 
 gboolean
-qof_date_to_struct_tm (QofDate * qt, struct tm * stm, glong *nanosecs)
+qof_date_to_struct_tm (const QofDate * qd, struct tm * stm, glong *nanosecs)
 {
-	g_return_val_if_fail (qt, FALSE);
+	g_return_val_if_fail (qd, FALSE);
 	g_return_val_if_fail (stm, FALSE);
-	g_return_val_if_fail (qt->qd_valid, FALSE);
-	qt = date_normalise (qt);
-	if ((qt->qd_year > G_MAXINT) || (qt->qd_year < 1900))
+	g_return_val_if_fail (qd->qd_valid, FALSE);
+	if ((qd->qd_year > G_MAXINT) || (qd->qd_year < 1900))
 	{
 		PERR (" date too large for struct tm");
 		return FALSE;
 	}
-	stm->tm_sec = qt->qd_sec;
-	stm->tm_min = qt->qd_min;
-	stm->tm_hour = qt->qd_hour;
-	stm->tm_mday = qt->qd_mday;
-	stm->tm_mon = qt->qd_mon;
-	stm->tm_year = qt->qd_year - 1900;
-	stm->tm_wday = qt->qd_wday;
-	stm->tm_yday = qt->qd_yday;
-	stm->tm_isdst = qt->qd_is_dst;
-	stm->tm_gmtoff = qt->qd_gmt_off;
-	stm->tm_zone = qt->qd_zone;
-	*nanosecs = qt->qd_nanosecs;
+	stm->tm_sec  = qd->qd_sec;
+	stm->tm_min  = qd->qd_min;
+	stm->tm_hour = qd->qd_hour;
+	stm->tm_mday = qd->qd_mday;
+	stm->tm_mon  = qd->qd_mon;
+	stm->tm_year = qd->qd_year - 1900;
+	stm->tm_wday = qd->qd_wday;
+	stm->tm_yday = qd->qd_yday;
+	stm->tm_isdst = qd->qd_is_dst;
+	stm->tm_gmtoff = qd->qd_gmt_off;
+	stm->tm_zone = qd->qd_zone;
+	*nanosecs = qd->qd_nanosecs;
 	return TRUE;
 }
 
 gboolean
-qof_date_to_gdate (QofDate *qd, GDate *gd)
+qof_date_to_gdate (const QofDate *qd, GDate *gd)
 {
 	g_return_val_if_fail (qd, FALSE);
 	g_return_val_if_fail (gd, FALSE);
-	qd = date_normalise (qd);
+	g_return_val_if_fail (qd->qd_valid, FALSE);
 	if (qd->qd_year >= G_MAXUINT16)
 	{
 		PERR (" QofDate out of range of GDate");
@@ -724,7 +725,7 @@ qof_date_to_gdate (QofDate *qd, GDate *gd)
 }
 
 QofDate *
-qof_date_from_gdate (GDate *date)
+qof_date_from_gdate (const GDate *date)
 {
 	QofDate * qd;
 
@@ -733,6 +734,7 @@ qof_date_from_gdate (GDate *date)
 	qd->qd_year = g_date_get_year (date);
 	qd->qd_mon  = g_date_get_month (date);
 	qd->qd_mday = g_date_get_day (date);
+	qd = date_normalise (qd);
 	return qd;
 }
 
@@ -866,13 +868,13 @@ days_between (gint64 year1, gint64 year2)
 }
 
 QofTime*
-qof_date_to_qtime (QofDate *qd)
+qof_date_to_qtime (const QofDate *qd)
 {
 	QofTime *qt;
 	QofTimeSecs c;
 
 	g_return_val_if_fail (qd, NULL);
-	g_return_val_if_fail (qof_date_valid(qd), NULL);
+	g_return_val_if_fail (qd->qd_valid, NULL);
 	c = 0;
 	qt = NULL;
 	if (qd->qd_year < 1970)
@@ -899,7 +901,7 @@ qof_date_to_qtime (QofDate *qd)
 }
 
 QofTime *
-qof_date_time_difference (QofDate * date1, QofDate * date2)
+qof_date_time_difference (const QofDate * date1, const QofDate * date2)
 {
 	gint64 days;
 	QofTime *secs;
