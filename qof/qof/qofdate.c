@@ -156,6 +156,8 @@ qof_date_get_yday (gint mday, gint month, gint64 year)
 	g_return_val_if_fail (month >= 1, 0);
 	g_return_val_if_fail (year  != 0, 0);
 	leap = qof_date_isleap (year);
+	g_return_val_if_fail (mday <= 
+		qof_date_get_mday (month, year), 0);
 	return days_in_year[leap][month] + mday;
 }
 
