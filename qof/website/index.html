@@ -12,16 +12,12 @@
 <ul>
 <li><a href="#intro">Introduction</a></li>
 <li><a href="http://sourceforge.net/projects/qof/">SourceForge</a></li>
+<li><a href="http://qof.cvs.sourceforge.net/qof/">CVS</a></li>
 <li><a href="#docs">Documentation</a></li>
 <li><a href="#download">Downloads</a></li>
 <li><a href="hacking.html">Packaging</a></li>
 <li><a href="hacking.html#roadmap">Roadmap</a></li>
-<li><a href="#example">Examples</a>
-  <ul>
-    <li><a href="#generate">Generating</a></li>
-    <li><a href="#online">Online</a></li>
-  </ul>
-</li>
+<li><a href="#example">Examples</a></li>
 <li><a href="#origins">Origins</a></li>
 <li><a href="#functions">Function</a></li>
 <li><a href="#goals">Goals</a></li>
@@ -74,20 +70,6 @@ libqof1 library. So <code>qof-main.c|h</code> and <code>qof-shell.c|h</code> wil
 be updated from qof-generator so that each project can benefit from improvements
 made elsewhere.
 </p>
-</div>
-<h3 id="online">Online examples</h3>
-<div><p>Two incomplete usage examples are available online. These demonstrate
-the code but are not intended to compile.</p>
-<ul>
-<li>An <a href="my-obj-example.c.html">example of using QOF
-to perform a query over some user-defined objects</a>. This example shows 
-how to define an object in QOF, and then perform a half-dozen different SQL 
-queries on it.</li>
-<li>An <a href="gobj-example.c.html">example of using QOF to query a set 
-of GLib GObjects</a>. This particular example creates three GtkButton widgets, 
-sets their labels to different values, and then uses the statement
-<code>"SELECT * FROM GtkButton WHERE (label = 'asdfasdf');"</code></li>
-</ul>
 </div>
 <hr><h2 id="docs">Documentation</h2>
 <div><p>The API documentation is embedded in the header files and
@@ -217,39 +199,36 @@ storage backend.</p>
 </div>
 <hr>
 <h2 id="download">Downloads</h2>
-<div>
-<ul>
-<li>The source code release for v0.7.0 is available from <a title="qof-0.7.0.tar.gz"
-href="http://prdownloads.sourceforge.net/qof/qof-0.7.0.tar.gz?download"
->SourceForge</a>.</li>
-<li>Also <a href="http://freshmeat.net/projects/qof/">Freshmeat</a>.</li>
-<li><b>Debian</b> packages are available in 
+<div><h3>SourceForge</h3>
+The source code release for v0.7.0 is available from <a title="qof-0.7.0.tar.gz"
+href="http://prdownloads.sourceforge.net/qof/qof-0.7.0.tar.gz?download">
+SourceForge</a>.
+<h3>Debian</h3>
+Packages are available in 
 <a href="http://packages.debian.org/unstable/libs/libqof1">unstable</a>
 and <a href="http://packages.debian.org/testing/libs/libqof1">testing</a>.
 <ul><li>
 There are <b>test packages</b> available using a trivial apt repository.
 (the / at the end of the URL is important.)<br/>
-<code>deb http://www.linux.codehelp.co.uk/ packages/<br/>
-deb-src http://www.linux.codehelp.co.uk/ packages/</code><br/>
+<code>deb http://www.linux.codehelp.co.uk/ packages/unstable/$(ARCH)/<br/>
+deb-src http://www.linux.codehelp.co.uk/ packages/unstable/source/</code><br/>
 Please note that these are not the usual quality-assured Debian packages,
-these are only tests - demos if you will.</li></ul></li>
-<li>QOF is in 
-<a href="http://packages.ubuntu.com/dapper/libs/libqof1">Ubuntu Universe</a>
-usually at the same version as Debian testing.</li>
-<li>There is a sample .spec file available in QOF CVS, available 
-via <a href="http://cvs.sourceforge.net/viewcvs.py/qof/qof/rpm/">SourceForge</a>.</li>
-<li>RPM packages have been prepared for v0.6.4 in
-<a href="http://rpmfind.net/linux/RPM/fedora/extras/4/i386/qof-0.6.4-4.fc4.i386.html">
-Fedora 4 Extras</a> and 
-<a href="http://rpmfind.net//linux/RPM/fedora/extras/5/i386/qof-0.6.4-4.fc5.i386.html">
-Fedora 5 Extras</a>. 
-(<a href="http://rpmfind.net/linux/rpm2html/search.php?query=qof">Other versions</a>).
-</li>
-<li>Packages are also possible for Fink and DarwinPorts (Mac OSX) - a sample
-Finkinfo file is provided in QOF CVS
-via <a href="http://cvs.sourceforge.net/viewcvs.py/qof/qof/fink/">SourceForge</a>.
-</li>
-</ul>
+these are only tests - demos if you will.</li></ul>
+<h3>Ubuntu</h3>
+<ul><li>Ubuntu Edgy :
+<a href="http://packages.ubuntu.com/edgy/libs/libqof1">[universe]</a>
+usually at the same version as Debian testing, currently (0.6.4-2).</li>
+<li>Ubuntu Dapper : <a href="http://packages.ubuntu.com/dapper/libs/libqof1">[universe]</a>
+at version 0.6.1-1.</li></ul>
+<h3>RPM packages</h3>
+<p>There is a sample .spec file available in QOF CVS, available via 
+<a href="http://cvs.sourceforge.net/viewcvs.py/qof/qof/rpm/">SourceForge</a>.
+<a href="http://rpmfind.net/linux/rpm2html/search.php?query=qof">RPM packages</a>
+have been prepared for v0.6.4 in Fedora 4 and 5 as well as OpenSuSE Factory.</p>
+<h3>Mac OSX &amp; Fink</h3>
+Packages are also possible for Fink and DarwinPorts (Mac OSX) - a sample Finkinfo file 
+is provided in QOF CVS via 
+<a href="http://cvs.sourceforge.net/viewcvs.py/qof/qof/fink/">SourceForge</a>.
 </div>
 
 <hr>
