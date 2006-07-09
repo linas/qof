@@ -344,6 +344,18 @@ backends (when reading the GUID from the data source). */
 #define QOF_TYPE_DATE      "date"
 Timespec qof_instance_get_last_update (QofInstance * inst);
 void qof_instance_set_last_update (QofInstance * inst, Timespec ts);
+/** \deprecated use kvp_frame_set_time instead. */
+void kvp_frame_set_timespec (KvpFrame * frame, const gchar * path,
+			 Timespec ts);
+/** \deprecated use kvp_frame_add_time instead. */
+void kvp_frame_add_timespec (KvpFrame * frame, const gchar * path,
+			 Timespec ts);
+/** \deprecated use kvp_value_get_time instead. */
+Timespec kvp_value_get_timespec (const KvpValue * value);
+/** \deprecated use kvp_frame_get_time instead. */
+Timespec kvp_frame_get_timespec (const KvpFrame * frame, const gchar * path);
+/** \deprecated use kvp_frame_new_time instead. */
+KvpValue *kvp_value_new_timespec (Timespec timespec);
 
 
 #endif /* _DEPRECATED_H */
