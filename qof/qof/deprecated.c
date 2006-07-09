@@ -771,11 +771,13 @@ gnc_print_date (Timespec ts)
 	gchar *str;
 
 	df = qof_date_format_get_current ();
+	ENTER (" using date format %d", df);
 	time = timespecToQofTime (ts);
 	str = qof_date_print (qof_date_from_qtime (time), df);
 	qof_time_free (time);
 	g_stpcpy (buff, str);
 	g_free (str);
+	LEAVE (" printing %s", buff);
 	return buff;
 }
 
@@ -829,6 +831,7 @@ gnc_dmy2timespec (gint day, gint month, gint year)
 	qd->qd_mday = day;
 	qd->qd_mon  = month;
 	qd->qd_year = year;
+	qof_date_valid (qd);
 	qt = qof_date_to_qtime (qd);
 	ts = qof_time_to_Timespec (qt);
 	qof_time_free (qt);
@@ -1292,7 +1295,8 @@ const gchar *qof_date_format_get_string(QofDateFormat df)
 
 void qof_date_format_set(QofDateFormat df)
 {
-	qof_date_format_set_current (df);
+	if(!qof_date_format_set_current (df))
+		PERR (" unable to set current format, %d", df);
 }
 
 const gchar *qof_date_text_format_get_string(QofDateFormat df)
