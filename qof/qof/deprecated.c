@@ -39,8 +39,8 @@ including use of localtime - that's why these are deprecated! */
 #  define QOF_T_FMT (nl_langinfo (T_FMT))
 #else
 #  define QOF_D_FMT   "%F"
-#  define QOF_D_T_FMT QOF_DATE_UTC
-#  define QOF_T_FMT   "%H:%M:SZ"
+#  define QOF_D_T_FMT "%F %r"
+#  define QOF_T_FMT   "%i"
 #endif
 
 #include <glib.h>
@@ -1310,7 +1310,66 @@ xaccDateUtilGetStampNow (void)
    return qof_time_stamp_now ();
 }
 
+void
+kvp_frame_set_timespec (KvpFrame * frame, const char *path, Timespec ts)
+{
+	KvpValue *value;
+	value = kvp_value_new_timespec (ts);
+	frame = kvp_frame_set_value_nc (frame, path, value);
+	if (!frame)
+		kvp_value_delete (value);
+}
 
+void
+kvp_frame_add_timespec (KvpFrame * frame, const char *path, Timespec ts)
+{
+	KvpValue *value;
+	value = kvp_value_new_timespec (ts);
+	frame = kvp_frame_add_value_nc (frame, path, value);
+	if (!frame)
+		kvp_value_delete (value);
+}
+
+Timespec
+kvp_frame_get_timespec (const KvpFrame * frame, const char *path)
+{
+	QofTime *qt;
+	Timespec ts;
+	char *key;
+
+	key = NULL;
+	ts.tv_sec = 0;
+	ts.tv_nsec = 0;
+	qt = kvp_value_get_time (kvp_frame_get_slot (frame, key));
+	if(!qt)
+		return ts;
+	return qof_time_to_Timespec (qt);
+}
+
+KvpValue *
+kvp_value_new_timespec (Timespec value)
+{
+	QofTime *qt;
+	KvpValue *retval;
+
+	qt = timespecToQofTime (value);
+	retval = kvp_value_new_time (qt);
+	return retval;
+}
+
+Timespec
+kvp_value_get_timespec (const KvpValue * value)
+{
+	Timespec ts;
+	QofTime *qt;
+	ts.tv_sec = 0;
+	ts.tv_nsec = 0;
+	if (!value)
+		return ts;
+	qt = kvp_value_get_time (value);
+	ts = qof_time_to_Timespec (qt);
+	return ts;
+}
 
 /* ==================================================================== */
 #endif /* QOF_DISABLE_DEPRECATED */
