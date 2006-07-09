@@ -58,7 +58,10 @@ struct _KvpValue
 		gnc_numeric numeric;
 		gchar *str;
 		GUID *guid;
+		QofTime *qt;
+#ifndef QOF_DISABLE_DEPRECATED
 		Timespec timespec;
+#endif
 		KvpValueBinaryData binary;
 		GList *list;
 		KvpFrame *frame;
@@ -428,6 +431,16 @@ kvp_frame_set_double (KvpFrame * frame, const char *path, double dval)
 }
 
 void
+kvp_frame_set_time (KvpFrame * frame, const gchar *path, QofTime *qt)
+{
+	KvpValue *value;
+	value = kvp_value_new_time (qt);
+	frame = kvp_frame_set_value_nc (frame, path, value);
+	if (!frame)
+		kvp_value_delete (value);
+}
+
+void
 kvp_frame_set_numeric (KvpFrame * frame, const char *path,
 	gnc_numeric nval)
 {
@@ -453,16 +466,6 @@ kvp_frame_set_guid (KvpFrame * frame, const char *path, const GUID * guid)
 {
 	KvpValue *value;
 	value = kvp_value_new_guid (guid);
-	frame = kvp_frame_set_value_nc (frame, path, value);
-	if (!frame)
-		kvp_value_delete (value);
-}
-
-void
-kvp_frame_set_timespec (KvpFrame * frame, const char *path, Timespec ts)
-{
-	KvpValue *value;
-	value = kvp_value_new_timespec (ts);
 	frame = kvp_frame_set_value_nc (frame, path, value);
 	if (!frame)
 		kvp_value_delete (value);
@@ -631,7 +634,17 @@ kvp_frame_add_numeric (KvpFrame * frame, const char *path,
 }
 
 void
-kvp_frame_add_string (KvpFrame * frame, const char *path, const char *str)
+kvp_frame_add_time (KvpFrame * frame, const gchar *path, QofTime *qt)
+{
+	KvpValue *value;
+	value = kvp_value_new_time (qt);
+	frame = kvp_frame_add_value_nc (frame, path, value);
+	if (!frame)
+		kvp_value_delete (value);
+}
+
+void
+kvp_frame_add_string (KvpFrame * frame, const gchar *path, const gchar *str)
 {
 	KvpValue *value;
 	value = kvp_value_new_string (str);
@@ -645,16 +658,6 @@ kvp_frame_add_guid (KvpFrame * frame, const char *path, const GUID * guid)
 {
 	KvpValue *value;
 	value = kvp_value_new_guid (guid);
-	frame = kvp_frame_add_value_nc (frame, path, value);
-	if (!frame)
-		kvp_value_delete (value);
-}
-
-void
-kvp_frame_add_timespec (KvpFrame * frame, const char *path, Timespec ts)
-{
-	KvpValue *value;
-	value = kvp_value_new_timespec (ts);
 	frame = kvp_frame_add_value_nc (frame, path, value);
 	if (!frame)
 		kvp_value_delete (value);
@@ -968,12 +971,12 @@ kvp_frame_get_binary (const KvpFrame * frame, const char *path,
 		size_return);
 }
 
-Timespec
-kvp_frame_get_timespec (const KvpFrame * frame, const char *path)
+QofTime *
+kvp_frame_get_time (const KvpFrame * frame, const gchar *path)
 {
-	char *key = NULL;
+	gchar *key = NULL;
 	frame = get_trailer_or_null (frame, path, &key);
-	return kvp_value_get_timespec (kvp_frame_get_slot (frame, key));
+	return kvp_value_get_time (kvp_frame_get_slot (frame, key));
 }
 
 KvpFrame *
@@ -1255,11 +1258,11 @@ kvp_value_new_guid (const GUID * value)
 }
 
 KvpValue *
-kvp_value_new_timespec (Timespec value)
+kvp_value_new_time (QofTime *value)
 {
 	KvpValue *retval = g_new0 (KvpValue, 1);
-	retval->type = KVP_TYPE_TIMESPEC;
-	retval->value.timespec = value;
+	retval->type = KVP_TYPE_TIME;
+	retval->value.qt = value;
 	return retval;
 }
 
@@ -1460,18 +1463,19 @@ kvp_value_get_guid (const KvpValue * value)
 	}
 }
 
-Timespec
-kvp_value_get_timespec (const KvpValue * value)
+QofTime*
+kvp_value_get_time (const KvpValue * value)
 {
-	Timespec ts;
-	ts.tv_sec = 0;
-	ts.tv_nsec = 0;
 	if (!value)
-		return ts;
-	if (value->type == KVP_TYPE_TIMESPEC)
-		return value->value.timespec;
+		return NULL;
+	if (value->type == KVP_TYPE_TIME)
+	{
+		return value->value.qt;
+	}
 	else
-		return ts;
+	{
+		return NULL;
+	}
 }
 
 void *
@@ -1581,9 +1585,14 @@ kvp_value_copy (const KvpValue * value)
 	case KVP_TYPE_GUID:
 		return kvp_value_new_guid (value->value.guid);
 		break;
+	case KVP_TYPE_TIME :
+		return kvp_value_new_time (value->value.qt);
+		break;
+#ifndef QOF_DISABLE_DEPRECATED
 	case KVP_TYPE_TIMESPEC:
 		return kvp_value_new_timespec (value->value.timespec);
 		break;
+#endif
 	case KVP_TYPE_BINARY:
 		return kvp_value_new_binary (value->value.binary.data,
 			value->value.binary.datasize);
@@ -1663,10 +1672,15 @@ kvp_value_compare (const KvpValue * kva, const KvpValue * kvb)
 	case KVP_TYPE_GUID:
 		return guid_compare (kva->value.guid, kvb->value.guid);
 		break;
+	case KVP_TYPE_TIME :
+		return qof_time_cmp (kva->value.qt, kvb->value.qt);
+		break;
+#ifndef QOF_DISABLE_DEPRECATED
 	case KVP_TYPE_TIMESPEC:
 		return timespec_cmp (&(kva->value.timespec),
 			&(kvb->value.timespec));
 		break;
+#endif
 	case KVP_TYPE_BINARY:
 		/* I don't know that this is a good compare. Ab is bigger than Acef.
 		   But I'm not sure that actually matters here. */
@@ -1841,7 +1855,7 @@ kvp_value_to_bare_string (const KvpValue * val)
 		tmp2 = g_strdup_printf ("%s", ctmp ? ctmp : "");
 		return tmp2;
 		break;
-
+#ifndef QOF_DISABLE_DEPRECATED
 	case KVP_TYPE_TIMESPEC:
 		{
 			time_t t;
@@ -1850,6 +1864,7 @@ kvp_value_to_bare_string (const KvpValue * val)
 			return qof_print_date (t);
 			break;
 		}
+#endif
 	case KVP_TYPE_BINARY:
 		{
 			guint64 len;
@@ -1928,15 +1943,15 @@ kvp_value_to_string (const KvpValue * val)
 		tmp2 = g_strdup_printf ("KVP_VALUE_GUID(%s)", ctmp ? ctmp : "");
 		return tmp2;
 		break;
-
+#ifndef QOF_DISABLE_DEPRECATED
 	case KVP_TYPE_TIMESPEC:
 		tmp1 = g_new0 (char, 40);
-//        gnc_timespec_to_iso8601_buff (kvp_value_get_timespec (val), tmp1);
+        gnc_timespec_to_iso8601_buff (kvp_value_get_timespec (val), tmp1);
 		tmp2 = g_strdup_printf ("KVP_VALUE_TIMESPEC(%s)", tmp1);
 		g_free (tmp1);
 		return tmp2;
 		break;
-
+#endif
 	case KVP_TYPE_BINARY:
 		{
 			guint64 len;

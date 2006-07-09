@@ -25,9 +25,7 @@
 
 #include <glib.h>
 #include <stdio.h>
-
-#include "kvp_frame.h"
-#include "kvp-util.h"
+#include "qof.h"
 #include "kvp-util-p.h"
 
 /* ================================================================ */

@@ -240,6 +240,11 @@ qof_backend_prepare_option (QofBackend * be, QofBackendOption * option)
 		{
 			break;
 		}						/* unsupported */
+	case KVP_TYPE_TIME :
+		{
+			value = kvp_value_new_time ((QofTime*) option->value);
+			break;
+		}
 	case KVP_TYPE_TIMESPEC:
 		{
 			value = kvp_value_new_timespec (*(Timespec *) option->value);
@@ -359,6 +364,10 @@ config_foreach_cb (const gchar * key, KvpValue * value, gpointer data)
 			option.value = (gpointer) kvp_value_get_string (value);
 			break;
 		}
+	case KVP_TYPE_TIME :
+	{
+		option.value = (gpointer) kvp_value_get_time (value);
+	}
 	case KVP_TYPE_TIMESPEC:
 		{
 			ts = kvp_value_get_timespec (value);
@@ -417,6 +426,12 @@ config_foreach_cb (const gchar * key, KvpValue * value, gpointer data)
 				(gchar *) option.value);
 			break;
 		}
+	case KVP_TYPE_TIME :
+	{
+		kvp_frame_set_time (helper->recursive, key,
+			(QofTime*) option.value);
+		break;
+	}
 	case KVP_TYPE_TIMESPEC:
 		{
 			kvp_frame_set_timespec (helper->recursive, key,

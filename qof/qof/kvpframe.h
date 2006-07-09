@@ -93,7 +93,8 @@ typedef enum
 	KVP_TYPE_NUMERIC,  /**< QOF_TYPE_NUMERIC */
 	KVP_TYPE_STRING,   /**< QOF_TYPE_STRING gchar* */
 	KVP_TYPE_GUID,	   /**< QOF_TYPE_GUID */
-	KVP_TYPE_TIMESPEC, /**< QOF_TYPE_DATE */
+	KVP_TYPE_TIMESPEC, /**< \deprecated QOF_TYPE_DATE */
+	KVP_TYPE_TIME,     /**< QOF_TYPE_TIME */
 	KVP_TYPE_BINARY,   /**< no QOF equivalent. */
 	KVP_TYPE_GLIST,	   /**< no QOF equivalent. */
 	KVP_TYPE_FRAME	   /**< no QOF equivalent. */
@@ -161,13 +162,6 @@ Use kvp_frame_set_numeric instead of kvp_frame_set_gnc_numeric
  */
 void kvp_frame_set_numeric (KvpFrame * frame, const gchar * path,
 							gnc_numeric nval);
-/**    store the value of the 
- *     Timespec at the indicated path.
- *     If not all frame components of 
- *     the path exist, they are created.
- */
-void kvp_frame_set_timespec (KvpFrame * frame, const gchar * path,
-							 Timespec ts);
 
 /** \deprecated
 
@@ -187,10 +181,14 @@ Use kvp_frame_set_string instead of kvp_frame_set_str
  * The kvp_frame_set_frame_nc() routine works as above, but does 
  *    *NOT* copy the frame. 
  */
-void kvp_frame_set_string (KvpFrame * frame, const gchar * path,
-						   const char *str);
-void kvp_frame_set_guid (KvpFrame * frame, const gchar * path,
+void 
+kvp_frame_set_string (KvpFrame * frame, const gchar * path,
+						   const gchar *str);
+void 
+kvp_frame_set_guid (KvpFrame * frame, const gchar * path,
 						 const GUID * guid);
+void
+kvp_frame_set_time (KvpFrame * frame, const gchar *path, QofTime *qt);
 
 void kvp_frame_set_frame (KvpFrame * frame, const gchar * path,
 						  KvpFrame * chld);
@@ -265,7 +263,7 @@ void kvp_frame_add_url_encoding (KvpFrame * frame, const gchar * enc);
  *     not a glist bag, then a bag will be formed there, the old 
  *     value placed in the bag, and the new value added to the bag.
  *
- *     Similarly, the add_double, add_numeric, and add_timespec 
+ *     Similarly, the add_double, add_numeric, and add_time 
  *     routines perform the same function, for each of the respective 
  *     types.
  */
@@ -279,8 +277,8 @@ Use kvp_frame_add_numeric instead of kvp_frame_add_gnc_numeric
 
 void kvp_frame_add_numeric (KvpFrame * frame, const gchar * path,
 							gnc_numeric nval);
-void kvp_frame_add_timespec (KvpFrame * frame, const gchar * path,
-							 Timespec ts);
+void
+kvp_frame_add_time (KvpFrame * frame, const gchar *path, QofTime *qt);
 
 /** \deprecated
 
@@ -369,7 +367,8 @@ gchar *kvp_frame_get_string (const KvpFrame * frame, const gchar * path);
 GUID *kvp_frame_get_guid (const KvpFrame * frame, const gchar * path);
 void *kvp_frame_get_binary (const KvpFrame * frame, const gchar * path,
 							guint64 * size_return);
-Timespec kvp_frame_get_timespec (const KvpFrame * frame, const gchar * path);
+QofTime *
+kvp_frame_get_time (const KvpFrame * frame, const gchar *path);
 KvpValue *kvp_frame_get_value (const KvpFrame * frame, const gchar * path);
 
 /** Value accessor.  Takes a unix-style slash-separated path as an
@@ -574,7 +573,7 @@ Use kvp_value_new_numeric instead of kvp_value_new_gnc_numeric
 KvpValue *kvp_value_new_numeric (gnc_numeric value);
 KvpValue *kvp_value_new_string (const gchar * value);
 KvpValue *kvp_value_new_guid (const GUID * guid);
-KvpValue *kvp_value_new_timespec (Timespec timespec);
+KvpValue *kvp_value_new_time (QofTime *value);
 KvpValue *kvp_value_new_binary (const void *data, guint64 datasize);
 KvpValue *kvp_value_new_frame (const KvpFrame * value);
 
@@ -656,7 +655,8 @@ GList *kvp_value_get_glist (const KvpValue * value);
 /** Value accessor. This one is non-copying -- the caller can modify
  * the value directly. */
 KvpFrame *kvp_value_get_frame (const KvpValue * value);
-Timespec kvp_value_get_timespec (const KvpValue * value);
+QofTime*
+kvp_value_get_time (const KvpValue * value);
 
 /**
  * Similar returns as strcmp.

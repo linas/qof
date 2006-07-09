@@ -257,6 +257,7 @@ handle_single_condition (QofSqlQuery * query, sql_condition * cond)
 				return NULL;
 			break;
 		case KVP_TYPE_GUID:
+		case KVP_TYPE_TIME :
 		case KVP_TYPE_TIMESPEC:
 		case KVP_TYPE_BINARY:
 		case KVP_TYPE_GLIST:

@@ -1,3 +1,24 @@
+2006-07-09  Neil Williams <linux@codehelp.co.uk>
+
+	* backend/file/qsf-xml.h : Doxygen tweak.
+	* backend/file/qsf-backend.c : Move from Timespec 
+	to QofTime and QofDate.
+	* qof/deprecated.c : Ensure QofDate is valid and 
+	add some logging calls. Revert QOF_D_T_FMT and 
+	QOF_T_FMT to old values (to retain deprecated
+	behaviour). Deprecate Timespec within KVP.
+	* qof/deprecated.h : Deprecate Timespec within KVP.
+	* qof/kvp_frame.c : Implement QofTime handlers.
+	* qof/kvp_frame.h : Replace Timespec with QofTime.
+	* qof/kvp-util.c : Handle KVP_TYPE_TIME
+	* qof/qofbackend.c : Handle KVP_TYPE_TIME
+	* qof/qofsql.c : Skip KVP_TYPE_TIME
+	* qof/qofdate.c :  Revert default value of
+	dateFormat to gnc-date value (to retain deprecated
+	behaviour). Add qof_date_get_current
+	* qof/qofdate.h : Add qof_date_get_current
+	* qof/qofstrptime.c : Fix YEAR_BASE error in %y.
+
 2006-06-26 Neil Williams  <linux@codehelp.co.uk>
 
 	* qof/qofdate.c,
