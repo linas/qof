@@ -449,6 +449,10 @@ qof_date_format_set_date_separator (const gchar sep, QofDateFormat df);
 QofDate *
 qof_date_new (void);
 
+/** create a new QofDate for the current date and time. */
+QofDate *
+qof_date_get_current (void);
+
 /** create a new QofDate from basic calendar data. */
 QofDate *
 qof_date_new_dmy (gint day, gint month, gint64 year);

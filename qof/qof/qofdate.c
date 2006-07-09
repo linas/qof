@@ -573,6 +573,18 @@ qof_date_new (void)
 }
 
 QofDate *
+qof_date_get_current (void)
+{
+	QofTime *qt;
+	QofDate *qd;
+
+	qt = qof_time_get_current ();
+	qd = qof_date_from_qtime (qt);
+	qof_time_free (qt);
+	return qd;
+}
+
+QofDate *
 qof_date_new_dmy (gint day, gint month, gint64 year)
 {
 	QofDate *qd;
