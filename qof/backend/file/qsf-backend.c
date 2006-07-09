@@ -156,12 +156,9 @@ qsf_map_prepare_list (GList ** maps)
 static void
 qsf_param_init (qsf_param * params)
 {
-	Timespec qsf_ts;
-	gchar qsf_time_string[QSF_DATE_LENGTH];
-	gchar qsf_enquiry_date[QSF_DATE_LENGTH];
-	gchar qsf_time_match[QSF_DATE_LENGTH];
-	gchar qsf_time_now[QSF_DATE_LENGTH];
-	time_t qsf_time_now_t;
+	gchar *qsf_time_string;
+	gchar *qsf_enquiry_date;
+	gchar *qsf_time_now;
 	gchar *qsf_time_precision;
 
 	g_return_if_fail (params != NULL);
@@ -194,8 +191,12 @@ qsf_param_init (qsf_param * params)
 		g_slist_append (params->supported_types, QOF_TYPE_BOOLEAN);
 	params->supported_types =
 		g_slist_append (params->supported_types, QOF_TYPE_NUMERIC);
+#ifndef QOF_DISABLE_DEPRECATED
 	params->supported_types =
 		g_slist_append (params->supported_types, QOF_TYPE_DATE);
+#endif
+	params->supported_types = 
+		g_slist_append (params->supported_types, QOF_TYPE_TIME);
 	params->supported_types =
 		g_slist_append (params->supported_types, QOF_TYPE_INT32);
 	params->supported_types =
@@ -211,22 +212,15 @@ qsf_param_init (qsf_param * params)
 	params->supported_types =
 		g_slist_append (params->supported_types, QOF_TYPE_CHOICE);
 	qsf_time_precision = "%j";
-	qsf_time_now_t = time (NULL);
-	qsf_ts.tv_sec = 0;
-	qsf_ts.tv_nsec = 0;
-	timespecFromTime_t (&qsf_ts, qsf_time_now_t);
-	strftime (qsf_enquiry_date, QSF_DATE_LENGTH, QSF_XSD_TIME,
-		gmtime (&qsf_time_now_t));
-	strftime (qsf_time_match, QSF_DATE_LENGTH, qsf_time_precision,
-		gmtime (&qsf_time_now_t));
-	strftime (qsf_time_string, QSF_DATE_LENGTH, "%F",
-		gmtime (&qsf_time_now_t));
-	strftime (qsf_time_now, QSF_DATE_LENGTH, QSF_XSD_TIME,
-		gmtime (&qsf_time_now_t));
+	qsf_enquiry_date = qof_time_stamp_now ();
+	qsf_time_string = qof_date_print (qof_date_get_current(), 
+		QOF_DATE_FORMAT_ISO);
+	qsf_time_now  = qof_time_stamp_now ();
+
 	g_hash_table_insert (params->qsf_default_hash, "qsf_enquiry_date",
 		qsf_enquiry_date);
 	g_hash_table_insert (params->qsf_default_hash, "qsf_time_now",
-		&qsf_time_now_t);
+		qof_time_get_current());
 	g_hash_table_insert (params->qsf_default_hash, "qsf_time_string",
 		qsf_time_string);
 	/* default map files */
@@ -418,7 +412,7 @@ static gboolean
 qsfdoc_to_qofbook (xmlDocPtr doc, qsf_param * params)
 {
 	QofInstance *inst;
-	struct qsf_node_iterate iter;
+	struct qsf_node_iterate qiter;
 	QofBook *book;
 	GList *object_list;
 	xmlNodePtr qsf_root;
@@ -434,11 +428,11 @@ qsfdoc_to_qofbook (xmlDocPtr doc, qsf_param * params)
 		return FALSE;
 	}
 	qsf_ns = qsf_root->ns;
-	iter.ns = qsf_ns;
+	qiter.ns = qsf_ns;
 	book = params->book;
 	params->referenceList =
 		(GList *) qof_book_get_data (book, ENTITYREFERENCE);
-	qsf_node_foreach (qsf_root, qsf_book_node_handler, &iter, params);
+	qsf_node_foreach (qsf_root, qsf_book_node_handler, &qiter, params);
 	object_list = g_list_copy (params->qsf_object_list);
 	while (object_list != NULL)
 	{
@@ -694,6 +688,11 @@ qsf_to_kvp_helper (const char *type_string)
 	{
 		return KVP_TYPE_TIMESPEC;
 	}
+	if (0 == safe_strcmp (QOF_TYPE_TIME, type_string))
+	{
+		/** \todo implement KVP_TYPE_TIME */
+		return KVP_TYPE_TIMESPEC;
+	}
 	if (0 == safe_strcmp (QSF_TYPE_BINARY, type_string))
 	{
 		return KVP_TYPE_BINARY;
@@ -744,6 +743,7 @@ kvp_value_to_qof_type_helper (KvpValueType n)
 			return QOF_TYPE_DATE;
 			break;
 		}
+	/** \todo implement KVP_TYPE_TIME */
 	case KVP_TYPE_BINARY:
 		{
 			return QSF_TYPE_BINARY;
@@ -789,6 +789,7 @@ qsf_from_kvp_helper (const gchar * path, KvpValue * content, gpointer data)
 	case KVP_TYPE_NUMERIC:
 	case KVP_TYPE_STRING:
 	case KVP_TYPE_GUID:
+	/** \todo implement KVP_TYPE_TIME */
 	case KVP_TYPE_TIMESPEC:
 	case KVP_TYPE_BINARY:
 	case KVP_TYPE_GLIST:
@@ -1247,9 +1248,11 @@ string_to_kvp_value (const gchar * content, KvpValueType type)
 	double cm_double;
 	gnc_numeric cm_numeric;
 	GUID *cm_guid;
+#ifndef QOF_DISABLE_DEPRECATED
 	struct tm kvp_time;
 	time_t kvp_time_t;
 	Timespec cm_date;
+#endif
 
 	switch (type)
 	{
@@ -1293,6 +1296,25 @@ string_to_kvp_value (const gchar * content, KvpValueType type)
 			}
 			break;
 		}
+	case KVP_TYPE_TIME :
+	{
+		QofDate *qd;
+		QofTime *qt;
+		KvpValue *retval;
+
+		qd = qof_date_parse (content, QOF_DATE_FORMAT_UTC);
+		if(qd)
+		{
+			qt = qof_date_to_qtime (qd);
+			retval = kvp_value_new_time (qt);
+			qof_date_free (qd);
+			qof_time_free (qt);
+			return retval;
+		}
+		else
+			PERR (" failed to parse date");
+	}
+#ifndef QOF_DISABLE_DEPRECATED
 	case KVP_TYPE_TIMESPEC:
 		{
 			strptime (content, QSF_XSD_TIME, &kvp_time);
@@ -1301,6 +1323,7 @@ string_to_kvp_value (const gchar * content, KvpValueType type)
 			return kvp_value_new_timespec (cm_date);
 			break;
 		}
+#endif
 	case KVP_TYPE_BINARY:
 //      return kvp_value_new_binary(value->value.binary.data,
 //                                  value->value.binary.datasize);
@@ -1347,6 +1370,7 @@ qsf_object_commitCB (gpointer key, gpointer value, gpointer data)
 	QofSetterFunc cm_setter;
 	const QofParam *cm_param;
 	void (*string_setter) (QofEntity *, const gchar *);
+	void (*time_setter) (QofEntity *, QofTime *);
 	void (*date_setter) (QofEntity *, Timespec);
 	void (*numeric_setter) (QofEntity *, gnc_numeric);
 	void (*double_setter) (QofEntity *, double);
@@ -1382,6 +1406,26 @@ qsf_object_commitCB (gpointer key, gpointer value, gpointer data)
 			string_setter (qsf_ent, (gchar *) xmlNodeGetContent (node));
 		}
 	}
+	if (safe_strcmp (qof_type, QOF_TYPE_TIME) == 0)
+	{
+		time_setter = (void (*)(QofEntity *, QofTime*)) cm_setter;
+		if (time_setter != NULL)
+		{
+			QofDate *qd;
+			QofTime *qt;
+			qd = qof_date_parse ((const gchar*) xmlNodeGetContent,
+				QOF_DATE_FORMAT_UTC);
+			if(qd)
+			{
+				qt = qof_date_to_qtime (qd);
+				time_setter (qsf_ent, qt);
+				qof_date_free (qd);
+			}
+			else
+				PERR (" failed to parse date string");
+		}
+	}
+#ifndef QOF_DISABLE_DEPRECATED
 	if (safe_strcmp (qof_type, QOF_TYPE_DATE) == 0)
 	{
 		date_setter = (void (*)(QofEntity *, Timespec)) cm_setter;
@@ -1400,6 +1444,7 @@ qsf_object_commitCB (gpointer key, gpointer value, gpointer data)
 			}
 		}
 	}
+#endif
 	if ((safe_strcmp (qof_type, QOF_TYPE_NUMERIC) == 0) ||
 		(safe_strcmp (qof_type, QOF_TYPE_DEBCRED) == 0))
 	{
@@ -1621,7 +1666,7 @@ qsf_provider_init (void)
 	QofBackendProvider *prov;
 
 	prov = g_new0 (QofBackendProvider, 1);
-	prov->provider_name = "QSF Backend Version 0.2";
+	prov->provider_name = "QSF Backend Version 0.3";
 	prov->access_method = "file";
 	prov->partial_book_supported = TRUE;
 	prov->backend_new = qsf_backend_new;
