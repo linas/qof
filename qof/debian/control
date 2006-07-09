@@ -12,7 +12,7 @@ Section: libdevel
 Architecture: any
 Suggests: libqof-doc
 Depends: libqof1 (= ${Source-Version}), libgda2-dev
-Description: Query Object Framework - development headers
+Description: Query Object Framework - Development Headers
  A framework to allow the execution of SQL-type queries
  using collections of in-memory objects as 'tables'.
  .
@@ -42,7 +42,7 @@ Section: libs
 Architecture: any
 Recommends: libqof-doc
 Depends: libqof1 (= ${Source-Version})
-Description: Query Object Framework - debug symbols
+Description: Query Object Framework - Debug Symbols
  A framework to allow the execution of SQL-type queries
  using collections of in-memory objects as 'tables'.
  .
@@ -55,8 +55,8 @@ Package: libqof-doc
 Priority: optional
 Section: doc
 Architecture: all
-Recommends: firefox|www-browser, dwww
-Description: Query Object Framework - HTML Developer Docs
+Recommends: firefox|x-www-browser|www-browser, dwww
+Description: Query Object Framework - API Documentation
  A framework to allow the execution of SQL-type queries
  using collections of in-memory objects as tables.
  .

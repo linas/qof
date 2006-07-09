@@ -8,7 +8,7 @@ qof (0.7.0-1) unstable; urgency=low
   - Upgrade to debhelper compat 5, standards version 3.7.2
   - Add linda override for lib-not-in-shlibs (see #345871)
 
- -- Neil Williams <linux@codehelp.co.uk>  Thu, 18 May 2006 23:40:47 +0100
+ -- Neil Williams <linux@codehelp.co.uk>  Sun,  9 Jul 2006 17:18:26 +0100
 
 qof (0.6.4-2) unstable; urgency=low
 
