@@ -38,7 +38,7 @@ static GHashTable *DateFormatTable = NULL;
 static gboolean QofDateInit = FALSE;
 static QofLogModule log_module = QOF_MOD_DATE;
 static gchar locale_separator = '\0';
-static QofDateFormat dateFormat = QOF_DATE_FORMAT_UTC;
+static QofDateFormat dateFormat = QOF_DATE_FORMAT_LOCALE;
 
 /* copied from glib */
 static const guint16 days_in_year[2][14] = 
