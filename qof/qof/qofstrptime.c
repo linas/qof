@@ -430,7 +430,7 @@ strptime_internal (const gchar * rp, const gchar * fmt,
 			get_number (0, 99, 2);
 			/* The "Year 2000: The Millennium Rollover" paper suggests that
 			values in the range 69-99 refer to the twentieth century.  */
-			qd->qd_year = val >= 69 ? val : val + 100;
+			qd->qd_year = val >= 69 ? val : val + 1900;
 			/* Indicate that we want to use the century, if specified.  */
 			want_century = 1;
 			want_xday = 1;
