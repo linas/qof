@@ -67,7 +67,7 @@ qof_object_is_choice (QofIdType type)
 }
 
 gboolean
-qof_choice_create (char *type)
+qof_choice_create (gchar *type)
 {
 	GHashTable *param_table;
 
@@ -79,7 +79,7 @@ qof_choice_create (char *type)
 }
 
 gboolean
-qof_choice_add_class (char *select, char *option, char *param_name)
+qof_choice_add_class (gchar *select, gchar *option, gchar *param_name)
 {
 	GHashTable *param_table;
 	GList *option_list;
@@ -112,7 +112,7 @@ qof_object_get_choices (QofIdType type, QofParam * param)
 }
 
 gboolean
-qof_choice_check (char *choice_obj, char *param_name, char *choice)
+qof_choice_check (gchar *choice_obj, gchar *param_name, gchar *choice)
 {
 	GList *choices, *result;
 	GHashTable *param_table;
