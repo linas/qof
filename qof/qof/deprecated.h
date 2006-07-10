@@ -342,6 +342,7 @@ backends (when reading the GUID from the data source). */
          qof_entity_set_guid(QOF_ENTITY(book), guid)
 /** \deprecated use QOF_TYPE_TIME instead */
 #define QOF_TYPE_DATE      "date"
+/** \deprecated use qof_instance_set_update_time instead. */
 Timespec qof_instance_get_last_update (QofInstance * inst);
 void qof_instance_set_last_update (QofInstance * inst, Timespec ts);
 /** \deprecated use kvp_frame_set_time instead. */
@@ -356,6 +357,42 @@ Timespec kvp_value_get_timespec (const KvpValue * value);
 Timespec kvp_frame_get_timespec (const KvpFrame * frame, const gchar * path);
 /** \deprecated use kvp_frame_new_time instead. */
 KvpValue *kvp_value_new_timespec (Timespec timespec);
+/** \deprecated */
+#define qof_book_get_guid(X) qof_entity_get_guid (QOF_ENTITY(X))
+/** \deprecated no replacement. */
+void qof_start_clock (gint clockno, QofLogModule log_module,
+				   QofLogLevel log_level, const gchar * function_name,
+				   const gchar * format, ...);
+/** \deprecated no replacement. */
+void qof_report_clock (gint clockno,
+					QofLogModule log_module,
+					QofLogLevel log_level,
+					const gchar * function_name,
+					const gchar * format, ...);
+/** \deprecated no replacement. */
+void qof_report_clock_total (gint clockno,
+						  QofLogModule log_module,
+						  QofLogLevel log_level,
+						  const gchar * function_name,
+						  const gchar * format, ...);
+/** \deprecated no replacement. */
+#define START_CLOCK(clockno,format, args...) do {        \
+  if (qof_log_check (log_module, QOF_LOG_INFO))          \
+    qof_start_clock (clockno, log_module, QOF_LOG_INFO,  \
+             __FUNCTION__, format , ## args);               \
+} while (0)
+/** \deprecated no replacement. */
+#define REPORT_CLOCK(clockno,format, args...) do {       \
+  if (qof_log_check (log_module, QOF_LOG_INFO))          \
+    qof_report_clock (clockno, log_module, QOF_LOG_INFO, \
+             __FUNCTION__, format , ## args);               \
+} while (0)
+/** \deprecated no replacement. */
+#define REPORT_CLOCK_TOTAL(clockno,format, args...) do {       \
+  if (qof_log_check (log_module, QOF_LOG_INFO))                \
+    qof_report_clock_total (clockno, log_module, QOF_LOG_INFO, \
+             __FUNCTION__, format , ## args);               \
+} while (0)
 
 
 #endif /* _DEPRECATED_H */

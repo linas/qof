@@ -28,6 +28,7 @@
 including use of localtime - that's why these are deprecated! */
 #include <stdlib.h>
 #include <ctype.h>
+#include <sys/time.h>
 
 #ifdef HAVE_LANGINFO_H
 #define HAVE_LANGINFO_D_FMT 1
@@ -46,6 +47,7 @@ including use of localtime - that's why these are deprecated! */
 #include <glib.h>
 #include "qof.h"
 static QofLogModule log_module = "deprecated";
+static FILE *fout = NULL;
 
 /* Don't be fooled: gnc_trace_num_spaces has external linkage and
    static storage, but can't be defined with 'extern' because it has
@@ -1375,6 +1377,130 @@ kvp_value_get_timespec (const KvpValue * value)
 	qt = kvp_value_get_time (value);
 	ts = qof_time_to_Timespec (qt);
 	return ts;
+}
+#define NUM_CLOCKS 10
+static struct timeval qof_clock[NUM_CLOCKS] = {
+	{0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0},
+	{0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0},
+};
+
+static struct timeval qof_clock_total[NUM_CLOCKS] = {
+	{0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0},
+	{0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0},
+};
+
+void
+qof_start_clock (gint clockno, QofLogModule log_module,
+	QofLogLevel log_level, const gchar * function_name,
+	const gchar * format, ...)
+{
+	va_list ap;
+
+	if ((0 > clockno) || (NUM_CLOCKS <= clockno))
+		return;
+#ifdef HAVE_GETTIMEOFDAY
+	gettimeofday (&qof_clock[clockno], NULL);
+#else
+	time (&(qof_clock[clockno].tv_sec));
+	qof_clock[clockno].tv_usec = 0;
+#endif
+
+	if (!fout)
+		qof_log_init ();
+
+	fprintf (fout, "Clock %d Start: %s: ",
+		clockno, qof_log_prettify (function_name));
+
+	va_start (ap, format);
+
+	vfprintf (fout, format, ap);
+
+	va_end (ap);
+
+	fprintf (fout, "\n");
+	fflush (fout);
+}
+
+void
+qof_report_clock (gint clockno, QofLogModule log_module,
+	QofLogLevel log_level, const gchar * function_name,
+	const gchar * format, ...)
+{
+	struct timeval now;
+	va_list ap;
+
+	if ((0 > clockno) || (NUM_CLOCKS <= clockno))
+		return;
+#ifdef HAVE_GETTIMEOFDAY
+	gettimeofday (&now, NULL);
+#else
+	time (&(now.tv_sec));
+	now.tv_usec = 0;
+#endif
+
+	/* need to borrow to make difference */
+	if (now.tv_usec < qof_clock[clockno].tv_usec)
+	{
+		now.tv_sec--;
+		now.tv_usec += 1000000;
+	}
+	now.tv_sec -= qof_clock[clockno].tv_sec;
+	now.tv_usec -= qof_clock[clockno].tv_usec;
+
+	qof_clock_total[clockno].tv_sec += now.tv_sec;
+	qof_clock_total[clockno].tv_usec += now.tv_usec;
+
+	if (!fout)
+		qof_log_init ();
+
+	fprintf (fout, "Clock %d Elapsed: %ld.%06lds %s: ",
+		clockno, (long int) now.tv_sec, (long int) now.tv_usec,
+		qof_log_prettify (function_name));
+
+	va_start (ap, format);
+
+	vfprintf (fout, format, ap);
+
+	va_end (ap);
+
+	fprintf (fout, "\n");
+	fflush (fout);
+}
+
+void
+qof_report_clock_total (gint clockno,
+	QofLogModule log_module, QofLogLevel log_level,
+	const gchar * function_name, const gchar * format, ...)
+{
+	va_list ap;
+
+	if ((0 > clockno) || (NUM_CLOCKS <= clockno))
+		return;
+
+	/* need to normalize usec */
+	while (qof_clock_total[clockno].tv_usec >= 1000000)
+	{
+		qof_clock_total[clockno].tv_sec++;
+		qof_clock_total[clockno].tv_usec -= 1000000;
+	}
+
+	if (!fout)
+		qof_log_init ();
+
+	fprintf (fout, "Clock %d Total Elapsed: %ld.%06lds  %s: ",
+		clockno,
+		(long int) qof_clock_total[clockno].tv_sec,
+		(long int) qof_clock_total[clockno].tv_usec,
+		qof_log_prettify (function_name));
+
+	va_start (ap, format);
+
+	vfprintf (fout, format, ap);
+
+	va_end (ap);
+
+	fprintf (fout, "\n");
+	fflush (fout);
 }
 
 /* ==================================================================== */
