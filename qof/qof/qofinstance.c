@@ -56,7 +56,7 @@ qof_instance_init (QofInstance * inst, QofIdType type, QofBook * book)
 
 	inst->book = book;
 	inst->kvp_data = kvp_frame_new ();
-	inst->last_update = qof_time_new ();
+	inst->update_time = qof_time_new ();
 	inst->editlevel = 0;
 	inst->do_free = FALSE;
 	inst->dirty = FALSE;
@@ -109,7 +109,7 @@ qof_instance_get_update_time (QofInstance * inst)
 		time = qof_time_new ();
 		return time;
 	}
-	return inst->last_update;
+	return inst->update_time;
 }
 
 int
@@ -121,7 +121,7 @@ qof_instance_version_cmp (QofInstance * left, QofInstance * right)
 		return -1;
 	if (!right)
 		return +1;
-	return qof_time_cmp (left->last_update, right->last_update);
+	return qof_time_cmp (left->update_time, right->update_time);
 }
 
 gboolean
@@ -204,12 +204,13 @@ qof_instance_set_update_time (QofInstance * inst, QofTime * time)
 {
 	if (!inst)
 		return;
-	qof_time_free (inst->last_update);
-	inst->last_update = time;
+	qof_time_free (inst->update_time);
+	inst->update_time = time;
 }
 
 /* ========================================================== */
 
+/* move to QofTime when kvp functions renamed. */
 void
 qof_instance_gemini (QofInstance * to, QofInstance * from)
 {

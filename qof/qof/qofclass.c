@@ -102,7 +102,7 @@ qof_class_register (QofIdTypeConst obj_name,
 
 	if (default_sort_function)
 	{
-		g_hash_table_insert (sortTable, (char *) obj_name,
+		g_hash_table_insert (sortTable, (gchar *) obj_name,
 			default_sort_function);
 	}
 
@@ -112,7 +112,7 @@ qof_class_register (QofIdTypeConst obj_name,
 	if (!ht)
 	{
 		ht = g_hash_table_new (g_str_hash, g_str_equal);
-		g_hash_table_insert (classTable, (char *) obj_name, ht);
+		g_hash_table_insert (classTable, (gchar *) obj_name, ht);
 	}
 
 	/* At least right now, we allow dummy, parameterless objects,
@@ -142,7 +142,7 @@ qof_class_is_registered (QofIdTypeConst obj_name)
 }
 
 const QofParam *
-qof_class_get_parameter (QofIdTypeConst obj_name, const char *parameter)
+qof_class_get_parameter (QofIdTypeConst obj_name, const gchar *parameter)
 {
 	GHashTable *ht;
 
@@ -163,7 +163,7 @@ qof_class_get_parameter (QofIdTypeConst obj_name, const char *parameter)
 
 QofAccessFunc
 qof_class_get_parameter_getter (QofIdTypeConst obj_name,
-	const char *parameter)
+	const gchar *parameter)
 {
 	const QofParam *prm;
 
@@ -179,7 +179,7 @@ qof_class_get_parameter_getter (QofIdTypeConst obj_name,
 
 QofSetterFunc
 qof_class_get_parameter_setter (QofIdTypeConst obj_name,
-	const char *parameter)
+	const gchar *parameter)
 {
 	const QofParam *prm;
 
@@ -195,7 +195,7 @@ qof_class_get_parameter_setter (QofIdTypeConst obj_name,
 
 QofType
 qof_class_get_parameter_type (QofIdTypeConst obj_name,
-	const char *param_name)
+	const gchar *param_name)
 {
 	const QofParam *prm;
 
@@ -220,26 +220,26 @@ struct class_iterate
 static void
 class_foreach_cb (gpointer key, gpointer item, gpointer arg)
 {
-	struct class_iterate *iter = arg;
+	struct class_iterate *qiter = arg;
 	QofIdTypeConst id = key;
 
-	iter->fcn (id, iter->data);
+	qiter->fcn (id, qiter->data);
 }
 
 void
 qof_class_foreach (QofClassForeachCB cb, gpointer user_data)
 {
-	struct class_iterate iter;
+	struct class_iterate qiter;
 
 	if (!cb)
 		return;
 	if (!classTable)
 		return;
 
-	iter.fcn = cb;
-	iter.data = user_data;
+	qiter.fcn = cb;
+	qiter.data = user_data;
 
-	g_hash_table_foreach (classTable, class_foreach_cb, &iter);
+	g_hash_table_foreach (classTable, class_foreach_cb, &qiter);
 }
 
 /* ================================================================ */
@@ -253,17 +253,17 @@ struct parm_iterate
 static void
 param_foreach_cb (gpointer key, gpointer item, gpointer arg)
 {
-	struct parm_iterate *iter = arg;
+	struct parm_iterate *qiter = arg;
 	QofParam *parm = item;
 
-	iter->fcn (parm, iter->data);
+	qiter->fcn (parm, qiter->data);
 }
 
 void
 qof_class_param_foreach (QofIdTypeConst obj_name,
 	QofParamForeachCB cb, gpointer user_data)
 {
-	struct parm_iterate iter;
+	struct parm_iterate qiter;
 	GHashTable *param_ht;
 
 	if (!obj_name || !cb)
@@ -274,10 +274,10 @@ qof_class_param_foreach (QofIdTypeConst obj_name,
 	if (!param_ht)
 		return;
 
-	iter.fcn = cb;
-	iter.data = user_data;
+	qiter.fcn = cb;
+	qiter.data = user_data;
 
-	g_hash_table_foreach (param_ht, param_foreach_cb, &iter);
+	g_hash_table_foreach (param_ht, param_foreach_cb, &qiter);
 }
 
 struct param_ref_list
@@ -292,57 +292,35 @@ find_reference_param_cb (QofParam * param, gpointer user_data)
 
 	b = (struct param_ref_list *) user_data;
 	if ((param->param_getfcn == NULL) || (param->param_setfcn == NULL))
-	{
 		return;
-	}
 	if (0 == safe_strcmp (param->param_type, QOF_TYPE_STRING))
-	{
 		return;
-	}
 	if (0 == safe_strcmp (param->param_type, QOF_TYPE_NUMERIC))
-	{
 		return;
-	}
+	if (0 == safe_strcmp (param->param_type, QOF_TYPE_TIME))
+		return;
+#ifndef QOF_DISABLE_DEPRECATED
 	if (0 == safe_strcmp (param->param_type, QOF_TYPE_DATE))
-	{
 		return;
-	}
+#endif
 	if (0 == safe_strcmp (param->param_type, QOF_TYPE_CHAR))
-	{
 		return;
-	}
 	if (0 == safe_strcmp (param->param_type, QOF_TYPE_DEBCRED))
-	{
 		return;
-	}
 	if (0 == safe_strcmp (param->param_type, QOF_TYPE_GUID))
-	{
 		return;
-	}
 	if (0 == safe_strcmp (param->param_type, QOF_TYPE_INT32))
-	{
 		return;
-	}
 	if (0 == safe_strcmp (param->param_type, QOF_TYPE_INT64))
-	{
 		return;
-	}
 	if (0 == safe_strcmp (param->param_type, QOF_TYPE_DOUBLE))
-	{
 		return;
-	}
 	if (0 == safe_strcmp (param->param_type, QOF_TYPE_KVP))
-	{
 		return;
-	}
 	if (0 == safe_strcmp (param->param_type, QOF_TYPE_BOOLEAN))
-	{
 		return;
-	}
 	if (0 == safe_strcmp (param->param_type, QOF_ID_BOOK))
-	{
 		return;
-	}
 	b->list = g_list_append (b->list, param);
 }
 

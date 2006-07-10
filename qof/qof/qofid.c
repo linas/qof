@@ -125,7 +125,7 @@ id_hash (gconstpointer key)
 	else
 	{
 		guint hash = 0;
-		unsigned int i, j;
+		guint i, j;
 
 		for (i = 0, j = 0; i < sizeof (guint); i++, j++)
 		{
@@ -296,25 +296,15 @@ qof_collection_compare (QofCollection * target, QofCollection * merge)
 
 	value = 0;
 	if (!target && !merge)
-	{
 		return 0;
-	}
 	if (target == merge)
-	{
 		return 0;
-	}
 	if (!target && merge)
-	{
 		return -1;
-	}
 	if (target && !merge)
-	{
 		return 1;
-	}
 	if (target->e_type != merge->e_type)
-	{
 		return -1;
-	}
 	qof_collection_set_data (target, &value);
 	qof_collection_foreach (merge, collection_compare_cb, target);
 	value = *(gint *) qof_collection_get_data (target);
@@ -420,25 +410,25 @@ struct _iterate
 static void
 foreach_cb (gpointer key, gpointer item, gpointer arg)
 {
-	struct _iterate *iter = arg;
+	struct _iterate *qiter = arg;
 	QofEntity *ent = item;
 
-	iter->fcn (ent, iter->data);
+	qiter->fcn (ent, qiter->data);
 }
 
 void
 qof_collection_foreach (QofCollection * col, QofEntityForeachCB cb_func,
 	gpointer user_data)
 {
-	struct _iterate iter;
+	struct _iterate qiter;
 
 	g_return_if_fail (col);
 	g_return_if_fail (cb_func);
 
-	iter.fcn = cb_func;
-	iter.data = user_data;
+	qiter.fcn = cb_func;
+	qiter.data = user_data;
 
-	g_hash_table_foreach (col->hash_of_entities, foreach_cb, &iter);
+	g_hash_table_foreach (col->hash_of_entities, foreach_cb, &qiter);
 }
 
 /* =============================================================== */

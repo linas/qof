@@ -240,13 +240,13 @@
 struct QofBackendProvider_s
 {
 /** Some arbitrary name given for this particular backend provider */
-	const char *provider_name;
+	const gchar *provider_name;
 
 /** The access method that this provider provides, for example,
 file:// http:// postgres:// or sqlite://, but without
 the :// at the end
 */
-	const char *access_method;
+	const gchar *access_method;
 
 /** \brief Partial QofBook handler
 
@@ -276,7 +276,7 @@ It is sufficient only to return TRUE if any ONE of the supported
 types match the incoming data. The backend should not assume that
 returning TRUE will mean that the data will naturally follow.
 */
-	  gboolean (*check_data_type) (const char *);
+	  gboolean (*check_data_type) (const gchar *);
 
 /** Free this structure, unregister this backend handler. */
 	void (*provider_free) (QofBackendProvider *);
@@ -319,10 +319,10 @@ possibly unrelated file. Not all file backends use this function.
 @return TRUE if the user may need to be warned about possible
 data loss, otherwise FALSE.
 */
-	  gboolean (*save_may_clobber_data) (QofBackend *);
+	gboolean (*save_may_clobber_data) (QofBackend *);
 
 	QofBackendError last_err;
-	char *error_msg;
+	gchar *error_msg;
 
 	KvpFrame *backend_configuration;
 	gint config_count;

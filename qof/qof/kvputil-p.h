@@ -66,6 +66,9 @@
  *
  *  This routine returns a pointer to the frame that was created, or 
  *  NULL if an error occured.
+ 
+ @todo replace with qof_kvp_bag_add using QofTime.
+ 
  */
 
 KvpFrame *gnc_kvp_bag_add (KvpFrame * kvp_root, const char *path, time_t secs,
@@ -75,6 +78,8 @@ KvpFrame *gnc_kvp_bag_add (KvpFrame * kvp_root, const char *path, time_t secs,
 /** The gnc_kvp_bag_merge() routine will move the bag contents from
  *    the 'kvp_from', to the 'into' bag.  It will then delete the 
  *    'from' bag from the kvp tree.
+ 
+ @todo Rename qof_kvp_bag_merge
  */
 void gnc_kvp_bag_merge (KvpFrame * kvp_into, const char *intopath,
 						KvpFrame * kvp_from, const char *frompath);
@@ -85,6 +90,8 @@ void gnc_kvp_bag_merge (KvpFrame * kvp_into, const char *intopath,
  *    If it finds that matching guid, then it returns a pointer to 
  *    the KVP frame that contains it.  If it is not found, or if there
  *    is any other error, NULL is returned.
+ 
+ @todo rename qof_kvp_bag_find_by_guid
  */
 
 KvpFrame *gnc_kvp_bag_find_by_guid (KvpFrame * root, const char *path,
@@ -97,6 +104,8 @@ KvpFrame *gnc_kvp_bag_find_by_guid (KvpFrame * root, const char *path,
  *  be a pointer to the actual frame (for example, as returned by
  *  gnc_kvp_bag_find_by_guid() for by gnc_kvp_bag_add()), and not
  *  some copy of the frame.
+ 
+ @todo rename qof_kvp_bag_remove_frame
  */
 
 void gnc_kvp_bag_remove_frame (KvpFrame * root, const char *path,

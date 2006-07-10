@@ -245,11 +245,13 @@ qof_backend_prepare_option (QofBackend * be, QofBackendOption * option)
 			value = kvp_value_new_time ((QofTime*) option->value);
 			break;
 		}
+#ifndef QOF_DISABLE_DEPRECATED
 	case KVP_TYPE_TIMESPEC:
 		{
 			value = kvp_value_new_timespec (*(Timespec *) option->value);
 			break;
 		}
+#endif
 	case KVP_TYPE_BINARY:
 		{
 			break;
@@ -312,7 +314,6 @@ config_foreach_cb (const gchar * key, KvpValue * value, gpointer data)
 	gint64 int64;
 	double db;
 	gnc_numeric num;
-	Timespec ts;
 	gchar *parent;
 	struct config_iterate *helper;
 
@@ -368,12 +369,15 @@ config_foreach_cb (const gchar * key, KvpValue * value, gpointer data)
 	{
 		option.value = (gpointer) kvp_value_get_time (value);
 	}
+#ifndef QOF_DISABLE_DEPRECATED
 	case KVP_TYPE_TIMESPEC:
 		{
+			Timespec ts;
 			ts = kvp_value_get_timespec (value);
 			option.value = (gpointer) & ts;
 			break;
 		}
+#endif
 	case KVP_TYPE_GUID:
 		{
 			break;
@@ -432,12 +436,14 @@ config_foreach_cb (const gchar * key, KvpValue * value, gpointer data)
 			(QofTime*) option.value);
 		break;
 	}
+#ifndef QOF_DISABLE_DEPRECATED
 	case KVP_TYPE_TIMESPEC:
 		{
 			kvp_frame_set_timespec (helper->recursive, key,
 				(*(Timespec *) option.value));
 			break;
 		}
+#endif
 	case KVP_TYPE_GUID:
 		{
 			break;

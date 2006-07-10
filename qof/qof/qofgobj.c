@@ -219,8 +219,7 @@ qof_gobject_foreach (QofCollection * coll, QofEntityForeachCB cb,
 void
 qof_gobject_register (QofType e_type, GObjectClass * obclass)
 {
-	int i;
-	int j;
+	gint i, j;
 	QofParam *qof_param_list, *qpar;
 	QofObject *class_def;
 	GParamSpec **prop_list, *gparam;

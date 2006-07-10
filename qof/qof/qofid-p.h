@@ -50,7 +50,7 @@ void qof_collection_insert_entity (QofCollection *, QofEntity *);
 void qof_collection_mark_clean (QofCollection *);
 void qof_collection_mark_dirty (QofCollection *);
 
-/* @} */
-/* @} */
-/* @} */
+/** @} */
+/** @} */
+/** @} */
 #endif /* QOF_ID_P_H */

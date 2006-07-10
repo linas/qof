@@ -1,3 +1,33 @@
+2006-07-10  Neil Williams <linux@codehelp.co.uk>
+
+	* qof/deprecated.c : Retain previous behaviour 
+	if deprecated Timespec is set directly.
+	Deprecating clock timing functions.
+	* qof/deprecated.h : Deprecating clock timing 
+	functions.
+	* qof/qofchoice.c :
+	* qof/qofchoice.h : minor char->gchar tweaks
+
+	Beginning transition from Timespec to QofTime.
+	* qof/kvp-util-p.h :
+	* qof/kvp-util.c :
+	* qof/qofbackend-p.h :
+	* qof/qofbackend.c :
+	* qof/qofbackend.h :
+	* qof/qofbook.c :
+	* qof/qofbook.h :
+	* qof/qofbookmerge.c :
+	* qof/qofbookmerge.h :
+	* qof/qofclass.c :
+	* qof/qofclass.h :
+	* qof/qofgobj.c :
+	* qof/qofid-p.h :
+	* qof/qofid.c :
+	* qof/qofid.h :
+	* qof/qofinstance-p.h :
+	* qof/qofinstance.c :
+
+
 2006-07-09  Neil Williams <linux@codehelp.co.uk>
 
 	* backend/file/qsf-xml.h : Doxygen tweak.

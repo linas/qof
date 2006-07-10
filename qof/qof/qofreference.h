@@ -203,8 +203,9 @@ the integrity of the partial book during sequential copy operations.
 
 @return FALSE on error, otherwise a pointer to the QofEntityReference.
 */
-QofEntityReference *qof_entity_get_reference_from (QofEntity * ent,
-												   const QofParam * param);
+QofEntityReference *
+qof_entity_get_reference_from (QofEntity * ent,
+							   const QofParam * param);
 
 /** @} */
 /** @} */

@@ -179,26 +179,33 @@ void qof_collection_destroy (QofCollection * col);
 QofIdType qof_collection_get_type (QofCollection *);
 
 /** Find the entity going only from its guid */
-QofEntity *qof_collection_lookup_entity (QofCollection *, const GUID *);
+QofEntity *
+qof_collection_lookup_entity (QofCollection *, const GUID *);
 
 /** Callback type for qof_entity_foreach */
 typedef void (*QofEntityForeachCB) (QofEntity *, gpointer user_data);
 
 /** Call the callback for each entity in the collection. */
-void qof_collection_foreach (QofCollection *, QofEntityForeachCB,
-							 gpointer user_data);
+void 
+qof_collection_foreach (QofCollection *, QofEntityForeachCB,
+						gpointer user_data);
 
-/** Store and retreive arbitrary object-defined data 
+/** Store arbitrary object-defined data 
  *
  * XXX We need to add a callback for when the collection is being
  * destroyed, so that the user has a chance to clean up anything
  * that was put in the 'data' member here.
  */
-gpointer qof_collection_get_data (QofCollection * col);
-void qof_collection_set_data (QofCollection * col, gpointer user_data);
+gpointer 
+qof_collection_get_data (QofCollection * col);
+
+/** Retrieve arbitrary object-defined data */
+void 
+qof_collection_set_data (QofCollection * col, gpointer user_data);
 
 /** Return value of 'dirty' flag on collection */
-gboolean qof_collection_is_dirty (QofCollection * col);
+gboolean 
+qof_collection_is_dirty (QofCollection * col);
 
 /** @name QOF_TYPE_COLLECT: Linking one entity to many of one type
 
@@ -220,7 +227,8 @@ will not be removed from the original collection as they would
 by using ::qof_entity_insert_entity or ::qof_entity_remove_entity. 
 
 */
-gboolean qof_collection_add_entity (QofCollection * coll, QofEntity * ent);
+gboolean 
+qof_collection_add_entity (QofCollection * coll, QofEntity * ent);
 
 /** \brief Merge two QOF_TYPE_COLLECT of the same type.
 
@@ -232,7 +240,8 @@ original collection as when using ::qof_entity_insert_entity
 or ::qof_entity_remove_entity.
 
 */
-gboolean qof_collection_merge (QofCollection * target, QofCollection * merge);
+gboolean 
+qof_collection_merge (QofCollection * target, QofCollection * merge);
 
 /** \brief Compare two secondary collections.
 
@@ -245,7 +254,8 @@ GUID or if the types of the two collections do not match,
 or +1 if merge is NULL or if any entity exists in one collection but
 not in the other.
 */
-gint qof_collection_compare (QofCollection * target, QofCollection * merge);
+gint 
+qof_collection_compare (QofCollection * target, QofCollection * merge);
 
 /** \brief Create a secondary collection from a GList
 
@@ -257,7 +267,8 @@ gint qof_collection_compare (QofCollection * target, QofCollection * merge);
 	QofCollection type, else a pointer to the collection
 	on success.
 */
-QofCollection *qof_collection_from_glist (QofIdType type, GList * glist);
+QofCollection *
+qof_collection_from_glist (QofIdType type, GList * glist);
 
 /** @} */
 /** @} */

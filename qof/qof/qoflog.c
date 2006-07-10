@@ -28,20 +28,15 @@
 
 #include <glib.h>
 #include <unistd.h>
-#include <stdarg.h>
-#include <string.h>
-#include <sys/time.h>
 #include "qof.h"
-#include "qoflog.h"
 
 #define QOF_LOG_MAX_CHARS 50
 #define QOF_LOG_INDENT_WIDTH 4
-#define NUM_CLOCKS 10
 
 static FILE *fout = NULL;
 static gchar *filename = NULL;
 static gchar *function_buffer = NULL;
-static const int MAX_TRACE_FILENAME = 100;
+static const gint MAX_TRACE_FILENAME = 100;
 static GHashTable *log_table = NULL;
 static gint qof_log_num_spaces = 0;
 
@@ -49,7 +44,8 @@ static gint qof_log_num_spaces = 0;
 Lookups are done on the string. */
 AS_STRING_FUNC (QofLogLevel, LOG_LEVEL_LIST)
 FROM_STRING_FUNC (QofLogLevel, LOG_LEVEL_LIST)
-	 void qof_log_add_indent (void)
+
+void qof_log_add_indent (void)
 {
 	qof_log_num_spaces += QOF_LOG_INDENT_WIDTH;
 }
@@ -68,8 +64,8 @@ qof_log_drop_indent (void)
 }
 
 static void
-fh_printer (const gchar * log_domain,
-	GLogLevelFlags log_level, const gchar * message, gpointer user_data)
+fh_printer (const gchar * log_domain, GLogLevelFlags log_level, 
+	const gchar * message, gpointer user_data)
 {
 	FILE *fh = user_data;
 	fprintf (fh, "%*s%s\n", qof_log_num_spaces, "", message);
@@ -79,7 +75,7 @@ fh_printer (const gchar * log_domain,
 void
 qof_log_init (void)
 {
-	if (!fout)					/* allow qof_log_set_file */
+	if (!fout)	/* allow qof_log_set_file */
 	{
 		fout = fopen ("/tmp/qof.trace", "w");
 	}
@@ -178,8 +174,8 @@ qof_log_shutdown (void)
 	g_hash_table_destroy (log_table);
 }
 
-const char *
-qof_log_prettify (const char *name)
+const gchar *
+qof_log_prettify (const gchar *name)
 {
 	gchar *p, *buffer;
 	gint length;
@@ -205,135 +201,12 @@ qof_log_prettify (const char *name)
 	return function_buffer;
 }
 
-static struct timeval qof_clock[NUM_CLOCKS] = {
-	{0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0},
-	{0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0},
-};
-
-static struct timeval qof_clock_total[NUM_CLOCKS] = {
-	{0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0},
-	{0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0},
-};
-
-void
-qof_start_clock (int clockno, QofLogModule log_module,
-	QofLogLevel log_level, const gchar * function_name,
-	const gchar * format, ...)
-{
-	va_list ap;
-
-	if ((0 > clockno) || (NUM_CLOCKS <= clockno))
-		return;
-#ifdef HAVE_GETTIMEOFDAY
-	gettimeofday (&qof_clock[clockno], NULL);
-#else
-	time (&(qof_clock[clockno].tv_sec));
-	qof_clock[clockno].tv_usec = 0;
-#endif
-
-	if (!fout)
-		qof_log_init ();
-
-	fprintf (fout, "Clock %d Start: %s: ",
-		clockno, qof_log_prettify (function_name));
-
-	va_start (ap, format);
-
-	vfprintf (fout, format, ap);
-
-	va_end (ap);
-
-	fprintf (fout, "\n");
-	fflush (fout);
-}
-
-void
-qof_report_clock (gint clockno, QofLogModule log_module,
-	QofLogLevel log_level, const gchar * function_name,
-	const gchar * format, ...)
-{
-	struct timeval now;
-	va_list ap;
-
-	if ((0 > clockno) || (NUM_CLOCKS <= clockno))
-		return;
-#ifdef HAVE_GETTIMEOFDAY
-	gettimeofday (&now, NULL);
-#else
-	time (&(now.tv_sec));
-	now.tv_usec = 0;
-#endif
-
-	/* need to borrow to make difference */
-	if (now.tv_usec < qof_clock[clockno].tv_usec)
-	{
-		now.tv_sec--;
-		now.tv_usec += 1000000;
-	}
-	now.tv_sec -= qof_clock[clockno].tv_sec;
-	now.tv_usec -= qof_clock[clockno].tv_usec;
-
-	qof_clock_total[clockno].tv_sec += now.tv_sec;
-	qof_clock_total[clockno].tv_usec += now.tv_usec;
-
-	if (!fout)
-		qof_log_init ();
-
-	fprintf (fout, "Clock %d Elapsed: %ld.%06lds %s: ",
-		clockno, (long int) now.tv_sec, (long int) now.tv_usec,
-		qof_log_prettify (function_name));
-
-	va_start (ap, format);
-
-	vfprintf (fout, format, ap);
-
-	va_end (ap);
-
-	fprintf (fout, "\n");
-	fflush (fout);
-}
-
-void
-qof_report_clock_total (gint clockno,
-	QofLogModule log_module, QofLogLevel log_level,
-	const gchar * function_name, const gchar * format, ...)
-{
-	va_list ap;
-
-	if ((0 > clockno) || (NUM_CLOCKS <= clockno))
-		return;
-
-	/* need to normalize usec */
-	while (qof_clock_total[clockno].tv_usec >= 1000000)
-	{
-		qof_clock_total[clockno].tv_sec++;
-		qof_clock_total[clockno].tv_usec -= 1000000;
-	}
-
-	if (!fout)
-		qof_log_init ();
-
-	fprintf (fout, "Clock %d Total Elapsed: %ld.%06lds  %s: ",
-		clockno,
-		(long int) qof_clock_total[clockno].tv_sec,
-		(long int) qof_clock_total[clockno].tv_usec,
-		qof_log_prettify (function_name));
-
-	va_start (ap, format);
-
-	vfprintf (fout, format, ap);
-
-	va_end (ap);
-
-	fprintf (fout, "\n");
-	fflush (fout);
-}
-
 gboolean
 qof_log_check (QofLogModule log_module, QofLogLevel log_level)
 {
 	gchar *log_string;
-	QofLogLevel maximum;		/* Any positive log_level less than this will be logged. */
+	/* Any positive log_level less than this will be logged. */
+	QofLogLevel maximum; 
 
 	log_string = NULL;
 	if (log_level > QOF_LOG_TRACE)
@@ -382,28 +255,28 @@ struct hash_s
 static void
 hash_cb (gpointer key, gpointer value, gpointer data)
 {
-	struct hash_s *iter;
+	struct hash_s *qiter;
 
-	iter = (struct hash_s *) data;
-	if (!iter)
+	qiter = (struct hash_s *) data;
+	if (!qiter)
 	{
 		return;
 	}
-	(iter->cb) (key, value, iter->data);
+	(qiter->cb) (key, value, qiter->data);
 }
 
 void
 qof_log_module_foreach (QofLogCB cb, gpointer data)
 {
-	struct hash_s iter;
+	struct hash_s qiter;
 
 	if (!cb)
 	{
 		return;
 	}
-	iter.cb = cb;
-	iter.data = data;
-	g_hash_table_foreach (log_table, hash_cb, (gpointer) & iter);
+	qiter.cb = cb;
+	qiter.data = data;
+	g_hash_table_foreach (log_table, hash_cb, (gpointer) &qiter);
 }
 
 gint

@@ -123,7 +123,7 @@ n.b. Always subject to each collection holding only one type at runtime.
 */
 /** @} */
 /** Type of Paramters (String, Date, Numeric, GUID, etc.) */
-typedef const char *QofType;
+typedef const gchar *QofType;
 
 typedef struct _QofParam QofParam;
 
@@ -170,7 +170,7 @@ typedef void (*QofSetterFunc) (gpointer, gpointer);
  */
 struct _QofParam
 {
-	const char *param_name;
+	const gchar *param_name;
 	QofType param_type;
 	QofAccessFunc param_getfcn;
 	QofSetterFunc param_setfcn;
@@ -178,7 +178,8 @@ struct _QofParam
 };
 
 /** This function is the default sort function for a particular object type */
-typedef int (*QofSortFunc) (gconstpointer, gconstpointer);
+typedef 
+gint (*QofSortFunc) (gconstpointer, gconstpointer);
 
 /** This function registers a new object class with the Qof subsystem.
  *  In particular, it registers the set of setters and getters for
@@ -219,23 +220,28 @@ void qof_class_register (QofIdTypeConst obj_name,
 /** Return true if the the indicated type is registered, 
  *  else return FALSE.
  */
-gboolean qof_class_is_registered (QofIdTypeConst obj_name);
+gboolean 
+qof_class_is_registered (QofIdTypeConst obj_name);
 
 /** Return the core datatype of the specified object's parameter */
-QofType qof_class_get_parameter_type (QofIdTypeConst obj_name,
-									  const char *param_name);
+QofType 
+qof_class_get_parameter_type (QofIdTypeConst obj_name,
+							  const gchar *param_name);
 
 /** Return the registered Parameter Definition for the requested parameter */
-const QofParam *qof_class_get_parameter (QofIdTypeConst obj_name,
-										 const char *parameter);
+const QofParam *
+qof_class_get_parameter (QofIdTypeConst obj_name,
+						const gchar *parameter);
 
 /** Return the object's parameter getter function */
-QofAccessFunc qof_class_get_parameter_getter (QofIdTypeConst obj_name,
-											  const char *parameter);
+QofAccessFunc 
+qof_class_get_parameter_getter (QofIdTypeConst obj_name,
+								const gchar *parameter);
 
 /** Return the object's parameter setter function */
-QofSetterFunc qof_class_get_parameter_setter (QofIdTypeConst obj_name,
-											  const char *parameter);
+QofSetterFunc 
+qof_class_get_parameter_setter (QofIdTypeConst obj_name,
+								const gchar *parameter);
 
 /** Type definition for the class callback function. */
 typedef void (*QofClassForeachCB) (QofIdTypeConst, gpointer);
@@ -243,7 +249,8 @@ typedef void (*QofClassForeachCB) (QofIdTypeConst, gpointer);
 /** Call the callback once for each object class that is registered
  *  with the system.  The 'user_data' is passed back to the callback.
  */
-void qof_class_foreach (QofClassForeachCB, gpointer user_data);
+void 
+qof_class_foreach (QofClassForeachCB, gpointer user_data);
 
 /** Type definition for the paramter callback function. */
 typedef void (*QofParamForeachCB) (QofParam *, gpointer user_data);
@@ -251,8 +258,9 @@ typedef void (*QofParamForeachCB) (QofParam *, gpointer user_data);
 /** Call the callback once for each parameter on the indicated 
  *  object class.  The 'user_data' is passed back to the callback.
  */
-void qof_class_param_foreach (QofIdTypeConst obj_name,
-							  QofParamForeachCB, gpointer user_data);
+void 
+qof_class_param_foreach (QofIdTypeConst obj_name,
+						 QofParamForeachCB, gpointer user_data);
 
 /** \brief List of the parameters that could be references.
 
@@ -260,8 +268,8 @@ Simple check to return a GList of all parameters
 of this object type that are not known QOF data types.
 Used for partial QofBook support, see ::QofEntityReference
 */
-GList *qof_class_get_referenceList (QofIdTypeConst type);
-
+GList *
+qof_class_get_referenceList (QofIdTypeConst type);
 
 #endif /* QOF_CLASS_H */
 /** @} */

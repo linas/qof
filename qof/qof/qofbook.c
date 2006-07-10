@@ -242,23 +242,23 @@ struct _iterate
 static void
 foreach_cb (gpointer key, gpointer item, gpointer arg)
 {
-	struct _iterate *iter = arg;
+	struct _iterate *qiter = arg;
 	QofCollection *col = item;
 
-	iter->fn (col, iter->data);
+	qiter->fn (col, qiter->data);
 }
 
 void
 qof_book_foreach_collection (QofBook * book,
 	QofCollectionForeachCB cb, gpointer user_data)
 {
-	struct _iterate iter;
+	struct _iterate qiter;
 
 	g_return_if_fail (book);
 	g_return_if_fail (cb);
-	iter.fn = cb;
-	iter.data = user_data;
-	g_hash_table_foreach (book->hash_of_collections, foreach_cb, &iter);
+	qiter.fn = cb;
+	qiter.data = user_data;
+	g_hash_table_foreach (book->hash_of_collections, foreach_cb, &qiter);
 }
 
 void

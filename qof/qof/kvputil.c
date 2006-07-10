@@ -28,8 +28,7 @@
 #include "qof.h"
 #include "kvp-util-p.h"
 
-/* ================================================================ */
-
+/* replace time_t and Timespec with QofTime */
 static KvpFrame *
 gnc_kvp_array_va (KvpFrame * kvp_root, const char *path,
 	time_t secs, const char *first_name, va_list ap)
@@ -68,7 +67,7 @@ gnc_kvp_array_va (KvpFrame * kvp_root, const char *path,
 	return cwd;
 }
 
-/* ================================================================ */
+/* replace time_t with QofTime */
 
 KvpFrame *
 gnc_kvp_bag_add (KvpFrame * pwd, const char *path,

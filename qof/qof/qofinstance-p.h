@@ -31,12 +31,6 @@
 
 #include "qofinstance.h"
 
-/*
- * UNDER CONSTRUCTION!
- * This is mostly scaffolding for now,
- * eventually, it may hold more fields, such as refrence counting...
- *
- */
 struct QofInstance_s
 {
 	/* Globally unique id identifying this instance */
@@ -51,14 +45,16 @@ struct QofInstance_s
 	 * important keys. */
 	KvpFrame *kvp_data;
 
-	/*  Timestamp used to track the last modification to this 
+	/*  Time of the last modification to this 
 	 *  instance.  Typically used to compare two versions of the
 	 *  same object, to see which is newer.  When used with the 
 	 *  SQL backend, this field is reserved for SQL use, to compare
 	 *  the version in local memory to the remote, server version.
 	 */
-	QofTime *last_update;
-
+	QofTime *update_time;
+#ifndef QOF_DISABLE_DEPRECATED
+	Timespec last_update;
+#endif
 	/*  Keep track of nesting level of begin/end edit calls */
 	gint editlevel;
 
@@ -76,10 +72,11 @@ void qof_instance_mark_clean (QofInstance *);
 
 void qof_instance_set_slots (QofInstance *, KvpFrame *);
 
-/*  Set the last_update time. Reserved for use by the SQL backend;
+/*  Set the update time. Reserved for use by the SQL backend;
  *  used for comparing version in local memory to that in remote 
  *  server. The QofTime becomes the property of the instance.
  */
-void qof_instance_set_update_time (QofInstance * inst, QofTime * time);
+void
+qof_instance_set_update_time (QofInstance * inst, QofTime * time);
 
 #endif /* QOF_INSTANCE_P_H */

@@ -225,7 +225,7 @@ should ensure that your backend is fully configured and ready for use.
 typedef struct QofBackendOption_s
 {
 	KvpValueType type;		   /**< Only GINT64, DOUBLE, NUMERIC,
-	STRING and TIMESPEC supported. */
+	STRING and TIME supported. TIMESPEC is deprecated. */
 	const gchar *option_name;  /**< non-translated, key. */
 	const gchar *description;  /**< translatable description. */
 	const gchar *tooltip;	   /**< translatable tooltip */

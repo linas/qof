@@ -49,21 +49,28 @@
   _(QOF_LOG_DETAIL, = 5)  \
   _(QOF_LOG_TRACE, = 6)
 
-DEFINE_ENUM (QofLogLevel, LOG_LEVEL_LIST) AS_STRING_DEC (QofLogLevel, LOG_LEVEL_LIST)
-										   /**< Convert QofLogLevel to a string.
+/** Convert QofLogLevel to a string.
 
 The macro correlates the enum value and an
 exact copy as a string, removing the need to
 keep two separate lists in sync.
 */
-	FROM_STRING_DEC (QofLogLevel, LOG_LEVEL_LIST)
-											 /**< Convert the 
-log_string to a QofLogLevel
+DEFINE_ENUM (QofLogLevel, LOG_LEVEL_LIST) 
+
+/** Convert a QofLogLevel to the log_string
+
+Only for use as a partner to ::QofLogLevelfromString
+*/
+AS_STRING_DEC (QofLogLevel, LOG_LEVEL_LIST)
+
+/** Convert the log_string to a QofLogLevel
 
 Only for use as a partner to ::QofLogLevelasString
 */
+FROM_STRING_DEC (QofLogLevel, LOG_LEVEL_LIST)
+
 /** indents once for each ENTER macro */
-	 void qof_log_add_indent (void);
+void qof_log_add_indent (void);
 
 /** gets the running total of the indent */
 	 gint qof_log_get_indent (void);
@@ -84,14 +91,14 @@ Instead, use qof_log_init_filename
 which sets the filename and initialises the
 logging subsystem in one operation.
 */
-	 void qof_log_init (void);
+void qof_log_init (void);
 
 /** Set the logging level of the given log_module.
 
 Registers the log_module with the qof_log hashtable and
 sets an initial value for the loglevel for that log_module.
 */
-	 void qof_log_set_level (QofLogModule module, QofLogLevel level);
+void qof_log_set_level (QofLogModule module, QofLogLevel level);
 
 /** Set the logging level for all registered log_modules.
 
@@ -113,7 +120,7 @@ sections of the default log output - and using qof_log_set_level_registered
 allows these silent log_modules to be retained in the code without
 being logged by other developers etc.
 */
-	 void qof_log_set_level_registered (QofLogLevel level);
+void qof_log_set_level_registered (QofLogLevel level);
 
 /** Specify an alternate log output, to pipe or file.
 By default, all logging goes to /tmp/qof.trace 
@@ -121,40 +128,40 @@ By default, all logging goes to /tmp/qof.trace
 Needs to be called \b before qof_log_init()
 \deprecated
 */
-	 void qof_log_set_file (FILE * outfile);
+void qof_log_set_file (FILE * outfile);
 
 /** Specify a filename for log output.
 
 Calls qof_log_init() for you.
 */
-	 void qof_log_init_filename (const gchar * logfilename);
+void qof_log_init_filename (const gchar * logfilename);
 
 /** Be nice, close the logfile if possible. */
-	 void qof_log_shutdown (void);
+void qof_log_shutdown (void);
 
 /** qof_log_prettify() cleans up subroutine names. AIX/xlC has the habit
  * of printing signatures not names; clean this up. On other operating
  * systems, truncate name to QOF_LOG_MAX_CHARS chars.  */
-	 const gchar *qof_log_prettify (const gchar * name);
+const gchar *qof_log_prettify (const gchar * name);
 
 /** Do not log log_modules that have not been enabled. */
-	 gboolean qof_log_check (QofLogModule log_module, QofLogLevel log_level);
+gboolean qof_log_check (QofLogModule log_module, QofLogLevel log_level);
 
 /** Set the default QOF log_modules to the log level. */
-	 void qof_log_set_default (QofLogLevel log_level);
+void qof_log_set_default (QofLogLevel log_level);
 
-	 typedef void (*QofLogCB) (QofLogModule log_module,
-							   QofLogLevel * log_level, gpointer user_data);
+typedef void (*QofLogCB) (QofLogModule log_module,
+					   QofLogLevel * log_level, gpointer user_data);
 
 /** Iterate over each known log_module
 
 Only log_modules with log_levels set will 
 be available.
 */
-	 void qof_log_module_foreach (QofLogCB cb, gpointer data);
+void qof_log_module_foreach (QofLogCB cb, gpointer data);
 
 /** Number of log_modules registered*/
-	 gint qof_log_module_count (void);
+gint qof_log_module_count (void);
 
 #define FUNK qof_log_prettify(__FUNCTION__)
 
@@ -241,49 +248,6 @@ be available.
 		(x);                                        \
 	}                                               \
 } while (0)
-
-/* -------------------------------------------------------- */
-/** Infrastructure to make timing measurements for critical pieces 
- * of code. Used for only for performance tuning & debugging. 
- */
-
-	 void qof_start_clock (gint clockno, QofLogModule log_module,
-						   QofLogLevel log_level, const gchar * function_name,
-						   const gchar * format, ...);
-
-	 void qof_report_clock (gint clockno,
-							QofLogModule log_module,
-							QofLogLevel log_level,
-							const gchar * function_name,
-							const gchar * format, ...);
-
-	 void qof_report_clock_total (gint clockno,
-								  QofLogModule log_module,
-								  QofLogLevel log_level,
-								  const gchar * function_name,
-								  const gchar * format, ...);
-
-/** start a particular timer */
-#define START_CLOCK(clockno,format, args...) do {        \
-  if (qof_log_check (log_module, QOF_LOG_INFO))          \
-    qof_start_clock (clockno, log_module, QOF_LOG_INFO,  \
-             __FUNCTION__, format , ## args);               \
-} while (0)
-
-/** report elapsed time since last report on a particular timer */
-#define REPORT_CLOCK(clockno,format, args...) do {       \
-  if (qof_log_check (log_module, QOF_LOG_INFO))          \
-    qof_report_clock (clockno, log_module, QOF_LOG_INFO, \
-             __FUNCTION__, format , ## args);               \
-} while (0)
-
-/** report total elapsed time since timer started */
-#define REPORT_CLOCK_TOTAL(clockno,format, args...) do {       \
-  if (qof_log_check (log_module, QOF_LOG_INFO))                \
-    qof_report_clock_total (clockno, log_module, QOF_LOG_INFO, \
-             __FUNCTION__, format , ## args);               \
-} while (0)
-
 
 #endif /* _QOF_LOG_H */
 

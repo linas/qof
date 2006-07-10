@@ -69,6 +69,8 @@ any error values to the calling process. ::qof_book_merge_init returns a
 pointer to the ::QofBookMergeData struct - the calling process needs to
 make sure this is non-NULL to know that the Init has been successful.
 
+@todo Prior to libqof2 rationalise internal variable names.
+
  @{
 */
 /** @file  qofbookmerge.h
