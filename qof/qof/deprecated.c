@@ -1124,13 +1124,19 @@ gnc_timezone (struct tm *tm)
 Timespec
 qof_instance_get_last_update (QofInstance * inst)
 {
-	return qof_time_to_Timespec (inst->last_update);
+	Timespec ts;
+	ts = inst->last_update;
+	inst->update_time = timespecToQofTime (ts);
+	return ts;
 }
 
 void
 qof_instance_set_last_update (QofInstance * inst, Timespec ts)
 {
-	QofTime *time = timespecToQofTime (ts);
+	QofTime *time;
+	g_return_if_fail (inst);
+	inst->last_update = ts;
+	time = timespecToQofTime (ts);
 	qof_instance_set_update_time (inst, time);
 }
 time_t 
