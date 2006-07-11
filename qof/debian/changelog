@@ -1,12 +1,18 @@
 qof (0.7.0-1) unstable; urgency=low
 
   * New upstream release.
-  - Rewritten date and time handling for full range support.
-  - Undo and redo handling.
-  - New QOF extension code for strftime, as used in coreutils.
-  - Package QOF Doxygen HTML reference and website content.
+  - Rewritten date and time handling for full range support
+	using QofTime (seconds) and QofDate (calendar).
+  - New QOF parameter type added : QOF_TYPE_TIME
+  - QOF_TYPE_DATE and Timespec both deprecated.
+  - New QOF extension code for strftime and strptime, as used 
+	in coreutils.
+  - Added Undo and redo handling.
+  - libqof-doc : New package for QOF Doxygen Developer Reference
+	and website content.
   - Upgrade to debhelper compat 5, standards version 3.7.2
   - Add linda override for lib-not-in-shlibs (see #345871)
+  - Run make check during preparation of package.
 
  -- Neil Williams <linux@codehelp.co.uk>  Sun,  9 Jul 2006 17:18:26 +0100
 

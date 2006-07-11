@@ -27,7 +27,10 @@ QOF_TYPE_DATE is now deprecated, to be replaced by
 QOF_TYPE_TIME. This is the first change in the QofObject
 API in libqof1 and requires significant changes within
 all QOF objects to be supported by libqof2. libqof2 will
-therefore use a incremented QOF_OBJECT_VERSION.
+therefore use a incremented QOF_OBJECT_VERSION. libqof1
+retains the existing version, using QOF_TYPE_TIME as an
+optional extra. Packages using QOF_TYPE_TIME need to depend
+on QOF >= 0.7.0
 
 QofTime is opaque, firstly, to implement strict validity
 checking and secondly to ensure consistent handling

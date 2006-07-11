@@ -33,7 +33,7 @@ title="Query Object Framework">QOF</acronym></h1>
 symbol of the same name"></div>
 
 <h2>Advice for packagers / maintainers</h2>
-<h3>Updated May 2006 for QOF 0.7.0</h3>
+<h3>Updated July 2006 for QOF 0.7.0</h3>
 
 <ul>
 <li>Building against QOF
@@ -58,6 +58,8 @@ symbol of the same name"></div>
 <h2>BUILDING AGAINST QOF</h2>
 
 <h3 id="automake">AUTOMAKE</h3>
+<div>To use QOF_TYPE_TIME or QofUndo, QOF_REQUIRED
+needs to be set to 0.7.0 in the example below.</div>
 <div>Using automake, consider this example as the basis for
 your commands for in configure.ac:</div>
 <pre>
@@ -89,7 +91,7 @@ if test x$QOF_XML_DIR = x; then
         AC_MSG_RESULT([no])
         AC_MSG_ERROR([
         The package requires the Query Object Framework: QOF.
-        You need to install QOF >= 0.6.0 (libqof1).
+        You need to install QOF >= $QOF_REQUIRED (libqof1).
         You can find it at http://qof.sourceforge.net/
 ])
         exit 1
@@ -98,32 +100,36 @@ else
 fi
 </pre>
 
-<div>For more information, see the source for Pilot-QOF and CashUtil
-which include an optional method to build from QOF CVS source as
-well as the package.</div>
+<div>For more information, see the source for Pilot-QOF,
+gpe-expenses or CashUtil which include an optional 
+method to build from QOF CVS source as well as the package.</div>
 
 <div>
 <p><a href="http://pilot-qof.sourceforge.net/">
 http://pilot-qof.sourceforge.net/</a></p>
-<p><a href="http://linux.codehelp.co.uk/cashutil/">
-http://linux.codehelp.co.uk/cashutil/</a></p>
+<p><a href="http://cashutil.sourceforge.net/">
+http://cashutil.sourceforge.net/</a></p>
+<p><a href="http://gpe-expenses.sourceforge.net/">
+http://gpe-expenses.sourceforge.net/</a></p>
 </div>
 <hr>
 <h3 id="libqof1">libqof1 API/ABI compatibility.</h3>
 
 <div>
-<p>During the life of the QOF the 0.6.x, 0.7.x and 0.8.x trees, various 
-functions will be deprecated and renamed - leaving a #define or deprecated
-version to support the old name. New code will be expected to use the new 
-name and old code the deprecated version. Then when all such code has been 
-sorted out, applications have two choices:</p>
+<p>During the life of the QOF the 0.6.x, 0.7.x and 0.8.x trees, 
+various functions will be deprecated and renamed - leaving a 
+#define or deprecated version to support the old name. New code 
+will be expected to use the new name and old code the deprecated 
+version. Then when all such code has been sorted out, applications 
+have two choices:</p>
 <ol>
 <li>Move to the new API with the library, or</li>
 <li>Integrate the #define's in a header of their own.</li>
 </ol>
 
-<p>Either way, the deprecated functions will then be removed from QOF in a
-single operation that takes us smoothly from libqof1 to libqof2.</p>
+<p>Either way, the deprecated functions will then be removed from 
+QOF in a single operation that takes us smoothly from libqof1 to 
+libqof2.</p>
 </div>
 <hr>
 <h3 id="required">MAX_REQUIRED specifiers</h3>
@@ -132,26 +138,28 @@ single operation that takes us smoothly from libqof1 to libqof2.</p>
 <pre>LIBQOF_REQUIRED_MIN=0.5.2
 LIBQOF_REQUIRED_MAX=0.5.2</pre>
 
-<p>The MAX value is no longer required. QOF will only change the API/ABI 
-on a SONAME increment. So each release of libqof1 will always be API/ABI 
-compatible with previous releases of libqof1. It is recommended to only
-specify a minimum and accept any later version of QOF.</p>
+<p>The MAX value is no longer required. QOF will only change the 
+API/ABI on a SONAME increment. So each release of libqof1 will 
+always be API/ABI compatible with previous releases of libqof1. 
+It is recommended to only specify a minimum and accept any later 
+version of QOF.</p>
 </div>
 <hr>
 <h3 id="dwi">DWI is optional</h3>
 <div>
-<p>DWI - Data With Interaction - is a QOF backend in development and it has
-it's own SourceForge project and homepage.</p>
+<p>DWI - Data With Interaction - is a QOF backend in development 
+and it has it's own SourceForge project and homepage.</p>
 
 <p><a href="http://dwi.sourceforge.net/">
 http://dwi.sourceforge.net/</a></p>
 
-<p>DWI development seems to have stalled and it has not been tested against libqof1.
-QOF still checks for DWI but DWI is completely optional and there is no reason to
-include DWI with QOF at this time.</p>
+<p>DWI development seems to have stalled and it has not been tested 
+against libqof1. QOF still checks for DWI but DWI is completely 
+optional and there is no reason to include DWI with QOF at this 
+time.</p>
 
-<p>If you decide to try using DWI against libqof1, please report your results (good
-or bad) to the QOF-devel mailing list.</p>
+<p>If you decide to try using DWI against libqof1, please report 
+your results (good or bad) to the QOF-devel mailing list.</p>
 
 <p><a href="http://lists.sourceforge.net/lists/listinfo/qof-devel">
 http://lists.sourceforge.net/lists/listinfo/qof-devel</a></p>
@@ -174,23 +182,24 @@ export ACLOCAL_FLAGS="-I /sw/share/aclocal"
 export PAGER="less -s"
 </pre>
 
-<p>To only use these for this one build, create a bash script and export
-the variables before calling ./autogen.sh</p>
+<p>To only use these for this one build, create a bash script and 
+export the variables before calling ./autogen.sh</p>
 
-<p>QOF is no longer routinely built on OSX. If you encounter problems, post
-the '<code>config.h</code>' file from the top directory of your build to
-the QOF-devel mailing list.<p>
+<p>QOF is no longer routinely built on OSX. If you encounter 
+problems, post the '<code>config.h</code>' file from the top 
+directory of your build to the QOF-devel mailing list.<p>
 </div>
 <hr>
 <h2>PACKAGING QOF</h2>
 
 <h3 id="la">libqof-backend-qsf.la in libqof1</h3>
 <div>
-<p>This section has been re-written in the light of real usage of the QOF
-library, in particular on embedded systems. The previous statements about
-the .la files mainly reflected a previous implementation before the switch
-to GModule. I would recommend that the .la files are installed with the main
-library where possible but it is no longer a requirement of QOF.
+<p>This section has been re-written in the light of real usage of 
+the QOF library, in particular on embedded systems. The previous 
+statements about the .la files mainly reflected a previous 
+implementation before the switch to GModule. I would recommend 
+that the .la files are installed with the main library where 
+possible but it is no longer a requirement of QOF.
 </p>
 </div>
 <hr>
@@ -202,11 +211,13 @@ backend horribly.)</p>
 
 <h3 id="nogtk">There is no QOF dependency on Gtk!</h3>
 <div>
-<p>Do <b>not</b> list a QOF runtime or build dependency on libgtk. The one example 
-that could use Gtk has now been <b>removed</b> from the distribution tarball
-along with the other (outdated) examples.</p>
-<p>That's all there ever was to the Gtk stuff. It's important because projects like 
-pilot-link will not accept code that links to GUI stuff for no good reason.</p>
+<p>Do <b>not</b> list a QOF runtime or build dependency on libgtk. 
+The one example that could use Gtk has now been <b>removed</b> from
+the distribution tarball along with the other (outdated) examples.
+</p>
+<p>That's all there ever was to the Gtk stuff. It's important 
+because projects like pilot-link will not accept code that links 
+to GUI stuff for no good reason.</p>
 </div>
 <hr>
 <h3 id="dev">libqof-dev usage</h3>
@@ -251,33 +262,34 @@ SQL directly in the future.</p>
 
 <h3 id="roadmap">Roadmap</h3>
 <div>
-<p>Outline plan of the next few releases. All items are subject to change,
-but this is how it looks so far.</p>
+<p>Outline plan of the next few releases. All items are subject to 
+change, but this is how it looks so far.</p>
 
 <h4>QOF 0.7.0</h4>
 
-<ol><li>QOF 0.6.5 is reserved in case there are critical bugs besides the
-64bit issue already patched.</li>
+<ol><li>QOF 0.6.5 is reserved in case there are critical bugs 
+besides the 64bit issue already patched.</li>
 
 <li>The next release is intended to be QOF 0.7.0 which will include
 QofUndo from CashUtil and an overhaul of the QOF date handling. 0.7.0
-will replace the test-date.c check code completely - implementing a new
-and more robust check.</li>
+will replace the test-date.c check code completely - implementing 
+a new and more robust check.</li>
 
-<li>There will be a delay before the 0.7.0 release - I expect it to be
-ready in July or August.</li>
+<li>There will be a delay before the 0.7.0 release - I expect it to 
+be ready in July or August.</li>
 
-<li>Changes from 0.6.4 to 0.7.0 will primarily be made to provide support
-and bug fixes for CashUtil and pilot-qof, including QofLogic at some
-point during the life of 0.7.x.</li>
+<li>Changes from 0.6.4 to 0.7.0 will primarily be made to provide 
+support and bug fixes for CashUtil and pilot-qof, including QofLogic 
+at some point during the life of 0.7.x.</li>
 
 <li>When pilot-link 0.12 is finally released, an interim release of
-pilot-qof will follow (the much awaited 0.1.x series). This will occur
-with or without QOF 0.7.0, depending on exactly when pilot-link 0.12 is
-released.</li>
+pilot-qof will follow (the much awaited 0.1.x series). This will 
+occur with or without QOF 0.7.0, depending on exactly when 
+pilot-link 0.12 is released.</li>
 
 <li>QOF 0.7.x will still be libqof1 - the same API, same SONAME - in
-0.7.0 deprecated gnc-date.c code will be moved into deprecated.c as before.</li>
+0.7.0 deprecated gnc-date.c code will be moved into deprecated.c 
+as before.</li>
 </ol>
 <h4>Plans beyond 0.7.0</h4>
 

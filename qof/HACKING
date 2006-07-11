@@ -2,7 +2,7 @@ Packaging and building against QOF
 ==================================
 
 Advice for packagers / maintainers
-Updated May 2006 for QOF 0.7.0
+Updated July 2006 for QOF 0.7.0
 
     * Building against QOF
           o AUTOMAKE example
@@ -23,8 +23,10 @@ BUILDING AGAINST QOF
 AUTOMAKE
 --------
 
-Using automake, consider this example as the basis for 
-your commands for in configure.ac:
+To use QOF_TYPE_TIME or QofUndo, QOF_REQUIRED needs to be set 
+to 0.7.0 in the example below.
+Using automake, consider this example as the basis for your 
+commands for in configure.ac:
 
 dnl *************************************
 dnl QOF
@@ -54,7 +56,7 @@ if test x$QOF_XML_DIR = x; then
         AC_MSG_RESULT([no])
         AC_MSG_ERROR([
         The package requires the Query Object Framework: QOF.
-        You need to install QOF >= 0.6.0 (libqof1).
+        You need to install QOF >= $QOF_REQUIRED (libqof1).
         You can find it at http://qof.sourceforge.net/
 ])
         exit 1
@@ -62,13 +64,15 @@ else
         AC_MSG_RESULT([yes (found $QOF_VERSION)])
 fi
 
-For more information, see the source for Pilot-QOF and CashUtil 
-which include an optional method to build from QOF CVS source 
-as well as the package.
+For more information, see the source for Pilot-QOF, gpe-expenses 
+or CashUtil which include an optional method to build from QOF 
+CVS source as well as the package.
 
 http://pilot-qof.sourceforge.net/
 
-http://linux.codehelp.co.uk/cashutil/
+http://cashutil.sourceforge.net/
+
+http://gpe-expenses.sourceforge.net/
 
 
 libqof1 API/ABI compatibility.
@@ -88,7 +92,6 @@ Either way, the deprecated functions will then be removed from
 QOF in a single operation that takes us smoothly from libqof1 to 
 libqof2.
 
-
 MAX_REQUIRED specifiers
 -----------------------
 
@@ -107,14 +110,15 @@ later version of QOF.
 DWI is optional
 ---------------
 
-DWI - Data With Interaction - is a QOF backend in development and 
-it has it's own SourceForge project and homepage.
+DWI - Data With Interaction - is a QOF backend in development 
+and it has it's own SourceForge project and homepage.
 
 http://dwi.sourceforge.net/
 
-DWI development seems to have stalled and it has not been tested 
-against libqof1. QOF still checks for DWI but DWI is completely 
-optional and there is no reason to include DWI with QOF at this time.
+DWI development seems to have stalled and it has not been 
+tested against libqof1. QOF still checks for DWI but DWI is 
+completely optional and there is no reason to include DWI with 
+QOF at this time.
 
 If you decide to try using DWI against libqof1, please report 
 your results (good or bad) to the QOF-devel mailing list.
@@ -134,33 +138,36 @@ export LIBTOOL="glibtool"
 export PATH="/sw/bin:$PATH"
 export ACLOCAL_FLAGS="-I /sw/share/aclocal"
 
-Helpful pair of settings for general manpage usage (to go into 
-.bashrc in your home directory):
+Helpful pair of settings for general manpage usage (to go 
+into .bashrc in your home directory):
 
 export MANPATH="/sw/share/man:<build_path>"
 export PAGER="less -s"
 
-To only use these for this one build, create a bash script and 
-export the variables before calling ./autogen.sh
+To only use these for this one build, create a bash script 
+and export the variables before calling ./autogen.sh
 
-QOF is no longer routinely built on OSX. If you encounter problems, 
-post the 'config.h' file from the top directory of your build to 
-the QOF-devel mailing list.
+QOF is no longer routinely built on OSX. If you encounter 
+problems, post the 'config.h' file from the top directory of 
+your build to the QOF-devel mailing list.
 
 PACKAGING QOF
 =============
 
-
 libqof-backend-qsf.la in libqof1
 --------------------------------
 
-This section has been re-written in the light of real usage of 
-the QOF library, in particular on embedded systems. The previous 
-statements about the .la files mainly reflected a previous 
-implementation before the switch to GModule. I would recommend 
-that the .la files are installed with the main library where 
-possible but it is no longer a requirement of QOF.
+This section has been re-written in the light of real usage 
+of the QOF library, in particular on embedded systems. The 
+previous statements about the .la files mainly reflected a 
+previous implementation before the switch to GModule. I would 
+recommend that the .la files are installed with the main 
+library where possible but it is no longer a requirement of 
+QOF.
+
+
 libxml2 >= 2.5.10
+-----------------
 
 The version string is vital. (Earlier versions will break the 
 QSF backend horribly.)
@@ -169,8 +176,8 @@ QSF backend horribly.)
 There is no QOF dependency on Gtk!
 ----------------------------------
 
-Do not list a QOF runtime or build dependency on libgtk. The one 
-example that could use Gtk has now been removed from the 
+Do not list a QOF runtime or build dependency on libgtk. The 
+one example that could use Gtk has now been removed from the 
 distribution tarball along with the other (outdated) examples.
 
 That's all there ever was to the Gtk stuff. It's important 
@@ -192,8 +199,8 @@ or
 - this is because some headers in libqof-dev need to be 
 included in the correct sequence. Individual filenames and 
 file contents are also subject to change during the life of 
-libqof1 and packages using QOF need to only use qof.h to avoid 
-problems moving to libqof2.
+libqof1 and packages using QOF need to only use qof.h to 
+avoid problems moving to libqof2.
 
 
 Replacement of lib/libsql
@@ -202,20 +209,20 @@ Replacement of lib/libsql
 Updated!
 
 The code in lib/libsql came from the libgda package at about 
-v1.0.3 and is now commonly available, including on Mac OSX 
-via fink - albeit at only v1.0.4-3.
+v1.0.3 and is now commonly available, including on Mac OSX via 
+fink - albeit at only v1.0.4-3.
 
 Fedora Core 3 has 1.0.4, Fedora Core 4 has 1.2.0 and Debian 
 has 1.2.2.
 
-libgda comes in stable and unstable releases. At time of 
-writing, the stable release is 1.2.2 (libgda2-3 in Debian). 
-QOF does not support the unstable libgda releases. If your 
-distribution has libgda 1.3.x or 1.9.x, please do not patch QOF 
-to use the unstable code. Instead, let QOF use it's internal 
-code. QOF currently uses a fraction of the libgda codebase and 
-until a full QOF/GDA backend is available, QOF will not be 
-supporting any of the unstable libgda releases.
+libgda comes in stable and unstable releases. At time of writing, 
+the stable release is 1.2.2 (libgda2-3 in Debian). QOF does not 
+support the unstable libgda releases. If your distribution has 
+libgda 1.3.x or 1.9.x, please do not patch QOF to use the unstable 
+code. Instead, let QOF use it's internal code. QOF currently uses 
+a fraction of the libgda codebase and until a full QOF/GDA backend 
+is available, QOF will not be supporting any of the unstable 
+libgda releases.
 
 This also helps complete the CashUtil project that will need the 
 SQL handling in QOF and GnuCash itself which is likely to use 
@@ -225,28 +232,29 @@ more SQL directly in the future.
 Roadmap
 -------
 
-Outline plan of the next few releases. All items are subject to 
-change, but this is how it looks so far.
+Outline plan of the next few releases. All items are subject 
+to change, but this is how it looks so far.
+
 QOF 0.7.0
 
    1. QOF 0.6.5 is reserved in case there are critical bugs 
-	besides the 64bit issue already patched.
+   besides the 64bit issue already patched.
    2. The next release is intended to be QOF 0.7.0 which will 
-	include QofUndo from CashUtil and an overhaul of the QOF 
-	date handling. 0.7.0 will replace the test-date.c check 
-	code completely - implementing a new and more robust check.
-   3. There will be a delay before the 0.7.0 release - I expect 
-	it to be ready in July or August.
-   4. Changes from 0.6.4 to 0.7.0 will primarily be made to provide 
-	support and bug fixes for CashUtil and pilot-qof, including 
-	QofLogic at some point during the life of 0.7.x.
-   5. When pilot-link 0.12 is finally released, an interim release 
-	of pilot-qof will follow (the much awaited 0.1.x series). 
-	This will occur with or without QOF 0.7.0, depending on 
-	exactly when pilot-link 0.12 is released.
-   6. QOF 0.7.x will still be libqof1 - the same API, same SONAME - 
-	in 0.7.0 deprecated gnc-date.c code will be moved into 
-	deprecated.c as before.
+   include QofUndo from CashUtil and an overhaul of the QOF 
+   date handling. 0.7.0 will replace the test-date.c check 
+   code completely - implementing a new and more robust check.
+   3. There will be a delay before the 0.7.0 release - I 
+   expect it to be ready in July or August.
+   4. Changes from 0.6.4 to 0.7.0 will primarily be made to 
+   provide support and bug fixes for CashUtil and pilot-qof, 
+   including QofLogic at some point during the life of 0.7.x.
+   5. When pilot-link 0.12 is finally released, an interim 
+   release of pilot-qof will follow (the much awaited 0.1.x series). 
+   This will occur with or without QOF 0.7.0, depending on 
+   exactly when pilot-link 0.12 is released.
+   6. QOF 0.7.x will still be libqof1 - the same API, same 
+   SONAME - in 0.7.0 deprecated gnc-date.c code will be moved 
+   into deprecated.c as before.
 
 Plans beyond 0.7.0
 
@@ -254,59 +262,62 @@ Plans beyond 0.7.0
       QofNumeric
 
       The next section to be converted to the QOF naming 
-	conventions will be gnc_numeric (QofNumeric) - this will 
-	be a simple change of struct and function names. 
-	Expected : 0.7.1, September 2006.
+	  conventions will be gnc_numeric (QofNumeric) - this will 
+	  be a simple change of struct and function names. 
+	  Expected : 0.7.1, September 2006.
    2.
       QSQLBackend
 
       Embedded users of libqof1 will benefit from a SQLite 
-	compatible backend. This will be a GModule that can replace 
-	the QSF Backend for embedded systems that cannot use the ever 
-	expanding libxml2. QSQL will only be suitable for embedded 
-	systems - it is not intended for use on larger systems. In 
-	particular, it might not support the full range of QOF 
-	operations. Possibly in 0.7.0, otherwise 0.7.1, September 2006.
+	  compatible backend. This will be a GModule that can replace 
+	  the QSF Backend for embedded systems that cannot use the 
+	  ever expanding libxml2. QSQL will only be suitable for 
+	  embedded systems - it is not intended for use on larger 
+	  systems. In particular, it might not support the full 
+	  range of QOF operations. 
+	  Possibly in 0.7.0, otherwise 0.7.1, September 2006.
    3.
       QOF/GDA Backend
 
       A more comprehensive backend based on libgda is planned, 
-	supporting various databases via GnomeDB plugins. This will 
-	not be implemented directly on embedded systems. This 
-	could be a relatively large amount of new code, expect for 
-	early 2007. Likely to take QOF to 0.8.0, still as libqof1.
+	  supporting various databases via GnomeDB plugins. This 
+	  will not be implemented directly on embedded systems. 
+	  This could be a relatively large amount of new code, 
+	  expect for early 2007. Likely to take QOF to 0.8.0, 
+	  still as libqof1.
    4.
       QofKvp
 
-      Various Kvp functions need to be reviewed, a KVP_TYPE_BOOLEAN 
-	is long overdue and the split between public and private Kvp 
-	functions needs to be completely redone. 
-	Expected: Late 2006, early 2007.
+      Various Kvp functions need to be reviewed, a 
+	  KVP_TYPE_BOOLEAN is long overdue and the split between 
+	  public and private Kvp functions needs to be completely 
+	  redone. Expected: Late 2006, early 2007.
    5.
       libqof2
 
       Once these steps are complete, the rest of QOF will be 
-	reviewed - including moving certain sections of code around 
-	within the codebase to make the overview clearer and the 
-	library easier to follow. A series of pre-releases for libqof2 
-	can then begin. Expect pre-releases Summer 2007 and libqof2, 
-	QOF 1.0.0, Autumn 2007. Note that libqof2 will start with the 
-	last release of libqof1 but with all deprecated code removed. 
-	Users who migrate with libqof1 will be able to transfer to 
-	libqof2 without problems. The libqof2 API will then remain 
-	stable, just as with libqof1.
+	  reviewed - including moving certain sections of code around 
+	  within the codebase to make the overview clearer and the 
+	  library easier to follow. A series of pre-releases for 
+	  libqof2 can then begin. Expect pre-releases Summer 2007 
+	  and libqof2, QOF 1.0.0, Autumn 2007. Note that libqof2 will 
+	  start with the last release of libqof1 but with all 
+	  deprecated code removed. Users who migrate with libqof1 will 
+	  be able to transfer to libqof2 without problems. The 
+	  libqof2 API will then remain stable, just as with libqof1.
 
 Support for GLib GObject mapping (qofgobj.c) is not currently 
-anticipated before QOF 0.8.0. If everything else is ready for libqof2, 
-libqof2 will proceed without GLib Gobject mapping.
+anticipated before QOF 0.8.0. If everything else is ready for 
+libqof2, libqof2 will proceed without GLib Gobject mapping.
 
 
 Packaging documentation
 -----------------------
 
-The doxy symlink in the website directory is provided for CVS users 
-and the main SourceForge site. When packaging the website HTML alongside 
-the Doxygen output, ignore the symlink and just package the Doxygen output:
+The doxy symlink in the website directory is provided for CVS 
+users and the main SourceForge site. When packaging the website 
+HTML alongside the Doxygen output, ignore the symlink and just 
+package the Doxygen output:
 
     * doc/html/* => /usr/share/doc/libqof-doc/html/doxy/
 
@@ -316,3 +327,16 @@ and the website content:
     * website/*.css => /usr/share/doc/libqof-doc/html/
     * website/*.png => /usr/share/doc/libqof-doc/html/
     * website/*.jpg => /usr/share/doc/libqof-doc/html/
+
+
+Written by Neil Williams <linux@codehelp.co.uk> December 2005.
+Last updated by Neil Williams <linux@codehelp.co.uk> May 2006.
+The copyright licensing notice below applies to this text.
+Copyright © 2005,2006 Neil Williams
+
+Permission is granted to copy, distribute, and/or modify this 
+document under the terms of the GNU Free Documentation License, 
+Version 1.2 or any later version published by the Free Software 
+Foundation; with no Invariant Sections, with no Front-Cover Texts, 
+and with no Back-Cover Texts. In installed versions, the licence 
+can be found in the copyright file.
