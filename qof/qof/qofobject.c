@@ -303,7 +303,7 @@ qof_object_register (const QofObject * object)
 const QofObject *
 qof_object_lookup (QofIdTypeConst name)
 {
-	GList *iter;
+	GList *qiter;
 	const QofObject *obj;
 
 	g_return_val_if_fail (object_is_initialized, NULL);
@@ -311,9 +311,9 @@ qof_object_lookup (QofIdTypeConst name)
 	if (!name)
 		return NULL;
 
-	for (iter = object_modules; iter; iter = iter->next)
+	for (qiter = object_modules; qiter; qiter = qiter->next)
 	{
-		obj = iter->data;
+		obj = qiter->data;
 		if (!safe_strcmp (obj->e_type, name))
 			return obj;
 	}
@@ -337,11 +337,11 @@ qof_object_register_backend (QofIdTypeConst type_name,
 	if (!ht)
 	{
 		ht = g_hash_table_new (g_str_hash, g_str_equal);
-		g_hash_table_insert (backend_data, (char *) backend_name, ht);
+		g_hash_table_insert (backend_data, (gchar *) backend_name, ht);
 	}
 
 	/* Now insert the data */
-	g_hash_table_insert (ht, (char *) type_name, be_data);
+	g_hash_table_insert (ht, (gchar *) type_name, be_data);
 
 	return TRUE;
 }
@@ -356,11 +356,11 @@ qof_object_lookup_backend (QofIdTypeConst type_name,
 		!backend_name || *backend_name == '\0')
 		return NULL;
 
-	ht = g_hash_table_lookup (backend_data, (char *) backend_name);
+	ht = g_hash_table_lookup (backend_data, (gchar *) backend_name);
 	if (!ht)
 		return NULL;
 
-	return g_hash_table_lookup (ht, (char *) type_name);
+	return g_hash_table_lookup (ht, (gchar *) type_name);
 }
 
 struct foreach_data

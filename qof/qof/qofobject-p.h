@@ -52,7 +52,8 @@ calling more than once, pass FALSE.
 
 \return TRUE if object can be created and supports iteration, else FALSE.
 */
-gboolean qof_object_compliance (QofIdTypeConst type_name, gboolean warn);
+gboolean 
+qof_object_compliance (QofIdTypeConst type_name, gboolean warn);
 
 #endif /* QOF_OBJECT_P_H_ */
 /** @} */

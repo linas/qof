@@ -79,7 +79,7 @@ struct _QofObject
    *  NULL if the object type doesn't provide a way of creating new 
    *  instances. 
    */
-	  gpointer (*create) (QofBook *);
+	gpointer (*create) (QofBook *);
 
   /** book_begin is called from within the Book routines to create
    * module-specific hooks in a book whenever a book is created.
@@ -92,7 +92,7 @@ struct _QofObject
 	void (*book_end) (QofBook *);
 
   /** Determine if there are any dirty items in this book */
-	  gboolean (*is_dirty) (QofCollection *);
+	gboolean (*is_dirty) (QofCollection *);
 
   /** Mark this object's book clean (for after a load) */
 	void (*mark_clean) (QofCollection *);
@@ -118,7 +118,7 @@ struct _QofObject
    *  if 'instance_left' is found to be, respecitvely, earlier than, equal
    *  to or later than than 'instance_right'.
    */
-	int (*version_cmp) (gpointer instance_left, gpointer instance_right);
+	gint (*version_cmp) (gpointer instance_left, gpointer instance_right);
 };
 
 /* -------------------------------------------------------------- */
