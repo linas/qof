@@ -87,16 +87,18 @@
     @author Copyright 2006 Neil Williams <linux@codehelp.co.uk>
 */
 
+#include "config.h"
 /** log module name */
 #define QOF_MOD_TIME "qof-time"
 
 /* Until the rest of QOF is moved to QofTime this is needed. */
-/*typedef struct timespec64
+#ifndef QOF_DISABLE_DEPRECATED
+typedef struct timespec64
 {
 	guint64 tv_sec;
 	glong tv_nsec;
 } Timespec;
-*/
+#endif
 /** number of nanoseconds per second. 10^9 */
 #define QOF_NSECS 1000000000
 

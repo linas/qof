@@ -214,11 +214,11 @@ gboolean gnc_date_string_to_dateformat (const gchar * format_string,
 gboolean gnc_date_string_to_monthformat (const gchar * format_string,
 										 GNCDateMonthFormat * format);
 /** \deprecated use ::QofTime. */
-typedef struct timespec64
+/*typedef struct timespec64
 {
    guint64 tv_sec;     
    glong tv_nsec;
-}Timespec;
+}Timespec;*/
 /** \deprecated use ::qof_time_equal. */
 gboolean timespec_equal (const Timespec * ta, const Timespec * tb);
 /** \deprecated use ::qof_time_cmp. */
