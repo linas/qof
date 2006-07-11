@@ -28,7 +28,7 @@
 
  @author Copyright (c) 1998-2004 Linas Vepstas <linas@linas.org>
  @author Copyright (c) 2000 Dave Peticolas
- @author Copyright (c) 2005 Neil Williams <linux@codehelp.co.uk>
+ @author Copyright (c) 2005-2006 Neil Williams <linux@codehelp.co.uk>
    */
 
 #include "config.h"
@@ -45,9 +45,6 @@
 #include "qofbook-p.h"
 #include "qofsession-p.h"
 #include "qofobject-p.h"
-
-/** \deprecated should not be static */
-static QofSession *current_session = NULL;
 
 static GHookList *session_closed_hooks = NULL;
 static QofLogModule log_module = QOF_MOD_SESSION;
@@ -162,13 +159,13 @@ qof_session_get_error (QofSession * session)
 	return err;
 }
 
-static const char *
+static const gchar *
 get_default_error_message (QofBackendError err)
 {
 	return "";
 }
 
-const char *
+const gchar *
 qof_session_get_error_message (QofSession * session)
 {
 	if (!session)
@@ -214,29 +211,6 @@ qof_session_new (void)
 	QofSession *session = g_new0 (QofSession, 1);
 	qof_session_init (session);
 	return session;
-}
-
-/** \deprecated Each application should keep
-their \b own session context. */
-QofSession *
-qof_session_get_current_session (void)
-{
-	if (!current_session)
-	{
-		qof_event_suspend ();
-		current_session = qof_session_new ();
-		qof_event_resume ();
-	}
-
-	return current_session;
-}
-
-/** \deprecated Each application should keep
-their \b own session context. */
-void
-qof_session_set_current_session (QofSession * session)
-{
-	current_session = session;
 }
 
 QofBook *
@@ -1569,9 +1543,10 @@ qof_session_destroy (QofSession * session)
 	}
 
 	session->books = NULL;
-	if (session == current_session)
-		current_session = NULL;
-
+#ifndef QOF_DISABLE_DEPRECATED
+	if (session == qof_session_get_current_session())
+		qof_session_clear_current_session();
+#endif
 	g_free (session);
 
 	LEAVE ("sess=%p", session);

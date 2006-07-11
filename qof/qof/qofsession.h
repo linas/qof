@@ -111,8 +111,6 @@ typedef struct _QofSession QofSession;
 
 QofSession *qof_session_new (void);
 void qof_session_destroy (QofSession * session);
-QofSession *qof_session_get_current_session (void);
-void qof_session_set_current_session (QofSession * session);
 
 /** The qof_session_swap_data () method swaps the book of
  *    the two given sessions. It is useful
@@ -149,7 +147,6 @@ void qof_session_swap_data (QofSession * session_1, QofSession * session_2);
 void qof_session_begin (QofSession * session, const char *book_id,
 						gboolean ignore_lock, gboolean create_if_nonexistent);
 
-
 /**
  * The qof_session_load() method causes the QofBook to be made ready to 
  *    to use with this URL/datastore.   When the URL points at a file, 
@@ -163,7 +160,7 @@ void qof_session_begin (QofSession * session, const char *book_id,
  * wrong to me, and should be restricted to allow only one load per 
  * session.
  */
-typedef void (*QofPercentageFunc) (const char *message, double percent);
+typedef void (*QofPercentageFunc) (const gchar *message, double percent);
 void qof_session_load (QofSession * session,
 					   QofPercentageFunc percentage_func);
 
@@ -173,7 +170,7 @@ void qof_session_load (QofSession * session,
  *    for any failure.  Calling this routine returns the current error.
  */
 QofBackendError qof_session_get_error (QofSession * session);
-const char *qof_session_get_error_message (QofSession * session);
+const gchar *qof_session_get_error_message (QofSession * session);
 
 /**
  * The qof_session_pop_error() routine can be used to obtain the reason
@@ -213,9 +210,9 @@ QofBook *qof_session_get_book (QofSession * session);
  *    URL's for local files take the form of 
  *    file:/some/where/some/file.gml
  */
-const char *qof_session_get_file_path (QofSession * session);
+const gchar *qof_session_get_file_path (QofSession * session);
 
-const char *qof_session_get_url (QofSession * session);
+const gchar *qof_session_get_url (QofSession * session);
 
 /**
  * The qof_session_not_saved() subroutine will return TRUE
