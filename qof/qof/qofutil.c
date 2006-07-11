@@ -186,7 +186,7 @@ ultostr (gulong val, gint base)
 /* =================================================================== */
 
 gboolean
-gnc_strisnum (const guchar * s)
+qof_util_string_isnum (const guchar * s)
 {
 	if (s == NULL)
 		return FALSE;
@@ -498,12 +498,20 @@ qof_util_param_as_string (QofEntity * ent, QofParam * param)
 		known_type = TRUE;
 		return param_string;
 	}
+	if (safe_strcmp (paramType, QOF_TYPE_TIME) == 0)
+	{
+		QofTime *param_qt;
+		QofDate *qd;
+		param_qt = param->param_getfcn (ent, param);
+		qd = qof_date_from_qtime (param_qt);
+		return qof_date_print (qd, QOF_DATE_FORMAT_UTC);
+	}
+#ifndef QOF_DISABLE_DEPRECATED
 	if (safe_strcmp (paramType, QOF_TYPE_DATE) == 0)
 	{
 		date_getter =
 			(Timespec (*)(QofEntity *, QofParam *)) param->param_getfcn;
 		param_ts = date_getter (ent, param);
-			/** \todo check conversion! */
 		param_t = param_ts.tv_sec;
 		strftime (param_date, MAX_DATE_LENGTH,
 			QOF_UTC_DATE_FORMAT, gmtime (&param_t));
@@ -511,6 +519,7 @@ qof_util_param_as_string (QofEntity * ent, QofParam * param)
 		known_type = TRUE;
 		return param_string;
 	}
+#endif
 	if ((safe_strcmp (paramType, QOF_TYPE_NUMERIC) == 0) ||
 		(safe_strcmp (paramType, QOF_TYPE_DEBCRED) == 0))
 	{
