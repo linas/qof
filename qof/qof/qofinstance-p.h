@@ -28,7 +28,7 @@
 
 #ifndef QOF_INSTANCE_P_H
 #define QOF_INSTANCE_P_H
-
+#include "config.h"
 #include "qofinstance.h"
 
 struct QofInstance_s

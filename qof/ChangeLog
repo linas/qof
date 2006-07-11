@@ -34,6 +34,30 @@
 	in favour of qof_util_string_isnum.
 	Implement QOF_TYPE_TIME in qof_util_param_as_string
 
+	Implement a configure option to disable all
+	deprecated QOF code.
+	* configure.in : Add --disable-deprecated-qof
+	(off by default)
+	* backend/file/qsf-backend.c : 
+	* qof/kvp_frame.h :
+	* qof/kvp-util.c :
+	* qof/kvp-util-p.h :
+	* qof/qofinstance.c :
+	* qof/qofquery.c :
+	* qof/qofquery-p.h :
+	* qof/qofsession.c :
+	* qof/qofsql.c :
+	* qof/qofutil.c :
+	* qof/qofinstance-p.h :
+	* qof/test/test-book-merge.c : Update to avoid deprecated
+	code.
+	* qof/test/test-engine-stuff.h : Skip timespec code if
+	deprecated code disabled.
+	* qof/test/test-engine-stuff.c :
+	* qof/test/test-object.c :
+	* qof/test/test-recursive.c :
+	* qof/test/test-event.c :
+	
 2006-07-10  Neil Williams <linux@codehelp.co.uk>
 
 	* qof/deprecated.c : Retain previous behaviour 

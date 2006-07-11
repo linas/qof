@@ -399,10 +399,8 @@ qof_entity_foreach_copy (gpointer data, gpointer user_data)
 	gboolean cm_boolean, (*boolean_getter) (QofEntity *, QofParam *);
 	gint32 cm_i32, (*int32_getter) (QofEntity *, QofParam *);
 	gint64 cm_i64, (*int64_getter) (QofEntity *, QofParam *);
-	Timespec cm_date, (*date_getter) (QofEntity *, QofParam *);
 	/* function pointers to the parameter setters */
 	void (*string_setter) (QofEntity *, const char *);
-	void (*date_setter) (QofEntity *, Timespec);
 	void (*numeric_setter) (QofEntity *, gnc_numeric);
 	void (*guid_setter) (QofEntity *, const GUID *);
 	void (*double_setter) (QofEntity *, double);
@@ -414,8 +412,6 @@ qof_entity_foreach_copy (gpointer data, gpointer user_data)
 
 	g_return_if_fail (user_data != NULL);
 	context = (QofEntityCopyData *) user_data;
-	cm_date.tv_nsec = 0;
-	cm_date.tv_sec = 0;
 	importEnt = context->from;
 	targetEnt = context->to;
 	registered_type = FALSE;
@@ -437,8 +433,14 @@ qof_entity_foreach_copy (gpointer data, gpointer user_data)
 		}
 		registered_type = TRUE;
 	}
+#ifndef QOF_DISABLE_DEPRECATED
 	if (safe_strcmp (cm_param->param_type, QOF_TYPE_DATE) == 0)
 	{
+		Timespec cm_date, (*date_getter) (QofEntity *, QofParam *);
+		void (*date_setter) (QofEntity *, Timespec);
+
+		cm_date.tv_nsec = 0;
+		cm_date.tv_sec = 0;
 		date_getter =
 			(Timespec (*)(QofEntity *, QofParam *)) cm_param->param_getfcn;
 		cm_date = date_getter (importEnt, cm_param);
@@ -450,6 +452,7 @@ qof_entity_foreach_copy (gpointer data, gpointer user_data)
 		}
 		registered_type = TRUE;
 	}
+#endif
 	if ((safe_strcmp (cm_param->param_type, QOF_TYPE_NUMERIC) == 0) ||
 		(safe_strcmp (cm_param->param_type, QOF_TYPE_DEBCRED) == 0))
 	{

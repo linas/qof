@@ -684,14 +684,15 @@ qsf_to_kvp_helper (const char *type_string)
 	{
 		return KVP_TYPE_GUID;
 	}
+#ifndef QOF_DISABLE_DEPRECATED
 	if (0 == safe_strcmp (QOF_TYPE_DATE, type_string))
 	{
 		return KVP_TYPE_TIMESPEC;
 	}
+#endif
 	if (0 == safe_strcmp (QOF_TYPE_TIME, type_string))
 	{
-		/** \todo implement KVP_TYPE_TIME */
-		return KVP_TYPE_TIMESPEC;
+		return KVP_TYPE_TIME;
 	}
 	if (0 == safe_strcmp (QSF_TYPE_BINARY, type_string))
 	{
@@ -738,12 +739,18 @@ kvp_value_to_qof_type_helper (KvpValueType n)
 			return QOF_TYPE_GUID;
 			break;
 		}
+#ifndef QOF_DISABLE_DEPRECATED
 	case KVP_TYPE_TIMESPEC:
 		{
 			return QOF_TYPE_DATE;
 			break;
 		}
-	/** \todo implement KVP_TYPE_TIME */
+#endif
+	case KVP_TYPE_TIME :
+		{
+			return QOF_TYPE_TIME;
+			break;
+		}
 	case KVP_TYPE_BINARY:
 		{
 			return QSF_TYPE_BINARY;
@@ -789,8 +796,10 @@ qsf_from_kvp_helper (const gchar * path, KvpValue * content, gpointer data)
 	case KVP_TYPE_NUMERIC:
 	case KVP_TYPE_STRING:
 	case KVP_TYPE_GUID:
-	/** \todo implement KVP_TYPE_TIME */
+	case KVP_TYPE_TIME :
+#ifndef QOF_DISABLE_DEPRECATED
 	case KVP_TYPE_TIMESPEC:
+#endif
 	case KVP_TYPE_BINARY:
 	case KVP_TYPE_GLIST:
 		{
@@ -1167,7 +1176,7 @@ qofbook_to_qsf (QofBook * book, qsf_param * params)
 		NULL);
 	params->book_node = node;
 	xmlNewProp (node, BAD_CAST QSF_BOOK_COUNT, BAD_CAST "1");
-	book_guid = qof_book_get_guid (book);
+	book_guid = qof_entity_get_guid ((QofEntity*)book);
 	guid_to_string_buff (book_guid, buffer);
 	xmlNewChild (params->book_node, params->qsf_ns,
 		BAD_CAST QSF_BOOK_GUID, BAD_CAST buffer);
@@ -1350,10 +1359,8 @@ qsf_object_commitCB (gpointer key, gpointer value, gpointer data)
 	QofEntityReference *reference;
 	QofEntity *qsf_ent;
 	QofBook *targetBook;
-	const char *qof_type, *parameter_name, *timechk;
+	const gchar *qof_type, *parameter_name;
 	QofIdType obj_type, reference_type;
-	struct tm qsf_time;
-	time_t qsf_time_t;
 	gchar *tail;
 	/* cm_ prefix used for variables that hold the data to commit */
 	gnc_numeric cm_numeric;
@@ -1361,7 +1368,6 @@ qsf_object_commitCB (gpointer key, gpointer value, gpointer data)
 	gboolean cm_boolean;
 	gint32 cm_i32;
 	gint64 cm_i64;
-	Timespec cm_date;
 	gchar cm_char, (*char_getter) (xmlNodePtr);
 	GUID *cm_guid;
 	KvpFrame *cm_kvp;
@@ -1371,7 +1377,6 @@ qsf_object_commitCB (gpointer key, gpointer value, gpointer data)
 	const QofParam *cm_param;
 	void (*string_setter) (QofEntity *, const gchar *);
 	void (*time_setter) (QofEntity *, QofTime *);
-	void (*date_setter) (QofEntity *, Timespec);
 	void (*numeric_setter) (QofEntity *, gnc_numeric);
 	void (*double_setter) (QofEntity *, double);
 	void (*boolean_setter) (QofEntity *, gboolean);
@@ -1386,9 +1391,6 @@ qsf_object_commitCB (gpointer key, gpointer value, gpointer data)
 	qof_type = (gchar *) node->name;
 	qsf_ent = params->qsf_ent;
 	targetBook = params->book;
-	memset (&qsf_time, '\0', sizeof (qsf_time));
-	cm_date.tv_nsec = 0;
-	cm_date.tv_sec = 0;
 	obj_type =
 		(gchar *) xmlGetProp (node->parent, BAD_CAST QSF_OBJECT_TYPE);
 	if (0 == safe_strcasecmp (obj_type, parameter_name))
@@ -1428,6 +1430,15 @@ qsf_object_commitCB (gpointer key, gpointer value, gpointer data)
 #ifndef QOF_DISABLE_DEPRECATED
 	if (safe_strcmp (qof_type, QOF_TYPE_DATE) == 0)
 	{
+		void (*date_setter) (QofEntity *, Timespec);
+		struct tm qsf_time;
+		time_t qsf_time_t;
+		Timespec cm_date;
+		const gchar *timechk;
+
+		memset (&qsf_time, '\0', sizeof (qsf_time));
+		cm_date.tv_nsec = 0;
+		cm_date.tv_sec = 0;
 		date_setter = (void (*)(QofEntity *, Timespec)) cm_setter;
 		timechk = NULL;
 		timechk =

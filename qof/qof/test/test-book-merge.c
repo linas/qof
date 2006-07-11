@@ -57,7 +57,7 @@ typedef struct obj_s
 	char flag;
 	gnc_numeric Amount;
 	const GUID *obj_guid;
-	Timespec date;
+	QofTime *date;
 	double discount;			/* cheap pun, I know. */
 	gboolean active;
 	gint32 version;
@@ -70,7 +70,7 @@ myobj *obj_create (QofBook *);
 void obj_setName (myobj *, char *);
 void obj_setGUID (myobj *, const GUID *);
 void obj_setAmount (myobj *, gnc_numeric);
-void obj_setDate (myobj *, Timespec h);
+void obj_setDate (myobj *, QofTime *h);
 void obj_setDiscount (myobj *, double);
 void obj_setActive (myobj *, gboolean);
 void obj_setVersion (myobj *, gint32);
@@ -81,7 +81,7 @@ void obj_setFlag (myobj *, char);
 char *obj_getName (myobj *);
 const GUID *obj_getGUID (myobj *);
 gnc_numeric obj_getAmount (myobj *);
-Timespec obj_getDate (myobj *);
+QofTime *obj_getDate (myobj *);
 double obj_getDiscount (myobj *);
 gboolean obj_getActive (myobj *);
 gint32 obj_getVersion (myobj *);
@@ -96,8 +96,7 @@ obj_create (QofBook * book)
 	g = g_new (myobj, 1);
 	qof_instance_init (&g->inst, TEST_MODULE_NAME, book);
 	obj_setGUID (g, qof_instance_get_guid (&g->inst));
-	g->date.tv_nsec = 0;
-	g->date.tv_sec = 0;
+	g->date = qof_time_new ();
 	g->discount = 0;
 	g->active = TRUE;
 	g->version = 1;
@@ -183,23 +182,19 @@ obj_getDiscount (myobj * g)
 }
 
 void
-obj_setDate (myobj * g, Timespec h)
+obj_setDate (myobj * g, QofTime *h)
 {
 	if (!g)
 		return;
 	g->date = h;
 }
 
-Timespec
+QofTime *
 obj_getDate (myobj * g)
 {
-	Timespec ts;
-	ts.tv_sec = 0;
-	ts.tv_nsec = 0;
 	if (!g)
-		return ts;
-	ts = g->date;
-	return ts;
+		return NULL;
+	return g->date;
 }
 
 void
@@ -274,7 +269,7 @@ myobjRegister (void)
 		 (QofSetterFunc) obj_setAmount},
 		{OBJ_GUID, QOF_TYPE_GUID, (QofAccessFunc) obj_getGUID,
 		 (QofSetterFunc) obj_setGUID},
-		{OBJ_DATE, QOF_TYPE_DATE, (QofAccessFunc) obj_getDate,
+		{OBJ_DATE, QOF_TYPE_TIME, (QofAccessFunc) obj_getDate,
 		 (QofSetterFunc) obj_setDate},
 		{OBJ_DISCOUNT, QOF_TYPE_DOUBLE, (QofAccessFunc) obj_getDiscount,
 		 (QofSetterFunc) obj_setDiscount},
@@ -304,8 +299,8 @@ test_merge (void)
 	QofBook *target, *import;
 	double init_value, discount;
 	myobj *import_obj, *target_obj, *new_obj;
-	int result;
-	Timespec ts, tc;
+	gint result;
+	QofTime *ts, *tc;
 	gboolean active;
 	gint32 version;
 	gint64 minor;
@@ -325,8 +320,7 @@ test_merge (void)
 	minor = get_random_int_in_range (1000001, 2000000);
 	import_init = "test";
 	target_init = "testing";
-	qof_date_format_set (QOF_DATE_FORMAT_UK);
-	timespecFromTime_t (&ts, time (NULL));
+	ts = qof_time_get_current ();
 
 	do_test ((NULL != target), "#1 target book is NULL");
 
@@ -338,7 +332,7 @@ test_merge (void)
 	do_test ((NULL != &import_obj->inst), "#4 instance init");
 	obj_setGUID (import_obj, qof_instance_get_guid (&import_obj->inst));
 	do_test ((NULL != &import_obj->obj_guid), "#5 guid set");
-	gnc_engine_gen_event (&import_obj->inst.entity, GNC_EVENT_CREATE);
+	qof_event_gen (&import_obj->inst.entity, QOF_EVENT_CREATE, NULL);
 	do_test ((NULL != &import_obj->inst.entity), "#6 gnc event create");
 	obj_setName (import_obj, import_init);
 	do_test ((NULL != &import_obj->Name), "#7 string set");
@@ -356,7 +350,7 @@ test_merge (void)
 	do_test ((minor == import_obj->minor), "#12 gint64 set");
 	obj_setDate (import_obj, ts);
 	tc = import_obj->date;
-	do_test ((timespec_cmp (&ts, &tc) == 0), "#13 date set");
+	do_test ((qof_time_cmp (ts, tc) == 0), "#13 date set");
 	obj_setFlag (import_obj, flag);
 	do_test ((flag == obj_getFlag (import_obj)), "#14 flag set");
 
@@ -370,7 +364,7 @@ test_merge (void)
 	new_obj = g_new (myobj, 1);
 	qof_instance_init (&new_obj->inst, TEST_MODULE_NAME, import);
 	obj_setGUID (new_obj, qof_instance_get_guid (&new_obj->inst));
-	qof_event_gen (&new_obj->inst.entity, GNC_EVENT_CREATE, NULL);
+	qof_event_gen (&new_obj->inst.entity, QOF_EVENT_CREATE, NULL);
 	obj_setName (new_obj, import_init);
 	obj_setAmount (new_obj, obj_amount);
 	obj_setActive (new_obj, active);
@@ -386,14 +380,14 @@ test_merge (void)
 	version = 2;
 	minor = 3;
 	flag = 'z';
-	tc.tv_sec = ts.tv_sec - 1;
-	tc.tv_nsec = 0;
+	tc = qof_time_add_secs (ts, -1);
+	qof_time_set_nanosecs (tc, 0);
 
 	/* target object - test results would be the same, so not tested. */
 	target_obj = g_new (myobj, 1);
 	qof_instance_init (&target_obj->inst, TEST_MODULE_NAME, target);
 	obj_setGUID (target_obj, qof_instance_get_guid (&target_obj->inst));
-	qof_event_gen (&target_obj->inst.entity, GNC_EVENT_CREATE, NULL);
+	qof_event_gen (&target_obj->inst.entity, QOF_EVENT_CREATE, NULL);
 	obj_setName (target_obj, target_init);
 	obj_setAmount (target_obj, obj_amount);
 	obj_setActive (target_obj, active);
@@ -448,10 +442,10 @@ test_merge (void)
 
 	/* target had a different date, so import date should now be set */
 	tc = target_obj->date;
-	do_test ((timespec_cmp (&ts, &tc) == 0), "date value check: 1");
+	do_test ((qof_time_cmp (ts, tc) == 0), "date value check: 1");
 	tc = import_obj->date;
-	do_test ((timespec_cmp (&tc, &ts) == 0), "date value check: 2");
-	do_test ((timespec_cmp (&import_obj->date, &target_obj->date) == 0),
+	do_test ((qof_time_cmp (tc, ts) == 0), "date value check: 2");
+	do_test ((qof_time_cmp (import_obj->date, target_obj->date) == 0),
 			 "date value check: 3");
 
 	/* import should be the same as target - pass if values are the same */

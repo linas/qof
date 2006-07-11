@@ -471,14 +471,12 @@ qof_util_string_cache_insert (gconstpointer key)
 gchar *
 qof_util_param_as_string (QofEntity * ent, QofParam * param)
 {
-	gchar *param_string, param_date[MAX_DATE_LENGTH];
+	gchar *param_string;
 	gchar param_sa[GUID_ENCODING_LENGTH + 1];
 	gboolean known_type;
 	QofType paramType;
 	const GUID *param_guid;
-	time_t param_t;
 	gnc_numeric param_numeric, (*numeric_getter) (QofEntity *, QofParam *);
-	Timespec param_ts, (*date_getter) (QofEntity *, QofParam *);
 	double param_double, (*double_getter) (QofEntity *, QofParam *);
 	gboolean param_boolean, (*boolean_getter) (QofEntity *, QofParam *);
 	gint32 param_i32, (*int32_getter) (QofEntity *, QofParam *);
@@ -509,6 +507,10 @@ qof_util_param_as_string (QofEntity * ent, QofParam * param)
 #ifndef QOF_DISABLE_DEPRECATED
 	if (safe_strcmp (paramType, QOF_TYPE_DATE) == 0)
 	{
+		Timespec param_ts, (*date_getter) (QofEntity *, QofParam *);
+		time_t param_t;
+		gchar param_date[MAX_DATE_LENGTH];
+
 		date_getter =
 			(Timespec (*)(QofEntity *, QofParam *)) param->param_getfcn;
 		param_ts = date_getter (ent, param);
@@ -643,7 +645,7 @@ qof_util_param_as_string (QofEntity * ent, QofParam * param)
 		{
 			return param_string;
 		}
-		param_guid = qof_book_get_guid (book);
+		param_guid = qof_entity_get_guid ((QofEntity*)book);
 		guid_to_string_buff (param_guid, param_sa);
 		PINFO (" book GUID=%s", param_sa);
 		param_string = g_strdup (param_sa);

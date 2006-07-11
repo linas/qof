@@ -26,22 +26,24 @@
 
 #include <glib.h>
 #include <stdlib.h>
-
+#include "config.h"
 #include "qofquery.h"
 #include "qoftime.h"
 #include "qofbook.h"
 #include "qofsession.h"
 
+#ifndef QOF_DISABLE_DEPRECATED
 Timespec *get_random_timespec (void);
 void random_timespec_zero_nsec (gboolean zero_nsec);
 void random_timespec_usec_resolution (gboolean usec_resolution);
+#endif
 
-kvp_value *get_random_kvp_value (int type);
+kvp_value *get_random_kvp_value (gint type);
 
 typedef struct
 {
 	guchar *data;
-	int len;
+	gint len;
 } bin_data;
 
 bin_data *get_random_binary_data (void);

@@ -93,7 +93,9 @@ typedef enum
 	KVP_TYPE_NUMERIC,  /**< QOF_TYPE_NUMERIC */
 	KVP_TYPE_STRING,   /**< QOF_TYPE_STRING gchar* */
 	KVP_TYPE_GUID,	   /**< QOF_TYPE_GUID */
+#ifndef QOF_DISABLE_DEPRECATED
 	KVP_TYPE_TIMESPEC, /**< \deprecated QOF_TYPE_DATE */
+#endif
 	KVP_TYPE_TIME,     /**< QOF_TYPE_TIME */
 	KVP_TYPE_BINARY,   /**< no QOF equivalent. */
 	KVP_TYPE_GLIST,	   /**< no QOF equivalent. */

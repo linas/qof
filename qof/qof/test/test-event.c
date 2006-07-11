@@ -56,7 +56,7 @@ typedef struct e_obj
 	gchar *Name;
 	gchar flag;
 	gnc_numeric Amount;
-	Timespec date;
+	QofTime *date;
 	double discount;			/* cheap pun, I know. */
 	gboolean active;
 	gint32 version;
@@ -71,7 +71,7 @@ event_create (QofBook * book)
 	g_return_val_if_fail (book, NULL);
 	e = g_new0 (event_obj, 1);
 	qof_instance_init (&e->inst, OBJ_EVENT_NAME, book);
-	e->date = *get_random_timespec ();
+	e->date = qof_time_get_current ();
 	e->discount = get_random_double ();
 	e->active = get_random_boolean ();
 	e->version = get_random_int_in_range (1, 10000);
@@ -79,7 +79,7 @@ event_create (QofBook * book)
 	e->flag = get_random_character ();
 	e->Name = get_random_string ();
 	e->Amount = get_random_gnc_numeric ();
-	gnc_engine_gen_event (&e->inst.entity, GNC_EVENT_CREATE);
+	qof_event_gen (&e->inst.entity, QOF_EVENT_CREATE, NULL);
 	return e;
 }
 
@@ -159,23 +159,19 @@ event_getDiscount (event_obj * e)
 }
 
 static void
-event_setDate (event_obj * e, Timespec h)
+event_setDate (event_obj * e, QofTime *h)
 {
 	if (!e)
 		return;
 	e->date = h;
 }
 
-static Timespec
+static QofTime*
 event_getDate (event_obj * e)
 {
-	Timespec ts;
-	ts.tv_sec = 0;
-	ts.tv_nsec = 0;
 	if (!e)
-		return ts;
-	ts = e->date;
-	return ts;
+		return NULL;
+	return e->date;
 }
 
 static void
@@ -232,7 +228,7 @@ event_objRegister (void)
 		 (QofSetterFunc) event_setName},
 		{OBJ_AMOUNT, QOF_TYPE_NUMERIC, (QofAccessFunc) event_getAmount,
 		 (QofSetterFunc) event_setAmount},
-		{OBJ_DATE, QOF_TYPE_DATE, (QofAccessFunc) event_getDate,
+		{OBJ_DATE, QOF_TYPE_TIME, (QofAccessFunc) event_getDate,
 		 (QofSetterFunc) event_setDate},
 		{OBJ_DISCOUNT, QOF_TYPE_DOUBLE, (QofAccessFunc) event_getDiscount,
 		 (QofSetterFunc) event_setDiscount},
@@ -258,7 +254,7 @@ event_objRegister (void)
 
 typedef struct event_context_s
 {
-	GNCEngineEventType event_type;
+	QofEventId event_type;
 	QofEntity *entity_original;
 	QofEntity *entity_modified;
 	const QofParam *param;
@@ -269,58 +265,57 @@ typedef struct event_context_s
 } event_context;
 
 static void
-test_event_handler (GUID * g, QofIdType id_type,
-					GNCEngineEventType event_type, gpointer user_data)
+test_event_handler (QofEntity *ent, QofEventId event_type, 
+					gpointer handler_data, gpointer user_data)
 {
 	event_context *context;
 
-	context = (event_context *) user_data;
-	do_test ((g != NULL), "Null GUID in test");
-	do_test ((id_type != NULL), "Null IdType in test");
+	context = (event_context *) handler_data;
+	do_test ((ent != NULL), "Null ent in test");
 	do_test ((context != NULL), "Null context");
 	switch (event_type)
 	{
-	case GNC_EVENT_NONE:
+	case QOF_EVENT_NONE:
 		{
 			break;
 		}
-	case GNC_EVENT_CREATE:
+	case QOF_EVENT_CREATE:
 		{
 			break;
 		}
-	case GNC_EVENT_MODIFY:
+	case QOF_EVENT_MODIFY:
 		{
 			do_test ((context->entity_original != NULL),
 					 "No original entity");
-			do_test ((context->event_type == GNC_EVENT_MODIFY),
+			do_test ((context->event_type == QOF_EVENT_MODIFY),
 					 "wrong event sent: test (GNC_EVENT_MODIFY)");
 			break;
 		}
-	case GNC_EVENT_DESTROY:
+	case QOF_EVENT_DESTROY:
 		{
 			do_test ((context->entity_original != NULL),
 					 "No original entity");
-			do_test ((context->event_type == GNC_EVENT_DESTROY),
+			do_test ((context->event_type == QOF_EVENT_DESTROY),
 					 "wrong event sent: test (GNC_EVENT_DESTROY)");
 			do_test ((context->destroy_used),
 					 "destroy sent without being called");
 			/* make sure we can unregister an earlier handler */
-			gnc_engine_unregister_event_handler (foo);
+			qof_event_unregister_handler (foo);
 			break;
 		}
-	case GNC_EVENT_ADD:
+	case QOF_EVENT_ADD:
 		{
 			do_test ((context->entity_original != NULL),
 					 "No original entity: test");
 			break;
 		}
-	case GNC_EVENT_REMOVE:
+	case QOF_EVENT_REMOVE:
 		{
 			do_test ((context->entity_original != NULL),
 					 "No original entity: test");
 			break;
 		}
-	case GNC_EVENT_ALL:
+	case QOF_EVENT_ALL:
 		{
 			do_test ((context->entity_original != NULL),
 					 "No original entity: test");
@@ -330,50 +325,49 @@ test_event_handler (GUID * g, QofIdType id_type,
 }
 
 static void
-foo_event_handler (GUID * g, QofIdType id_type, GNCEngineEventType event_type,
-				   gpointer user_data)
+foo_event_handler (QofEntity *ent, QofEventId event_type,
+				   gpointer handler_data, gpointer user_data)
 {
 	event_context *context;
 
-	context = (event_context *) user_data;
+	context = (event_context *) handler_data;
 	do_test ((context != NULL), "Null context");
-	do_test ((g != NULL), "Null GUID for foo");
-	do_test ((id_type != NULL), "Null IdType for foo");
+	do_test ((ent != NULL), "Null entity for foo");
 	switch (event_type)
 	{
-	case GNC_EVENT_NONE:
+	case QOF_EVENT_NONE:
 		{
 			break;
 		}
-	case GNC_EVENT_CREATE:
+	case QOF_EVENT_CREATE:
 		{
 			break;
 		}
-	case GNC_EVENT_MODIFY:
+	case QOF_EVENT_MODIFY:
 		{
 			break;
 		}
-	case GNC_EVENT_DESTROY:
+	case QOF_EVENT_DESTROY:
 		{
 			do_test ((context->entity_original != NULL),
 					 "No original entity");
-			do_test ((context->event_type == GNC_EVENT_DESTROY),
+			do_test ((context->event_type == QOF_EVENT_DESTROY),
 					 "wrong event sent: foo (GNC_EVENT_DESTROY)");
 			do_test ((context->destroy_used),
 					 "destroy sent without being called");
 			/* make sure we can unregister a later handler */
-			gnc_engine_unregister_event_handler (test);
+			qof_event_unregister_handler (test);
 			break;
 		}
-	case GNC_EVENT_ADD:
+	case QOF_EVENT_ADD:
 		{
 			break;
 		}
-	case GNC_EVENT_REMOVE:
+	case QOF_EVENT_REMOVE:
 		{
 			break;
 		}
-	case GNC_EVENT_ALL:
+	case QOF_EVENT_ALL:
 		{
 			break;
 		}
@@ -410,28 +404,28 @@ create_data (QofSession * original, event_context * context)
 			context->entity_modified = (QofEntity *) e1;
 			context->param =
 				qof_class_get_parameter (OBJ_EVENT_NAME, OBJ_NAME);
-			context->event_type = GNC_EVENT_MODIFY;
+			context->event_type = QOF_EVENT_MODIFY;
 			event_setName (e, event_getName (e1));
-			gnc_engine_gen_event ((QofEntity *) e, GNC_EVENT_MODIFY);
-			context->event_type = GNC_EVENT_DESTROY;
+			qof_event_gen ((QofEntity *) e, QOF_EVENT_MODIFY, NULL);
+			context->event_type = QOF_EVENT_DESTROY;
 			context->destroy_used = TRUE;
 			/* this block unregisters both handlers on DESTROY in turn.
 			   Here, foo is unregistered within test */
-			gnc_engine_gen_event ((QofEntity *) e1, GNC_EVENT_DESTROY);
+			qof_event_gen ((QofEntity *) e1, QOF_EVENT_DESTROY, NULL);
 			qof_entity_release ((QofEntity *) e1);
 			g_free (e1);
 			e1 = NULL;
 			context->destroy_used = FALSE;
-			context->event_type = GNC_EVENT_NONE;
+			context->event_type = QOF_EVENT_NONE;
 			context->entity_modified = NULL;
 			context->param = NULL;
 			/* repeat the test in reverse. */
-			gnc_engine_unregister_event_handler (test);
+			qof_event_unregister_handler (test);
 			test =
-				gnc_engine_register_event_handler (test_event_handler,
+				qof_event_register_handler (test_event_handler,
 												   context);
 			foo =
-				gnc_engine_register_event_handler (foo_event_handler,
+				qof_event_register_handler (foo_event_handler,
 												   context);
 			do_test ((context->old_foo_id < foo), "reverse foo");
 			do_test ((context->old_test_id < test), "reverse test");
@@ -439,53 +433,53 @@ create_data (QofSession * original, event_context * context)
 			e1 = (event_obj *) qof_object_new_instance (OBJ_EVENT_NAME,
 														start);
 			context->entity_modified = (QofEntity *) e1;
-			context->event_type = GNC_EVENT_DESTROY;
+			context->event_type = QOF_EVENT_DESTROY;
 			context->destroy_used = TRUE;
-			gnc_engine_gen_event ((QofEntity *) e1, GNC_EVENT_DESTROY);
+			qof_event_gen ((QofEntity *) e1, QOF_EVENT_DESTROY, NULL);
 			qof_entity_release ((QofEntity *) e1);
 			g_free (e1);
 			e1 = NULL;
 			context->destroy_used = FALSE;
-			context->event_type = GNC_EVENT_NONE;
+			context->event_type = QOF_EVENT_NONE;
 			context->entity_original = NULL;
 			context->entity_modified = NULL;
 			test =
-				gnc_engine_register_event_handler (test_event_handler,
+				qof_event_register_handler (test_event_handler,
 												   context);
 			context->old_foo_id = foo;
 			context->old_test_id = test;
 			break;
 		}
 	case 2:
-		{						/* create the second test entity */
+		{	/* create the second test entity */
 			context->entity_original = (QofEntity *) e;
 			do_test ((NULL != &e2->inst), "second instance init");
 			context->entity_modified = (QofEntity *) e2;
 			break;
 		}
 	case 3:
-		{						/* destroy the entity e2 */
-			context->event_type = GNC_EVENT_DESTROY;
+		{	/* destroy the entity e2 */
+			context->event_type = QOF_EVENT_DESTROY;
 			context->destroy_used = TRUE;
-			gnc_engine_gen_event ((QofEntity *) e2, GNC_EVENT_DESTROY);
+			qof_event_gen ((QofEntity *) e2, QOF_EVENT_DESTROY, NULL);
 			qof_entity_release ((QofEntity *) e2);
 			g_free (e2);
 			e2 = NULL;
 			context->destroy_used = FALSE;
-			context->event_type = GNC_EVENT_NONE;
+			context->event_type = QOF_EVENT_NONE;
 			context->entity_modified = NULL;
 			break;
 		}
 	case 4:
-		{						/* destroy the original entity e */
-			context->event_type = GNC_EVENT_DESTROY;
+		{	/* destroy the original entity e */
+			context->event_type = QOF_EVENT_DESTROY;
 			context->destroy_used = TRUE;
-			gnc_engine_gen_event ((QofEntity *) e, GNC_EVENT_DESTROY);
+			qof_event_gen ((QofEntity *) e, QOF_EVENT_DESTROY, NULL);
 			qof_entity_release ((QofEntity *) e);
 			g_free (e);
 			e = NULL;
 			context->destroy_used = FALSE;
-			context->event_type = GNC_EVENT_NONE;
+			context->event_type = QOF_EVENT_NONE;
 			context->entity_original = NULL;
 			break;
 		}
@@ -506,7 +500,7 @@ main (int argc, const char *argv[])
 	{
 		qof_session_begin (original, QOF_STDOUT, TRUE, FALSE);
 	}
-	context.event_type = GNC_EVENT_NONE;
+	context.event_type = QOF_EVENT_NONE;
 	context.entity_original = NULL;
 	context.entity_modified = NULL;
 	context.destroy_used = FALSE;
@@ -515,8 +509,8 @@ main (int argc, const char *argv[])
 	   a bug when unregistering a later module from an earlier one,
 	   register the foo module first and unregister it from within
 	   a later handler. */
-	foo = gnc_engine_register_event_handler (foo_event_handler, &context);
-	test = gnc_engine_register_event_handler (test_event_handler, &context);
+	foo = qof_event_register_handler (foo_event_handler, &context);
+	test = qof_event_register_handler (test_event_handler, &context);
 	context.old_test_id = test;
 	context.old_foo_id = foo;
 	for (count = 0; count < 25; count++)

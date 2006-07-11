@@ -53,7 +53,7 @@ qof_time_new (void)
 void
 qof_time_free (QofTime * qt)
 {
-	if (!qt)
+	if (qt == NULL)
 		return;
 	g_free (qt);
 	qt = NULL;

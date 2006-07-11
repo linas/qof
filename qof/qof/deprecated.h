@@ -80,13 +80,13 @@ gboolean gnc_should_log (QofLogModule log_module, gncLogLevel log_level);
 /** \deprecated use ::QOF_LOG_TRACE */
 #define GNC_LOG_TRACE   QOF_LOG_TRACE
 
-/** \deprecated use ::qof_start_clock */
+/** \deprecated no replacement */
 void gnc_start_clock (int, QofLogModule, gncLogLevel, const char *,
 					  const char *, ...);
-/** \deprecated use ::qof_report_clock */
+/** \deprecated no replacement */
 void gnc_report_clock (int, QofLogModule, gncLogLevel, const char *,
 					   const char *, ...);
-/** \deprecated use ::qof_report_clock_total */
+/** \deprecated no replacement */
 void gnc_report_clock_total (int, QofLogModule, gncLogLevel, const char *,
 							 const char *, ...);
 
@@ -214,11 +214,11 @@ gboolean gnc_date_string_to_dateformat (const gchar * format_string,
 gboolean gnc_date_string_to_monthformat (const gchar * format_string,
 										 GNCDateMonthFormat * format);
 /** \deprecated use ::QofTime. */
-/*typedef struct timespec64
+typedef struct timespec64
 {
    guint64 tv_sec;     
    glong tv_nsec;
-}Timespec;*/
+}Timespec;
 /** \deprecated use ::qof_time_equal. */
 gboolean timespec_equal (const Timespec * ta, const Timespec * tb);
 /** \deprecated use ::qof_time_cmp. */
@@ -416,6 +416,22 @@ void
 qof_session_clear_current_session (void);
 /** \deprecated use qof_util_string_isnum */
 gboolean gnc_strisnum (const guchar * s);
+/** \deprecated use qof_kvp_bag_add instead. */
+KvpFrame *
+gnc_kvp_bag_add (KvpFrame * pwd, const char *path,
+	time_t secs, const char *first_name, ...);
+/** \deprecated use qof_kvp_bag_find_by_guid instead. */
+KvpFrame *
+gnc_kvp_bag_find_by_guid (KvpFrame * root, const char *path,
+	const char *guid_name, GUID * desired_guid);
+/** \deprecated use qof_kvp_bag_remove_frame instead. */
+void
+gnc_kvp_bag_remove_frame (KvpFrame * root, const char *path, 
+						  KvpFrame * fr);
+/** \deprecated use qof_kvp_bag_merge instead. */
+void
+gnc_kvp_bag_merge (KvpFrame * kvp_into, const char *intopath,
+	KvpFrame * kvp_from, const char *frompath);
 
 #endif /* _DEPRECATED_H */
 #endif /* QOF_DISABLE_DEPRECATED */

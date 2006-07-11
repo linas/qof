@@ -22,20 +22,17 @@
 \********************************************************************/
 
 #include "config.h"
-
 #include <glib.h>
 #include <stdio.h>
 #include "qof.h"
 #include "kvp-util-p.h"
 
-/* replace time_t and Timespec with QofTime */
 static KvpFrame *
-gnc_kvp_array_va (KvpFrame * kvp_root, const char *path,
-	time_t secs, const char *first_name, va_list ap)
+qof_kvp_array_va (KvpFrame * kvp_root, const gchar *path,
+	QofTime *qt, const gchar *first_name, va_list ap)
 {
 	KvpFrame *cwd;
-	Timespec ts;
-	const char *name;
+	const gchar *name;
 
 	if (!kvp_root)
 		return NULL;
@@ -46,9 +43,7 @@ gnc_kvp_array_va (KvpFrame * kvp_root, const char *path,
 	cwd = kvp_frame_new ();
 
 	/* Record the time */
-	ts.tv_sec = secs;
-	ts.tv_nsec = 0;
-	kvp_frame_set_timespec (cwd, "date", ts);
+	kvp_frame_set_time (cwd, "time", qt);
 
 	/* Loop over the args */
 	name = first_name;
@@ -67,16 +62,14 @@ gnc_kvp_array_va (KvpFrame * kvp_root, const char *path,
 	return cwd;
 }
 
-/* replace time_t with QofTime */
-
 KvpFrame *
-gnc_kvp_bag_add (KvpFrame * pwd, const char *path,
-	time_t secs, const char *first_name, ...)
+qof_kvp_bag_add (KvpFrame * pwd, const gchar *path,
+	QofTime *qt, const gchar *first_name, ...)
 {
 	KvpFrame *cwd;
 	va_list ap;
 	va_start (ap, first_name);
-	cwd = gnc_kvp_array_va (pwd, path, secs, first_name, ap);
+	cwd = qof_kvp_array_va (pwd, path, qt, first_name, ap);
 	va_end (ap);
 	return cwd;
 }
@@ -92,8 +85,8 @@ gnc_kvp_bag_add (KvpFrame * pwd, const char *path,
 }
 
 KvpFrame *
-gnc_kvp_bag_find_by_guid (KvpFrame * root, const char *path,
-	const char *guid_name, GUID * desired_guid)
+qof_kvp_bag_find_by_guid (KvpFrame * root, const gchar *path,
+	const gchar *guid_name, GUID * desired_guid)
 {
 	KvpValue *arr;
 	KvpValueType valtype;
@@ -122,7 +115,8 @@ gnc_kvp_bag_find_by_guid (KvpFrame * root, const char *path,
 /* ================================================================ */
 
 void
-gnc_kvp_bag_remove_frame (KvpFrame * root, const char *path, KvpFrame * fr)
+qof_kvp_bag_remove_frame (KvpFrame * root, const char *path,
+						  KvpFrame * fr)
 {
 	KvpValue *arr;
 	KvpValueType valtype;
@@ -191,24 +185,19 @@ gnc_kvp_bag_get_first (KvpFrame * root, const char *path)
 }
 
 void
-gnc_kvp_bag_merge (KvpFrame * kvp_into, const char *intopath,
-	KvpFrame * kvp_from, const char *frompath)
+qof_kvp_bag_merge (KvpFrame * kvp_into, const gchar *intopath,
+	KvpFrame * kvp_from, const gchar *frompath)
 {
 	KvpFrame *fr;
 
 	fr = gnc_kvp_bag_get_first (kvp_from, frompath);
 	while (fr)
 	{
-		gnc_kvp_bag_remove_frame (kvp_from, frompath, fr);
+		qof_kvp_bag_remove_frame (kvp_from, frompath, fr);
 		kvp_frame_add_frame_nc (kvp_into, intopath, fr);
 		fr = gnc_kvp_bag_get_first (kvp_from, frompath);
 	}
 }
-
-/* ================================================================ */
-/*
- * See header for docs.
- */
 
 static void
 kv_pair_helper (gpointer key, gpointer val, gpointer user_data)

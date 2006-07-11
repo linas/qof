@@ -70,7 +70,7 @@ qof_query_sort_get_sort_options (QofQuerySort * querysort);
 gboolean 
 qof_query_sort_get_increasing (QofQuerySort * querysort);
 
-#ifndef QOF_DISABLE_DEPRECATED
+#ifdef QOF_DISABLE_DEPRECATED
 /** Log the Query 
  *
  * Called by QofLog. Do not call directly.

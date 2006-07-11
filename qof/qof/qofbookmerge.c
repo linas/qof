@@ -21,6 +21,7 @@
  *                                                                   *
  ********************************************************************/
 
+#include "config.h"
 #include <glib.h>
 #include "qof.h"
 
@@ -102,7 +103,6 @@ qof_book_merge_compare (QofBookMergeData * mergeData)
 	gchar *stringImport, *stringTarget;
 	QofEntity *mergeEnt, *targetEnt, *referenceEnt;
 	const GUID *guidImport, *guidTarget;
-	QofTime *qtImport, *qtTarget;
 	QofParam *qtparam;
 	KvpFrame *kvpImport, *kvpTarget;
 	QofIdType mergeParamName;
@@ -165,14 +165,14 @@ qof_book_merge_compare (QofBookMergeData * mergeData)
 		}
 		if (safe_strcmp (mergeType, QOF_TYPE_TIME) == 0)
 		{
+			QofTime *qtImport, *qtTarget;
+
 			qtImport = qtparam->param_getfcn (mergeEnt, qtparam);
 			qtTarget = qtparam->param_getfcn (targetEnt, qtparam);
 			if (qof_time_cmp (qtImport, qtTarget) == 0)
 			{
 				currentRule = qof_book_merge_update_rule (currentRule,
 					mergeMatch, DEFAULT_MERGE_WEIGHT);
-				qof_time_free (qtImport);
-				qof_time_free (qtTarget);
 				knowntype = TRUE;
 			}
 		}
@@ -547,7 +547,7 @@ qof_book_merge_foreach_target (QofEntity * targetEnt, gpointer user_data)
 	QofBookMergeData *mergeData;
 
 	g_return_if_fail (user_data != NULL);
-	mergeData = (qof_book_mergeData *) user_data;
+	mergeData = (QofBookMergeData *) user_data;
 	g_return_if_fail (targetEnt != NULL);
 	mergeData->targetList =
 		g_slist_prepend (mergeData->targetList, targetEnt);

@@ -208,25 +208,22 @@ qof_instance_set_update_time (QofInstance * inst, QofTime * time)
 	inst->update_time = time;
 }
 
-/* ========================================================== */
-
-/* move to QofTime when kvp functions renamed. */
 void
 qof_instance_gemini (QofInstance * to, QofInstance * from)
 {
-	time_t now;
+	QofTime *qt;
 
 	/* Books must differ for a gemini to be meaningful */
 	if (!from || !to || (from->book == to->book))
 		return;
 
-	now = time (0);
+	qt = qof_time_get_current ();
 
 	/* Make a note of where the copy came from */
-	gnc_kvp_bag_add (to->kvp_data, "gemini", now,
+	qof_kvp_bag_add (to->kvp_data, "gemini", qt,
 		"inst_guid", &from->entity.guid,
 		"book_guid", &from->book->inst.entity.guid, NULL);
-	gnc_kvp_bag_add (from->kvp_data, "gemini", now,
+	qof_kvp_bag_add (from->kvp_data, "gemini", qt,
 		"inst_guid", &to->entity.guid,
 		"book_guid", &to->book->inst.entity.guid, NULL);
 
@@ -245,7 +242,7 @@ qof_instance_lookup_twin (QofInstance * src, QofBook * target_book)
 		return NULL;
 	ENTER (" ");
 
-	fr = gnc_kvp_bag_find_by_guid (src->kvp_data, "gemini",
+	fr = qof_kvp_bag_find_by_guid (src->kvp_data, "gemini",
 		"book_guid", &target_book->inst.entity.guid);
 
 	twin_guid = kvp_frame_get_guid (fr, "inst_guid");

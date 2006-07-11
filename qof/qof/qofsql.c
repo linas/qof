@@ -28,7 +28,6 @@
 */
 
 #include "config.h"
-
 #include <stdlib.h>				/* for working atoll */
 #include <errno.h>
 #include "glib.h"
@@ -38,8 +37,8 @@
 #include "sql_parser.h"
 #endif
 #include <time.h>
-
 #include "qof.h"
+#include "qofquery-p.h"
 
 static QofLogModule log_module = QOF_MOD_QUERY;
 
@@ -159,7 +158,7 @@ handle_single_condition (QofSqlQuery * query, sql_condition * cond)
 	KvpValue *kv, *kval;
 	KvpValueType kvt;
 	QofQueryCompare qop;
-	gint rc, len;
+	gint len;
 	QofType param_type;
 	QofGuidMatch gm;
 
@@ -256,7 +255,9 @@ handle_single_condition (QofSqlQuery * query, sql_condition * cond)
 			break;
 		case KVP_TYPE_GUID:
 		case KVP_TYPE_TIME :
+#ifndef QOF_DISABLE_DEPRECATED
 		case KVP_TYPE_TIMESPEC:
+#endif
 		case KVP_TYPE_BINARY:
 		case KVP_TYPE_GLIST:
 		case KVP_TYPE_NUMERIC:
@@ -375,6 +376,7 @@ handle_single_condition (QofSqlQuery * query, sql_condition * cond)
 #ifndef QOF_DISABLE_DEPRECATED
 	else if (!strcmp (param_type, QOF_TYPE_DATE))
 	{
+		gint rc;
 		Timespec ts;
 		time_t exact;
 
@@ -480,8 +482,15 @@ handle_single_condition (QofSqlQuery * query, sql_condition * cond)
 			(p = strchr (p + 1, ' ')) &&
 			(p = strchr (p + 1, ':')) && (p = strchr (p + 1, ':')))
 		{
+			QofDate *qd;
+			QofTime *qt;
+
+			qd = qof_date_parse (str, QOF_DATE_FORMAT_UTC);
+			qt = qof_date_to_qtime (qd);
 			kval =
-				kvp_value_new_timespec (gnc_iso8601_to_timespec_gmt (str));
+				kvp_value_new_time (qt);
+			qof_date_free (qd);
+/*			gnc_iso8601_to_timespec_gmt (str)*/
 		}
 
 		/* The default handler is a string */
@@ -621,28 +630,25 @@ qof_sql_insertCB (const QofParam * param, const gchar * insert_string,
 	sql_insert_statement *sis;
 	gboolean registered_type;
 	QofEntity *ent;
-	struct tm query_time;
-	time_t query_time_t;
 	/* cm_ prefix used for variables that hold the data to commit */
 	gnc_numeric cm_numeric;
 	double cm_double;
 	gboolean cm_boolean;
 	gint32 cm_i32;
 	gint64 cm_i64;
-	Timespec cm_date;
-	char cm_char, *tail;
+	gchar cm_char, *tail;
 	GUID *cm_guid;
 /*	KvpFrame       *cm_kvp;
 	KvpValue       *cm_value;
 	KvpValueType   cm_type;*/
-	void (*string_setter) (QofEntity *, const char *);
-	void (*date_setter) (QofEntity *, Timespec);
+	void (*string_setter) (QofEntity *, const gchar *);
+	void (*time_setter) (QofEntity *, QofTime *);
 	void (*numeric_setter) (QofEntity *, gnc_numeric);
 	void (*double_setter) (QofEntity *, double);
 	void (*boolean_setter) (QofEntity *, gboolean);
 	void (*i32_setter) (QofEntity *, gint32);
 	void (*i64_setter) (QofEntity *, gint64);
-	void (*char_setter) (QofEntity *, char);
+	void (*char_setter) (QofEntity *, gchar);
 /*	void (*kvp_frame_setter) (QofEntity*, KvpFrame*);*/
 
 	g_return_if_fail (param || insert_string || query);
@@ -662,8 +668,27 @@ qof_sql_insertCB (const QofParam * param, const gchar * insert_string,
 		}
 		registered_type = TRUE;
 	}
+	if (safe_strcmp (param->param_type, QOF_TYPE_TIME) == 0)
+	{
+		QofDate *qd;
+		QofTime *qt;
+		time_setter = 
+			(void (*)(QofEntity *, QofTime *)) param->param_setfcn;
+		qd = qof_date_parse (insert_string, QOF_DATE_FORMAT_UTC);
+		qt = qof_date_to_qtime (qd);
+		if((time_setter != NULL) && (qof_time_is_valid(qt)))
+		{
+			time_setter (ent, qt);
+		}
+	}
+#ifndef QOF_DISABLE_DEPRECATED
 	if (safe_strcmp (param->param_type, QOF_TYPE_DATE) == 0)
 	{
+		void (*date_setter) (QofEntity *, Timespec);
+		Timespec cm_date;
+		struct tm query_time;
+		time_t query_time_t;
+
 		date_setter =
 			(void (*)(QofEntity *, Timespec)) param->param_setfcn;
 		strptime (insert_string, QOF_UTC_DATE_FORMAT, &query_time);
@@ -674,6 +699,7 @@ qof_sql_insertCB (const QofParam * param, const gchar * insert_string,
 			date_setter (ent, cm_date);
 		}
 	}
+#endif
 	if ((safe_strcmp (param->param_type, QOF_TYPE_NUMERIC) == 0) ||
 		(safe_strcmp (param->param_type, QOF_TYPE_DEBCRED) == 0))
 	{
@@ -1021,7 +1047,7 @@ qof_sql_query_run (QofSqlQuery * query, const char *str)
 
 	qof_query_set_book (query->qof_query, query->book);
 	/* Maybe log this sucker */
-	if (gnc_should_log (log_module, GNC_LOG_DETAIL))
+	if (qof_log_check (log_module, QOF_LOG_DETAIL))
 	{
 		qof_query_print (query->qof_query);
 	}
@@ -1051,7 +1077,7 @@ qof_sql_query_rerun (QofSqlQuery * query)
 	qof_query_set_book (query->qof_query, query->book);
 
 	/* Maybe log this sucker */
-	if (gnc_should_log (log_module, GNC_LOG_DETAIL))
+	if (qof_log_check (log_module, QOF_LOG_DETAIL))
 	{
 		qof_query_print (query->qof_query);
 	}

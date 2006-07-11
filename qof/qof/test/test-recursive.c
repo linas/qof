@@ -57,7 +57,7 @@ typedef struct child_s
 	gchar *Name;
 	gchar flag;
 	gnc_numeric Amount;
-	Timespec date;
+	QofTime *date;
 	double discount;			/* cheap pun, I know. */
 	gboolean active;
 	gint32 version;
@@ -72,7 +72,7 @@ typedef struct parent_s
 	gchar *Name;
 	gchar flag;
 	gnc_numeric Amount;
-	Timespec date;
+	QofTime *date;
 	double discount;			/* cheap pun, I know. */
 	gboolean active;
 	gint32 version;
@@ -88,7 +88,7 @@ typedef struct grand_s
 	gchar *Name;
 	gchar flag;
 	gnc_numeric Amount;
-	Timespec date;
+	QofTime *date;
 	double discount;			/* cheap pun, I know. */
 	gboolean active;
 	gint32 version;
@@ -106,7 +106,7 @@ gboolean mychildRegister (void);
 /* obvious setter functions */
 void grand_setName (mygrand *, gchar *);
 void grand_setAmount (mygrand *, gnc_numeric);
-void grand_setDate (mygrand *, Timespec h);
+void grand_setDate (mygrand *, QofTime *h);
 void grand_setDiscount (mygrand *, double);
 void grand_setActive (mygrand *, gboolean);
 void grand_setVersion (mygrand *, gint32);
@@ -116,7 +116,7 @@ void grand_setFlag (mygrand *, gchar);
 /* obvious getter functions */
 gchar *grand_getName (mygrand *);
 gnc_numeric grand_getAmount (mygrand *);
-Timespec grand_getDate (mygrand *);
+QofTime *grand_getDate (mygrand *);
 double grand_getDiscount (mygrand *);
 gboolean grand_getActive (mygrand *);
 gint32 grand_getVersion (mygrand *);
@@ -126,7 +126,7 @@ gchar grand_getFlag (mygrand *);
 /* obvious setter functions */
 void parent_setName (myparent *, gchar *);
 void parent_setAmount (myparent *, gnc_numeric);
-void parent_setDate (myparent *, Timespec h);
+void parent_setDate (myparent *, QofTime *h);
 void parent_setDiscount (myparent *, double);
 void parent_setActive (myparent *, gboolean);
 void parent_setVersion (myparent *, gint32);
@@ -136,7 +136,7 @@ void parent_setFlag (myparent *, gchar);
 /* obvious getter functions */
 gchar *parent_getName (myparent *);
 gnc_numeric parent_getAmount (myparent *);
-Timespec parent_getDate (myparent *);
+QofTime *parent_getDate (myparent *);
 double parent_getDiscount (myparent *);
 gboolean parent_getActive (myparent *);
 gint32 parent_getVersion (myparent *);
@@ -146,7 +146,7 @@ gchar parent_getFlag (myparent *);
 /* obvious setter functions */
 void child_setName (mychild *, gchar *);
 void child_setAmount (mychild *, gnc_numeric);
-void child_setDate (mychild *, Timespec h);
+void child_setDate (mychild *, QofTime *h);
 void child_setDiscount (mychild *, double);
 void child_setActive (mychild *, gboolean);
 void child_setVersion (mychild *, gint32);
@@ -156,7 +156,7 @@ void child_setFlag (mychild *, gchar);
 /* obvious getter functions */
 gchar *child_getName (mychild *);
 gnc_numeric child_getAmount (mychild *);
-Timespec child_getDate (mychild *);
+QofTime *child_getDate (mychild *);
 double child_getDiscount (mychild *);
 gboolean child_getActive (mychild *);
 gint32 child_getVersion (mychild *);
@@ -171,7 +171,8 @@ grand_create (QofBook * book)
 	g_return_val_if_fail (book, NULL);
 	g = g_new0 (mygrand, 1);
 	qof_instance_init (&g->inst, GRAND_MODULE_NAME, book);
-	g->date = *get_random_timespec ();
+	/* implement qof_time_random? */
+	g->date = qof_time_get_current ();
 	g->discount = get_random_double ();;
 	g->active = get_random_boolean ();
 	g->version = get_random_int_in_range (1, 10000);
@@ -181,7 +182,7 @@ grand_create (QofBook * book)
 	g->Amount = get_random_gnc_numeric ();
 	g->child = NULL;
 	g->descend = NULL;
-	gnc_engine_gen_event (&g->inst.entity, GNC_EVENT_CREATE);
+	qof_event_gen (&g->inst.entity, QOF_EVENT_CREATE, NULL);
 	return g;
 }
 
@@ -193,7 +194,7 @@ parent_create (QofBook * book)
 	g_return_val_if_fail (book, NULL);
 	g = g_new0 (myparent, 1);
 	qof_instance_init (&g->inst, PARENT_MODULE_NAME, book);
-	g->date = *get_random_timespec ();
+	g->date = qof_time_get_current ();
 	g->discount = get_random_double ();
 	g->active = get_random_boolean ();
 	g->version = get_random_int_in_range (1, 10000);
@@ -202,7 +203,7 @@ parent_create (QofBook * book)
 	g->Name = get_random_string ();
 	g->Amount = get_random_gnc_numeric ();
 	g->child = NULL;
-	gnc_engine_gen_event (&g->inst.entity, GNC_EVENT_CREATE);
+	qof_event_gen (&g->inst.entity, QOF_EVENT_CREATE, NULL);
 	return g;
 }
 
@@ -214,7 +215,7 @@ child_create (QofBook * book)
 	g_return_val_if_fail (book, NULL);
 	g = g_new0 (mychild, 1);
 	qof_instance_init (&g->inst, CHILD_MODULE_NAME, book);
-	g->date = *get_random_timespec ();
+	g->date = qof_time_get_current ();
 	g->discount = get_random_double ();
 	g->active = get_random_boolean ();
 	g->version = get_random_int_in_range (1, 10000);
@@ -222,7 +223,7 @@ child_create (QofBook * book)
 	g->flag = get_random_character ();
 	g->Name = get_random_string ();
 	g->Amount = get_random_gnc_numeric ();
-	gnc_engine_gen_event (&g->inst.entity, GNC_EVENT_CREATE);
+	qof_event_gen (&g->inst.entity, QOF_EVENT_CREATE, NULL);
 	return g;
 }
 
@@ -359,23 +360,19 @@ grand_getDiscount (mygrand * g)
 }
 
 void
-grand_setDate (mygrand * g, Timespec h)
+grand_setDate (mygrand * g, QofTime *h)
 {
 	if (!g)
 		return;
 	g->date = h;
 }
 
-Timespec
+QofTime*
 grand_getDate (mygrand * g)
 {
-	Timespec ts;
-	ts.tv_sec = 0;
-	ts.tv_nsec = 0;
 	if (!g)
-		return ts;
-	ts = g->date;
-	return ts;
+		return NULL;
+	return g->date;
 }
 
 void
@@ -500,23 +497,19 @@ parent_getDiscount (myparent * p)
 }
 
 void
-parent_setDate (myparent * p, Timespec h)
+parent_setDate (myparent * p, QofTime *h)
 {
 	if (!p)
 		return;
 	p->date = h;
 }
 
-Timespec
+QofTime *
 parent_getDate (myparent * p)
 {
-	Timespec ts;
-	ts.tv_sec = 0;
-	ts.tv_nsec = 0;
 	if (!p)
-		return ts;
-	ts = p->date;
-	return ts;
+		return NULL;
+	return p->date;
 }
 
 void
@@ -627,23 +620,19 @@ child_getDiscount (mychild * c)
 }
 
 void
-child_setDate (mychild * c, Timespec h)
+child_setDate (mychild * c, QofTime *h)
 {
 	if (!c)
 		return;
 	c->date = h;
 }
 
-Timespec
+QofTime*
 child_getDate (mychild * c)
 {
-	Timespec ts;
-	ts.tv_sec = 0;
-	ts.tv_nsec = 0;
 	if (!c)
-		return ts;
-	ts = c->date;
-	return ts;
+		return NULL;
+	return c->date;
 }
 
 void
@@ -700,7 +689,7 @@ mygrandRegister (void)
 		 (QofSetterFunc) grand_setName},
 		{OBJ_AMOUNT, QOF_TYPE_NUMERIC, (QofAccessFunc) grand_getAmount,
 		 (QofSetterFunc) grand_setAmount},
-		{OBJ_DATE, QOF_TYPE_DATE, (QofAccessFunc) grand_getDate,
+		{OBJ_DATE, QOF_TYPE_TIME, (QofAccessFunc) grand_getDate,
 		 (QofSetterFunc) grand_setDate},
 		{OBJ_DISCOUNT, QOF_TYPE_DOUBLE, (QofAccessFunc) grand_getDiscount,
 		 (QofSetterFunc) grand_setDiscount},
@@ -751,7 +740,7 @@ myparentRegister (void)
 		 (QofSetterFunc) parent_setName},
 		{OBJ_AMOUNT, QOF_TYPE_NUMERIC, (QofAccessFunc) parent_getAmount,
 		 (QofSetterFunc) parent_setAmount},
-		{OBJ_DATE, QOF_TYPE_DATE, (QofAccessFunc) parent_getDate,
+		{OBJ_DATE, QOF_TYPE_TIME, (QofAccessFunc) parent_getDate,
 		 (QofSetterFunc) parent_setDate},
 		{OBJ_DISCOUNT, QOF_TYPE_DOUBLE, (QofAccessFunc) parent_getDiscount,
 		 (QofSetterFunc) parent_setDiscount},
@@ -799,7 +788,7 @@ mychildRegister (void)
 		 (QofSetterFunc) child_setName},
 		{OBJ_AMOUNT, QOF_TYPE_NUMERIC, (QofAccessFunc) child_getAmount,
 		 (QofSetterFunc) child_setAmount},
-		{OBJ_DATE, QOF_TYPE_DATE, (QofAccessFunc) child_getDate,
+		{OBJ_DATE, QOF_TYPE_TIME, (QofAccessFunc) child_getDate,
 		 (QofSetterFunc) child_setDate},
 		{OBJ_DISCOUNT, QOF_TYPE_DOUBLE, (QofAccessFunc) child_getDiscount,
 		 (QofSetterFunc) child_setDiscount},

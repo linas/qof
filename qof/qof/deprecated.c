@@ -1535,6 +1535,42 @@ gnc_strisnum (const guchar * s)
 	return qof_util_string_isnum (s);
 }
 
+KvpFrame *
+gnc_kvp_bag_add (KvpFrame * pwd, const char *path,
+	time_t secs, const char *first_name, ...)
+{
+	QofTime *qt;
+	KvpFrame *cwd;
+	va_list ap;
+
+	qt = qof_time_from_time_t (secs, 0);
+	va_start (ap, first_name);
+	cwd = qof_kvp_bag_add(pwd, path, qt, first_name, ap);
+	va_end (ap);
+	return cwd;
+}
+
+KvpFrame *
+gnc_kvp_bag_find_by_guid (KvpFrame * root, const gchar *path,
+	const gchar *guid_name, GUID * desired_guid)
+{
+	return qof_kvp_bag_find_by_guid (root, path, 
+		guid_name, desired_guid);
+}
+
+void
+gnc_kvp_bag_remove_frame (KvpFrame * root, const char *path, 
+	KvpFrame * fr)
+{
+	qof_kvp_bag_remove_frame (root, path, fr);
+}
+
+void
+gnc_kvp_bag_merge (KvpFrame * kvp_into, const char *intopath,
+	KvpFrame * kvp_from, const char *frompath)
+{
+	qof_kvp_bag_merge (kvp_into, intopath, kvp_from, frompath);
+}
 
 /* ==================================================================== */
 #endif /* QOF_DISABLE_DEPRECATED */

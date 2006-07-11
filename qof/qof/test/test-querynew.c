@@ -132,19 +132,12 @@ test_querynew (void)
 int
 main (int argc, char **argv)
 {
-	gnc_engine_get_string_cache ();
-	guid_init ();
-	qof_object_initialize ();
-	qof_book_register ();
-	qof_query_init ();
+	qof_init ();
 	test_query_core ();
 	test_class ();
 	test_querynew ();
 	print_test_results ();
 	exit (get_rv ());
-	qof_query_shutdown ();
-	guid_shutdown ();
-	qof_object_shutdown ();
-	gnc_engine_string_cache_destroy ();
+	qof_close ();
 	return 0;
 }

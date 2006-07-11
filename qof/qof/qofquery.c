@@ -1344,7 +1344,7 @@ qof_query_set_book (QofQuery * q, QofBook * book)
 	slist = g_slist_prepend (slist, QOF_PARAM_GUID);
 	slist = g_slist_prepend (slist, QOF_PARAM_BOOK);
 	qof_query_add_guid_match (q, slist,
-		qof_book_get_guid (book), QOF_QUERY_AND);
+		qof_entity_get_guid ((QofEntity*)book), QOF_QUERY_AND);
 }
 
 GList *

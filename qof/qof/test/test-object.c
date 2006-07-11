@@ -148,15 +148,10 @@ test_printable (const char *name, gpointer obj)
 int
 main (int argc, char **argv)
 {
-	gnc_engine_get_string_cache ();
-	guid_init ();
-	qof_object_initialize ();
-	qof_book_register ();
+	qof_init ();
 	test_object ();
 	print_test_results ();
 	exit (get_rv ());
-	qof_object_shutdown ();
-	guid_shutdown ();
-	gnc_engine_string_cache_destroy ();
+	qof_close ();
 	return 0;
 }
