@@ -57,7 +57,7 @@ struct QofUndoEntity_t
 struct QofUndoOperation_t
 {
 	const gchar *label;
-	Timespec ts;
+	QofTime *qt;
 	GList *entity_list;			/* GList of qof_undo_entity* */
 };
 
@@ -69,12 +69,10 @@ qof_entity_set_param (QofEntity * ent, QofParam * param, gchar * value)
 	gboolean cli_bool;
 	gint32 cli_i32;
 	gint64 cli_i64;
-	Timespec cli_date;
+	QofTime *cli_time;
 	GUID *cm_guid;
-	struct tm cli_time;
-	time_t cli_time_t;
 	void (*string_setter) (QofEntity *, gchar *);
-	void (*date_setter) (QofEntity *, Timespec);
+	void (*time_setter) (QofEntity *, QofTime *);
 	void (*i32_setter) (QofEntity *, gint32);
 	void (*i64_setter) (QofEntity *, gint64);
 	void (*numeric_setter) (QofEntity *, gnc_numeric);
@@ -166,8 +164,27 @@ qof_entity_set_param (QofEntity * ent, QofParam * param, gchar * value)
 				"an overflow has been detected.", value);
 		}
 	}
+	if (0 ==safe_strcmp (param->param_type, QOF_TYPE_TIME))
+	{
+		QofDate *qd;
+
+		qd = qof_date_parse (value, QOF_DATE_FORMAT_UTC);
+		cli_time = qof_date_to_qtime (qd);
+		time_setter = 
+			(void (*)(QofEntity *, QofTime *)) param->param_setfcn;
+		if ((time_setter != NULL) && qof_time_is_valid (cli_time))
+		{
+			time_setter (ent, cli_time);
+		}
+	}
+#ifndef QOF_DISABLE_DEPRECATED
 	if (0 == safe_strcmp (param->param_type, QOF_TYPE_DATE))
 	{
+		Timespec cli_date;
+		time_t cli_time_t;
+		void (*date_setter) (QofEntity *, Timespec);
+		struct tm cli_time;
+
 		date_setter =
 			(void (*)(QofEntity *, Timespec)) param->param_setfcn;
 		strptime (value, QOF_UTC_DATE_FORMAT, &cli_time);
@@ -178,6 +195,7 @@ qof_entity_set_param (QofEntity * ent, QofParam * param, gchar * value)
 			date_setter (ent, cli_date);
 		}
 	}
+#endif
 	if (0 == safe_strcmp (param->param_type, QOF_TYPE_CHAR))
 	{
 		param->param_setfcn (ent, value);
@@ -444,16 +462,12 @@ qof_undo_new_operation (QofBook * book, gchar * label)
 {
 	QofUndoOperation *undo_operation;
 	QofUndo *book_undo;
-	time_t t;
-	Timespec ts;
 
 	undo_operation = NULL;
 	book_undo = book->undo_data;
-	t = time (NULL);
-	timespecFromTime_t (&ts, t);
 	undo_operation = g_new0 (QofUndoOperation, 1);
 	undo_operation->label = label;
-	undo_operation->ts = ts;
+	undo_operation->qt = qof_time_get_current();
 	undo_operation->entity_list = NULL;
 	g_list_foreach (book_undo->undo_cache,
 		qof_undo_new_entry, undo_operation);
@@ -614,7 +628,7 @@ qof_book_end_operation (QofBook * book)
 	book_undo->undo_operation_open = FALSE;
 }
 
-Timespec
+QofTime *
 qof_book_undo_first_modified (QofBook * book)
 {
 	QofUndoOperation *undo_operation;
@@ -623,7 +637,7 @@ qof_book_undo_first_modified (QofBook * book)
 	book_undo = book->undo_data;
 	undo_operation =
 		(QofUndoOperation *) g_list_last (book_undo->undo_list);
-	return undo_operation->ts;
+	return undo_operation->qt;
 }
 
 gint

@@ -26,6 +26,7 @@
     @file qofsql.h
     @brief QOF client-side SQL parser, interfacing with libgda.
     @author Copyright (C) 2004 Linas Vepstas <linas@linas.org>
+	@author Copyright (c) 2006 Neil Williams <linux@codehelp.co.uk>
 */
 
 #ifndef QOF_SQL_QUERY_H
@@ -45,15 +46,15 @@ supported:
   INSERT INTO SomeObj (param_a, param_b, param_c) VALUES
         ("value_a", true, "0/1");
 
-For SELECT, the returned list is a list of all of the instances of 'SomeObj' that
-match the query.  The 'SORT' term is optional. The 'WHERE' term is
-optional; but if you don't include 'WHERE', you will get a list of 
-all of the object instances.  The Boolean operations 'AND' and 'OR'
-together with parenthesis can be used to construct arbitrarily 
-nested predicates.
+For SELECT, the returned list is a list of all of the instances of
+'SomeObj' that match the query.  The 'SORT' term is optional. The
+'WHERE' term is optional; but if you don't include 'WHERE', you
+will get a list of all of the object instances.  The Boolean
+operations 'AND' and 'OR' together with parenthesis can be used
+to construct arbitrarily nested predicates.
 
-For INSERT, the returned list is a list containing the newly created instance
-of 'SomeObj'.
+For INSERT, the returned list is a list containing the newly created
+instance of 'SomeObj'.
 
 Joins are not supported directly.
   SELECT * FROM ObjA,ObjB WHERE (ObjA.param_id = ObjB.param_other_id);
@@ -82,8 +83,7 @@ See ::QofEntityForeachCB and ::qof_object_foreach.
 Date queries handle full date and time strings, using the format
 exported by the QSF backend. To query dates and times, convert
 user input into UTC time using the ::QOF_UTC_DATE_FORMAT string.
-e.g. set the UTC date format and call ::qof_print_time_buff
-with a time_t obtained via ::timespecToTime_t.
+See ::qof_date_print
 
 If the param is a KVP frame, then we use a special markup to 
 indicate frame values.  The markup should look like 

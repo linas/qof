@@ -60,6 +60,8 @@ operation then make it:
 QofOperation qof_book_start_operation(QofBook* book, gchar *label) and
 void qof_book_end_operation(QofOperation oper);
 
+\since 0.7.0
+
 @{
  */
 /** @file  qofundo.h
@@ -115,7 +117,8 @@ get_fcn, set_fcn, param_type and param_name.
 type as specified in param->param_type.
 
 */
-void qof_entity_set_param (QofEntity * ent, QofParam * param, gchar * value);
+void 
+qof_entity_set_param (QofEntity * ent, QofParam * param, gchar * value);
 
 /** @brief Set parameter values from before the previous event. */
 void qof_book_undo (QofBook * book);
@@ -146,7 +149,8 @@ void qof_book_start_operation (QofBook * book, gchar * label);
 void qof_book_end_operation (QofBook * book);
 
 /** \brief HIG compliance aid to report time of first change. */
-Timespec qof_book_undo_first_modified (QofBook * book);
+QofTime *
+qof_book_undo_first_modified (QofBook * book);
 
 /** \brief Number of undo operations available. */
 gint qof_book_undo_count (QofBook * book);

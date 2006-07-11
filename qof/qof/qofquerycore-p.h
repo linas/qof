@@ -1,6 +1,7 @@
 /********************************************************************\
  * qofquerycore-p.h -- Private API for providing core Query data types *
  * Copyright (C) 2002 Derek Atkins <warlord@MIT.EDU>                *
+ * Copyright (C) 2006 Neil Williams <linux@codehelp.co.uk>          *
  *                                                                  *
  * This program is free software; you can redistribute it and/or    *
  * modify it under the terms of the GNU General Public License as   *
@@ -83,7 +84,7 @@ typedef struct
 {
 	QofQueryPredData pd;
 	QofDateMatch options;
-	Timespec date;
+	QofTime *qt;
 } query_date_def, *query_date_t;
 
 typedef struct

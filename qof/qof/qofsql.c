@@ -50,7 +50,7 @@ struct _QofSqlQuery
 	sql_statement *parse_result;
 	QofQuery *qof_query;
 	QofBook *book;
-	char *single_global_tablename;
+	gchar *single_global_tablename;
 	KvpFrame *kvp_join;
 	GList *param_list;
 	QofEntity *inserted_entity;
@@ -153,15 +153,13 @@ handle_single_condition (QofSqlQuery * query, sql_condition * cond)
 	GList *guid_list;
 	QofQueryPredData *pred_data;
 	sql_field_item *sparam, *svalue;
-	char *qparam_name, *qvalue_name, *table_name, *param_name;
-	char *sep, *path, *str, *p;
+	gchar *qparam_name, *qvalue_name, *table_name, *param_name;
+	gchar *sep, *path, *str, *p;
 	QofQuery *qq;
 	KvpValue *kv, *kval;
 	KvpValueType kvt;
 	QofQueryCompare qop;
-	time_t exact;
-	int rc, len;
-	Timespec ts;
+	gint rc, len;
 	QofType param_type;
 	QofGuidMatch gm;
 
@@ -362,8 +360,24 @@ handle_single_condition (QofSqlQuery * query, sql_condition * cond)
 		gboolean ival = qof_util_bool_to_int (qvalue_name);
 		pred_data = qof_query_boolean_predicate (qop, ival);
 	}
+	else if (!safe_strcmp (param_type, QOF_TYPE_TIME))
+	{
+		QofDate *qd;
+		QofTime *qt;
+
+		qd = qof_date_parse (qvalue_name, QOF_DATE_FORMAT_UTC);
+		qt = qof_date_to_qtime (qd);
+		qof_date_free (qd);
+		pred_data = 
+			qof_query_time_predicate (qop, QOF_DATE_MATCH_NORMAL, 
+			qt);
+	}
+#ifndef QOF_DISABLE_DEPRECATED
 	else if (!strcmp (param_type, QOF_TYPE_DATE))
 	{
+		Timespec ts;
+		time_t exact;
+
 		/* Use a timezone independent setting */
 		qof_date_format_set (QOF_DATE_FORMAT_UTC);
 		rc = 0;
@@ -379,6 +393,7 @@ handle_single_condition (QofSqlQuery * query, sql_condition * cond)
 		pred_data =
 			qof_query_date_predicate (qop, QOF_DATE_MATCH_NORMAL, ts);
 	}
+#endif
 	else if (!strcmp (param_type, QOF_TYPE_NUMERIC))
 	{
 		gnc_numeric ival;

@@ -1,3 +1,39 @@
+2006-07-11  Neil Williams <linux@codehelp.co.uk>
+
+	* HACKING : Update for QOF_TYPE_DATE changes.
+	* README :  Update for QOF_TYPE_DATE changes.
+	* debian/changelog : Update for QOF_TYPE_DATE 
+	changes.
+	* qof/deprecated.c : Deprecating QOF_TYPE_DATE
+	handlers and current_session handlers.
+	* qof/deprecated.h : Deprecating QOF_TYPE_DATE
+	handlers and current_session handlers.
+	* qof/qofsession.c : Deprecate current_session
+	handlers.
+	* qof/qofsession.h : Deprecate current_session
+	handlers.
+	* website/hacking.html : Update for 
+	QOF_TYPE_DATE changes.
+
+	Implement QOF_TYPE_TIME in the Query system.
+	* qof/qofquery-p.h :
+	* qof/qofquery.c :
+	* qof/qofquery.h :
+	* qof/qofquerycore-p.h :
+	* qof/qofquerycore.c :
+	* qof/qofquerycore.h :
+	* qof/qofsql.c :
+	* qof/qofsql.h :
+	* qof/qofundo.c :
+	* qof/qofundo.h :
+
+	* qof/qofutil.c : Deprecate gnc_strisnum
+	in favour of qof_util_string_isnum. 
+	Implement QOF_TYPE_TIME in qof_util_param_as_string
+	* qof/qofutil.h : Deprecate gnc_strisnum
+	in favour of qof_util_string_isnum.
+	Implement QOF_TYPE_TIME in qof_util_param_as_string
+
 2006-07-10  Neil Williams <linux@codehelp.co.uk>
 
 	* qof/deprecated.c : Retain previous behaviour 

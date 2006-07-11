@@ -42,7 +42,7 @@ core representation, and execute it.
 STRUCTURE OF A QUERY: A Query is a logical function of any number of
 QueryTerms.  A QueryTerm consists of a C function pointer (the
 Predicate) and a PredicateData structure containing data passed to the
-predicate funtion.  The PredicateData structure is a constant
+predicate function.  The PredicateData structure is a constant
 associated with the Term and is identical for every object that is
 tested.
 
@@ -68,7 +68,7 @@ probably optimize.
     @brief find objects that match a certain expression.
     @author Copyright (C) 2002 Derek Atkins <warlord@MIT.EDU>
     @author Copyright (C) 2003 Linas Vepstas <linas@linas.org>
-
+	@author Copyright (c) 2006 Neil Williams <linux@codehelp.co.uk>
 */
 
 #ifndef QOF_QUERYNEW_H
@@ -109,9 +109,9 @@ typedef enum
 #define QOF_PARAM_ACTIVE  "active"
 #define QOF_PARAM_VERSION "version"
 
-/* --------------------------------------------------------- */
-/** \name Query Subsystem Initialization and Shudown  */
-// @{
+/** \name Query Subsystem Initialization and Shudown
+ @{
+*/
 /** Subsystem initialization and shutdown. Call init() once 
  *  to initalize the query subsytem; call shutdown() to free
  *  up any resources associated with the query subsystem. 
@@ -120,11 +120,11 @@ typedef enum
 
 void qof_query_init (void);
 void qof_query_shutdown (void);
-// @}
+/** @} */
 
-/* --------------------------------------------------------- */
-/** \name Low-Level API Functions */
-// @{
+/** \name Low-Level API Functions
+ @{
+*/
 
 GSList *qof_query_build_param_list (char const *param, ...);
 
@@ -146,7 +146,8 @@ void qof_query_destroy (QofQuery * q);
 /** Set the object type to be searched for.  The results of 
  *  performing the query will be a list of this obj_type.
  */
-void qof_query_search_for (QofQuery * query, QofIdTypeConst obj_type);
+void 
+qof_query_search_for (QofQuery * query, QofIdTypeConst obj_type);
 
 /** Set the book to be searched.  Books contain/identify collections 
  *  of objects; the search will be performed over those books
@@ -238,15 +239,17 @@ void qof_query_purge_terms (QofQuery * q, GSList * param_list);
  *  Can be used as a predicate to see if the query has been 
  *  initialized (return value > 0) or is "blank" (return value == 0).
  */
-int qof_query_has_terms (QofQuery * q);
+gint qof_query_has_terms (QofQuery * q);
 
 /** Return the number of terms in the canonical form of the query.  
  */
-int qof_query_num_terms (QofQuery * q);
+gint qof_query_num_terms (QofQuery * q);
 
 /** DOCUMENT ME !! */
-gboolean qof_query_has_term_type (QofQuery * q, GSList * term_param);
-GSList *qof_query_get_term_type (QofQuery * q, GSList * term_param);
+gboolean 
+qof_query_has_term_type (QofQuery * q, GSList * term_param);
+GSList *
+qof_query_get_term_type (QofQuery * q, GSList * term_param);
 
 /** Make a copy of the indicated query */
 QofQuery *qof_query_copy (QofQuery * q);
@@ -279,12 +282,14 @@ QofQuery *qof_query_invert (QofQuery * q);
  *  This will return a newly allocated QofQuery object, or NULL
  *  on error. Free it with qof_query_destroy() when no longer needed.
  */
-QofQuery *qof_query_merge (QofQuery * q1, QofQuery * q2, QofQueryOp op);
+QofQuery *
+qof_query_merge (QofQuery * q1, QofQuery * q2, QofQueryOp op);
 
 /** Like qof_query_merge, but this will merge a copy of q2 into q1.  
  *   q2 remains unchanged.
  */
-void qof_query_merge_in_place (QofQuery * q1, QofQuery * q2, QofQueryOp op);
+void 
+qof_query_merge_in_place (QofQuery * q1, QofQuery * q2, QofQueryOp op);
 
 /** 
  * When a query is run, the results are sorted before being returned.
@@ -325,9 +330,9 @@ void qof_query_set_sort_options (QofQuery * q, gint prim_op, gint sec_op,
  * if the sort is set to be increasing date order, then only the
  * objects with the most recent dates will be returned.
  */
-void qof_query_set_sort_increasing (QofQuery * q, gboolean prim_inc,
-									gboolean sec_inc, gboolean tert_inc);
-
+void 
+qof_query_set_sort_increasing (QofQuery * q, gboolean prim_inc,
+							   gboolean sec_inc, gboolean tert_inc);
 
 /**
  * Set the maximum number of results that should be returned. 
@@ -339,7 +344,7 @@ void qof_query_set_sort_increasing (QofQuery * q, gboolean prim_inc,
  * if the sort order is set to be increasing date order, then 
  * only the objects with the most recent dates will be returned.
  */
-void qof_query_set_max_results (QofQuery * q, int n);
+void qof_query_set_max_results (QofQuery * q, gint n);
 
 /** Compare two queries for equality. 
  * Query terms are compared each to each.
@@ -349,20 +354,12 @@ void qof_query_set_max_results (QofQuery * q, int n);
  */
 gboolean qof_query_equal (QofQuery * q1, QofQuery * q2);
 
-/** Log the Query 
- *
- * \deprecated Do not call directly, use the standard log
- * module code: ::qof_log_set_level(QOF_MOD_QUERY, QOF_LOG_DEBUG);
- * or ::qof_log_set_default(QOF_LOG_DEBUG);
- */
-void qof_query_print (QofQuery * query);
-
 /** Return the type of data we're querying for */
 QofIdType qof_query_get_search_for (QofQuery * q);
 
 /** Return the list of books we're using */
 GList *qof_query_get_books (QofQuery * q);
 
-// @}
-/* @} */
+/** @} */
+/** @} */
 #endif /* QOF_QUERYNEW_H */

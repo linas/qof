@@ -1,6 +1,7 @@
 /********************************************************************\
  * qofquery-p.h -- internal/private API for finding objects         *
  * Copyright (C) 2002 Derek Atkins <warlord@MIT.EDU>                *
+ * Copyright (C) 2006 Neil Williams <linux@codehelp.co.uk>          *
  *                                                                  *
  * This program is free software; you can redistribute it and/or    *
  * modify it under the terms of the GNU General Public License as   *
@@ -30,8 +31,8 @@ typedef struct _QofQueryTerm QofQueryTerm;
 typedef struct _QofQuerySort QofQuerySort;
 
 /* Functions to get Query information */
-int qof_query_get_max_results (QofQuery * q);
-
+gint 
+qof_query_get_max_results (QofQuery * q);
 
 /* Functions to get and look at QueryTerms */
 
@@ -45,22 +46,38 @@ int qof_query_get_max_results (QofQuery * q);
  */
 GList *qof_query_get_terms (QofQuery * q);
 
-GSList *qof_query_term_get_param_path (QofQueryTerm * queryterm);
-QofQueryPredData *qof_query_term_get_pred_data (QofQueryTerm * queryterm);
-gboolean qof_query_term_is_inverted (QofQueryTerm * queryterm);
-
+GSList *
+qof_query_term_get_param_path (QofQueryTerm * queryterm);
+QofQueryPredData *
+qof_query_term_get_pred_data (QofQueryTerm * queryterm);
+gboolean 
+qof_query_term_is_inverted (QofQueryTerm * queryterm);
 
 /* Functions to get and look at QuerySorts */
 
 /* This function returns the primary, secondary, and tertiary sorts.
  * These are part of the query and should NOT be changed!
  */
-void qof_query_get_sorts (QofQuery * q, QofQuerySort ** primary,
-						  QofQuerySort ** secondary,
-						  QofQuerySort ** tertiary);
+void 
+qof_query_get_sorts (QofQuery * q, QofQuerySort ** primary,
+					 QofQuerySort ** secondary,
+					 QofQuerySort ** tertiary);
 
-GSList *qof_query_sort_get_param_path (QofQuerySort * querysort);
-gint qof_query_sort_get_sort_options (QofQuerySort * querysort);
-gboolean qof_query_sort_get_increasing (QofQuerySort * querysort);
+GSList *
+qof_query_sort_get_param_path (QofQuerySort * querysort);
+gint 
+qof_query_sort_get_sort_options (QofQuerySort * querysort);
+gboolean 
+qof_query_sort_get_increasing (QofQuerySort * querysort);
+
+#ifndef QOF_DISABLE_DEPRECATED
+/** Log the Query 
+ *
+ * Called by QofLog. Do not call directly.
+ * See: ::qof_log_set_level(QOF_MOD_QUERY, QOF_LOG_DEBUG);
+ * or ::qof_log_set_default(QOF_LOG_DEBUG);
+ */
+void qof_query_print (QofQuery * query);
+#endif
 
 #endif /* QOF_QUERY_P_H */

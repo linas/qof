@@ -1,6 +1,7 @@
 /********************************************************************\
  * qofquerycore.h -- API for providing core Query data types        *
  * Copyright (C) 2002 Derek Atkins <warlord@MIT.EDU>                *
+ * Copyright (C) 2006 Neil Williams <linux@codehelp.co.uk>          *
  *                                                                  *
  * This program is free software; you can redistribute it and/or    *
  * modify it under the terms of the GNU General Public License as   *
@@ -143,61 +144,86 @@ struct _QofQueryPredData
 
 /** @name Core Data Type Predicates
     @{ */
-QofQueryPredData *qof_query_string_predicate (QofQueryCompare how,
-											  const gchar * str,
-											  QofStringMatch options,
-											  gboolean is_regex);
+QofQueryPredData *
+qof_query_string_predicate (QofQueryCompare how,
+						    const gchar * str,
+						    QofStringMatch options,
+						    gboolean is_regex);
 
-QofQueryPredData *qof_query_date_predicate (QofQueryCompare how,
-											QofDateMatch options,
-											Timespec date);
+QofQueryPredData *
+qof_query_time_predicate (QofQueryCompare how,
+						  QofDateMatch options,
+						  QofTime *qt);
 
-QofQueryPredData *qof_query_numeric_predicate (QofQueryCompare how,
-											   QofNumericMatch options,
-											   gnc_numeric value);
+QofQueryPredData *
+qof_query_numeric_predicate (QofQueryCompare how,
+							 QofNumericMatch options,
+							 gnc_numeric value);
 
-QofQueryPredData *qof_query_guid_predicate (QofGuidMatch options,
-											GList * guids);
-QofQueryPredData *qof_query_int32_predicate (QofQueryCompare how, gint32 val);
-QofQueryPredData *qof_query_int64_predicate (QofQueryCompare how, gint64 val);
-QofQueryPredData *qof_query_double_predicate (QofQueryCompare how,
-											  double val);
-QofQueryPredData *qof_query_boolean_predicate (QofQueryCompare how,
-											   gboolean val);
-QofQueryPredData *qof_query_char_predicate (QofCharMatch options,
-											const gchar * chars);
-QofQueryPredData *qof_query_collect_predicate (QofGuidMatch options,
-											   QofCollection * coll);
-QofQueryPredData *qof_query_choice_predicate (QofGuidMatch options,
-											  GList * guids);
+QofQueryPredData *
+qof_query_guid_predicate (QofGuidMatch options,
+						  GList * guids);
+
+QofQueryPredData *
+qof_query_int32_predicate (QofQueryCompare how, gint32 val);
+
+QofQueryPredData *
+qof_query_int64_predicate (QofQueryCompare how, gint64 val);
+
+QofQueryPredData *
+qof_query_double_predicate (QofQueryCompare how,
+							double val);
+
+QofQueryPredData *
+qof_query_boolean_predicate (QofQueryCompare how,
+							 gboolean val);
+
+QofQueryPredData *
+qof_query_char_predicate (QofCharMatch options,
+						  const gchar * chars);
+
+QofQueryPredData *
+qof_query_collect_predicate (QofGuidMatch options,
+							 QofCollection * coll);
+
+QofQueryPredData *
+qof_query_choice_predicate (QofGuidMatch options,
+							GList * guids);
 
 /** The qof_query_kvp_predicate() matches the object that has
  *  the value 'value' located at the path 'path'.  In a certain
  *  sense, the 'path' is handled as if it were a paramter.
  */
-QofQueryPredData *qof_query_kvp_predicate (QofQueryCompare how,
-										   GSList * path,
-										   const KvpValue * value);
+QofQueryPredData *
+qof_query_kvp_predicate (QofQueryCompare how,
+						 GSList * path,
+						 const KvpValue * value);
 
 /** Same predicate as above, except that 'path' is assumed to be
  * a string containing slash-separated pathname. */
-QofQueryPredData *qof_query_kvp_predicate_path (QofQueryCompare how,
-												const gchar * path,
-												const KvpValue * value);
+QofQueryPredData *
+qof_query_kvp_predicate_path (QofQueryCompare how,
+							  const gchar * path,
+							  const KvpValue * value);
 
 /** Copy a predicate. */
-QofQueryPredData *qof_query_core_predicate_copy (QofQueryPredData * pdata);
+QofQueryPredData *
+qof_query_core_predicate_copy (QofQueryPredData * pdata);
 
 /** Destroy a predicate. */
 void qof_query_core_predicate_free (QofQueryPredData * pdata);
 
 /** Retrieve a predicate. */
-gboolean qof_query_date_predicate_get_date (QofQueryPredData * pd,
-											Timespec * date);
+gboolean
+qof_query_time_predicate_get_time (QofQueryPredData * pd, 
+								   QofTime * qt);
+
 /** Return a printable string for a core data object.  Caller needs
  *  to g_free() the returned string.
  */
-char *qof_query_core_to_string (QofType, gpointer object, QofParam * getter);
+gchar *
+qof_query_core_to_string (QofType, gpointer object, 
+						  QofParam * getter);
 
 #endif /* QOF_QUERYCORE_H */
 /* @} */

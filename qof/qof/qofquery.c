@@ -1,6 +1,7 @@
 /********************************************************************\
  * qof_query.c -- Implement predicate API for searching for objects *
  * Copyright (C) 2002 Derek Atkins <warlord@MIT.EDU>                *
+ * Copyright (C) 2006 Neil Williams <linux@codehelp.co.uk>          *
  *                                                                  *
  * This program is free software; you can redistribute it and/or    *
  * modify it under the terms of the GNU General Public License as   *
@@ -284,7 +285,7 @@ free_members (QofQuery * q)
 	q->results = NULL;
 }
 
-static int
+static gint
 cmp_func (QofQuerySort * sort, QofSortFunc default_sort,
 	gconstpointer a, gconstpointer b)
 {
@@ -330,7 +331,7 @@ cmp_func (QofQuerySort * sort, QofSortFunc default_sort,
 	/* And now return the (appropriate) compare */
 	if (sort->comp_fcn)
 	{
-		int rc = sort->comp_fcn (conva, convb, sort->options, param);
+		gint rc = sort->comp_fcn (conva, convb, sort->options, param);
 		return rc;
 	}
 
@@ -339,10 +340,10 @@ cmp_func (QofQuerySort * sort, QofSortFunc default_sort,
 
 static QofQuery *sortQuery = NULL;
 
-static int
+static gint
 sort_func (gconstpointer a, gconstpointer b)
 {
-	int retval;
+	gint retval;
 
 	g_return_val_if_fail (sortQuery, 0);
 
@@ -352,18 +353,21 @@ sort_func (gconstpointer a, gconstpointer b)
 	if (retval == 0)
 	{
 		retval =
-			cmp_func (&(sortQuery->secondary_sort), sortQuery->defaultSort,
+			cmp_func (&(sortQuery->secondary_sort), 
+			sortQuery->defaultSort,
 			a, b);
 		if (retval == 0)
 		{
 			retval =
 				cmp_func (&(sortQuery->tertiary_sort),
 				sortQuery->defaultSort, a, b);
-			return sortQuery->tertiary_sort.increasing ? retval : -retval;
+			return sortQuery->tertiary_sort.increasing ? 
+				retval : -retval;
 		}
 		else
 		{
-			return sortQuery->secondary_sort.increasing ? retval : -retval;
+			return sortQuery->secondary_sort.increasing ? 
+				retval : -retval;
 		}
 	}
 	else
@@ -378,13 +382,13 @@ sort_func (gconstpointer a, gconstpointer b)
  * object passes the seive.
  */
 
-static int
+static gint
 check_object (QofQuery * q, gpointer object)
 {
 	GList *and_ptr;
 	GList *or_ptr;
 	QofQueryTerm *qt;
-	int and_terms_ok = 1;
+	gint and_terms_ok = 1;
 
 	for (or_ptr = q->terms; or_ptr; or_ptr = or_ptr->next)
 	{
@@ -662,10 +666,10 @@ query_clear_compiles (QofQuery * q)
 /* PUBLISHED API FUNCTIONS */
 
 GSList *
-qof_query_build_param_list (char const *param, ...)
+qof_query_build_param_list (gchar const *param, ...)
 {
 	GSList *param_list = NULL;
-	char const *this_param;
+	gchar const *this_param;
 	va_list ap;
 
 	if (!param)
@@ -674,7 +678,7 @@ qof_query_build_param_list (char const *param, ...)
 	va_start (ap, param);
 
 	for (this_param = param; this_param;
-		this_param = va_arg (ap, const char *))
+		this_param = va_arg (ap, const gchar *))
 		  param_list = g_slist_prepend (param_list, (gpointer) this_param);
 
 	va_end (ap);
@@ -753,7 +757,7 @@ qof_query_run (QofQuery * q)
 {
 	GList *matching_objects = NULL;
 	GList *node;
-	int object_count = 0;
+	gint object_count = 0;
 
 	if (!q)
 		return NULL;
@@ -924,7 +928,7 @@ qof_query_create_for (QofIdTypeConst obj_type)
 	return q;
 }
 
-int
+gint
 qof_query_has_terms (QofQuery * q)
 {
 	if (!q)
@@ -932,11 +936,11 @@ qof_query_has_terms (QofQuery * q)
 	return g_list_length (q->terms);
 }
 
-int
+gint
 qof_query_num_terms (QofQuery * q)
 {
 	GList *o;
-	int n = 0;
+	gint n = 0;
 	if (!q)
 		return 0;
 	for (o = q->terms; o; o = o->next)
@@ -1043,7 +1047,7 @@ qof_query_invert (QofQuery * q)
 	GList *aterms;
 	GList *cur;
 	GList *new_oterm;
-	int num_or_terms;
+	gint num_or_terms;
 
 	if (!q)
 		return NULL;
@@ -1285,7 +1289,7 @@ qof_query_set_sort_increasing (QofQuery * q, gboolean prim_inc,
 }
 
 void
-qof_query_set_max_results (QofQuery * q, int n)
+qof_query_set_max_results (QofQuery * q, gint n)
 {
 	if (!q)
 		return;
@@ -1382,7 +1386,7 @@ qof_query_shutdown (void)
 	qof_query_core_shutdown ();
 }
 
-int
+gint
 qof_query_get_max_results (QofQuery * q)
 {
 	if (!q)
@@ -1566,14 +1570,7 @@ static void qof_query_printValueForParam (QofQueryPredData * pd,
 	GString * gs);
 static void qof_query_printOutput (GList * output);
 
-/** \deprecated access via qof_log instead.
- The query will be logged automatically if qof_log_set_default
- or qof_log_set_level(QOF_MOD_QUERY, ...) are set to QOF_LOG_DEBUG
- or higher.
-
- This function cycles through a QofQuery object, and
- prints out the values of the various members of the query
-*/
+/** \deprecated this will be private in libqof2. */
 void
 qof_query_print (QofQuery * query)
 {
@@ -1628,8 +1625,8 @@ qof_query_printOutput (GList * output)
 }
 
 /*
-        Get the search_for type--This is the type of Object
-        we are searching for (SPLIT, TRANS, etc)
+    Get the search_for type--This is the type of Object
+    we are searching for (SPLIT, TRANS, etc)
 */
 static GList *
 qof_query_printSearchFor (QofQuery * query, GList * output)
@@ -1643,12 +1640,12 @@ qof_query_printSearchFor (QofQuery * query, GList * output)
 	output = g_list_append (output, gs);
 
 	return output;
-}								/* qof_query_printSearchFor */
+}	/* qof_query_printSearchFor */
 
 /*
-        Run through the terms of the query.  This is a outer-inner
-        loop.  The elements of the outer loop are ORed, and the
-        elements of the inner loop are ANDed.
+    Run through the terms of the query.  This is a outer-inner
+    loop.  The elements of the outer loop are ORed, and the
+    elements of the inner loop are ANDed.
 */
 static GList *
 qof_query_printTerms (QofQuery * query, GList * output)
@@ -1676,12 +1673,12 @@ qof_query_printTerms (QofQuery * query, GList * output)
 	}
 
 	return output;
-}								/* qof_query_printTerms */
+}	/* qof_query_printTerms */
 
 /*
-        Process the sort parameters
-        If this function is called, the assumption is that the first sort
-        not null.
+    Process the sort parameters
+    If this function is called, the assumption is that the first sort
+    not null.
 */
 static GList *
 qof_query_printSorts (QofQuerySort * s[], const gint numSorts,
@@ -1722,16 +1719,16 @@ qof_query_printSorts (QofQuerySort * s[], const gint numSorts,
 	output = g_list_append (output, gs);
 	return output;
 
-}								/* qof_query_printSorts */
+}		/* qof_query_printSorts */
 
 /*
-        Process the AND terms of the query.  This is a GList
-        of WHERE terms that will be ANDed
+    Process the AND terms of the query.  This is a GList
+    of WHERE terms that will be ANDed
 */
 static GList *
 qof_query_printAndTerms (GList * terms, GList * output)
 {
-	const char *prefix = "AND Terms:";
+	const gchar *prefix = "AND Terms:";
 	QofQueryTerm *qt;
 	QofQueryPredData *pd;
 	GSList *path;
@@ -1755,10 +1752,10 @@ qof_query_printAndTerms (GList * terms, GList * output)
 	}
 
 	return output;
-}								/* qof_query_printAndTerms */
+}	/* qof_query_printAndTerms */
 
 /*
-        Process the parameter types of the predicate data
+    Process the parameter types of the predicate data
 */
 static GString *
 qof_query_printParamPath (GSList * parmList)
@@ -1774,10 +1771,10 @@ qof_query_printParamPath (GSList * parmList)
 	}
 
 	return gs;
-}								/* qof_query_printParamPath */
+}	/* qof_query_printParamPath */
 
 /*
-        Process the PredData of the AND terms
+    Process the PredData of the AND terms
 */
 static GList *
 qof_query_printPredData (QofQueryPredData * pd, GList * lst)
@@ -1799,11 +1796,11 @@ qof_query_printPredData (QofQueryPredData * pd, GList * lst)
 	qof_query_printValueForParam (pd, gs);
 	lst = g_list_append (lst, gs);
 	return lst;
-}								/* qof_query_printPredData */
+}	/* qof_query_printPredData */
 
 /*
-        Get a string representation for the
-        QofCompareFunc enum type.
+    Get a string representation for the
+    QofCompareFunc enum type.
 */
 static gchar *
 qof_query_printStringForHow (QofQueryCompare how)
@@ -1826,7 +1823,7 @@ qof_query_printStringForHow (QofQueryCompare how)
 	}
 
 	return "INVALID HOW";
-}								/* qncQueryPrintStringForHow */
+}	/* qncQueryPrintStringForHow */
 
 
 static void
@@ -1897,21 +1894,42 @@ qof_query_printValueForParam (QofQueryPredData * pd, GString * gs)
 		g_string_append_printf (gs, " double: %.18g", pdata->val);
 		return;
 	}
-	if (!safe_strcmp (pd->type_name, QOF_TYPE_DATE))
+	if (!safe_strcmp (pd->type_name, QOF_TYPE_TIME))
 	{
-		query_date_t pdata = (query_date_t) pd;
+		query_date_t pdata;
+		QofDate *qd;
+
+		pdata = (query_date_t) pd;
+		qd = qof_date_from_qtime (pdata->qt);
 		g_string_append_printf (gs, " Match type %s",
 			qof_query_printDateMatch (pdata->options));
-	/** \todo replace old func */
-/*    g_string_append_printf (gs, " query_date: %s", gnc_print_date (pdata->date));
-*/ return;
+		g_string_append_printf (gs, "query date: %s",
+			qof_date_print (qd, QOF_DATE_FORMAT_UTC));
+		qof_date_free (qd);
 	}
+#ifndef QOF_DISABLE_DEPRECATED
+	if (!safe_strcmp (pd->type_name, QOF_TYPE_DATE))
+	{
+		query_date_t pdata;
+		Timespec ts;
+
+		pdata = (query_date_t) pd;
+		ts.tv_sec = qof_time_get_secs (pdata->qt);
+		ts.tv_nsec = qof_time_get_nanosecs (pdata->qt);
+		g_string_append_printf (gs, " Match type %s",
+			qof_query_printDateMatch (pdata->options));
+	    g_string_append_printf (gs, " query_date: %s", 
+			gnc_print_date (ts));
+		return;
+	}
+#endif
 	if (!safe_strcmp (pd->type_name, QOF_TYPE_CHAR))
 	{
 		query_char_t pdata = (query_char_t) pd;
 		g_string_append_printf (gs, " Match type %s",
 			qof_query_printCharMatch (pdata->options));
-		g_string_append_printf (gs, " char list: %s", pdata->char_list);
+		g_string_append_printf (gs, " char list: %s", 
+			pdata->char_list);
 		return;
 	}
 	if (!safe_strcmp (pd->type_name, QOF_TYPE_BOOLEAN))
@@ -1923,7 +1941,7 @@ qof_query_printValueForParam (QofQueryPredData * pd, GString * gs)
 	}
   /** \todo QOF_TYPE_COLLECT */
 	return;
-}								/* qof_query_printValueForParam */
+}	/* qof_query_printValueForParam */
 
 /*
  * Print out a string representation of the
@@ -1940,7 +1958,7 @@ qof_query_printStringMatch (QofStringMatch s)
 		return "QOF_STRING_MATCH_CASEINSENSITIVE";
 	}
 	return "UNKNOWN MATCH TYPE";
-}								/* qof_query_printStringMatch */
+}	/* qof_query_printStringMatch */
 
 /*
  * Print out a string representation of the
@@ -1957,7 +1975,7 @@ qof_query_printDateMatch (QofDateMatch d)
 		return "QOF_DATE_MATCH_DAY";
 	}
 	return "UNKNOWN MATCH TYPE";
-}								/* qof_query_printDateMatch */
+}	/* qof_query_printDateMatch */
 
 /*
  * Print out a string representation of the
@@ -1976,7 +1994,7 @@ qof_query_printNumericMatch (QofNumericMatch n)
 		return "QOF_NUMERIC_MATCH_ANY";
 	}
 	return "UNKNOWN MATCH TYPE";
-}								/* qof_query_printNumericMatch */
+}	/* qof_query_printNumericMatch */
 
 /*
  * Print out a string representation of the
@@ -2000,7 +2018,7 @@ qof_query_printGuidMatch (QofGuidMatch g)
 	}
 
 	return "UNKNOWN MATCH TYPE";
-}								/* qof_query_printGuidMatch */
+}	/* qof_query_printGuidMatch */
 
 /*
  * Print out a string representation of the
@@ -2017,6 +2035,6 @@ qof_query_printCharMatch (QofCharMatch c)
 		return "QOF_CHAR_MATCH_NONE";
 	}
 	return "UNKNOWN MATCH TYPE";
-}								/* qof_query_printGuidMatch */
+}	/* qof_query_printGuidMatch */
 
 /* ======================== END OF FILE =================== */
