@@ -394,6 +394,28 @@ void qof_report_clock_total (gint clockno,
              __FUNCTION__, format , ## args);               \
 } while (0)
 
+/** \deprecated Do not call directly, use QofLog. */
+void qof_query_print (QofQuery * query);
+/** \deprecated use qof_query_time_predicate instead. */
+QofQueryPredData *
+qof_query_date_predicate (QofQueryCompare how,
+						  QofDateMatch options,
+						  Timespec date);
+gboolean 
+qof_query_date_predicate_get_date (QofQueryPredData * pd,
+								   Timespec * date);
+/** \deprecated Each application should keep
+their \b own session context.*/
+QofSession *qof_session_get_current_session (void);
+/** \deprecated Each application should keep
+their \b own session context.*/
+void qof_session_set_current_session (QofSession * session);
+/** \deprecated Each application should keep
+their \b own session context.*/
+void
+qof_session_clear_current_session (void);
+/** \deprecated use qof_util_string_isnum */
+gboolean gnc_strisnum (const guchar * s);
 
 #endif /* _DEPRECATED_H */
 #endif /* QOF_DISABLE_DEPRECATED */

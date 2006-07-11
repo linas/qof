@@ -1502,6 +1502,39 @@ qof_report_clock_total (gint clockno,
 	fprintf (fout, "\n");
 	fflush (fout);
 }
+static QofSession *current_session = NULL;
+
+QofSession *
+qof_session_get_current_session (void)
+{
+	if (!current_session)
+	{
+		qof_event_suspend ();
+		current_session = qof_session_new ();
+		qof_event_resume ();
+	}
+
+	return current_session;
+}
+
+void
+qof_session_set_current_session (QofSession * session)
+{
+	current_session = session;
+}
+
+void
+qof_session_clear_current_session (void)
+{
+	current_session = NULL;
+}
+
+gboolean
+gnc_strisnum (const guchar * s)
+{
+	return qof_util_string_isnum (s);
+}
+
 
 /* ==================================================================== */
 #endif /* QOF_DISABLE_DEPRECATED */
