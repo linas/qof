@@ -133,8 +133,7 @@ strptime_internal (const gchar * rp, const gchar * fmt,
 	QofDate * qd, QofDateError * error)
 {
 	const gchar *rp_backup;
-	size_t val;
-	gint64 century, want_century;
+	gint64 val, century, want_century;
 	gint want_era, have_wday, want_xday, have_yday;
 	gint have_mon, have_mday, have_uweek, have_wweek;
 	gint week_no, have_I, is_pm, cnt, decided, era_cnt;
@@ -306,6 +305,19 @@ strptime_internal (const gchar * rp, const gchar * fmt,
 			get_number (0, 59, 2);
 			qd->qd_min = val;
 			break;
+		case 'N':
+		{
+			/* match nanoseconds */
+			gint n;
+			n = val = 0;
+			while (n < 9 && *rp >= '0' && *rp <= '9')
+			{
+				val = val * 10 + *rp++ - '0';
+				++n;
+			}
+			qd->qd_nanosecs = val;
+			break;
+		}
 		case 'n':
 		case 't':
 			/* Match any white space.  */
@@ -430,7 +442,7 @@ strptime_internal (const gchar * rp, const gchar * fmt,
 			get_number (0, 99, 2);
 			/* The "Year 2000: The Millennium Rollover" paper suggests that
 			values in the range 69-99 refer to the twentieth century.  */
-			qd->qd_year = val >= 69 ? val : val + 1900;
+			qd->qd_year = val >= 69 ? val + 2000 : val + 1900;
 			/* Indicate that we want to use the century, if specified.  */
 			want_century = 1;
 			want_xday = 1;
@@ -444,6 +456,7 @@ strptime_internal (const gchar * rp, const gchar * fmt,
 			break;
 		case 'Z':
 			/* XXX How to handle this?  */
+			PINFO (" Z format - todo?");
 			break;
 		case 'z':
 			/* We recognize two formats: if two digits are given, these
@@ -497,6 +510,7 @@ strptime_internal (const gchar * rp, const gchar * fmt,
 				qd->qd_gmt_off = (val * 3600) / 100;
 				if (neg)
 					qd->qd_gmt_off = -qd->qd_gmt_off;
+
 			}
 			break;
 		case 'E':
@@ -593,8 +607,8 @@ strptime_internal (const gchar * rp, const gchar * fmt,
 		default:
 			{
 				*error = ERR_UNKNOWN_ERR;
-				PERR (" error=%s (second default)", 
-					QofDateErrorasString (*error));
+				PERR (" error=%s val=%s (second default)", 
+					QofDateErrorasString (*error), rp);
 				return NULL;
 			}
 		}

@@ -1,3 +1,14 @@
+2006-07-12  Neil Williams <linux@codehelp.co.uk>
+
+	* qof/qofdate.c : Adding back QOF_DATE_FORMAT_ISO8601
+	* qof/qofdate.h : Adding back QOF_DATE_FORMAT_ISO8601
+	* qof/qofstrftime.c : Supporting nanoseconds.
+	* qof/qofstrptime.c : Supporting nanoseconds.
+	* qof/qoftime.c : Correcting nanosecond handling.
+	* qof/test/test-date.c : Adding nanosecond tests.
+	* qof/test/.cvsignore : Ignore debug file.
+	(only created in CVS builds).
+
 2006-07-11  Neil Williams <linux@codehelp.co.uk>
 
 	* HACKING : Update for QOF_TYPE_DATE changes.

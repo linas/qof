@@ -165,8 +165,8 @@ strftime_case (gboolean upcase, gchar * s,
 	size_t maxsize, const gchar *format, const QofDate *qd, 
 	gint ut, glong ns)
 {
-	gint hour12 = qd->qd_hour;
 	const gchar *zone;
+	gint hour12 = qd->qd_hour;
 	size_t i = 0;
 	gchar *p = s;
 	const gchar *f;
@@ -195,7 +195,7 @@ strftime_case (gboolean upcase, gchar * s,
 		gint pad = 0;			/* Padding for number ('-', '_', or 0).  */
 		gint modifier;			/* Field modifier ('E', 'O', or 0).  */
 		gint digits = 0;		/* Max digits for numeric format.  */
-		gint number_value;		/* Numeric value to be printed.  */
+		glong number_value;		/* Numeric value to be printed.  */
 		guint u_number_value;	/* (unsigned int) number_value.  */
 		gboolean negative_number;	/* The number is negative.  */
 		gboolean always_output_a_sign;	/* +/- should always be output.  */
