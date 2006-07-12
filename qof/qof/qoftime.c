@@ -96,11 +96,6 @@ time_normalize (QofTime * time)
 		time->qt_sec--;
 		time->qt_nsec = QOF_NSECS + time->qt_nsec;
 	}
-	if (time->qt_sec < 0 && time->qt_nsec > 0)
-	{
-		time->qt_sec++;
-		time->qt_nsec = -QOF_NSECS + time->qt_nsec;
-	}
 	return time;
 }
 
