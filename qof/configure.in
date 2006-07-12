@@ -329,7 +329,6 @@ if test "$GCC" = "yes" -a "$set_compile_warnings" != "no"; then
  -Wstrict-prototypes -Winline -Wnested-externs -Wpointer-arith"
 fi
 
-dnl CFLAGS="${CFLAGS} -Wall"
 AC_SUBST(CFLAGS)
 AC_SUBST(CPPFLAGS)
 AC_SUBST(LDFLAGS)
@@ -375,6 +374,15 @@ AC_DEFUN([STRUCT_TM_GMTOFF_CHECK],
 
 STRUCT_TM_GMTOFF_CHECK
 
+dnl ******************************
+dnl Check if this was CVS source
+dnl ******************************
+if test -f "${srcdir}/README.cvs" ; then
+	AC_DEFINE([TEST_DEBUG],1, 
+		[Run test code in debug mode])
+	QOF_FROM_CVS=yes
+fi
+
 AC_OUTPUT([ po/Makefile.in
 Makefile
 backend/Makefile
@@ -416,14 +424,7 @@ echo ""
 echo ""
 dnl <= End of configuration summary =>
 
-dnl ******************************
-dnl Check if this was CVS source
-dnl ******************************
-if test -f "${srcdir}/README.cvs" ; then
-       PL_FROM_CVS=yes
-fi
-
-if [[ x"$PL_FROM_CVS" = xyes ]]; then
+if [[ x"$QOF_FROM_CVS" = xyes ]]; then
   echo " .----- NOTICE ------------------------------------------------."
   echo " |         You are using QOF from CVS source.                  |"
   echo " |                                                             |"

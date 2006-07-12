@@ -30,10 +30,6 @@
 #include "qof.h"
 #include "test-stuff.h"
 
-/* define to enable logging of this test sequence
-to qof/test/test-date.trace */
-#define TEST_DEBUG 1
-
 static gboolean test_data_is_init = FALSE;
 static GList *test_data = NULL;
 #ifdef TEST_DEBUG
