@@ -278,6 +278,17 @@ times.
 9th May 2006 == 2006-05-09T14:49:04Z
 */
 #define QOF_DATE_FORMAT_UTC     5
+
+/** Date and time with nanoseconds and timezone.
+
+%Y-%m-%d %H:%M:%S.%N %z
+
+12th July 2006 gives 2006-07-12 17:08:16.329768000 +0000
+in UTC. Timezones can be specified and will then be
+converted into UTC at validation.
+*/
+#define QOF_DATE_FORMAT_ISO8601 6
+
 /** \brief GNU locale default. "%x"
 
 QOF_DATE_FORMAT_LOCALE and QOF_DATE_FORMAT_CUSTOM are only 
@@ -292,7 +303,8 @@ One example: 9th May 2006 gives 09/05/06
  specifiers and therefore cannot support the full range of
  QofDate. see \ref datelocales
 */
-#define QOF_DATE_FORMAT_LOCALE  6
+#define QOF_DATE_FORMAT_LOCALE  7
+
 /** \brief Date and time for the current locale "%c"
 
 QOF_DATE_FORMAT_LOCALE and QOF_DATE_FORMAT_CUSTOM are only 
@@ -307,7 +319,7 @@ One example: 9th May 2006 gives Tue 09 May 2006 14:50:10 UTC
  specifiers and therefore cannot support the full range of
  QofDate. see \ref datelocales
 */
-#define QOF_DATE_FORMAT_CUSTOM  7
+#define QOF_DATE_FORMAT_CUSTOM  8
 
 /** New identifiers must be larger than this. */
 #define DATE_FORMAT_LAST  QOF_DATE_FORMAT_CUSTOM

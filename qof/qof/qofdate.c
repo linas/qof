@@ -132,6 +132,15 @@ qof_date_init (void)
 		d->locale_specific = TRUE;
 		g_hash_table_insert (DateFormatTable, GINT_TO_POINTER (d->df), d);
 	}
+	{
+		QofDateEntry *d = g_new0(QofDateEntry,1);
+		d->format = "%Y-%m-%d %H:%M:%S.%N %z";
+		d->name = "iso8601";
+		d->separator = '-';
+		d->df = QOF_DATE_FORMAT_ISO8601;
+		d->locale_specific = FALSE;
+		g_hash_table_insert (DateFormatTable, GINT_TO_POINTER(d->df), d);
+	}
 	QofDateInit = TRUE;
 }
 
@@ -516,7 +525,6 @@ qof_date_parse (const gchar * str, QofDateFormat df)
 	QofDate *date;
 	gchar *check;
 
-	ENTER (" ");
 	check = NULL;
 	error = ERR_NO_ERROR;
 	date = qof_date_new ();
@@ -525,12 +533,10 @@ qof_date_parse (const gchar * str, QofDateFormat df)
 	if (error != ERR_NO_ERROR)
 	{
 		qof_date_free (date);
-		fprintf (stderr, "strptime %s\n", 
+		PERR (" strptime %s\n", 
 			QofDateErrorasString (error));
-		LEAVE (" date is null");
 		return NULL;
 	}
-	LEAVE (" valid date parsed.");
 	date = date_normalise (date);
 	return date;
 }
@@ -548,16 +554,14 @@ qof_date_print (const QofDate * date, QofDateFormat df)
 	d = g_hash_table_lookup (DateFormatTable, 
 		GINT_TO_POINTER (df));
 	g_return_val_if_fail (d, NULL);
-	ENTER (" ");
 	temp[0] = '\1';
 	result = strftime_case (FALSE, temp, MAX_DATE_BUFFER, 
 		d->format, date, 1, date->qd_nanosecs);
 	if (result == 0 && temp[0] != '\0')
 	{
-		LEAVE (" qof extended strftime failed");
+		PERR (" qof extended strftime failed");
 		return NULL;
 	}
-	LEAVE (" ");
 	return g_strndup(temp, result);
 }
 
@@ -856,6 +860,7 @@ qof_date_from_qtime (const QofTime *qt)
 	tzset();
 	leap_extra_secs = extract_interval (qt);
 	qof_date_offset (qt, leap_extra_secs, qd);
+	qd->qd_nanosecs = qof_time_get_nanosecs (qt);
 	qd->qd_is_dst = 0;
 	qd->qd_zone = "GMT";
 	qd->qd_gmt_off = 0L;
