@@ -1,3 +1,14 @@
+2006-07-13  Neil Williams <linux@codehelp.co.uk>
+
+	* qof/qofdate.c : Fix date normalising.
+	* qof/qofdate.h : Expand QofDate so that
+	non-calculated values can be used to manipulate
+	the QofDate within a wider range - glong.
+	* qof/qofstrptime.c : Expand year recognition to
+	nine significant digits, allowing parsing of years
+	upto 999,999,999AD.
+	* qof/test/test-date.c : New tests.
+
 2006-07-12  Neil Williams <linux@codehelp.co.uk>
 
 	* qof/qofdate.c : Adding back QOF_DATE_FORMAT_ISO8601
