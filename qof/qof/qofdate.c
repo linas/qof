@@ -400,20 +400,9 @@ static QofDate*
 date_normalise (QofDate * date)
 {
 	gint days;
-	gboolean neg_year;
 
 	g_return_val_if_fail (date, NULL);
-	neg_year = (date->qd_year < 0) ? TRUE : FALSE;
-	/* overrides */
-	if ((date->qd_nanosecs < 0) || 
-		(date->qd_sec < 0)  ||
-		(date->qd_min < 0)  ||
-		(date->qd_hour < 0) ||
-		(date->qd_mday < 0) ||
-		(date->qd_mon < 0)  ||
-		(date->qd_yday < 0) ||
-		(date->qd_year < 0))
-		neg_year = TRUE;
+	date->qd_sec -= date->qd_gmt_off;
 	/* if value is negative, just add */
 	if ((date->qd_nanosecs >= QOF_NSECS) || 
 		(date->qd_nanosecs <= -QOF_NSECS))
@@ -456,21 +445,21 @@ date_normalise (QofDate * date)
 			date->qd_mday--;
 		}
 	}
-	if ((date->qd_mday >= 32) || (date->qd_mday <= -32))
-	{
-		gboolean is_leap;
-		gint leap;
-
-		is_leap = qof_date_isleap (date->qd_year);
-		leap = (is_leap) ? 366 : 365;
-		date->qd_mday %= leap;
-		date->qd_mon  += date->qd_mon  / 12;
-	}
 	if ((date->qd_mon > 12) || (date->qd_mon < -12))
 	{
 		date->qd_year += date->qd_mon / 12;
 		date->qd_mon   = date->qd_mon % 12;
+		if (date->qd_mon < 0)
+		{
+			/* -1 == Dec, -4 == Sep */
+			date->qd_mon += 12 + 1;
+			date->qd_year = (date->qd_year < 0) ? 
+				date->qd_year++ : date->qd_year--;
+		}
 	}
+	/* qd_mon starts at 1, not zero */
+	if (date->qd_mon == 0)
+		date->qd_mon = 1;
 	/* Year Zero does not exist, 1BC is immediately followed by 1AD. */
 	if (date->qd_year == 0)
 		date->qd_year = -1;
@@ -514,6 +503,9 @@ date_normalise (QofDate * date)
 	set_day_of_the_week (date);
 	/* qd_year has no realistic limits */
 	date->qd_valid = TRUE;
+	date->qd_zone = "GMT";
+	date->qd_is_dst = 0;
+	date->qd_gmt_off = 0L;
 	return date;
 }
 
@@ -820,10 +812,7 @@ count_leapseconds (time_t interval)
 	altered = interval;
 	utc = *gmtime_r (&interval, &utc);
 	altered = mktime (&utc);
-	/** \todo check not a negative value */
 	return altered - interval;
-/*	return ((altered - interval) < 0) ? (interval - altered) :
-		(altered - interval);*/
 }
 
 /*static inline gint*/
