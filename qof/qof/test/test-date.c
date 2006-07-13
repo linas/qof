@@ -70,10 +70,8 @@ check_date_cycles (gpointer data, gpointer user_data)
 	{
 		str = qof_date_print (d->date, i);
 		cmp = (gchar*)g_list_nth_data (d->string_list, (i - 1));
-#ifdef TEST_DEBUG
 		if (0 != safe_strcasecmp (str, cmp))
 			DEBUG (" str=%s cmp=%s", str, cmp);
-#endif
 		do_test ((0 == safe_strcasecmp (str, cmp)), d->id);
 		/* now test qofstrptime */
 		{
@@ -86,17 +84,15 @@ check_date_cycles (gpointer data, gpointer user_data)
 			base.tm_min  = base.tm_hour = base.tm_gmtoff = 0;
 			base.tm_sec  = base.tm_isdst = 0;
 			result = 0;
-/** \todo allow parsing of BC date strings
-and far future dates beyond 31/12/9999. */
+			/** \todo allow parsing of BC date strings */
 			if ((d->date->qd_year > 0) &&
 				(d->date->qd_year < 9999))
 			{
 				h = qof_date_parse (cmp, i);
 				do_test ((h != NULL), "no date could be parsed");
 				if (!h)
-					fprintf (stderr, "h failed for str=%s, "
-						"cmp=%s, %d\n",
-						str, cmp, i);
+					PERR (" h failed for str=%s, "
+						"cmp=%s, %d\n", str, cmp, i);
 				t = qof_date_format_get_format (i);
 				strptime (cmp, t, &base);
 				j = qof_date_from_struct_tm (&base);
@@ -758,19 +754,25 @@ static void
 scan_and_stamp (const gchar * str, QofDateFormat df, QofTimeSecs check)
 {
 	QofTime *scan;
+	QofDate *qd;
 	gchar *stamp;
 
-	scan = qof_date_to_qtime (qof_date_parse (str, df));
+	qd = qof_date_parse (str, df);
+	scan = qof_date_to_qtime (qd);
 	do_test ((scan != NULL), "scan failed");
 	if (scan == NULL)
 		return;
-	do_test ((qof_time_get_secs (scan) == check), "wrong time value");
+	do_test ((0 == safe_strcasecmp(qd->qd_zone, "GMT")),
+		" timezone reset incorrect");
+	do_test ((qof_time_get_secs (scan) == check), 
+		"wrong time value");
 	if (qof_time_get_secs (scan) != check)
-		fprintf (stderr, "wrong time value %"
+		PERR (" wrong time value %"
 			G_GINT64_FORMAT " %" G_GINT64_FORMAT " diff=%"
-			G_GINT64_FORMAT " df=%d str=%s\n",
+			G_GINT64_FORMAT " df=%d str=%s cmp=%s",
 			qof_time_get_secs (scan), check,
-			qof_time_get_secs (scan) - check, df, str);
+			qof_time_get_secs (scan) - check, df, str,
+			qof_date_print(qd, QOF_DATE_FORMAT_UTC));
 	stamp = qof_date_print (qof_date_from_qtime(scan), df);
 	do_test ((stamp != NULL), "stamp failed");
 	/* timezone tests mean stamp cannot be compared to str */
@@ -784,13 +786,10 @@ stamp_and_scan (QofTimeSecs start, glong nanosecs,
 	gchar *str1, *str2;
 	QofDate *check;
 	QofTime *time, *scan;
-	QofDateFormat old;
 
 	time = qof_time_new ();
 	qof_time_set_secs (time, start);
 	qof_time_set_nanosecs (time, nanosecs);
-	old = qof_date_format_get_current ();
-	qof_date_format_set_current (df);
 	str1 = qof_date_print (qof_date_from_qtime(time), df);
 	do_test ((str1 != NULL), "stamp failed");
 	if (!str1)
@@ -798,7 +797,7 @@ stamp_and_scan (QofTimeSecs start, glong nanosecs,
 	check = qof_date_parse (str1, df);
 	do_test ((check != NULL), "parse failed");
 	if (!check)
-		fprintf (stderr, "tried to parse %s\n", str1);
+		PERR (" tried to parse %s\n", str1);
 	scan = qof_date_to_qtime (check);
 	qof_date_free (check);
 	do_test ((scan != NULL), "scan failed");
@@ -814,11 +813,12 @@ stamp_and_scan (QofTimeSecs start, glong nanosecs,
 		"from_qtime failed");
 	do_test ((0 == safe_strcasecmp (str1, str2)), 
 		"stamp different to scan");
+	if (0 != safe_strcasecmp (str1, str2))
+		PERR (" df=%d str=%s scan=%s", df, str1, str2);
 	qof_time_free (scan);
 	qof_time_free (time);
 	g_free (str1);
 	g_free (str2);
-	qof_date_format_set_current (old);
 }
 
 static void
@@ -832,9 +832,7 @@ run_print_scan_tests (void)
 	secs = G_MAXINT32;
 	/* add ten days */
 	secs += SECS_PER_DAY * 10;
-	/** \todo 2 digit year errors with format 6  */
-	for (i = 1; i <= 6; i++)
-/*	for (i = 1; i <= DATE_FORMAT_LAST; i++)*/
+	for (i = 1; i <= QOF_DATE_FORMAT_ISO8601; i++)
 	{
 		stamp_and_scan (796179600, 0, i);
 		stamp_and_scan (796179500, 72000, i);
@@ -853,44 +851,47 @@ run_print_scan_tests (void)
 		stamp_and_scan (1841443200, 0, i);
 
 		/* work with early dates */
-		stamp_and_scan (G_GINT64_CONSTANT (-796179600),   0, i);
-		stamp_and_scan (G_GINT64_CONSTANT (-152098136),   0, i);
-		stamp_and_scan (G_GINT64_CONSTANT (-1143943200),  0, i);
-		stamp_and_scan (G_GINT64_CONSTANT (-1964049931),  0, i);
-		stamp_and_scan (G_GINT64_CONSTANT (-2463880447),  0, i);
-		stamp_and_scan (G_GINT64_CONSTANT (-22905158401), 0, i);
-		stamp_and_scan (G_GINT64_CONSTANT (-28502726400), 0, i);
+		stamp_and_scan (G_GINT64_CONSTANT (-796179600), 253, i);
+		stamp_and_scan (G_GINT64_CONSTANT (-152098136), 865, i);
+		stamp_and_scan (G_GINT64_CONSTANT (-1143943200), 67, i);
+		stamp_and_scan (G_GINT64_CONSTANT (-1964049931), 53, i);
+		stamp_and_scan (G_GINT64_CONSTANT (-2463880447), 48, i);
+		stamp_and_scan (G_GINT64_CONSTANT (-22905158401), 9, i);
+		stamp_and_scan (G_GINT64_CONSTANT (-28502726400), 1, i);
 		stamp_and_scan (G_GINT64_CONSTANT (-60798211200), 0, i);
 		stamp_and_scan (G_GINT64_CONSTANT (-32727638740), 0, i);
-		/*
-		stamp_and_scan (G_GINT64_CONSTANT (-86956848000), 0, i);
-		*/
+/*		stamp_and_scan (G_GINT64_CONSTANT (-86956848000), 0, i);*/
 		stamp_and_scan (secs, 0, i);
 		/* Wed 29 Jan 2048 03:14:07 UTC */
-		secs = G_GINT64_CONSTANT (2463880447);
-		stamp_and_scan (secs, 0, i);
+		stamp_and_scan (G_GINT64_CONSTANT (2463880447), 0, i);
 		/* Sat 29 Jan 2050 03:14:07 UTC */
-		secs = G_GINT64_CONSTANT (2527038847);
-		stamp_and_scan (secs, 0, i);
+		stamp_and_scan (G_GINT64_CONSTANT (2527038847), 0, i);
 		/* work with far future dates */
-		/* 1 year = 31536000 seconds */
-		/* enable once QofDate is sorted */
-		/* 32,727,638,740 approx 3007*/
-		secs = G_GINT64_CONSTANT (32727638740);
-		stamp_and_scan (secs, 0, i);
-		/* 88,313,632,867 approx 4770 */
-		secs = G_GINT64_CONSTANT (88313632867);
-		stamp_and_scan (secs, 0, i);
-		/* 189,216,632,865 approx 7970 */
-		secs = G_GINT64_CONSTANT (189216632865);
-		stamp_and_scan (secs, 0, i);
-		/* 378,432,632,864 approx 13,970  */
-/*		secs = G_GINT64_CONSTANT (378432632864);
-		stamp_and_scan (secs, 0, i);*/
-		/* 3165071328567 approx 102,333 */
-/*		secs = G_GINT64_CONSTANT (3165071328567);
-		stamp_and_scan (secs, 0, i);*/
+		/* 32,727,638,740 Fri Feb  6 02:45:40 UTC 3007 */
+		stamp_and_scan (G_GINT64_CONSTANT (32727638740), 0, i);
+		/* 88,313,632,867 Fri Jul 19 12:41:07 UTC 4768 */
+		stamp_and_scan (G_GINT64_CONSTANT (88313632867), 0, i);
+		/* 189,216,632,865 Fri Jan 14 07:47:45 UTC 7966 */
+		stamp_and_scan (G_GINT64_CONSTANT (189216632865), 0, i);
+		/* 378,432,632,864 Sat Jan 20 07:47:44 UTC 13,962  */
+		stamp_and_scan (G_GINT64_CONSTANT (378432632864), 0, i);
+		/* 3165071328567 Wed Feb 13 00:09:27 UTC 102,267 */
+		stamp_and_scan (G_GINT64_CONSTANT (3165071328567), 0, i);
 	}
+	/* far, far future dates delay the test */
+#ifdef TEST_DEBUG
+	/* 43165071328567 Wed Aug 28 23:16:07 UTC 1,369,816 */
+	stamp_and_scan (G_GINT64_CONSTANT (3165071328567), 
+		0, QOF_DATE_FORMAT_UTC);
+	/* 843165071328567 Tue Jun 19 05:29:27 UTC 26,720,807 */
+	stamp_and_scan (G_GINT64_CONSTANT(843165071328567), 
+		0, QOF_DATE_FORMAT_UTC);
+	/* 9843165071328567 Mon Jan  9 21:29:27 UTC 311,919,454 */
+	stamp_and_scan (G_GINT64_CONSTANT(9843165071328567), 
+		0, QOF_DATE_FORMAT_UTC);
+	stamp_and_scan (G_GINT64_CONSTANT(9843165071328567), 
+		354758450, QOF_DATE_FORMAT_ISO8601);
+#endif
 	scan_and_stamp ("05/09/2006", QOF_DATE_FORMAT_US, 
 		1147132800);
 	scan_and_stamp ("09/05/2006", QOF_DATE_FORMAT_UK, 
@@ -907,6 +908,7 @@ run_print_scan_tests (void)
 	/* test a custom format */
 	do_test ((qof_date_format_add ("%Y-%m-%d %H:%M:%S %z", 
 		12) == TRUE), "failed to add scan suitable format");
+	/* test timezone settings */
 	/* 1972-01-01T00:00:00Z */
 	scan_and_stamp ("1971-12-31 15:00:00 -0900", 12, 63072000);
 	/* 1980-01-01T00:00:00Z */
@@ -916,7 +918,6 @@ run_print_scan_tests (void)
 	scan_and_stamp ("1980-01-01 09:00:00 +0900", 12, 315532800);
 	scan_and_stamp ("1980-01-01 08:30:00 +0830", 12, 315532800);
 	/* pre-1970 dates */
-	/* enable once time_t replaced */
 	scan_and_stamp ("1963-11-22 14:00:00 -0500", 12, -192776400);
 	scan_and_stamp ("1945-09-08 11:02:00 +0900", 12, -767311080);
 	scan_and_stamp ("1918-11-11 11:00:00 +0000", 12, -1613826000);
@@ -927,15 +928,13 @@ run_print_scan_tests (void)
 	/* May 43AD Roman invasion (day and time guessed) */
 	scan_and_stamp ("0043-05-20 14:00:00 +0000", 12, 
 		G_GINT64_CONSTANT (-60798160800));
-	/* 751BC - end of the Bronze Age. (day and time arbitrary) */
-/*	scan_and_stamp ("-0751-05-20 00:00:00 +0000", 12, fails to parse with date.*/
-	/* should be around -86956848000 */
 	{
 		QofDate *qd;
 		QofTime *qt;
 		gint64 secs;
 
 		qt = qof_time_new ();
+		/* Tue May  9 14:50:10 UTC 2006 */
 		qof_time_set_secs (qt, 1147186210);
 		qd = qof_date_from_qtime (qt);
 		do_test ((qof_date_adddays (qd, 45) == TRUE),
@@ -946,6 +945,9 @@ run_print_scan_tests (void)
 		qof_date_free (qd);
 		do_test ((secs == qof_time_get_secs (qt)),
 				 "add_days gave incorrect result.");
+		if (secs != qof_time_get_secs (qt))
+			PERR (" secs=%" G_GINT64_FORMAT "cmp=%"
+			G_GINT64_FORMAT, secs, qof_time_get_secs (qt));
 		qof_time_set_secs (qt, 1147186210);
 		qd = qof_date_from_qtime (qt);
 		do_test ((qof_date_addmonths (qd, 50, TRUE) == TRUE),
@@ -969,18 +971,20 @@ run_qofdate_test (void)
 	{
 		qof_date_format_set_current (QOF_DATE_FORMAT_UK);
 		test = qof_date_format_get_current ();
-		do_test ((test == QOF_DATE_FORMAT_UK), "setting current format");
-		do_test ((safe_strcasecmp (qof_date_format_to_name (test), "uk") ==
-				  0), "getting the shorthand name");
+		do_test ((test == QOF_DATE_FORMAT_UK), 
+			"setting current format as UK");
+		do_test ((safe_strcasecmp (qof_date_format_to_name (test), 
+			"uk") == 0), "getting the shorthand name");
 		do_test ((FALSE ==
-				  qof_date_format_set_name ("foo", QOF_DATE_FORMAT_UK)),
-				 "default name should not be overridden");
-		do_test ((QOF_DATE_FORMAT_UK == qof_date_format_from_name ("uk")),
-				 "getting date format from shorthand name");
+			qof_date_format_set_name ("foo", QOF_DATE_FORMAT_UK)),
+			"default name should not be overridden");
+		do_test ((QOF_DATE_FORMAT_UK == 
+			qof_date_format_from_name ("uk")),
+			"getting date format from shorthand name");
 		do_test (('/' == qof_date_format_get_date_separator (test)),
-				 "getting date format separator from date format");
-		do_test ((FALSE == qof_date_format_set_date_separator (':', test)),
-				 "default separator should not be overridden");
+			"getting date format separator from date format");
+		do_test ((FALSE == qof_date_format_set_date_separator (':', 
+			test)), "default separator should not be overridden");
 	}
 	/* custom date format tests */
 	{
@@ -991,8 +995,8 @@ run_qofdate_test (void)
 		qof_date_format_set_current (10);
 		test = qof_date_format_get_current ();
 		do_test ((test == 10), "setting current format");
-		do_test ((safe_strcasecmp (qof_date_format_to_name (test), "%T") ==
-				  0), "getting the shorthand name");
+		do_test ((safe_strcasecmp (qof_date_format_to_name (test), 
+			"%T") == 0), "getting the shorthand name");
 		do_test ((TRUE == qof_date_format_set_name ("foo", test)),
 				 "custom name should be overridden");
 		do_test ((test == qof_date_format_from_name ("foo")),
@@ -1010,6 +1014,7 @@ run_qofdate_test (void)
 		QofDate *date;
 
 		date = qof_date_new ();
+		/* Mon Jan  3 00:00:30 UTC 2000 */
 		date->qd_sec = SECS_PER_DAY * 2 + 30;
 		date->qd_year = 2000;
 		do_test ((qof_date_valid (date) == TRUE), "date 1 was invalid");
@@ -1150,7 +1155,6 @@ run_qofdate_test (void)
 		do_test ((0 == safe_strcasecmp ("4500-07-24T06:34:26Z",
 			qof_date_print (qd, QOF_DATE_FORMAT_UTC))), 
 			"strftime:UTC:fifth");
-		/* future values are being parsed wrongly. */
 		do_test ((0 != safe_strcasecmp (NULL,
 			qof_date_print (qd, QOF_DATE_FORMAT_LOCALE))), 
 			"strftime:LOCALE:fifth:inrange");
@@ -1597,6 +1601,56 @@ run_qoftime_test (void)
 		g_date_free (date);
 		qof_time_free (time);
 		qof_time_free (reverse);
+	}
+	{
+		/* day, month, year wrapping */
+		QofTime *wrap_t;
+		QofDate *wrap_d;
+		glong day, month, year;
+
+		/* Thu Jul 13 18:20:27 UTC 2006 */
+		wrap_t = qof_time_set (1152814827, 345634);
+		wrap_d = qof_date_from_qtime (wrap_t);
+		PINFO (" base date for section =    %s",
+			qof_date_print (wrap_d, QOF_DATE_FORMAT_ISO8601));
+		day = wrap_d->qd_mday;
+		month = wrap_d->qd_mon;
+		year = wrap_d->qd_year;
+		qof_date_free (wrap_d);		
+		/* one day ago */
+		wrap_d = qof_date_from_qtime (wrap_t);
+		wrap_d->qd_mday -= 1;
+		qof_date_valid (wrap_d);
+		do_test ((wrap_d->qd_mon == month &&
+			wrap_d->qd_year == year &&
+			wrap_d->qd_mday == (day - 1)),
+			" this time on previous day");
+		PINFO (" same time previous day =   %s",
+			qof_date_print (wrap_d, QOF_DATE_FORMAT_ISO8601));
+		qof_date_free (wrap_d);
+		/* this time last month */
+		wrap_d = qof_date_from_qtime (wrap_t);
+		wrap_d->qd_mon -= 1;
+		qof_date_valid (wrap_d);
+		do_test ((wrap_d->qd_mon == (month - 1) &&
+			wrap_d->qd_year == year &&
+			wrap_d->qd_mday == day),
+			" this time last month");
+		PINFO (" same time previous month = %s",
+			qof_date_print (wrap_d, QOF_DATE_FORMAT_ISO8601));
+		qof_date_free (wrap_d);
+		/* this time last year */
+		wrap_d = qof_date_from_qtime (wrap_t);
+		wrap_d->qd_year -= 1;
+		qof_date_valid (wrap_d);
+		do_test ((wrap_d->qd_mon == month &&
+			wrap_d->qd_year == (year - 1) &&
+			wrap_d->qd_mday == day),
+			" this time last year");
+		PINFO (" same time previous year =  %s",
+			qof_date_print (wrap_d, QOF_DATE_FORMAT_ISO8601));
+		qof_time_free (wrap_t);
+		qof_date_free (wrap_d);
 	}
 }
 
