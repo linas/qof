@@ -63,8 +63,8 @@
  dates, avoid using dates at the start or end of a particular day.
 
  \since v0.7.0
-
- @{
+ 
+  @{
 */
 /**
     @file qofdate.h 
@@ -147,28 +147,28 @@ Setting qd_min to a negative value adjusts the other date
 values when the QofDate is validated and normalised to
 create an earlier time. 
  */
-	gshort qd_min;
+	glong qd_min;
 	/** \brief Signed replacement of struct tm.tm_hour.
 
 Setting qd_hour to a negative value adjusts the other date
 values when the QofDate is validated and normalised to
 create an earlier time. 
 */
-	gshort qd_hour;
+	glong qd_hour;
 	/** \brief Signed replacement of struct tm.tm_mday.
 
 Setting qd_mday to a negative value adjusts the other date
 values when the QofDate is validated and normalised to
 create an earlier time. 
  */
-	gshort qd_mday;
+	glong qd_mday;
 	/** \brief Signed replacement of struct tm.tm_mon.
 
 Setting qd_mon to a negative value adjusts the other date
 values when the QofDate is validated and normalised to
 create an earlier time. 
  */
-	gshort qd_mon;
+	glong qd_mon;
 	/** \brief Extended version to cope with full range of dates. 
 
  \warning QofDate does not use 1900 or 1970 as a base, all 
@@ -191,7 +191,7 @@ the QofDate is validated. */
 qd_is_dst is a calculated value and will be set to UTC when
 the QofDate is validated. */
 	gshort qd_is_dst;
-	/** \brief Calculated value based on struct tm.tm_gmtoff.
+/** \brief Calculated value based on struct tm.tm_gmtoff.
 
  \note qd_gmt_off \b WILL be overridden to UTC when the QofDate
 is validated. This can be used to convert a localtime to UTC -
@@ -199,17 +199,14 @@ set the value from struct tm.tm_gmtoff for the localtime and
 validate the QofDate to get UTC.
 */
 	glong qd_gmt_off;
-	/** \brief Calculated value based on struct tm.tm_zone.
+/** \brief Calculated value based on struct tm.tm_zone.
 
  \note qd_zone \b WILL be overridden to "GMT" when the QofDate
 is validated. This can be used to convert a localtime to UTC -
 set the value from struct tm.tm_zone for the localtime and
-validate the QofDate to get UTC.
-
- \todo check this works.
- */
+validate the QofDate to get UTC. */
 	const gchar *qd_zone;
-	/** \brief If the QofDate is valid or merely initialised. 
+/** \brief If the QofDate is valid or merely initialised. 
 
 Some QofDate values are invalid when initialised
 to zero (e.g. qm_mday). Avoid setting this value manually
