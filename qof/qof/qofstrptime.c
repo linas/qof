@@ -449,7 +449,7 @@ strptime_internal (const gchar * rp, const gchar * fmt,
 			break;
 		case 'Y':
 			/* Match year including century number.  */
-			get_number (0, 9999, 4);
+			get_number (0, 999999999, 9);
 			qd->qd_year = val;
 			want_century = 0;
 			want_xday = 1;
@@ -510,7 +510,6 @@ strptime_internal (const gchar * rp, const gchar * fmt,
 				qd->qd_gmt_off = (val * 3600) / 100;
 				if (neg)
 					qd->qd_gmt_off = -qd->qd_gmt_off;
-
 			}
 			break;
 		case 'E':
