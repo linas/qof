@@ -32,9 +32,7 @@
 
 static gboolean test_data_is_init = FALSE;
 static GList *test_data = NULL;
-#ifdef TEST_DEBUG
 static QofLogModule log_module = QOF_MOD_DATE;
-#endif
 
 typedef struct
 {
@@ -1659,7 +1657,6 @@ main (int argc, char **argv)
 {
 	qof_init ();
 #ifdef TEST_DEBUG
-	/* debug code - remove before release. */
 	qof_log_init_filename ("test-date.trace");
 	qof_log_set_default (QOF_LOG_DETAIL);
 	ENTER (" ");
@@ -1672,7 +1669,6 @@ main (int argc, char **argv)
 	print_test_results ();
 	test_date_close ();
 #ifdef TEST_DEBUG
-	/* debug only */
 	LEAVE (" ");
 	qof_log_shutdown ();
 #endif
