@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: qof 0.6.4\n"
 "Report-Msgid-Bugs-To: qof-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2006-04-11 20:17+0100\n"
+"POT-Creation-Date: 2006-07-14 22:59+0100\n"
 "PO-Revision-Date: 2006-05-19 22:58+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
@@ -15,26 +15,49 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../backend/file/qsf-backend.c:103
+#: ../backend/file/qsf-backend.c:117
 msgid "Level of compression to use: 0 for none, 9 for highest."
 msgstr "Komprimeringsnivå att använda: 0 för ingen, 9 för högsta."
 
-#: ../backend/file/qsf-backend.c:104
-msgid "QOF can compress QSF XML files using gzip. Note that compression is not used when outputting to STDOUT."
-msgstr "QOF kan komprimera QSF XML-filer med gzip. Notera att komprimering inte används när data skickas till standard ut."
+#: ../backend/file/qsf-backend.c:119
+msgid ""
+"QOF can compress QSF XML files using gzip. Note that compression is not used "
+"when outputting to STDOUT."
+msgstr ""
+"QOF kan komprimera QSF XML-filer med gzip. Notera att komprimering inte "
+"används när data skickas till standard ut."
 
-#: ../backend/file/qsf-backend.c:112
+#: ../backend/file/qsf-backend.c:129
 msgid "List of QSF map files to use for this session."
 msgstr "Lista av QSF-kartfiler att använda för denna session."
 
-#: ../backend/file/qsf-backend.c:113
-msgid "QOF can convert objects within QSF XML files using a map of the changes required."
-msgstr "QOF kan konvertera objekt inom QSF XML-filer med en karta av de ändringar som krävs."
+#: ../backend/file/qsf-backend.c:131
+msgid ""
+"QOF can convert objects within QSF XML files using a map of the changes "
+"required."
+msgstr ""
+"QOF kan konvertera objekt inom QSF XML-filer med en karta av de ändringar "
+"som krävs."
 
-#: ../backend/file/qsf-backend.c:121
+#: ../backend/file/qsf-backend.c:140
 msgid "Encoding string to use when writing the XML file."
 msgstr "Teckenkodningssträng att använda när XML-fil skrivs."
 
-#: ../backend/file/qsf-backend.c:122
-msgid "QSF defaults to UTF-8. Other encodings are supported by passing the encoding string in this option."
-msgstr "Standard i QSF är UTF-8. Övriga teckenkodningar stöds genom att skicka med kodningssträngen i detta alternativ."
+#: ../backend/file/qsf-backend.c:142
+msgid ""
+"QSF defaults to UTF-8. Other encodings are supported by passing the encoding "
+"string in this option."
+msgstr ""
+"Standard i QSF är UTF-8. Övriga teckenkodningar stöds genom att skicka med "
+"kodningssträngen i detta alternativ."
+
+#: ../backend/file/qsf-backend.c:151
+msgid "Convert deprecated date values to time values."
+msgstr ""
+
+#: ../backend/file/qsf-backend.c:153
+msgid ""
+"Applications that support the new QOF time format need to enable this option "
+"to convert older date values into time. Applications that still use date "
+"should not set this option until time values are supported."
+msgstr ""

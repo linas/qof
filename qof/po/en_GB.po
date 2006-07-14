@@ -1,14 +1,15 @@
 # English-GB for QOF
-# Copyright (C) 2005 Neil Williams <linux@codehelp.co.uk>
+# Copyright (C) 2005,2006 Neil Williams <linux@codehelp.co.uk>
 # This file is distributed under the same license as the qof package.
 # Neil Williams <linux@codehelp.co.uk>, 2005.
-#
+# 
+# 
 msgid ""
 msgstr ""
-"Project-Id-Version: QOF 0.6.4\n"
+"Project-Id-Version: QOF 0.7.0\n"
 "Report-Msgid-Bugs-To: qof-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2006-05-13 21:10+0100\n"
-"PO-Revision-Date: 2006-04-11 20:22+0100\n"
+"POT-Creation-Date: 2006-07-14 22:59+0100\n"
+"PO-Revision-Date: 2006-07-14 22:59+0100\n"
 "Last-Translator: Neil Williams <linux@codehelp.co.uk>\n"
 "Language-Team: English (British) <en_gb@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -16,11 +17,11 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms:  nplurals=2; plural=(n != 1);\n"
 
-#: ../backend/file/qsf-backend.c:102
+#: ../backend/file/qsf-backend.c:117
 msgid "Level of compression to use: 0 for none, 9 for highest."
 msgstr "Level of compression to use: 0 for none, 9 for highest."
 
-#: ../backend/file/qsf-backend.c:103
+#: ../backend/file/qsf-backend.c:119
 msgid ""
 "QOF can compress QSF XML files using gzip. Note that compression is not used "
 "when outputting to STDOUT."
@@ -28,11 +29,11 @@ msgstr ""
 "QOF can compress QSF XML files using gzip. Note that compression is not used "
 "when outputting to STDOUT."
 
-#: ../backend/file/qsf-backend.c:112
+#: ../backend/file/qsf-backend.c:129
 msgid "List of QSF map files to use for this session."
 msgstr "List of QSF map files to use for this session."
 
-#: ../backend/file/qsf-backend.c:113
+#: ../backend/file/qsf-backend.c:131
 msgid ""
 "QOF can convert objects within QSF XML files using a map of the changes "
 "required."
@@ -40,14 +41,28 @@ msgstr ""
 "QOF can convert objects within QSF XML files using a map of the changes "
 "required."
 
-#: ../backend/file/qsf-backend.c:121
+#: ../backend/file/qsf-backend.c:140
 msgid "Encoding string to use when writing the XML file."
 msgstr "Encoding string to use when writing the XML file."
 
-#: ../backend/file/qsf-backend.c:122
+#: ../backend/file/qsf-backend.c:142
 msgid ""
 "QSF defaults to UTF-8. Other encodings are supported by passing the encoding "
 "string in this option."
 msgstr ""
 "QSF defaults to UTF-8. Other encodings are supported by passing the encoding "
 "string in this option."
+
+#: ../backend/file/qsf-backend.c:151
+msgid "Convert deprecated date values to time values."
+msgstr "Convert deprecated date values to time values."
+
+#: ../backend/file/qsf-backend.c:153
+msgid ""
+"Applications that support the new QOF time format need to enable this option "
+"to convert older date values into time. Applications that still use date "
+"should not set this option until time values are supported."
+msgstr ""
+"Applications that support the new QOF time format need to enable this option "
+"to convert older date values into time. Applications that still use date "
+"should not set this option until time values are supported."
