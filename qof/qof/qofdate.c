@@ -190,7 +190,7 @@ qof_date_is_last_mday (const QofDate *qd)
 }
 
 gboolean
-qof_date_format_add (const gchar * str, QofDateFormat identifier)
+qof_date_format_add (const gchar * str, QofDateFormat * identifier)
 {
 	struct tm check;
 	gint len;
@@ -228,12 +228,13 @@ qof_date_format_add (const gchar * str, QofDateFormat identifier)
 			" Max=%d str_len=%d", str, test, MAX_DATE_LENGTH, len);
 		return FALSE;
 	}
+	*identifier = g_hash_table_size (DateFormatTable) + 1;
 	{
 		QofDateEntry *d = g_new0 (QofDateEntry, 1);
 		d->format = str;
 		d->name = str;
 		d->separator = locale_separator;
-		d->df = identifier;
+		d->df = *identifier;
 		g_hash_table_insert (DateFormatTable, GINT_TO_POINTER (d->df), d);
 	}
 	LEAVE (" successful");
@@ -273,6 +274,7 @@ qof_date_format_set_name (const gchar * name, QofDateFormat format)
 	g_hash_table_insert (DateFormatTable, GINT_TO_POINTER (format), d);
 	return TRUE;
 }
+
 QofDateFormat
 qof_date_format_get_current (void)
 {
