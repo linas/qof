@@ -824,6 +824,7 @@ run_print_scan_tests (void)
 {
 	gint i;
 	gint64 secs;
+	QofDateFormat df;
 
 	/* Set a secs value at the limit of the range of time_t 
 	   on 32bit systems. */
@@ -905,27 +906,28 @@ run_print_scan_tests (void)
 		1147186144);
 
 	/* test a custom format */
+	df = 0;
 	do_test ((qof_date_format_add ("%Y-%m-%d %H:%M:%S %z", 
-		12) == TRUE), "failed to add scan suitable format");
+		&df) == TRUE), "failed to add scan suitable format");
 	/* test timezone settings */
 	/* 1972-01-01T00:00:00Z */
-	scan_and_stamp ("1971-12-31 15:00:00 -0900", 12, 63072000);
+	scan_and_stamp ("1971-12-31 15:00:00 -0900", df, 63072000);
 	/* 1980-01-01T00:00:00Z */
-	scan_and_stamp ("1979-12-31 15:00:00 -0900", 12, 315532800);
-	scan_and_stamp ("1980-01-01 00:00:00 -0000", 12, 315532800);
-	scan_and_stamp ("1980-01-01 00:00:00 +0000", 12, 315532800);
-	scan_and_stamp ("1980-01-01 09:00:00 +0900", 12, 315532800);
-	scan_and_stamp ("1980-01-01 08:30:00 +0830", 12, 315532800);
+	scan_and_stamp ("1979-12-31 15:00:00 -0900", df, 315532800);
+	scan_and_stamp ("1980-01-01 00:00:00 -0000", df, 315532800);
+	scan_and_stamp ("1980-01-01 00:00:00 +0000", df, 315532800);
+	scan_and_stamp ("1980-01-01 09:00:00 +0900", df, 315532800);
+	scan_and_stamp ("1980-01-01 08:30:00 +0830", df, 315532800);
 	/* pre-1970 dates */
-	scan_and_stamp ("1963-11-22 14:00:00 -0500", 12, -192776400);
-	scan_and_stamp ("1945-09-08 11:02:00 +0900", 12, -767311080);
-	scan_and_stamp ("1918-11-11 11:00:00 +0000", 12, -1613826000);
+	scan_and_stamp ("1963-11-22 14:00:00 -0500", df, -192776400);
+	scan_and_stamp ("1945-09-08 11:02:00 +0900", df, -767311080);
+	scan_and_stamp ("1918-11-11 11:00:00 +0000", df, -1613826000);
 	/* work with really early dates */
 	/* 14th October 1066 (time is just a guess) */
-	scan_and_stamp ("1066-10-14 08:00:00 +0000", 12, 
+	scan_and_stamp ("1066-10-14 08:00:00 +0000", df, 
 		G_GINT64_CONSTANT (-28502726400));
 	/* May 43AD Roman invasion (day and time guessed) */
-	scan_and_stamp ("0043-05-20 14:00:00 +0000", 12, 
+	scan_and_stamp ("0043-05-20 14:00:00 +0000", df, 
 		G_GINT64_CONSTANT (-60798160800));
 	{
 		QofDate *qd;
@@ -987,13 +989,14 @@ run_qofdate_test (void)
 	}
 	/* custom date format tests */
 	{
-		do_test ((qof_date_format_add ("%T", 10) == TRUE),
+		QofDateFormat df, df2;
+		do_test ((qof_date_format_add ("%T", &df) == TRUE),
 				 "adding a valid format");
-		do_test ((qof_date_format_add ("%a%A%b%B%c%C%d%D%e%F%f%r", 11) ==
-				  FALSE), "adding an invalid format");
-		qof_date_format_set_current (10);
+		do_test ((qof_date_format_add ("%a%A%b%B%c%C%d%D%e%F%f%r", 
+				&df2) == FALSE), "adding an invalid format");
+		qof_date_format_set_current (df);
 		test = qof_date_format_get_current ();
-		do_test ((test == 10), "setting current format");
+		do_test ((test == df), "setting current format");
 		do_test ((safe_strcasecmp (qof_date_format_to_name (test), 
 			"%T") == 0), "getting the shorthand name");
 		do_test ((TRUE == qof_date_format_set_name ("foo", test)),
