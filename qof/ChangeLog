@@ -1,7 +1,21 @@
 2006-07-14  Neil Williams <linux@codehelp.co.uk>
 
-	* qofinstance.c : Set a valid time when creating
+	* backend/file/qsf-object.xsd.xml : Add time 
+	type to the qsf schema.
+
+	* qof/qofinstance.c : Set a valid time when creating
 	a new instance.
+	* qof/qoftime.c : Upgrade qof_time_from_tm to
+	not use GDate.
+	* qof/qofdate.h :
+	* qof/qofdate.c : Change prototype of 
+	qof_date_format_add to return the first available
+	identifier, not assume the user knows this value in
+	advance.
+	* qof/test/test-date.c : Use new qof_date_format_add
+	prototype.
+	* po/en_GB.po : Added new strings for date to time
+	transition handling option.
 
 2006-07-13  Neil Williams <linux@codehelp.co.uk>
 
