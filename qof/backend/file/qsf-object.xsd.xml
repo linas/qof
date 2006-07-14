@@ -81,6 +81,15 @@ attributeFormDefault="unqualified" xml:lang="en-GB">
      </xsd:simpleContent>
      </xsd:complexType>
    </xsd:element>
+   <xsd:element name="time" minOccurs="0" maxOccurs="unbounded" >
+     <xsd:complexType>
+     <xsd:simpleContent>
+      <xsd:extension base="xsd:dateTime">
+       <xsd:attribute name="type" type="xsd:string" use="required"/>
+      </xsd:extension>
+     </xsd:simpleContent>
+     </xsd:complexType>
+   </xsd:element>
    <xsd:element name="gint32" minOccurs="0" maxOccurs="unbounded">
      <xsd:complexType>
      <xsd:simpleContent>
