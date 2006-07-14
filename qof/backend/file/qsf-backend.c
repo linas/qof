@@ -73,6 +73,12 @@ option_cb (QofBackendOption * option, gpointer data)
 		params->encoding = g_strdup (option->value);
 		PINFO (" encoding=%s", params->encoding);
 	}
+	if (0 == safe_strcmp (QSF_DATE_CONVERT, option->option_name))
+	{
+		params->convert = (*(double *) option->value);
+		if (params->convert > 0)
+			PINFO (" converting date into time on file write.");
+	}
 }
 
 static void
@@ -139,6 +145,19 @@ qsf_get_config (QofBackend * be)
 	option->value = (gpointer) params->encoding;
 	qof_backend_prepare_option (be, option);
 	g_free (option);
+	option = g_new0 (QofBackendOption, 1);
+	option->option_name = QSF_DATE_CONVERT;
+	option->description = 
+		_("Convert deprecated date values to time values.");
+	option->tooltip = 
+		_("Applications that support the new QOF time format "
+		"need to enable this option to convert older date values into time. "
+		"Applications that still use date should not set this option "
+		"until time values are supported.");
+	option->type = KVP_TYPE_GINT64;
+	option->value = &params->convert;
+	qof_backend_prepare_option (be, option);
+	g_free (option);
 	LEAVE (" ");
 	return qof_backend_complete_frame (be);
 }
@@ -163,6 +182,7 @@ qsf_param_init (qsf_param * params)
 
 	g_return_if_fail (params != NULL);
 	params->count = 0;
+	params->convert = 1;
 	params->use_gz_level = 0;
 	params->supported_types = NULL;
 	params->file_type = QSF_UNDEF;
@@ -192,6 +212,8 @@ qsf_param_init (qsf_param * params)
 	params->supported_types =
 		g_slist_append (params->supported_types, QOF_TYPE_NUMERIC);
 #ifndef QOF_DISABLE_DEPRECATED
+	/*  Support read if built with deprecated code included.
+		Support write only if convert option is not enabled. */
 	params->supported_types =
 		g_slist_append (params->supported_types, QOF_TYPE_DATE);
 #endif
@@ -1408,8 +1430,17 @@ qsf_object_commitCB (gpointer key, gpointer value, gpointer data)
 			string_setter (qsf_ent, (gchar *) xmlNodeGetContent (node));
 		}
 	}
+#ifndef QOF_DISABLE_DEPRECATED
+	/* use convert here to read "date" */
+	if ((params->convert != 0) &&
+		((safe_strcmp (qof_type, QOF_TYPE_DATE) == 0) ||
+		(safe_strcmp (qof_type, QOF_TYPE_TIME) == 0)))
+	{
+	/* just reading the same value from a different tag */
+#else
 	if (safe_strcmp (qof_type, QOF_TYPE_TIME) == 0)
 	{
+#endif
 		time_setter = (void (*)(QofEntity *, QofTime*)) cm_setter;
 		if (time_setter != NULL)
 		{
@@ -1428,7 +1459,8 @@ qsf_object_commitCB (gpointer key, gpointer value, gpointer data)
 		}
 	}
 #ifndef QOF_DISABLE_DEPRECATED
-	if (safe_strcmp (qof_type, QOF_TYPE_DATE) == 0)
+	if ((params->convert == 0) &&
+		(safe_strcmp (qof_type, QOF_TYPE_DATE) == 0))
 	{
 		void (*date_setter) (QofEntity *, Timespec);
 		struct tm qsf_time;
@@ -1677,7 +1709,7 @@ qsf_provider_init (void)
 	QofBackendProvider *prov;
 
 	prov = g_new0 (QofBackendProvider, 1);
-	prov->provider_name = "QSF Backend Version 0.3";
+	prov->provider_name = "QSF Backend Version 0.4";
 	prov->access_method = "file";
 	prov->partial_book_supported = TRUE;
 	prov->backend_new = qsf_backend_new;

@@ -170,9 +170,9 @@ void qsf_provider_init (void);
 
 /** \brief compression level
 
-\b Type: gint (KVP_TYPE_GINT64)
+\b Type: gint64 (KVP_TYPE_GINT64)
 
-Use GINT_TO_POINTER() to set a integer value between 0 and 9.
+Pass a pointer to an integer value between 0 and 9.
 */
 #define QSF_COMPRESS    "compression_level"
 
@@ -194,12 +194,40 @@ to offer multiple map selections to the user.
 #define QSF_MAP_FILES   "selected_map_files"
 
 /** \brief Encoding string.
- *
- * Defaults of UTF-8. */
+
+ Defaults of UTF-8. */
 #define QSF_ENCODING    "encoding_string"
 
-/** @} */
+/** \brief Convert QOF_TYPE_DATE to QOF_TYPE_TIME
 
+QOF_TYPE_DATE is deprecated and some files will need 
+conversion. Applications can set this option so that if
+a QOF_TYPE_DATE field (&lt;date&gt;) is encountered, a
+QOF_TYPE_TIME field (&lt;time&gt;) will be passed to the
+application and written out when the file is saved.
+
+Applications that support the new QOF time format 
+need to enable this option to prevent data loss when
+loading older files. It is safe to leave the option enabled,
+whether or not the file contains any date fields.
+
+Applications that still use date must not set this option 
+until time values are supported.
+
+Although this could be passed to the user to specify, 
+most applications should set this option at start-up
+and without user intervention.
+
+\b Type: gint64 (KVP_TYPE_GINT64)
+
+Pass a pointer to a non-zero integer value to enable.
+
+Zero by default. Ignored if QOF was built with
+deprecated code disabled.
+*/
+#define QSF_DATE_CONVERT "convert_date_to_time"
+
+/** @} */
 /** @} */
 /** @} */
 

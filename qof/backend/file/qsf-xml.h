@@ -412,6 +412,7 @@ typedef struct qsf_metadata
 	Defaults to the pre-installed QSF maps, currently: pilot-qsf-GnuCashInvoice.xml
 	*/
 	const gchar *encoding;		  /**< Backend encoding option - defaults to UTF-8. */
+	gint64 convert;				  /**< Convert date to time on file write. Off. */
 } qsf_param;
 
 /** \brief Validation metadata
