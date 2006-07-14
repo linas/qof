@@ -351,15 +351,12 @@ Unlike GDate, QofDate allows time-related formats.
 
  \param str A pre-formatted string, suitable to be passed 
 directly to strftime.
- \param identifier Positive integer value to be used to 
-identify this date format later. Must be greater than 
-DATE_FORMAT_LAST. If the identifier is greater than 
-DATE_FORMAT_LAST but already exists, the previous value
-will be overridden.
+ \param identifier integer pointer. Will be set to the
+positive value to be used to identify this date format later.
  \return TRUE on success, otherwise FALSE
 */
 gboolean 
-qof_date_format_add (const gchar * str, QofDateFormat identifier);
+qof_date_format_add (const gchar * str, QofDateFormat  *identifier);
 
 /** \brief Retrieve the shorthand name for the selected date 
 format.
