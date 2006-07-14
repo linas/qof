@@ -230,17 +230,15 @@ qof_time_to_time_t (QofTime * qt, time_t * t, glong * nanosecs)
 QofTime *
 qof_time_from_tm (struct tm * tm, glong nanosecs)
 {
-	GDate *d;
-	QofTime *time;
+	QofDate *qd;
+	QofTime *qt;
 
 	/* avoids use of gmtime_r and therefore time_t */
-	d = g_date_new_dmy (tm->tm_mday, tm->tm_mon + 1, tm->tm_year + 1900);
-	time = qof_time_from_gdate (d);
-	time->qt_sec += tm->tm_hour * 60 * 60;
-	time->qt_sec += tm->tm_min * 60;
-	time->qt_sec += tm->tm_sec;
-	time->qt_nsec = nanosecs;
-	return time;
+	qd = qof_date_from_struct_tm (tm);
+	qd->qd_nanosecs = nanosecs;
+	qt = qof_date_to_qtime (qd);
+	qof_date_free (qd);
+	return qt;
 }
 
 gboolean
