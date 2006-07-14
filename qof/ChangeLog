@@ -1,3 +1,8 @@
+2006-07-14  Neil Williams <linux@codehelp.co.uk>
+
+	* qofinstance.c : Set a valid time when creating
+	a new instance.
+
 2006-07-13  Neil Williams <linux@codehelp.co.uk>
 
 	* qof/qofdate.c : Fix date normalising.

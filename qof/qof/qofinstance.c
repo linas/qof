@@ -56,7 +56,7 @@ qof_instance_init (QofInstance * inst, QofIdType type, QofBook * book)
 
 	inst->book = book;
 	inst->kvp_data = kvp_frame_new ();
-	inst->update_time = qof_time_new ();
+	inst->update_time = qof_time_get_current ();
 	inst->editlevel = 0;
 	inst->do_free = FALSE;
 	inst->dirty = FALSE;
@@ -106,7 +106,7 @@ qof_instance_get_update_time (QofInstance * inst)
 	{
 		QofTime *time;
 
-		time = qof_time_new ();
+		time = qof_time_get_current ();
 		return time;
 	}
 	return inst->update_time;
