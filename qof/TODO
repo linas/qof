@@ -9,3 +9,13 @@ Also take a look at doxy/deprecated.html which
 describes all the functions, objects, values and
 types that need to be replaced in code using QOF
 to make the transition to libqof2.
+
+QofTime/QofDate in QSF
+
+QSF still supports both <date> and <time> when built
+with deprecated code enabled (the default). Applications
+should convert existing files from <date> to <time>.
+Possible QofBackendOption to read <date> and write <time>.
+Each file would then only need to be read once with this
+option set.
+
