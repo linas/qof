@@ -56,60 +56,79 @@ events added within QOF.
 event identifiers must be based on this when using QOF_MAKE_EVENT(). */
 #define QOF_EVENT_BASE 8
 
-/** \brief Default events for backwards compatibility.
+/** \name Default events for backwards compatibility.
 
 These defaults merely replicate previous behaviour,
 any process can define their own events. 
 
-\note events 5, 6, and 7 are "undefined" as of v0.6.3
+\note events 6, and 7 are "undefined" as of v0.6.3
 for future libqof1 or libqof2 usage.
 */
+/** init value - invalid. */
 #define QOF_EVENT_NONE     (0)
+/** an entity has been created. */
 #define QOF_EVENT_CREATE   QOF_MAKE_EVENT(0)
+/** \brief an entity is about to be modified. 
+
+In addition to previous usage, can used for
+::QofUndo so that the original state
+of an entity can be stored before modification
+to allow the change to be undone and then redone.
+*/
 #define QOF_EVENT_MODIFY   QOF_MAKE_EVENT(1)
+/** an entity is about to be destroyed. */
 #define QOF_EVENT_DESTROY  QOF_MAKE_EVENT(2)
 #define QOF_EVENT_ADD      QOF_MAKE_EVENT(3)
 #define QOF_EVENT_REMOVE   QOF_MAKE_EVENT(4)
+/** \brief an entity has been modified. 
+
+Added for QofUndo so that the altered state
+of an entity can be stored to allow the change
+to be undone and then redone.
+
+\since 0.7.0
+*/
+#define QOF_EVENT_COMMIT   QOF_MAKE_EVENT(5)
 #define QOF_EVENT__LAST    QOF_MAKE_EVENT(QOF_EVENT_BASE-1)
 #define QOF_EVENT_ALL      (0xff)
 
 /** \brief Handler invoked when an event is generated.
- *
- * @param ent:      Entity generating the event
- * @param event_type:  The id of the event, including additional identifiers and
+
+ @param ent:      Entity generating the event
+ @param event_type:  The id of the event, including additional identifiers and
  	the older defaults.
- * @param handler_data:   data supplied when handler was registered.
- * @param event_data:   data to be supplied when handler is invoked.
- */
+ @param handler_data:   data supplied when handler was registered.
+ @param event_data:   data to be supplied when handler is invoked.
+*/
 typedef void (*QofEventHandler) (QofEntity * ent, QofEventId event_type,
 								 gpointer handler_data, gpointer event_data);
 
 /** \brief Register a handler for events.
- *
- * @param handler:   handler to register
- * @param handler_data: data provided when handler is invoked
- *
- * @return id identifying handler
- */
+
+ @param handler:   handler to register
+ @param handler_data: data provided when handler is invoked
+
+ @return id identifying handler
+*/
 gint qof_event_register_handler (QofEventHandler handler,
 								 gpointer handler_data);
 
 /** \brief Unregister an event handler.
- *
- * @param handler_id: the id of the handler to unregister
- */
+
+ @param handler_id: the id of the handler to unregister
+*/
 void qof_event_unregister_handler (gint handler_id);
 
 /** \brief Invoke all registered event handlers using the given arguments.
 
    Certain default events are used by QOF:
 
-- QOF_EVENT_DEFAULT_CREATE events should be generated after the object
-    has been created and registered in the engine entity table.
-- QOF_EVENT_DEFAULT_MODIFY events should be generated whenever any data
-     member or submember (i.e., splits) is changed.
-- QOF_EVENT_DEFAULT_DESTROY events should be called before the object
-     has been destroyed or removed from the entity table.
+- QOF_EVENT_DEFAULT_CREATE events should be generated \b after 
+	the object has been created and registered in the book.
+- QOF_EVENT_DEFAULT_MODIFY events should be generated whenever 
+	any data member or submember (i.e., splits) is changed.
+- QOF_EVENT_DEFAULT_DESTROY events should be called \b before
+	the object has been destroyed or removed book.
 
    Any other events are entirely the concern of the application.
 
