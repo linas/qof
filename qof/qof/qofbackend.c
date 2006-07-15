@@ -1,7 +1,7 @@
 /********************************************************************\
- * qofbackend.c -- utility routines for dealing with the data backend  *
+ * qofbackend.c -- utility routines for the data backend            *
  * Copyright (C) 2000 Linas Vepstas <linas@linas.org>               *
- * Copyright (C) 2004-5 Neil Williams <linux@codehelp.co.uk>        *
+ * Copyright (C) 2004-2006 Neil Williams <linux@codehelp.co.uk>     *
  *                                                                  *
  * This program is free software; you can redistribute it and/or    *
  * modify it under the terms of the GNU General Public License as   *
@@ -152,13 +152,9 @@ void
 qof_backend_run_begin (QofBackend * be, QofInstance * inst)
 {
 	if (!be || !inst)
-	{
 		return;
-	}
 	if (!be->begin)
-	{
 		return;
-	}
 	(be->begin) (be, inst);
 }
 
@@ -166,26 +162,18 @@ gboolean
 qof_backend_begin_exists (QofBackend * be)
 {
 	if (be->begin)
-	{
 		return TRUE;
-	}
 	else
-	{
 		return FALSE;
-	}
 }
 
 void
 qof_backend_run_commit (QofBackend * be, QofInstance * inst)
 {
 	if (!be || !inst)
-	{
 		return;
-	}
 	if (!be->commit)
-	{
 		return;
-	}
 	(be->commit) (be, inst);
 }
 
@@ -204,7 +192,8 @@ qof_backend_prepare_frame (QofBackend * be)
 }
 
 void
-qof_backend_prepare_option (QofBackend * be, QofBackendOption * option)
+qof_backend_prepare_option (QofBackend * be, 
+							QofBackendOption * option)
 {
 	KvpValue *value;
 	gchar *temp;
@@ -337,9 +326,7 @@ config_foreach_cb (const gchar * key, KvpValue * value, gpointer data)
 	option.option_name = key;
 	option.type = kvp_value_get_type (value);
 	if (!option.type)
-	{
 		return;
-	}
 	switch (option.type)
 	{							/* set the KvpFrame value into the option */
 	case KVP_TYPE_GINT64:
@@ -465,15 +452,13 @@ config_foreach_cb (const gchar * key, KvpValue * value, gpointer data)
 }
 
 void
-qof_backend_option_foreach (KvpFrame * config, QofBackendOptionCB cb,
-	gpointer data)
+qof_backend_option_foreach (KvpFrame * config, 
+	QofBackendOptionCB cb, gpointer data)
 {
 	struct config_iterate helper;
 
 	if (!config || !cb)
-	{
 		return;
-	}
 	ENTER (" ");
 	helper.fcn = cb;
 	helper.count = 1;
@@ -487,13 +472,9 @@ void
 qof_backend_load_config (QofBackend * be, KvpFrame * config)
 {
 	if (!be || !config)
-	{
 		return;
-	}
 	if (!be->load_config)
-	{
 		return;
-	}
 	(be->load_config) (be, config);
 }
 
@@ -501,13 +482,9 @@ KvpFrame *
 qof_backend_get_config (QofBackend * be)
 {
 	if (!be)
-	{
 		return NULL;
-	}
 	if (!be->get_config)
-	{
 		return NULL;
-	}
 	return (be->get_config) (be);
 }
 
@@ -515,17 +492,11 @@ gboolean
 qof_backend_commit_exists (QofBackend * be)
 {
 	if (!be)
-	{
 		return FALSE;
-	}
 	if (be->commit)
-	{
 		return TRUE;
-	}
 	else
-	{
 		return FALSE;
-	}
 }
 
 gboolean

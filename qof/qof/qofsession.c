@@ -45,6 +45,7 @@
 #include "qofbook-p.h"
 #include "qofsession-p.h"
 #include "qofobject-p.h"
+#include "qofundo-p.h"
 
 static GHookList *session_closed_hooks = NULL;
 static QofLogModule log_module = QOF_MOD_SESSION;
@@ -273,7 +274,7 @@ qof_session_get_backend (QofSession * session)
 	return session->backend;
 }
 
-const char *
+const gchar *
 qof_session_get_file_path (QofSession * session)
 {
 	if (!session)
@@ -283,7 +284,7 @@ qof_session_get_file_path (QofSession * session)
 	return session->backend->fullpath;
 }
 
-const char *
+const gchar *
 qof_session_get_url (QofSession * session)
 {
 	if (!session)
@@ -359,7 +360,7 @@ col_ref_cb (QofEntity * ref_ent, gpointer user_data)
 	QofEntityCopyData *qecd;
 	QofEntity *ent;
 	const GUID *cm_guid;
-	char cm_sa[GUID_ENCODING_LENGTH + 1];
+	gchar cm_sa[GUID_ENCODING_LENGTH + 1];
 	gchar *cm_string;
 
 	qecd = (QofEntityCopyData *) user_data;
@@ -1008,9 +1009,9 @@ the default QOF ones. The backends specified here are
 loaded only by applications that do not have their own. */
 struct backend_providers
 {
-	const char *libdir;
-	const char *filename;
-	const char *init_fcn;
+	const gchar *libdir;
+	const gchar *filename;
+	const gchar *init_fcn;
 };
 
 /* All available QOF backends need to be described here
