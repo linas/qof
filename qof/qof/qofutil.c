@@ -45,9 +45,7 @@ strncasestr (const guchar * str1, const guchar * str2, size_t len)
 		if (toupper (*str1) == toupper (*str2))
 		{
 			if (strncasecmp (str1, str2, strlen (str2)) == 0)
-			{
 				return (gchar *) str1;
-			}
 		}
 		str1++;
 	}
@@ -80,13 +78,9 @@ safe_strcmp (const gchar * da, const gchar * db)
 		}
 	}
 	else if ((!(da)) && (db))
-	{
 		return -1;
-	}
 	else if ((da) && (!(db)))
-	{
 		return +1;
-	}
 	return 0;
 }
 
@@ -104,13 +98,9 @@ safe_strcasecmp (const gchar * da, const gchar * db)
 		}
 	}
 	else if ((!(da)) && (db))
-	{
 		return -1;
-	}
 	else if ((da) && (!(db)))
-	{
 		return +1;
-	}
 	return 0;
 }
 
@@ -274,27 +264,17 @@ qof_begin_edit (QofInstance * inst)
 	QofBackend *be;
 
 	if (!inst)
-	{
 		return FALSE;
-	}
 	(inst->editlevel)++;
 	if (1 < inst->editlevel)
-	{
 		return FALSE;
-	}
 	if (0 >= inst->editlevel)
-	{
 		inst->editlevel = 1;
-	}
 	be = qof_book_get_backend (inst->book);
 	if (be && qof_backend_begin_exists (be))
-	{
 		qof_backend_run_begin (be, inst);
-	}
 	else
-	{
 		inst->dirty = TRUE;
-	}
 	return TRUE;
 }
 
@@ -304,27 +284,19 @@ qof_commit_edit (QofInstance * inst)
 	QofBackend *be;
 
 	if (!inst)
-	{
 		return FALSE;
-	}
 	(inst->editlevel)--;
 	if (0 < inst->editlevel)
-	{
 		return FALSE;
-	}
 	if ((-1 == inst->editlevel) && inst->dirty)
 	{
 		be = qof_book_get_backend ((inst)->book);
 		if (be && qof_backend_begin_exists (be))
-		{
 			qof_backend_run_begin (be, inst);
-		}
 		inst->editlevel = 0;
 	}
 	if (0 > inst->editlevel)
-	{
 		inst->editlevel = 0;
-	}
 	return TRUE;
 }
 
