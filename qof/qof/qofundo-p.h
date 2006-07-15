@@ -27,6 +27,32 @@
 #include <qof.h>
 #include "qofundo.h"
 
+/** @brief The parameter changes, one or more per affected entity 
+
+One per parameter change - the bottom level of any undo. A single click of 
+Undo could use the data from one or many parameter changes - as determined by 
+the event. Each parameter change can be for any entity of any registered type 
+in the book and parameter changes can be repeated for the multiple changes to 
+different parameters of the same entity. The combination of param, guid and 
+type will be unique per event. (i.e. no event will ever set the same 
+parameter of the same entity twice (with or without different data) in one 
+undo operation.)
+*/
+typedef struct QofUndoEntity_t QofUndoEntity;
+
+/** @brief The affected entities, one or more per operation 
+
+The top level of any undo. Contains a GList that keeps the type of operation
+and the GList of qof_undo_entity* instances relating to that operation. Some
+form of index / counter probably too in order to speed up freeing unwanted
+operations and undo data upon resumption of editing and in controlling the
+total number of operations that can be undone.
+
+Each qof_undo_event.entity_list can contain data about more than 1 type of
+entity.
+*/
+typedef struct QofUndoOperation_t QofUndoOperation;
+
 typedef struct QofUndo_s
 {
 	GList *undo_list;
@@ -39,9 +65,6 @@ typedef struct QofUndo_s
 /* Undo is limited, not infinite. */
 #define MAX_UNDO_LENGTH     300
 
-/* Free the entire undo list for this book. */
-void qof_book_clear_undo (QofBook * book);
-
 /* reads the data from this parameter to allow undo
 
 To be able to undo and then redo an action, QOF needs to know the
@@ -49,7 +72,8 @@ before and after states. Initially, the before state is the same as
 the file but after that point, the state of the entity needs to be
 tracked whenever it is opened for editing.
 */
-QofUndoEntity *qof_prepare_undo (QofEntity * ent, QofParam * param);
+QofUndoEntity *
+qof_prepare_undo (QofEntity * ent, const QofParam * param);
 
 /* Add the changes to be undone to the event.
 
@@ -58,7 +82,8 @@ any number of undo_entity pointers (representing the
 entity changes relating to this event) to the list 
 of changes for this event.
 */
-void qof_undo_new_entry (gpointer event, gpointer changes);
+void 
+qof_undo_new_entry (gpointer event, gpointer changes);
 
 /* Add an undo event to the list.
 
@@ -67,12 +92,7 @@ type holds the type of event that has just occurred.
 If the event follows a successful qof_commit_edit, then the
 cached undo_entity changes are placed into this undo_event.
 */
-QofUndoOperation *qof_undo_new_operation (QofBook * book, gchar * label);
-
-/* dummy routines for testing only */
-void undo_edit_record (QofInstance * inst, QofParam * param);
-void undo_edit_commit (QofInstance * inst, QofParam * param);
-void undo_create_record (QofInstance * inst);
-void undo_delete_record (QofInstance * inst);
+QofUndoOperation *
+qof_undo_new_operation (QofBook * book, gchar * label);
 
 #endif /* _QOFUNDO_P_H */

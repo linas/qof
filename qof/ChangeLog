@@ -1,3 +1,14 @@
+2006-07-15  Neil Williams <linux@codehelp.co.uk>
+
+	* qof/qofevent.h : new QOF_EVENT_COMMIT event to 
+	use alongside QOF_EVENT_MODIFY to handle before 
+	and after edit undo operations.
+	* qof/qoflog.c : adding undo the default log modules.
+	* qof/qofundo-p.h
+	 qof/qofundo.c
+	 qof/qofundo.h : Adding public functions to mark
+	 entity changes for undo operations.
+
 2006-07-14  Neil Williams <linux@codehelp.co.uk>
 
 	* backend/file/qsf-object.xsd.xml : Add time 

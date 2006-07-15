@@ -45,7 +45,7 @@ typedef enum
 
 struct QofUndoEntity_t
 {
-	QofParam *param;			/* static anyway so only store a pointer */
+	const QofParam *param;		/* static anyway so only store a pointer */
 	const GUID *guid;			/* enable re-creation of this entity */
 	QofIdType type;				/* ditto param, static. */
 	gchar *value;				/* cached string? */
@@ -61,8 +61,9 @@ struct QofUndoOperation_t
 	GList *entity_list;			/* GList of qof_undo_entity* */
 };
 
-void
-qof_entity_set_param (QofEntity * ent, QofParam * param, gchar * value)
+static void
+set_param (QofEntity * ent, const QofParam * param, 
+					  gchar * value)
 {
 	gchar *tail;
 	gnc_numeric cli_numeric;
@@ -202,6 +203,15 @@ qof_entity_set_param (QofEntity * ent, QofParam * param, gchar * value)
 	}
 }
 
+void
+qof_undo_set_param (QofEntity * ent, const QofParam * param, 
+					  gchar * value)
+{
+	qof_undo_modify ((QofInstance*)ent, param);
+	set_param (ent, param, value);
+	qof_undo_commit ((QofInstance*)ent, param);
+}
+
 static void
 undo_from_kvp_helper (const gchar * path, KvpValue * content,
 	gpointer data)
@@ -214,7 +224,7 @@ undo_from_kvp_helper (const gchar * path, KvpValue * content,
 }
 
 QofUndoEntity *
-qof_prepare_undo (QofEntity * ent, QofParam * param)
+qof_prepare_undo (QofEntity * ent, const QofParam * param)
 {
 	QofUndoEntity *undo_entity;
 	KvpFrame *undo_frame;
@@ -225,7 +235,8 @@ qof_prepare_undo (QofEntity * ent, QofParam * param)
 	undo_entity->param = param;
 	undo_entity->how = UNDO_MODIFY;
 	undo_entity->type = ent->e_type;
-	undo_entity->value = qof_book_merge_param_as_string (param, ent);
+	undo_entity->value = 
+		qof_book_merge_param_as_string ((QofParam*) param, ent);
 	if (0 == (safe_strcmp (param->param_type, QOF_TYPE_KVP)))
 	{
 		undo_frame = kvp_frame_copy (param->param_getfcn (ent, param));
@@ -239,28 +250,22 @@ qof_prepare_undo (QofEntity * ent, QofParam * param)
 static void
 qof_reinstate_entity (QofUndoEntity * undo_entity, QofBook * book)
 {
-	QofParam *undo_param;
+	const QofParam *undo_param;
 	QofCollection *coll;
 	QofEntity *ent;
 
 	undo_param = undo_entity->param;
 	if (!undo_param)
-	{
 		return;
-	}
 	PINFO (" reinstate:%s", undo_entity->type);
 	coll = qof_book_get_collection (book, undo_entity->type);
 	if (!coll)
-	{
 		return;
-	}
 	ent = qof_collection_lookup_entity (coll, undo_entity->guid);
 	if (!ent)
-	{
 		return;
-	}
 	PINFO (" undoing %s %s", undo_param->param_name, undo_entity->value);
-	qof_entity_set_param (ent, undo_param, undo_entity->value);
+	set_param (ent, undo_param, undo_entity->value);
 }
 
 static void
@@ -309,9 +314,7 @@ qof_book_undo (QofBook * book)
 	if (book_undo->index_position > 1)
 		book_undo->index_position--;
 	else
-	{
 		book_undo->index_position = 0;
-	}
 	undo_operation =
 		(QofUndoOperation
 		*) (g_list_nth (book_undo->undo_list,
@@ -322,9 +325,7 @@ qof_book_undo (QofBook * book)
 	{
 		undo_entity = (QofUndoEntity *) ent_list->data;
 		if (!undo_entity)
-		{
 			break;
-		}
 		switch (undo_entity->how)
 		{
 		case UNDO_MODIFY:
@@ -366,17 +367,13 @@ qof_book_redo (QofBook * book)
 		*) (g_list_nth (book_undo->undo_list,
 			book_undo->index_position))->data;
 	if (!undo_operation)
-	{
 		return;
-	}
 	ent_list = undo_operation->entity_list;
 	while (ent_list != NULL)
 	{
 		undo_entity = (QofUndoEntity *) ent_list->data;
 		if (!undo_entity)
-		{
 			break;
-		}
 		switch (undo_entity->how)
 		{
 		case UNDO_MODIFY:
@@ -405,9 +402,7 @@ qof_book_redo (QofBook * book)
 	if (book_undo->index_position < length)
 		book_undo->index_position++;
 	else
-	{
 		book_undo->index_position = length;
-	}
 }
 
 void
@@ -417,9 +412,7 @@ qof_book_clear_undo (QofBook * book)
 	QofUndo *book_undo;
 
 	if (!book)
-	{
 		return;
-	}
 	book_undo = book->undo_data;
 	while (book_undo != NULL)
 	{
@@ -489,16 +482,14 @@ qof_undo_new_entry (gpointer cache, gpointer operation)
 }
 
 void
-undo_create_record (QofInstance * instance)
+qof_undo_create (QofInstance * instance)
 {
 	QofUndoEntity *undo_entity;
 	QofBook *book;
 	QofUndo *book_undo;
 
 	if (!instance)
-	{
 		return;
-	}
 	book = instance->book;
 	book_undo = book->undo_data;
 	undo_entity = g_new0 (QofUndoEntity, 1);
@@ -528,7 +519,7 @@ undo_get_entity (QofParam * param, gpointer data)
 }
 
 void
-undo_delete_record (QofInstance * instance)
+qof_undo_delete (QofInstance * instance)
 {
 	QofUndoEntity *undo_entity;
 	QofIdType type;
@@ -536,9 +527,7 @@ undo_delete_record (QofInstance * instance)
 	QofBook *book;
 
 	if (!instance)
-	{
 		return;
-	}
 	book = instance->book;
 	book_undo = book->undo_data;
 	// now need to store each parameter in a second entity, MODIFY.
@@ -554,21 +543,18 @@ undo_delete_record (QofInstance * instance)
 }
 
 void
-undo_edit_record (QofInstance * instance, QofParam * param)
+qof_undo_modify (QofInstance * instance, const QofParam * param)
 {
 	QofBook *book;
 	QofUndo *book_undo;
 	QofUndoEntity *undo_entity;
 
 	if (!instance || !param)
-	{
 		return;
-	}
 	book = instance->book;
 	book_undo = book->undo_data;
 	// handle if record is called without a commit.
 	undo_entity = qof_prepare_undo (&instance->entity, param);
-	// get book from the instance.
 	book_undo->undo_cache =
 		g_list_prepend (book_undo->undo_cache, undo_entity);
 	// set the initial state that undo will reinstate.
@@ -581,16 +567,14 @@ undo_edit_record (QofInstance * instance, QofParam * param)
 }
 
 void
-undo_edit_commit (QofInstance * instance, QofParam * param)
+qof_undo_commit (QofInstance * instance, const QofParam * param)
 {
 	QofUndoEntity *undo_entity;
 	QofUndo *book_undo;
 	QofBook *book;
 
 	if (!instance || !param)
-	{
 		return;
-	}
 	book = instance->book;
 	book_undo = book->undo_data;
 	undo_entity = qof_prepare_undo (&instance->entity, param);
