@@ -45,7 +45,6 @@
 #include "qofbook-p.h"
 #include "qofsession-p.h"
 #include "qofobject-p.h"
-#include "qofundo-p.h"
 
 static GHookList *session_closed_hooks = NULL;
 static QofLogModule log_module = QOF_MOD_SESSION;
