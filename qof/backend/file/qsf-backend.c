@@ -255,33 +255,19 @@ qsf_determine_file_type (const gchar * path)
 	struct stat sbuf;
 
 	if (!path)
-	{
 		return TRUE;
-	}
 	if (0 == safe_strcmp (path, QOF_STDOUT))
-	{
 		return TRUE;
-	}
 	if (stat (path, &sbuf) < 0)
-	{
 		return FALSE;
-	}
 	if (sbuf.st_size == 0)
-	{
 		return TRUE;
-	}
 	if (is_our_qsf_object (path))
-	{
 		return TRUE;
-	}
 	else if (is_qsf_object (path))
-	{
 		return TRUE;
-	}
 	else if (is_qsf_map (path))
-	{
 		return TRUE;
-	}
 	return FALSE;
 }
 
@@ -321,18 +307,14 @@ qsf_session_begin (QofBackend * be, QofSession * session,
 		g_free (path);
 	}
 	else
-	{
 		qsf_be->fullpath = g_strdup (book_path);
-	}
 	if (create_if_nonexistent)
 	{
 		FILE *f;
 
 		f = fopen (qsf_be->fullpath, "a+");
 		if (f)
-		{
 			fclose (f);
-		}
 		else
 		{
 			qof_backend_set_error (be, ERR_BACKEND_READONLY);
@@ -348,14 +330,10 @@ qsf_free_params (qsf_param * params)
 	g_hash_table_destroy (params->qsf_calculate_hash);
 	g_hash_table_destroy (params->qsf_default_hash);
 	if (params->referenceList)
-	{
 		g_list_free (params->referenceList);
-	}
 	g_slist_free (params->supported_types);
 	if (params->map_ns)
-	{
 		xmlFreeNs (params->map_ns);
-	}
 }
 
 static void
@@ -393,13 +371,9 @@ ent_ref_cb (QofEntity * ent, gpointer user_data)
 	{
 		ref = (QofEntityReference *) params->referenceList->data;
 		if (qof_object_is_choice (ent->e_type))
-		{
 			type = ref->choice_type;
-		}
 		else
-		{
 			type = ref->type;
-		}
 		coll = qof_book_get_collection (params->book, type);
 		reference = qof_collection_lookup_entity (coll, ref->ref_guid);
 		reference_setter =
@@ -446,9 +420,7 @@ qsfdoc_to_qofbook (xmlDocPtr doc, qsf_param * params)
 	g_return_val_if_fail (params->file_type == OUR_QSF_OBJ, FALSE);
 	qsf_root = xmlDocGetRootElement (params->input_doc);
 	if (!qsf_root)
-	{
 		return FALSE;
-	}
 	qsf_ns = qsf_root->ns;
 	qiter.ns = qsf_ns;
 	book = params->book;
@@ -462,9 +434,7 @@ qsfdoc_to_qofbook (xmlDocPtr doc, qsf_param * params)
 		object_list = g_list_next (object_list);
 		params->qsf_parameter_hash = params->object_set->parameters;
 		if (!qof_class_is_registered (params->object_set->object_type))
-		{
 			continue;
-		}
 		inst =
 			(QofInstance *) qof_object_new_instance (params->object_set->
 			object_type, book);
@@ -583,9 +553,7 @@ qsf_file_type (QofBackend * be, QofBook * book)
 	path = g_strdup (qsf_be->fullpath);
 	f = fopen (path, "r");
 	if (!f)
-	{
 		qof_backend_set_error (be, ERR_FILEIO_READ_ERROR);
-	}
 	fclose (f);
 	params->filepath = g_strdup (path);
 	qof_backend_get_error (be);
@@ -644,10 +612,9 @@ qsf_object_sequence (QofParam * qof_param, gpointer data)
 	for (result = checklist; result != NULL; result = result->next)
 	{
 		if (0 ==
-			safe_strcmp ((QofIdType) result->data, qof_param->param_type))
-		{
+			safe_strcmp ((QofIdType) result->data, 
+			qof_param->param_type))
 			params->knowntype = TRUE;
-		}
 	}
 	g_slist_free (checklist);
 	if (0 == safe_strcmp (qof_param->param_type, params->qof_type))
@@ -687,47 +654,27 @@ static KvpValueType
 qsf_to_kvp_helper (const char *type_string)
 {
 	if (0 == safe_strcmp (QOF_TYPE_INT64, type_string))
-	{
 		return KVP_TYPE_GINT64;
-	}
 	if (0 == safe_strcmp (QOF_TYPE_DOUBLE, type_string))
-	{
 		return KVP_TYPE_DOUBLE;
-	}
 	if (0 == safe_strcmp (QOF_TYPE_NUMERIC, type_string))
-	{
 		return KVP_TYPE_NUMERIC;
-	}
 	if (0 == safe_strcmp (QOF_TYPE_STRING, type_string))
-	{
 		return KVP_TYPE_STRING;
-	}
 	if (0 == safe_strcmp (QOF_TYPE_GUID, type_string))
-	{
 		return KVP_TYPE_GUID;
-	}
 #ifndef QOF_DISABLE_DEPRECATED
 	if (0 == safe_strcmp (QOF_TYPE_DATE, type_string))
-	{
 		return KVP_TYPE_TIMESPEC;
-	}
 #endif
 	if (0 == safe_strcmp (QOF_TYPE_TIME, type_string))
-	{
 		return KVP_TYPE_TIME;
-	}
 	if (0 == safe_strcmp (QSF_TYPE_BINARY, type_string))
-	{
 		return KVP_TYPE_BINARY;
-	}
 	if (0 == safe_strcmp (QSF_TYPE_GLIST, type_string))
-	{
 		return KVP_TYPE_GLIST;
-	}
 	if (0 == safe_strcmp (QSF_TYPE_FRAME, type_string))
-	{
 		return KVP_TYPE_FRAME;
-	}
 	return 0;
 }
 
@@ -809,7 +756,6 @@ qsf_from_kvp_helper (const gchar * path, KvpValue * content, gpointer data)
 	qof_param = params->qof_param;
 	full_path = NULL;
 	g_return_if_fail (params && path && content);
-	ENTER (" ");
 	n = kvp_value_get_type (content);
 	switch (n)
 	{
@@ -838,21 +784,15 @@ qsf_from_kvp_helper (const gchar * path, KvpValue * content, gpointer data)
 			xmlNewProp (node, BAD_CAST QSF_OBJECT_KVP, BAD_CAST full_path);
 			xmlNewProp (node, BAD_CAST QSF_OBJECT_VALUE,
 				BAD_CAST kvp_value_to_qof_type_helper (n));
-			PINFO (" set %s", kvp_value_to_qof_type_helper (n));
 			break;
 		}
 	case KVP_TYPE_FRAME:
 		{
 			if (!params->full_kvp_path)
-			{
 				params->full_kvp_path = g_strdup (path);
-			}
 			else
-			{
 				params->full_kvp_path = g_strconcat (params->full_kvp_path,
 					"/", path, NULL);
-			}
-			PINFO (" full=%s, path=%s ", params->full_kvp_path, path);
 			kvp_frame_for_each_slot (kvp_value_get_frame (content),
 				qsf_from_kvp_helper, params);
 			g_free (params->full_kvp_path);
@@ -865,7 +805,6 @@ qsf_from_kvp_helper (const gchar * path, KvpValue * content, gpointer data)
 			break;
 		}
 	}
-	LEAVE (" ");
 }
 
 static void
@@ -878,9 +817,7 @@ qsf_from_coll_cb (QofEntity * ent, gpointer user_data)
 
 	params = (qsf_param *) user_data;
 	if (!ent || !params)
-	{
 		return;
-	}
 	qof_param = params->qof_param;
 	guid_to_string_buff (qof_entity_get_guid (ent), qsf_guid);
 	node = xmlAddChild (params->output_node, xmlNewNode (params->qsf_ns,
@@ -901,18 +838,14 @@ qof_reference_list_cb (gconstpointer a, gconstpointer b)
 	aa = (QofEntityReference *) a;
 	bb = (QofEntityReference *) b;
 	if (aa == NULL)
-	{
 		return 1;
-	}
 	g_return_val_if_fail ((bb != NULL), 1);
 	g_return_val_if_fail ((aa->type != NULL), 1);
 	if ((0 == guid_compare (bb->ent_guid, aa->ent_guid))
 		&& (0 == safe_strcmp (bb->type, aa->type))
 		&& (0 == safe_strcmp (bb->param->param_name,
 				aa->param->param_name)))
-	{
 		return 0;
-	}
 	return 1;
 }
 
@@ -923,18 +856,14 @@ qof_reference_lookup (GList * referenceList, QofEntityReference * find)
 	QofEntityReference *ent_ref;
 
 	if (referenceList == NULL)
-	{
 		return NULL;
-	}
 	g_return_val_if_fail (find != NULL, NULL);
 	single_ref = NULL;
 	ent_ref = NULL;
 	single_ref =
 		g_list_find_custom (referenceList, find, qof_reference_list_cb);
 	if (single_ref == NULL)
-	{
 		return ent_ref;
-	}
 	ent_ref = (QofEntityReference *) single_ref->data;
 	g_list_free (single_ref);
 	return ent_ref;
@@ -970,9 +899,7 @@ reference_list_lookup (gpointer data, gpointer user_data)
 	{
 		if ((ref_param->param_getfcn == NULL)
 			|| (ref_param->param_setfcn == NULL))
-		{
 			return;
-		}
 		ref_name = g_strdup (reference->param->param_name);
 		node =
 			xmlAddChild (object_node,
@@ -986,14 +913,10 @@ reference_list_lookup (gpointer data, gpointer user_data)
 	{
 		ent = (QofEntity *) ref_param->param_getfcn (ent, ref_param);
 		if (!ent)
-		{
 			return;
-		}
 		if ((0 == safe_strcmp (ref_param->param_type, QOF_TYPE_COLLECT)) ||
 			(0 == safe_strcmp (ref_param->param_type, QOF_TYPE_CHOICE)))
-		{
 			return;
-		}
 		node =
 			xmlAddChild (object_node,
 			xmlNewNode (ns, BAD_CAST QOF_TYPE_GUID));
@@ -1066,9 +989,7 @@ qsf_entity_foreach (QofEntity * ent, gpointer data)
 			params->output_node = object_node;
 			ref = qof_class_get_referenceList (ent->e_type);
 			if (ref != NULL)
-			{
 				g_list_foreach (ref, reference_list_lookup, params);
-			}
 		}
 		if (0 == safe_strcmp (qof_param->param_type, QOF_TYPE_COLLECT))
 		{
@@ -1078,10 +999,8 @@ qsf_entity_foreach (QofEntity * ent, gpointer data)
 				params->qof_param = qof_param;
 				params->output_node = object_node;
 				if (qof_collection_count (qsf_coll) > 0)
-				{
 					qof_collection_foreach (qsf_coll, qsf_from_coll_cb,
 						params);
-				}
 			}
 			param_list = g_slist_next (param_list);
 			continue;
@@ -1115,10 +1034,7 @@ qsf_entity_foreach (QofEntity * ent, gpointer data)
 			qsf_kvp =
 				(KvpFrame *) qof_param->param_getfcn (ent, qof_param);
 			if (kvp_frame_is_empty (qsf_kvp))
-			{
-				LEAVE (" ");
 				return;
-			}
 			params->qof_param = qof_param;
 			params->output_node = object_node;
 			kvp_frame_for_each_slot (qsf_kvp, qsf_from_kvp_helper, params);
@@ -1186,7 +1102,8 @@ qofbook_to_qsf (QofBook * book, qsf_param * params)
 	g_return_val_if_fail (book != NULL, NULL);
 	params->book = book;
 	params->referenceList =
-		g_list_copy ((GList *) qof_book_get_data (book, ENTITYREFERENCE));
+		g_list_copy ((GList *) qof_book_get_data (book, 
+		ENTITYREFERENCE));
 	doc = xmlNewDoc (BAD_CAST QSF_XML_VERSION);
 	top_node = xmlNewNode (NULL, BAD_CAST QSF_ROOT_TAG);
 	xmlDocSetRootElement (doc, top_node);
@@ -1209,7 +1126,8 @@ qofbook_to_qsf (QofBook * book, qsf_param * params)
 }
 
 static void
-write_qsf_from_book (const char *path, QofBook * book, qsf_param * params)
+write_qsf_from_book (const gchar *path, QofBook * book, 
+					 qsf_param * params)
 {
 	xmlDocPtr qsf_doc;
 	gint write_result;
@@ -1221,9 +1139,7 @@ write_qsf_from_book (const char *path, QofBook * book, qsf_param * params)
 	PINFO (" use_gz_level=%" G_GINT64_FORMAT " encoding=%s",
 		params->use_gz_level, params->encoding);
 	if ((params->use_gz_level > 0) && (params->use_gz_level <= 9))
-	{
 		xmlSetDocCompressMode (qsf_doc, params->use_gz_level);
-	}
 	g_return_if_fail (qsf_is_valid
 		(QSF_SCHEMA_DIR, QSF_OBJECT_SCHEMA, qsf_doc) == TRUE);
 	write_result =
@@ -1446,7 +1362,9 @@ qsf_object_commitCB (gpointer key, gpointer value, gpointer data)
 		{
 			QofDate *qd;
 			QofTime *qt;
-			qd = qof_date_parse ((const gchar*) xmlNodeGetContent,
+
+			qd = qof_date_parse (
+				(const gchar*) xmlNodeGetContent (node),
 				QOF_DATE_FORMAT_UTC);
 			if(qd)
 			{
