@@ -433,6 +433,18 @@ qof_entity_foreach_copy (gpointer data, gpointer user_data)
 		}
 		registered_type = TRUE;
 	}
+	if (safe_strcmp (cm_param->param_type, QOF_TYPE_TIME) == 0)
+	{
+		QofTime *qt;
+		void (*time_setter) (QofEntity *, QofTime *);
+
+		qt = cm_param->param_getfcn (importEnt, cm_param);
+		time_setter = 
+			(void (*)(QofEntity *, QofTime*))cm_param->param_setfcn;
+		if (time_setter != NULL)
+			time_setter (targetEnt, qt);
+		registered_type = TRUE;
+	}
 #ifndef QOF_DISABLE_DEPRECATED
 	if (safe_strcmp (cm_param->param_type, QOF_TYPE_DATE) == 0)
 	{
@@ -447,9 +459,7 @@ qof_entity_foreach_copy (gpointer data, gpointer user_data)
 		date_setter =
 			(void (*)(QofEntity *, Timespec)) cm_param->param_setfcn;
 		if (date_setter != NULL)
-		{
 			date_setter (targetEnt, cm_date);
-		}
 		registered_type = TRUE;
 	}
 #endif
@@ -713,17 +723,11 @@ qof_entity_copy_to_session (QofSession * new_session, QofEntity * original)
 	QofBook *book;
 
 	if (!new_session || !original)
-	{
 		return FALSE;
-	}
 	if (qof_entity_guid_match (new_session, original))
-	{
 		return FALSE;
-	}
 	if (!qof_object_compliance (original->e_type, TRUE))
-	{
 		return FALSE;
-	}
 	qof_event_suspend ();
 	qecd.param_list = NULL;
 	book = qof_session_get_book (new_session);
@@ -738,9 +742,7 @@ qof_entity_copy_to_session (QofSession * new_session, QofEntity * original)
 	qof_class_param_foreach (original->e_type, qof_entity_param_cb, &qecd);
 	qof_commit_edit (inst);
 	if (g_slist_length (qecd.param_list) == 0)
-	{
 		return FALSE;
-	}
 	g_slist_foreach (qecd.param_list, qof_entity_foreach_copy, &qecd);
 	g_slist_free (qecd.param_list);
 	qof_event_resume ();
