@@ -417,7 +417,8 @@ qof_book_clear_undo (QofBook * book)
 	while (book_undo != NULL)
 	{
 		operation = (QofUndoOperation *) book_undo->undo_list->data;
-		g_list_free (operation->entity_list);
+		if(operation->entity_list)
+			g_list_free (operation->entity_list);
 		book_undo->undo_list = g_list_next (book_undo->undo_list);
 	}
 	book_undo->index_position = 0;

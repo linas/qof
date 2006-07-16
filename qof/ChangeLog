@@ -8,6 +8,14 @@
 	 qof/test/test-querynew.c : Ensure tests fail
 	reliably.
 
+	* qof/deprecated.c : Use the old gnc-date version 
+	as deprecated for those who depend on the bugs.
+	* qof/qofchoice.c : tweak to remove newline from 
+	debug logs
+	* qof/qofundo.c : Problems with clear_undo - 
+	temporary fix.
+	* qof/qofdate.h : Doxygen tweak.
+
 2006-07-15  Neil Williams <linux@codehelp.co.uk>
 
 	* qof/qofevent.h : new QOF_EVENT_COMMIT event to 
