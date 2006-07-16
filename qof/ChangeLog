@@ -16,6 +16,12 @@
 	temporary fix.
 	* qof/qofdate.h : Doxygen tweak.
 
+	* qof/qofsession.c : Added missing QofTime handler 
+	for copying between sessions.
+
+	* backend/file/qsf-backend.c : Fix missing (node)
+	value from routine to retrieve time string.
+
 2006-07-15  Neil Williams <linux@codehelp.co.uk>
 
 	* qof/qofevent.h : new QOF_EVENT_COMMIT event to 
