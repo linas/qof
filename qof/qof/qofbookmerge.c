@@ -1113,14 +1113,13 @@ qof_book_merge_param_as_string (QofParam * qtparam, QofEntity * qtEnt)
 	{
 		param_string = g_strdup (qtparam->param_getfcn (qtEnt, qtparam));
 		if (param_string == NULL)
-		{
 			param_string = "";
-		}
 		return param_string;
 	}
 	if (safe_strcmp (paramType, QOF_TYPE_TIME) == 0)
 	{
 		QofDate *qd;
+
 		param_qt = qtparam->param_getfcn (qtEnt, qtparam);
 		if (!param_qt)
 			return NULL;
@@ -1195,20 +1194,14 @@ qof_book_merge_param_as_string (QofParam * qtparam, QofEntity * qtEnt)
 		param_boolean = boolean_getter (qtEnt, qtparam);
 		/* Boolean values need to be lowercase for QSF validation. */
 		if (param_boolean == TRUE)
-		{
 			param_string = g_strdup ("true");
-		}
 		else
-		{
 			param_string = g_strdup ("false");
-		}
 		return param_string;
 	}
 	/* "kvp" contains repeating values, cannot be a single string for the frame. */
 	if (safe_strcmp (paramType, QOF_TYPE_KVP) == 0)
-	{
 		return param_string;
-	}
 	if (safe_strcmp (paramType, QOF_TYPE_CHAR) == 0)
 	{
 		char_getter =
