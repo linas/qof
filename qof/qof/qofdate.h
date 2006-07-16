@@ -278,7 +278,7 @@ times.
 
 /** Date and time with nanoseconds and timezone.
 
-%Y-%m-%d %H:%M:%S.%N %z
+"%Y-%m-%d %H:%M:%S.%N %z"
 
 12th July 2006 gives 2006-07-12 17:08:16.329768000 +0000
 in UTC. Timezones can be specified and will then be
