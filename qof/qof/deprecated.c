@@ -783,9 +783,183 @@ gnc_print_date (Timespec ts)
 	return buff;
 }
 
-gboolean
-qof_scan_date (const gchar * buff, gint * day, gint * month, gint * year)
+/* This is now user configured through the gnome options system() */
+static QofDateFormat dateFormat = QOF_DATE_FORMAT_LOCALE;
+static QofDateFormat prevQofDateFormat = QOF_DATE_FORMAT_LOCALE;
+
+static gboolean
+qof_scan_date_internal (const char *buff, int *day, int *month, int *year,
+                  QofDateFormat which_format)
 {
+   char *dupe, *tmp, *first_field, *second_field, *third_field;
+   int iday, imonth, iyear;
+   struct tm *now, utc;
+   time_t secs;
+
+   if (!buff) return(FALSE);
+
+	if(which_format == QOF_DATE_FORMAT_UTC)
+	{
+		if(strptime(buff, QOF_UTC_DATE_FORMAT, &utc)) {
+			*day = utc.tm_mday;
+			*month = utc.tm_mon + 1;
+			*year = utc.tm_year + 1900;
+			return TRUE;
+		}
+		else { return FALSE; }
+	}
+   dupe = g_strdup (buff);
+
+   tmp = dupe;
+   first_field = NULL;
+   second_field = NULL;
+   third_field = NULL;
+
+   /* Use strtok to find delimiters */
+   if (tmp) {
+     static char *delims = ".,-+/\\() ";
+
+      first_field = strtok (tmp, delims);
+      if (first_field) {
+         second_field = strtok (NULL, delims);
+         if (second_field) {
+            third_field = strtok (NULL, delims);
+         }
+      }
+   }
+
+   /* If any fields appear to be blank, use today's date */
+   time (&secs);
+   now = localtime (&secs);
+   iday = now->tm_mday; 
+   imonth = now->tm_mon+1;
+   iyear = now->tm_year+1900;
+
+   /* get numeric values */
+   switch (which_format)
+   {
+     case QOF_DATE_FORMAT_LOCALE:
+       if (buff[0] != '\0')
+       {
+         struct tm thetime;
+
+         /* Parse time string. */
+         memset(&thetime, -1, sizeof(struct tm));
+         strptime (buff, QOF_D_FMT, &thetime);
+
+         if (third_field) {
+           /* Easy.  All three values were parsed. */
+           iyear = thetime.tm_year + 1900;
+           iday = thetime.tm_mday;
+           imonth = thetime.tm_mon + 1;
+         } else if (second_field) {
+           /* Hard. Two values parsed.  Figure out the ordering. */
+           if (thetime.tm_year == -1) {
+             /* %m-%d or %d-%m. Don't care. Already parsed correctly. */
+             iday = thetime.tm_mday;
+             imonth = thetime.tm_mon + 1;
+           } else if (thetime.tm_mon != -1) {
+             /* Must be %Y-%m-%d. Reparse as %m-%d.*/
+             imonth = atoi(first_field);
+             iday = atoi(second_field);
+           } else {
+             /* Must be %Y-%d-%m. Reparse as %d-%m. */
+             iday = atoi(first_field);
+             imonth = atoi(second_field);
+           }
+         } else if (first_field) {
+           iday = atoi(first_field);
+         }
+       }
+       break;
+     case QOF_DATE_FORMAT_UK:
+     case QOF_DATE_FORMAT_CE:
+       if (third_field) {
+         iday = atoi(first_field);
+         imonth = atoi(second_field);
+         iyear = atoi(third_field);
+       } else if (second_field) {
+         iday = atoi(first_field);
+         imonth = atoi(second_field);
+       } else if (first_field) {
+         iday = atoi(first_field);
+       }
+       break;
+     case QOF_DATE_FORMAT_ISO:
+       if (third_field) {
+         iyear = atoi(first_field);
+         imonth = atoi(second_field);
+         iday = atoi(third_field);
+       } else if (second_field) {
+         imonth = atoi(first_field);
+         iday = atoi(second_field);
+       } else if (first_field) {
+         iday = atoi(first_field);
+       }
+       break;
+    case QOF_DATE_FORMAT_US:
+    default:
+       if (third_field) {
+         imonth = atoi(first_field);
+         iday = atoi(second_field);
+         iyear = atoi(third_field);
+       } else if (second_field) {
+         imonth = atoi(first_field);
+         iday = atoi(second_field);
+       } else if (first_field) {
+         iday = atoi(first_field);
+       }
+       break;
+   }
+
+   g_free (dupe);
+
+   if ((12 < imonth) || (31 < iday)) 
+   {
+     /* 
+      * Ack! Thppfft!  Someone just fed this routine a string in the
+      * wrong date format.  This is known to happen if a register
+      * window is open when changing the date format.  Try the
+      * previous date format.  If that doesn't work, see if we can
+      * exchange month and day. If that still doesn't work,
+      * bail and give the caller what they asked for (garbage) 
+      * parsed in the new format.
+      *
+      * Note: This test cannot detect any format change that only
+      * swaps month and day field, if the day is 12 or less.  This is
+      * deemed acceptable given the obscurity of this bug.
+      */
+     if ((which_format != prevQofDateFormat) &&
+         qof_scan_date_internal(buff, day, month, year, prevQofDateFormat))
+     {
+       return(TRUE);
+     }
+     if ((12 < imonth) && (12 >= iday))
+     {
+        int tmp = imonth; imonth = iday; iday = tmp;
+     } 
+	  else
+	  {
+        return FALSE;
+	  }
+   }
+
+   /* If the year entered is smaller than 100, assume we mean the current
+      century (and are not revising some roman emperor's books) */
+   if (iyear < 100)
+     iyear += ((int) ((now->tm_year+1950-iyear)/100)) * 100;
+
+   if (year) *year=iyear;
+   if (month) *month=imonth;
+   if (day) *day=iday;
+   return(TRUE);
+}
+
+gboolean
+qof_scan_date (const char *buff, int *day, int *month, int *year)
+{
+  return qof_scan_date_internal(buff, day, month, year, dateFormat);
+/*
 	QofDateFormat df;
 	QofDate *qd;
 
@@ -800,12 +974,20 @@ qof_scan_date (const gchar * buff, gint * day, gint * month, gint * year)
 	if ((year) && (qd->qd_year > 0) && (qd->qd_year < G_MAXINT))
 			*year = (gint)qd->qd_year;
 	return TRUE;
+*/
 }
 
 gboolean
 qof_scan_date_secs (const gchar * buff, time_t * secs)
 {
-	QofDateFormat df;
+  gboolean rc;
+  int day, month, year;
+  
+  rc = qof_scan_date_internal(buff, &day, &month, &year, dateFormat);
+  if (secs) *secs = xaccDMYToSec (day, month, year);
+
+  return rc;
+/*	QofDateFormat df;
 	glong nanosecs;
 	time_t t;
 	QofTime *time;
@@ -817,7 +999,7 @@ qof_scan_date_secs (const gchar * buff, time_t * secs)
 	if (!qof_time_to_time_t (time, &t, &nanosecs))
 		return FALSE;
 	qof_time_free (time);
-	return TRUE;
+	return TRUE;*/
 }
 
 Timespec
