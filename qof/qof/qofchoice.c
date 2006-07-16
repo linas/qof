@@ -35,13 +35,9 @@ static gboolean
 qof_choice_is_initialized (void)
 {
 	if (!qof_choice_table)
-	{
 		qof_choice_table = g_hash_table_new (g_str_hash, g_str_equal);
-	}
 	if (!qof_choice_table)
-	{
 		return FALSE;
-	}
 	return TRUE;
 }
 
@@ -53,16 +49,11 @@ qof_object_is_choice (QofIdType type)
 	value = NULL;
 	check = NULL;
 	if (!qof_choice_is_initialized ())
-	{
 		return FALSE;
-	}
 	g_return_val_if_fail (type != NULL, FALSE);
 	value = g_hash_table_lookup (qof_choice_table, type);
 	if ((GHashTable *) value)
-	{
 		return TRUE;
-	}
-	DEBUG (" QOF_TYPE_CHOICE setup failed for %s", type);
 	return FALSE;
 }
 
@@ -73,8 +64,10 @@ qof_choice_create (gchar *type)
 
 	g_return_val_if_fail (type != NULL, FALSE);
 	g_return_val_if_fail (qof_choice_is_initialized () == TRUE, FALSE);
+	ENTER (" ");
 	param_table = g_hash_table_new (g_str_hash, g_str_equal);
 	g_hash_table_insert (qof_choice_table, type, param_table);
+	LEAVE (" ");
 	return TRUE;
 }
 
@@ -123,8 +116,6 @@ qof_choice_check (gchar *choice_obj, gchar *param_name, gchar *choice)
 	choices = g_hash_table_lookup (param_table, param_name);
 	result = g_list_find (choices, choice);
 	if (!result)
-	{
 		return FALSE;
-	}
 	return TRUE;
 }
