@@ -267,7 +267,7 @@ specified fields. Remember to use gmtime() NOT localtime()!
 */
 #define QOF_DATE_FORMAT_ISO     4
 /** \brief QOF UTC format, xsd:date compatible. 
-QOF_UTC_DATE_FORMAT
+QOF_UTC_DATE_FORMAT "%Y-%m-%dT%H:%M:%SZ"
 
 xsd:date is recommended for any XML data storage of dates and 
 times.
