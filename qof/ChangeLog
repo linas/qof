@@ -1,3 +1,13 @@
+2006-07-16  Neil Williams <linux@codehelp.co.uk>
+
+	* qof/test/test-book-merge.c :
+	 qof/test/test-event.c
+	 qof/test/test-guid.c
+	 qof/test/test-numeric.c
+	 qof/test/test-object.c
+	 qof/test/test-querynew.c : Ensure tests fail
+	reliably.
+
 2006-07-15  Neil Williams <linux@codehelp.co.uk>
 
 	* qof/qofevent.h : new QOF_EVENT_COMMIT event to 

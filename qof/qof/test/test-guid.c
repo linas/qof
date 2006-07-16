@@ -92,5 +92,5 @@ main (int argc, char **argv)
 	print_test_results ();
 	exit (get_rv ());
 	guid_shutdown ();
-	return 0;
+	return get_rv();
 }

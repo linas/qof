@@ -137,7 +137,6 @@ main (int argc, char **argv)
 	test_class ();
 	test_querynew ();
 	print_test_results ();
-	exit (get_rv ());
 	qof_close ();
-	return 0;
+	return get_rv ();
 }

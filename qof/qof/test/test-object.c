@@ -151,7 +151,6 @@ main (int argc, char **argv)
 	qof_init ();
 	test_object ();
 	print_test_results ();
-	exit (get_rv ());
 	qof_close ();
-	return 0;
+	return get_rv ();
 }

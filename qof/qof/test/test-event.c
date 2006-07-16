@@ -520,5 +520,5 @@ main (int argc, const char *argv[])
 	}
 	print_test_results ();
 	qof_close ();
-	return EXIT_SUCCESS;
+	return get_rv();
 }
