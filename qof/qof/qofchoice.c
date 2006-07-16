@@ -62,7 +62,7 @@ qof_object_is_choice (QofIdType type)
 	{
 		return TRUE;
 	}
-	DEBUG (" QOF_TYPE_CHOICE setup failed for %s\n", type);
+	DEBUG (" QOF_TYPE_CHOICE setup failed for %s", type);
 	return FALSE;
 }
 
