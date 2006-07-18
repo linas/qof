@@ -90,6 +90,7 @@ qsf_is_valid (const gchar * schema_dir, const gchar * schema_filename,
 	xmlSchemaFreeParserCtxt (qsf_schema_file);
 	xmlSchemaFreeValidCtxt (qsf_context);
 	xmlSchemaFree (qsf_schema);
+	g_free (schema_path);
 	if (result == 0)
 	{
 		return TRUE;
@@ -155,6 +156,7 @@ qsf_object_validation_handler (xmlNodePtr child, xmlNsPtr ns,
 			{
 				type = QSF_DEFINED_OBJECT;
 			}
+			xmlFree (object_declaration);
 			count = g_hash_table_size (valid->object_table);
 			g_hash_table_insert (valid->object_table, object_declaration,
 				GINT_TO_POINTER (type));
@@ -202,6 +204,7 @@ is_our_qsf_object (const gchar * path)
 		&valid);
 	table_count = g_hash_table_size (valid.object_table);
 	g_hash_table_destroy (valid.object_table);
+	xmlFreeDoc (doc);
 	if (table_count == valid.qof_registered_count)
 	{
 		return TRUE;
@@ -241,11 +244,9 @@ is_our_qsf_object_be (qsf_param * params)
 	xmlNodePtr object_root;
 	qsf_validator valid;
 	gint table_count;
-	gchar *path;
 
 	g_return_val_if_fail ((params != NULL), FALSE);
-	path = g_strdup (params->filepath);
-	if (path == NULL)
+	if (params->filepath == NULL)
 	{
 		qof_backend_set_error (params->be, ERR_FILEIO_FILE_NOT_FOUND);
 		return FALSE;
@@ -254,7 +255,7 @@ is_our_qsf_object_be (qsf_param * params)
 	{
 		return FALSE;
 	}
-	doc = xmlParseFile (path);
+	doc = xmlParseFile (params->filepath);
 	if (doc == NULL)
 	{
 		qof_backend_set_error (params->be, ERR_FILEIO_PARSE_ERROR);
@@ -263,10 +264,12 @@ is_our_qsf_object_be (qsf_param * params)
 	if (TRUE != qsf_is_valid (QSF_SCHEMA_DIR, QSF_OBJECT_SCHEMA, doc))
 	{
 		qof_backend_set_error (params->be, ERR_QSF_INVALID_OBJ);
+		xmlFreeDoc (doc);
 		return FALSE;
 	}
 	params->file_type = IS_QSF_OBJ;
 	object_root = xmlDocGetRootElement (doc);
+	xmlFreeDoc (doc);
 	valid.object_table = g_hash_table_new (g_str_hash, g_str_equal);
 	valid.qof_registered_count = 0;
 	iter.ns = object_root->ns;
@@ -387,11 +390,9 @@ qsf_object_node_handler (xmlNodePtr child, xmlNsPtr qsf_ns,
 		object_set->object_count = 0;
 		object_set->parameters =
 			g_hash_table_new (g_str_hash, g_str_equal);
-		object_set->object_type =
-			g_strdup ((gchar *) xmlGetProp (child,
+		object_set->object_type = ((gchar *) xmlGetProp (child,
 				BAD_CAST QSF_OBJECT_TYPE));
-		object_count_s =
-			g_strdup ((gchar *) xmlGetProp (child,
+		object_count_s = ((gchar *) xmlGetProp (child,
 				BAD_CAST QSF_OBJECT_COUNT));
 		c = (gint64) strtol (object_count_s, &tail, 0);
 		object_set->object_count = (gint) c;
@@ -425,6 +426,7 @@ qsf_book_node_handler (xmlNodePtr child, xmlNsPtr ns, qsf_param * params)
 		{
 			book_count = (gint) strtol (book_count_s, &tail, 0);
 			/* More than one book not currently supported. */
+			g_free (book_count_s);
 			g_return_if_fail (book_count == 1);
 		}
 		iter.ns = ns;
@@ -432,12 +434,12 @@ qsf_book_node_handler (xmlNodePtr child, xmlNsPtr ns, qsf_param * params)
 		if (qsf_is_element (child_node, ns, QSF_BOOK_GUID))
 		{
 			DEBUG (" trying to set book GUID");
-			buffer = g_strdup ((gchar *) xmlNodeGetContent (child_node));
+			buffer = BAD_CAST xmlNodeGetContent (child_node);
 			g_return_if_fail (TRUE == string_to_guid (buffer, &book_guid));
 			qof_entity_set_guid ((QofEntity *) params->book, &book_guid);
 			xmlNewChild (params->output_node, params->qsf_ns,
 				BAD_CAST QSF_BOOK_GUID, BAD_CAST buffer);
-			g_free (buffer);
+			xmlFree (buffer);
 		}
 		qsf_node_foreach (child, qsf_object_node_handler, &iter, params);
 	}

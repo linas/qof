@@ -334,6 +334,8 @@ qsf_free_params (qsf_param * params)
 	g_slist_free (params->supported_types);
 	if (params->map_ns)
 		xmlFreeNs (params->map_ns);
+	if (params->input_doc)
+		xmlFreeDoc (params->input_doc);
 }
 
 static void
@@ -954,7 +956,7 @@ qsf_entity_foreach (QofEntity * ent, gpointer data)
 	params = (qsf_param *) data;
 	param_count = ++params->count;
 	ns = params->qsf_ns;
-	qsf_kvp = kvp_frame_new ();
+	qsf_kvp = NULL;
 	own_guid = FALSE;
 	choice_ent = NULL;
 	object_node = xmlNewChild (params->book_node, params->qsf_ns,
@@ -1409,9 +1411,11 @@ qsf_object_commitCB (gpointer key, gpointer value, gpointer data)
 	if ((safe_strcmp (qof_type, QOF_TYPE_NUMERIC) == 0) ||
 		(safe_strcmp (qof_type, QOF_TYPE_DEBCRED) == 0))
 	{
+		gchar *tmp;
 		numeric_setter = (void (*)(QofEntity *, gnc_numeric)) cm_setter;
-		string_to_gnc_numeric ((char *) xmlNodeGetContent (node),
-			&cm_numeric);
+		tmp = (char *) xmlNodeGetContent (node);
+		string_to_gnc_numeric (tmp,	&cm_numeric);
+		g_free (tmp);
 		if (numeric_setter != NULL)
 		{
 			numeric_setter (qsf_ent, cm_numeric);
@@ -1524,6 +1528,7 @@ qsf_object_commitCB (gpointer key, gpointer value, gpointer data)
 		cm_kvp = (KvpFrame *) cm_param->param_getfcn (qsf_ent, cm_param);
 		cm_kvp = kvp_frame_set_value (cm_kvp, (gchar *) xmlGetProp (node,
 				BAD_CAST QSF_OBJECT_KVP), cm_value);
+		g_free (cm_value);
 	}
 	if (safe_strcmp (qof_type, QOF_TYPE_COLLECT) == 0)
 	{

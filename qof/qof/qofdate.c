@@ -143,12 +143,19 @@ qof_date_init (void)
 	}
 	QofDateInit = TRUE;
 }
-
+/*
+static void
+hash_value_free (gpointer key, gpointer value, gpointer data)
+{
+	g_free (value);
+}
+*/
 void
 qof_date_close (void)
 {
 	if (QofDateInit)
 	{
+//		g_hash_table_foreach (DateFormatTable, hash_value_free, NULL);
 		g_hash_table_destroy (DateFormatTable);
 	}
 	QofDateInit = FALSE;

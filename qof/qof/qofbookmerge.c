@@ -1111,7 +1111,7 @@ qof_book_merge_param_as_string (QofParam * qtparam, QofEntity * qtEnt)
 	paramType = qtparam->param_type;
 	if (safe_strcmp (paramType, QOF_TYPE_STRING) == 0)
 	{
-		param_string = g_strdup (qtparam->param_getfcn (qtEnt, qtparam));
+		param_string = qtparam->param_getfcn (qtEnt, qtparam);
 		if (param_string == NULL)
 			param_string = "";
 		return param_string;

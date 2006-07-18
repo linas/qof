@@ -525,6 +525,7 @@ qof_load_backend_library (const gchar * directory,
 	}
 	g_module_make_resident (backend);
 	gmod_init ();
+	g_free (fullpath);
 	return TRUE;
 }
 
