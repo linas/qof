@@ -804,7 +804,9 @@ stamp_and_scan (QofTimeSecs start, glong nanosecs,
 	/* depending on the format, data may be lost here
 	as some formats do not encode the time. So only
 	test that the returned stamp is the same. */
-	str2 = qof_date_print (qof_date_from_qtime (scan), df);
+	check = qof_date_from_qtime (scan);
+	str2 = qof_date_print (check, df);
+	qof_date_free (check);
 	/* 2 digit year errors with format 6  */
 	do_test ((str2 != NULL), "printed string is null");
 	do_test ((qof_date_from_qtime (scan) != NULL),
