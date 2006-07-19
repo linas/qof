@@ -44,10 +44,11 @@ struct QofTimespec64
 QofTime *
 qof_time_new (void)
 {
-	QofTime *time;
+	QofTime *qt;
 
-	time = g_new0 (QofTime, 1);
-	return time;
+	qt = g_new0 (QofTime, 1);
+	qt->valid = FALSE;
+	return qt;
 }
 
 void
@@ -60,81 +61,86 @@ qof_time_free (QofTime * qt)
 }
 
 QofTime *
-qof_time_add_secs (QofTime * time, QofTimeSecs secs)
+qof_time_add_secs (QofTime * qt, QofTimeSecs secs)
 {
-	g_return_val_if_fail (time->valid, NULL);
-	time->qt_sec += secs;
-	return time;
+	g_return_val_if_fail (qt->valid, NULL);
+	qt->qt_sec += secs;
+	return qt;
 }
 
 static QofTime *
-time_normalize (QofTime * time)
+time_normalize (QofTime * qt)
 {
-	g_return_val_if_fail (time->valid, NULL);
-	if ((time->qt_sec < 0) && (time->qt_nsec > QOF_NSECS))
+	g_return_val_if_fail (qt->valid, NULL);
+	if ((qt->qt_sec < 0) && (qt->qt_nsec > QOF_NSECS))
 	{
-		time->qt_sec -= (time->qt_nsec / QOF_NSECS);
-		time->qt_nsec = time->qt_nsec % QOF_NSECS;
+		qt->qt_sec -= (qt->qt_nsec / QOF_NSECS);
+		qt->qt_nsec = qt->qt_nsec % QOF_NSECS;
 	}
-	if ((time->qt_sec >= 0) && (time->qt_nsec > QOF_NSECS))
+	if ((qt->qt_sec >= 0) && (qt->qt_nsec > QOF_NSECS))
 	{
-		time->qt_sec += (time->qt_nsec / QOF_NSECS);
-		time->qt_nsec = time->qt_nsec % QOF_NSECS;
+		qt->qt_sec += (qt->qt_nsec / QOF_NSECS);
+		qt->qt_nsec = qt->qt_nsec % QOF_NSECS;
 	}
-	if ((time->qt_sec < 0) && (time->qt_nsec < -QOF_NSECS))
+	if ((qt->qt_sec < 0) && (qt->qt_nsec < -QOF_NSECS))
 	{
-		time->qt_sec -= -(-time->qt_nsec / QOF_NSECS);
-		time->qt_nsec = -(-time->qt_nsec % QOF_NSECS);
+		qt->qt_sec -= -(-qt->qt_nsec / QOF_NSECS);
+		qt->qt_nsec = -(-qt->qt_nsec % QOF_NSECS);
 	}
-	if ((time->qt_sec >= 0) && (time->qt_nsec < -QOF_NSECS))
+	if ((qt->qt_sec >= 0) && (qt->qt_nsec < -QOF_NSECS))
 	{
-		time->qt_sec += -(-time->qt_nsec / QOF_NSECS);
-		time->qt_nsec = -(-time->qt_nsec % QOF_NSECS);
+		qt->qt_sec += -(-qt->qt_nsec / QOF_NSECS);
+		qt->qt_nsec = -(-qt->qt_nsec % QOF_NSECS);
 	}
-	if (time->qt_sec >= 0 && time->qt_nsec < 0)
+	if (qt->qt_sec >= 0 && qt->qt_nsec < 0)
 	{
-		time->qt_sec--;
-		time->qt_nsec = QOF_NSECS + time->qt_nsec;
+		qt->qt_sec--;
+		qt->qt_nsec = QOF_NSECS + qt->qt_nsec;
 	}
-	return time;
+	return qt;
 }
 
 void
-qof_time_set_secs (QofTime * time, QofTimeSecs secs)
+qof_time_set_secs (QofTime * qt, QofTimeSecs secs)
 {
-	time->qt_sec = secs;
-	time->valid = TRUE;
-	time_normalize (time);
+	qt->qt_sec = secs;
+	qt->valid = TRUE;
+	time_normalize (qt);
 }
 
 void
-qof_time_set_nanosecs (QofTime * time, glong nano)
+qof_time_set_nanosecs (QofTime * qt, glong nano)
 {
-	time->qt_nsec = nano;
-	time->valid = TRUE;
-	time_normalize (time);
+	qt->qt_nsec = nano;
+	qt->valid = TRUE;
+	time_normalize (qt);
 }
 
 QofTimeSecs
-qof_time_get_secs (const QofTime * time)
+qof_time_get_secs (const QofTime * qt)
 {
-	g_return_val_if_fail (time->valid == TRUE, 0);
-	return time->qt_sec;
+	g_return_val_if_fail (qt, 0);
+	g_return_val_if_fail (qt->valid == TRUE, 0);
+	return qt->qt_sec;
 }
 
 glong
-qof_time_get_nanosecs (const QofTime * time)
+qof_time_get_nanosecs (const QofTime * qt)
 {
-	g_return_val_if_fail (time->valid == TRUE, 0);
-	return time->qt_nsec;
+	g_return_val_if_fail (qt->valid == TRUE, 0);
+	return qt->qt_nsec;
 }
 
 gboolean
 qof_time_equal (const QofTime * ta, const QofTime * tb)
 {
-	g_return_val_if_fail (ta->valid && tb->valid, FALSE);
 	if (ta == tb)
 		return TRUE;
+	if (!ta)
+		return FALSE;
+	if (!tb)
+		return FALSE;
+	g_return_val_if_fail (ta->valid && tb->valid, FALSE);
 	if (ta->qt_sec != tb->qt_sec)
 		return FALSE;
 	if (ta->qt_nsec != tb->qt_nsec)
@@ -174,10 +180,10 @@ qof_time_diff (const QofTime * ta, const QofTime * tb)
 }
 
 QofTime *
-qof_time_abs (QofTime * time)
+qof_time_abs (QofTime * qt)
 {
-	g_return_val_if_fail (time, NULL);
-	return time_normalize (time);
+	g_return_val_if_fail (qt, NULL);
+	return time_normalize (qt);
 }
 
 gboolean
@@ -228,13 +234,13 @@ qof_time_to_time_t (QofTime * qt, time_t * t, glong * nanosecs)
 }
 
 QofTime *
-qof_time_from_tm (struct tm * tm, glong nanosecs)
+qof_time_from_tm (struct tm * qtm, glong nanosecs)
 {
 	QofDate *qd;
 	QofTime *qt;
 
 	/* avoids use of gmtime_r and therefore time_t */
-	qd = qof_date_from_struct_tm (tm);
+	qd = qof_date_from_struct_tm (qtm);
 	qd->qd_nanosecs = nanosecs;
 	qt = qof_date_to_qtime (qd);
 	qof_date_free (qd);
@@ -269,7 +275,7 @@ qof_time_from_gtimeval (QofTime * qt, GTimeVal * gtv)
 }
 
 GDate *
-qof_time_to_gdate (QofTime * time)
+qof_time_to_gdate (QofTime * qt)
 {
 	GDate *d;
 	time_t t;
@@ -286,11 +292,12 @@ qof_time_to_gdate (QofTime * time)
 	gchar* str = "%d/%m/%Y";
 	
 	*/
-	success = qof_time_to_time_t (time, &t, &nsecs);
+	success = qof_time_to_time_t (qt, &t, &nsecs);
 	if (!success)
 		return NULL;
 	utc = *gmtime_r (&t, &utc);
-	d = g_date_new_dmy (utc.tm_mday, utc.tm_mon + 1, utc.tm_year + 1900);
+	d = g_date_new_dmy (utc.tm_mday, utc.tm_mon + 1, 
+		utc.tm_year + 1900);
 	if (g_date_valid (d))
 		return d;
 	return NULL;
@@ -320,11 +327,11 @@ qof_time_from_gdate (GDate * date)
 }
 
 gboolean
-qof_time_set_day_end (QofTime * time)
+qof_time_set_day_end (QofTime * qt)
 {
-	if (!qof_time_set_day_start (time))
+	if (!qof_time_set_day_start (qt))
 		return FALSE;
-	time->qt_sec += (SECS_PER_DAY - 1);
+	qt->qt_sec += (SECS_PER_DAY - 1);
 	return TRUE;
 }
 
@@ -417,14 +424,14 @@ qof_time_get_today_end (void)
 }
 
 guint8
-qof_time_last_mday (QofTime * t)
+qof_time_last_mday (QofTime * qt)
 {
 	GDate *d;
 	GDateMonth m;
 	GDateYear y;
 
-	g_return_val_if_fail (t, 0);
-	d = qof_time_to_gdate (t);
+	g_return_val_if_fail (qt, 0);
+	d = qof_time_to_gdate (qt);
 	if (!d)
 		return 0;
 	m = g_date_get_month (d);
@@ -433,11 +440,12 @@ qof_time_last_mday (QofTime * t)
 }
 
 gboolean
-qof_time_to_dmy (QofTime * t, guint8 * day, guint8 * month, guint16 * year)
+qof_time_to_dmy (QofTime * qt, guint8 * day, guint8 * month, 
+				 guint16 * year)
 {
 	GDate *d;
 
-	d = qof_time_to_gdate (t);
+	d = qof_time_to_gdate (qt);
 	if (!d)
 		return FALSE;
 	if (day)
@@ -465,16 +473,16 @@ gchar *
 qof_time_stamp_now (void)
 {
 	gint len;
-	struct tm tm;
+	struct tm qtm;
 	time_t t;
 	gchar test[MAX_DATE_LENGTH];
 	const gchar *fmt;
 
 	ENTER (" ");
 	t = time (NULL);
-	tm = *gmtime_r (&t, &tm);
+	qtm = *gmtime_r (&t, &qtm);
 	fmt = qof_date_format_get_format (QOF_DATE_FORMAT_UTC);
-	len = strftime (test, MAX_DATE_LENGTH, fmt, &tm);
+	len = strftime (test, MAX_DATE_LENGTH, fmt, &qtm);
 	if (len == 0 && test[0] != '\0')
 	{
 		LEAVE (" strftime failed.");
