@@ -102,6 +102,8 @@ obj_create (QofBook * book)
 	g->version = 1;
 	g->minor = 1;
 	g->flag = 'n';
+	g->date = qof_time_get_current ();
+	do_test ((qof_time_is_valid (g->date) == TRUE), "init time invalid");
 	qof_event_gen (&g->inst.entity, QOF_EVENT_CREATE, NULL);
 	return g;
 }
@@ -186,6 +188,8 @@ obj_setDate (myobj * g, QofTime *h)
 {
 	if (!g)
 		return;
+	do_test ((h != NULL), "passed a NULL time");
+	do_test ((qof_time_is_valid (h) == TRUE), "passed an invalid time");
 	g->date = h;
 }
 
@@ -194,6 +198,8 @@ obj_getDate (myobj * g)
 {
 	if (!g)
 		return NULL;
+	do_test ((g->date != NULL), "stored time is NULL");
+	do_test ((qof_time_is_valid (g->date) == TRUE), "stored time is invalid");
 	return g->date;
 }
 
@@ -321,6 +327,7 @@ test_merge (void)
 	import_init = "test";
 	target_init = "testing";
 	ts = qof_time_get_current ();
+	do_test ((TRUE == qof_time_is_valid (ts)), "invalid current time");
 
 	do_test ((NULL != target), "#1 target book is NULL");
 
@@ -348,8 +355,10 @@ test_merge (void)
 	do_test ((version == import_obj->version), "#11 gint32 set");
 	obj_setMinor (import_obj, minor);
 	do_test ((minor == import_obj->minor), "#12 gint64 set");
+	do_test ((TRUE == qof_time_is_valid (ts)), "invalid import time ts");
 	obj_setDate (import_obj, ts);
 	tc = import_obj->date;
+	do_test ((TRUE == qof_time_is_valid (tc)), "invalid import time tc");
 	do_test ((qof_time_cmp (ts, tc) == 0), "#13 date set");
 	obj_setFlag (import_obj, flag);
 	do_test ((flag == obj_getFlag (import_obj)), "#14 flag set");
@@ -371,6 +380,7 @@ test_merge (void)
 	obj_setDiscount (new_obj, discount);
 	obj_setVersion (new_obj, version);
 	obj_setMinor (new_obj, minor);
+	do_test ((TRUE == qof_time_is_valid (ts)), "second import time invalid");
 	obj_setDate (new_obj, ts);
 	obj_setFlag (new_obj, flag);
 
@@ -381,6 +391,7 @@ test_merge (void)
 	minor = 3;
 	flag = 'z';
 	tc = qof_time_add_secs (ts, -1);
+	do_test ((TRUE == qof_time_is_valid (tc)), "time add secs returned invalid");
 	qof_time_set_nanosecs (tc, 0);
 
 	/* target object - test results would be the same, so not tested. */
@@ -394,6 +405,7 @@ test_merge (void)
 	obj_setDiscount (target_obj, discount);
 	obj_setVersion (target_obj, version);
 	obj_setMinor (target_obj, minor);
+	do_test ((TRUE == qof_time_is_valid (tc)), "target time invalid");
 	obj_setDate (target_obj, tc);
 	obj_setFlag (target_obj, flag);
 	do_test ((flag == obj_getFlag (target_obj)), "#15 flag set");
