@@ -685,7 +685,7 @@ qof_date_from_struct_tm (const struct tm *stm)
 	d->qd_min  = stm->tm_min;
 	d->qd_hour = stm->tm_hour;
 	d->qd_mday = stm->tm_mday;
-	d->qd_mon  = stm->tm_mon;
+	d->qd_mon  = stm->tm_mon + 1;
 	d->qd_year = stm->tm_year + 1900;
 	d->qd_wday = stm->tm_wday;
 	d->qd_yday = stm->tm_yday;
@@ -712,7 +712,7 @@ qof_date_to_struct_tm (const QofDate * qd, struct tm * stm, glong *nanosecs)
 	stm->tm_min  = qd->qd_min;
 	stm->tm_hour = qd->qd_hour;
 	stm->tm_mday = qd->qd_mday;
-	stm->tm_mon  = qd->qd_mon;
+	stm->tm_mon  = qd->qd_mon - 1;
 	stm->tm_year = qd->qd_year - 1900;
 	stm->tm_wday = qd->qd_wday;
 	stm->tm_yday = qd->qd_yday;
