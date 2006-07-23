@@ -696,7 +696,8 @@ qof_date_from_struct_tm (const struct tm *stm)
 }
 
 gboolean
-qof_date_to_struct_tm (const QofDate * qd, struct tm * stm, glong *nanosecs)
+qof_date_to_struct_tm (const QofDate * qd, struct tm * stm, 
+					   glong *nanosecs)
 {
 	g_return_val_if_fail (qd, FALSE);
 	g_return_val_if_fail (stm, FALSE);
@@ -717,7 +718,8 @@ qof_date_to_struct_tm (const QofDate * qd, struct tm * stm, glong *nanosecs)
 	stm->tm_isdst = qd->qd_is_dst;
 	stm->tm_gmtoff = qd->qd_gmt_off;
 	stm->tm_zone = qd->qd_zone;
-	*nanosecs = qd->qd_nanosecs;
+	if (nanosecs != NULL)
+		*nanosecs = qd->qd_nanosecs;
 	return TRUE;
 }
 
@@ -923,15 +925,15 @@ qof_date_time_difference (const QofDate * date1, const QofDate * date2)
 
 	secs = qof_time_new ();
 	days = days_between (date1->qd_year, date2->qd_year);
-	secs = qof_time_add_secs(secs, QOF_DAYS_TO_SEC(days));
+	qof_time_add_secs(secs, QOF_DAYS_TO_SEC(days));
 	if (days_between >= 0)
 	{
 		/* positive value, add date2 secs, subtract date1 */
-		secs =  qof_time_add_secs(secs, -1 *
+		qof_time_add_secs(secs, -1 *
 				(QOF_HOUR_TO_SEC(date1->qd_hour) -
 				QOF_MIN_TO_SEC(date1->qd_min) -
 				(date1->qd_sec)));
-		secs =  qof_time_add_secs(secs,
+		qof_time_add_secs(secs,
 				QOF_HOUR_TO_SEC(date2->qd_hour) +
 				QOF_MIN_TO_SEC(date2->qd_min) +
 				(date2->qd_sec));
@@ -941,11 +943,11 @@ qof_date_time_difference (const QofDate * date1, const QofDate * date2)
 	if (days_between < 0)
 	{
 		/* negative value*/
-		secs =  qof_time_add_secs (secs, 
+		qof_time_add_secs (secs, 
 				QOF_HOUR_TO_SEC(date1->qd_hour) -
 				QOF_MIN_TO_SEC(date1->qd_min) -
 				(date1->qd_sec));
-		secs =  qof_time_add_secs (secs, -1 * 
+		qof_time_add_secs (secs, -1 * 
 				(QOF_HOUR_TO_SEC(date2->qd_hour) +
 				QOF_MIN_TO_SEC(date2->qd_min) +
 				(date2->qd_sec)));
