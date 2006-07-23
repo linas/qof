@@ -959,22 +959,6 @@ gboolean
 qof_scan_date (const char *buff, int *day, int *month, int *year)
 {
   return qof_scan_date_internal(buff, day, month, year, dateFormat);
-/*
-	QofDateFormat df;
-	QofDate *qd;
-
-	df = qof_date_format_get_current ();
-	qd = qof_date_parse (buff, df);
-	if (!qd)
-		return FALSE;
-	if (day)
-		*day = qd->qd_mday;
-	if (month)
-		*month = qd->qd_mon;
-	if ((year) && (qd->qd_year > 0) && (qd->qd_year < G_MAXINT))
-			*year = (gint)qd->qd_year;
-	return TRUE;
-*/
 }
 
 gboolean
@@ -987,19 +971,6 @@ qof_scan_date_secs (const gchar * buff, time_t * secs)
   if (secs) *secs = xaccDMYToSec (day, month, year);
 
   return rc;
-/*	QofDateFormat df;
-	glong nanosecs;
-	time_t t;
-	QofTime *time;
-
-	df = qof_date_format_get_current ();
-	time = qof_date_to_qtime (qof_date_parse (buff, df));
-	if (!time)
-		return FALSE;
-	if (!qof_time_to_time_t (time, &t, &nanosecs))
-		return FALSE;
-	qof_time_free (time);
-	return TRUE;*/
 }
 
 Timespec
@@ -1111,8 +1082,6 @@ gnc_iso8601_to_timespec_gmt (const gchar * str)
 	}
 	stm.tm_sec = atoi (str);
 
-	/* The decimal point, optionally present ... */
-	/* hack alert -- this algo breaks if more than 9 decimal places present */
 	if (strchr (str, '.'))
 	{
 		gint decimals, i, multiplier = 1000000000;
@@ -1124,7 +1093,6 @@ gnc_iso8601_to_timespec_gmt (const gchar * str)
 	}
 	stm.tm_isdst = -1;
 
-	/* Timezone format can be +hh or +hhmm or +hh.mm (or -) (or not present) */
 	str += strcspn (str, "+-");
 	if (str)
 	{
@@ -1140,7 +1108,6 @@ gnc_iso8601_to_timespec_gmt (const gchar * str)
 		if (isdigit ((guchar) * str) && isdigit ((guchar) * (str + 1)))
 		{
 			gint cyn;
-			/* copy sign from hour part */
 			if ('+' == buf[0])
 			{
 				cyn = -1;
@@ -1157,12 +1124,6 @@ gnc_iso8601_to_timespec_gmt (const gchar * str)
 		}
 	}
 
-	/* Note that mktime returns 'local seconds' which is the true time
-	 * minus the timezone offset.  We don't want to work with local 
-	 * seconds, since they swim around acording to daylight savings, etc. 
-	 * We want to work with universal time.  Thus, add an offset
-	 * to undo the damage that mktime causes.
-	 */
 	{
 		struct tm tmp_tm;
 		struct tm tm;
@@ -1170,8 +1131,6 @@ gnc_iso8601_to_timespec_gmt (const gchar * str)
 		gint tz_hour;
 		time_t secs;
 
-		/* Use a temporary tm struct so the mktime call below
-		 * doesn't mess up stm. */
 		tmp_tm = stm;
 		tmp_tm.tm_isdst = -1;
 
@@ -1179,8 +1138,6 @@ gnc_iso8601_to_timespec_gmt (const gchar * str)
 
 		if (secs < 0)
 		{
-			/* Workaround buggy mktime implementations that get confused
-			   on the day daylight saving starts or ends. (OSX) */
 			PWARN (" mktime failed to handle daylight saving: "
 				"tm_hour=%d tm_year=%d tm_min=%d tm_sec=%d tm_isdst=%d for string=%s",
 				stm.tm_hour, stm.tm_year, stm.tm_min,
@@ -1189,24 +1146,16 @@ gnc_iso8601_to_timespec_gmt (const gchar * str)
 			secs = mktime (&tmp_tm);
 			if (secs < 0)
 			{
-				/* if, for some strange reason, first attempt didn't fix it,
-				   try reversing the workaround. */
 				tmp_tm.tm_hour -= 2;
 				secs = mktime (&tmp_tm);
 			}
 			if (secs < 0)
 			{
-				/* Seriously buggy mktime - give up.  */
 				PERR (" unable to recover from buggy mktime ");
 				g_free (dupe);
 				return ts;
 			}
 		}
-
-		/* The call to localtime is 'bogus', but it forces 'timezone' to
-		 * be set. Note that we must use the accurate date, since the
-		 * value of 'gnc_timezone' includes daylight savings corrections
-		 * for that date. */
 
 		tm = *localtime_r (&secs, &tm);
 
@@ -1223,7 +1172,6 @@ gnc_iso8601_to_timespec_gmt (const gchar * str)
 				" tm_hour=%d tm_year=%d tm_min=%d tm_sec=%d tm_isdst=%d",
 				stm.tm_hour, stm.tm_year, stm.tm_min,
 				stm.tm_sec, stm.tm_isdst);
-			/* Try and make some sense of the result. */
 			ts.tv_sec = secs - tz;
 		}
 		ts.tv_nsec = nsec;
@@ -1248,9 +1196,6 @@ gnc_timespec_to_iso8601_buff (Timespec ts, gchar * buff)
 	tz_hour = secs / 3600;
 	tz_min = (secs % 3600) / 60;
 
-	/* We also have to print the sign by hand, to work around a bug
-	 * in the glibc 2.1.3 printf (where %+02d fails to zero-pad).
-	 */
 	cyn = '-';
 	if (0 > tz_hour)
 	{
@@ -1266,7 +1211,6 @@ gnc_timespec_to_iso8601_buff (Timespec ts, gchar * buff)
 		parsed.tm_min,
 		parsed.tm_sec, ts.tv_nsec / 1000, cyn, tz_hour, tz_min);
 
-	/* Return pointer to end of string. */
 	buff += len;
 	return buff;
 }
@@ -1294,13 +1238,8 @@ gnc_timezone (struct tm *tm)
 	g_return_val_if_fail (tm != NULL, 0);
 
 #ifdef HAVE_STRUCT_TM_GMTOFF
-	/* tm_gmtoff is seconds *east* of UTC and is
-	 * already adjusted for daylight savings time. */
 	return -(tm->tm_gmtoff);
 #else
-	/* timezone is seconds *west* of UTC and is
-	 * not adjusted for daylight savings time.
-	 * In Spring, we spring forward, wheee! */
 	return (glong) (timezone - (tm->tm_isdst > 0 ? 3600 : 0));
 #endif
 }
@@ -1334,7 +1273,6 @@ xaccDMYToSec (int day, int month, int year)
   stm.tm_mday = day;
   gnc_tm_set_day_start(&stm);
 
-  /* compute number of seconds */
   secs = mktime (&stm);
 
   return secs;
@@ -1344,10 +1282,8 @@ void date_add_months (struct tm *tm, int months, gboolean track_last_day)
   gboolean was_last_day;
   int new_last_mday;
 
-  /* Have to do this now */
   was_last_day = date_is_last_mday(tm);
 
-  /* Add in the months and normalize */
   tm->tm_mon += months;
   while (tm->tm_mon > 11) {
     tm->tm_mon -= 12;
@@ -1357,7 +1293,6 @@ void date_add_months (struct tm *tm, int months, gboolean track_last_day)
   if (!track_last_day)
     return;
 
-  /* Track last day of the month, i.e. 1/31 -> 2/28 -> 3/31 */
   new_last_mday = date_get_last_mday(tm);
   if (was_last_day || (tm->tm_mday > new_last_mday))
     tm->tm_mday = new_last_mday;
@@ -1417,8 +1352,6 @@ qof_date_add_days(Timespec *ts, gint days)
 	tm = *gmtime(&tt);
 #endif
 	tm.tm_mday += days;
-	/* let mktime normalise the months and year
-	because we aren't tracking last_day_of_month */
 	tt = mktime(&tm);
 	if(tt < 0) { return FALSE; }
 	timespecFromTime_t(ts, tt);
@@ -1447,7 +1380,6 @@ qof_date_add_months(Timespec *ts, gint months, gboolean track_last_day)
 		tm.tm_year++;
 	}
 	if (track_last_day) {
-		/* Track last day of the month, i.e. 1/31 -> 2/28 -> 3/31 */
 		new_last_mday = date_get_last_mday(&tm);
 		if (was_last_day || (tm.tm_mday > new_last_mday)) {
 			tm.tm_mday = new_last_mday;
@@ -1620,7 +1552,6 @@ qof_report_clock (gint clockno, QofLogModule log_module,
 	now.tv_usec = 0;
 #endif
 
-	/* need to borrow to make difference */
 	if (now.tv_usec < qof_clock[clockno].tv_usec)
 	{
 		now.tv_sec--;
@@ -1659,7 +1590,6 @@ qof_report_clock_total (gint clockno,
 	if ((0 > clockno) || (NUM_CLOCKS <= clockno))
 		return;
 
-	/* need to normalize usec */
 	while (qof_clock_total[clockno].tv_usec >= 1000000)
 	{
 		qof_clock_total[clockno].tv_sec++;
