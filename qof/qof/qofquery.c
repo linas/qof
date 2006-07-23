@@ -1767,7 +1767,7 @@ qof_query_printParamPath (GSList * parmList)
 	{
 		g_string_append (gs, (gchar *) list->data);
 		if (list->next)
-			g_string_append (gs, "->");
+			g_string_append (gs, ", ");
 	}
 
 	return gs;
@@ -1808,20 +1808,13 @@ qof_query_printStringForHow (QofQueryCompare how)
 
 	switch (how)
 	{
-	case QOF_COMPARE_LT:
-		return "QOF_COMPARE_LT";
-	case QOF_COMPARE_LTE:
-		return "QOF_COMPARE_LTE";
-	case QOF_COMPARE_EQUAL:
-		return "QOF_COMPARE_EQUAL";
-	case QOF_COMPARE_GT:
-		return "QOF_COMPARE_GT";
-	case QOF_COMPARE_GTE:
-		return "QOF_COMPARE_GTE";
-	case QOF_COMPARE_NEQ:
-		return "QOF_COMPARE_NEQ";
+		AS_STRING_CASE(QOF_COMPARE_LT,)
+		AS_STRING_CASE(QOF_COMPARE_LTE,)
+		AS_STRING_CASE(QOF_COMPARE_EQUAL,)
+		AS_STRING_CASE(QOF_COMPARE_GT,)
+		AS_STRING_CASE(QOF_COMPARE_GTE,)
+		AS_STRING_CASE(QOF_COMPARE_NEQ,)
 	}
-
 	return "INVALID HOW";
 }	/* qncQueryPrintStringForHow */
 
@@ -1834,7 +1827,7 @@ qof_query_printValueForParam (QofQueryPredData * pd, GString * gs)
 	{
 		GList *node;
 		query_guid_t pdata = (query_guid_t) pd;
-		g_string_append_printf (gs, "Match type %s",
+		g_string_append_printf (gs, "Match type %s ",
 			qof_query_printGuidMatch (pdata->options));
 		for (node = pdata->guids; node; node = node->next)
 		{
@@ -1847,7 +1840,7 @@ qof_query_printValueForParam (QofQueryPredData * pd, GString * gs)
 	if (!safe_strcmp (pd->type_name, QOF_TYPE_STRING))
 	{
 		query_string_t pdata = (query_string_t) pd;
-		g_string_append_printf (gs, " Match type %s",
+		g_string_append_printf (gs, "Match type %s ",
 			qof_query_printStringMatch (pdata->options));
 		g_string_append_printf (gs, " %s string: %s",
 			pdata->is_regex ? "Regex" : "Not regex", pdata->matchstring);
@@ -1856,7 +1849,7 @@ qof_query_printValueForParam (QofQueryPredData * pd, GString * gs)
 	if (!safe_strcmp (pd->type_name, QOF_TYPE_NUMERIC))
 	{
 		query_numeric_t pdata = (query_numeric_t) pd;
-		g_string_append_printf (gs, " Match type %s",
+		g_string_append_printf (gs, "Match type %s ",
 			qof_query_printNumericMatch (pdata->options));
 		g_string_append_printf (gs, " gnc_numeric: %s",
 			gnc_num_dbg_to_string (pdata->amount));
@@ -1896,12 +1889,12 @@ qof_query_printValueForParam (QofQueryPredData * pd, GString * gs)
 	}
 	if (!safe_strcmp (pd->type_name, QOF_TYPE_TIME))
 	{
-		query_date_t pdata;
+		query_time_t pdata;
 		QofDate *qd;
 
-		pdata = (query_date_t) pd;
+		pdata = (query_time_t) pd;
 		qd = qof_date_from_qtime (pdata->qt);
-		g_string_append_printf (gs, " Match type %s",
+		g_string_append_printf (gs, "Match type %s " ,
 			qof_query_printDateMatch (pdata->options));
 		g_string_append_printf (gs, "query date: %s",
 			qof_date_print (qd, QOF_DATE_FORMAT_UTC));
@@ -1911,22 +1904,19 @@ qof_query_printValueForParam (QofQueryPredData * pd, GString * gs)
 	if (!safe_strcmp (pd->type_name, QOF_TYPE_DATE))
 	{
 		query_date_t pdata;
-		Timespec ts;
 
 		pdata = (query_date_t) pd;
-		ts.tv_sec = qof_time_get_secs (pdata->qt);
-		ts.tv_nsec = qof_time_get_nanosecs (pdata->qt);
-		g_string_append_printf (gs, " Match type %s",
+	    g_string_append_printf (gs, "Match type %s ",
 			qof_query_printDateMatch (pdata->options));
-	    g_string_append_printf (gs, " query_date: %s", 
-			gnc_print_date (ts));
+		g_string_append_printf (gs, " query_date: %s", 
+			gnc_print_date (pdata->date));
 		return;
 	}
 #endif
 	if (!safe_strcmp (pd->type_name, QOF_TYPE_CHAR))
 	{
 		query_char_t pdata = (query_char_t) pd;
-		g_string_append_printf (gs, " Match type %s",
+		g_string_append_printf (gs, "Match type %s ",
 			qof_query_printCharMatch (pdata->options));
 		g_string_append_printf (gs, " char list: %s", 
 			pdata->char_list);
@@ -1952,10 +1942,8 @@ qof_query_printStringMatch (QofStringMatch s)
 {
 	switch (s)
 	{
-	case QOF_STRING_MATCH_NORMAL:
-		return "QOF_STRING_MATCH_NORMAL";
-	case QOF_STRING_MATCH_CASEINSENSITIVE:
-		return "QOF_STRING_MATCH_CASEINSENSITIVE";
+		AS_STRING_CASE(QOF_STRING_MATCH_NORMAL,)
+		AS_STRING_CASE(QOF_STRING_MATCH_CASEINSENSITIVE,)
 	}
 	return "UNKNOWN MATCH TYPE";
 }	/* qof_query_printStringMatch */
@@ -1969,10 +1957,8 @@ qof_query_printDateMatch (QofDateMatch d)
 {
 	switch (d)
 	{
-	case QOF_DATE_MATCH_NORMAL:
-		return "QOF_DATE_MATCH_NORMAL";
-	case QOF_DATE_MATCH_DAY:
-		return "QOF_DATE_MATCH_DAY";
+		AS_STRING_CASE(QOF_DATE_MATCH_NORMAL,)
+		AS_STRING_CASE(QOF_DATE_MATCH_DAY,)
 	}
 	return "UNKNOWN MATCH TYPE";
 }	/* qof_query_printDateMatch */
@@ -1986,12 +1972,9 @@ qof_query_printNumericMatch (QofNumericMatch n)
 {
 	switch (n)
 	{
-	case QOF_NUMERIC_MATCH_DEBIT:
-		return "QOF_NUMERIC_MATCH_DEBIT";
-	case QOF_NUMERIC_MATCH_CREDIT:
-		return "QOF_NUMERIC_MATCH_CREDIT";
-	case QOF_NUMERIC_MATCH_ANY:
-		return "QOF_NUMERIC_MATCH_ANY";
+		AS_STRING_CASE(QOF_NUMERIC_MATCH_DEBIT,)
+		AS_STRING_CASE(QOF_NUMERIC_MATCH_CREDIT,)
+		AS_STRING_CASE(QOF_NUMERIC_MATCH_ANY,)
 	}
 	return "UNKNOWN MATCH TYPE";
 }	/* qof_query_printNumericMatch */
@@ -2005,16 +1988,11 @@ qof_query_printGuidMatch (QofGuidMatch g)
 {
 	switch (g)
 	{
-	case QOF_GUID_MATCH_ANY:
-		return "QOF_GUID_MATCH_ANY";
-	case QOF_GUID_MATCH_ALL:
-		return "QOF_GUID_MATCH_ALL";
-	case QOF_GUID_MATCH_NONE:
-		return "QOF_GUID_MATCH_NONE";
-	case QOF_GUID_MATCH_NULL:
-		return "QOF_GUID_MATCH_NULL";
-	case QOF_GUID_MATCH_LIST_ANY:
-		return "QOF_GUID_MATCH_LIST_ANY";
+		AS_STRING_CASE(QOF_GUID_MATCH_ANY,)
+		AS_STRING_CASE(QOF_GUID_MATCH_ALL,)
+		AS_STRING_CASE(QOF_GUID_MATCH_NONE,)
+		AS_STRING_CASE(QOF_GUID_MATCH_NULL,)
+		AS_STRING_CASE(QOF_GUID_MATCH_LIST_ANY,)
 	}
 
 	return "UNKNOWN MATCH TYPE";
@@ -2029,10 +2007,8 @@ qof_query_printCharMatch (QofCharMatch c)
 {
 	switch (c)
 	{
-	case QOF_CHAR_MATCH_ANY:
-		return "QOF_CHAR_MATCH_ANY";
-	case QOF_CHAR_MATCH_NONE:
-		return "QOF_CHAR_MATCH_NONE";
+		AS_STRING_CASE(QOF_CHAR_MATCH_ANY,)
+		AS_STRING_CASE(QOF_CHAR_MATCH_NONE,)
 	}
 	return "UNKNOWN MATCH TYPE";
 }	/* qof_query_printGuidMatch */
