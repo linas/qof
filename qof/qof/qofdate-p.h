@@ -29,7 +29,6 @@
 	_(ERR_MONTH_NAME,)		\
 	_(ERR_LOCALE_DATE_TIME,) \
 	_(ERR_STANDARD_DAY,)	\
-	_(ERR_RECURSIVE_F,)		\
 	_(ERR_LOCALE_AMPM,)		\
 	_(ERR_TIME_AMPM,)		\
 	_(ERR_RECURSIVE_R,)		\
@@ -121,4 +120,4 @@ days_between (gint64 year1, gint64 year2);
 void
 set_day_of_the_week (QofDate * qd);
 
-#endif /* _QOFDATE_P_H */ 
+#endif /* _QOFDATE_P_H */

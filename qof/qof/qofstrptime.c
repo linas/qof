@@ -253,11 +253,7 @@ strptime_internal (const gchar * rp, const gchar * fmt,
 			break;
 		case 'F':
 			if (!recursive ("%Y-%m-%d"))
-			{
-				*error = ERR_RECURSIVE_F;
-				PERR (" error=%s", QofDateErrorasString (*error));
 				return NULL;
-			}
 			want_xday = 1;
 			break;
 		case 'x':
