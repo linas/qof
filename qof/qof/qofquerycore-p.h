@@ -85,7 +85,7 @@ typedef struct
 	QofQueryPredData pd;
 	QofDateMatch options;
 	QofTime *qt;
-} query_date_def, *query_date_t;
+} query_time_def, *query_time_t;
 
 typedef struct
 {
