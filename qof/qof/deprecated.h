@@ -396,6 +396,13 @@ void qof_report_clock_total (gint clockno,
 
 /** \deprecated Do not call directly, use QofLog. */
 void qof_query_print (QofQuery * query);
+/** \deprecated use query_time_t instead. */
+typedef struct
+{
+	QofQueryPredData pd;
+	QofDateMatch options;
+	Timespec date;
+} query_date_def, *query_date_t;
 /** \deprecated use qof_query_time_predicate instead. */
 QofQueryPredData *
 qof_query_date_predicate (QofQueryCompare how,
