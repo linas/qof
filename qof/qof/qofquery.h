@@ -126,7 +126,7 @@ void qof_query_shutdown (void);
  @{
 */
 
-GSList *qof_query_build_param_list (char const *param, ...);
+GSList *qof_query_build_param_list (gchar const *param, ...);
 
 /** Create a new query.  
  *  Before running the query, a 'search-for' type must be set
@@ -138,9 +138,11 @@ GSList *qof_query_build_param_list (char const *param, ...);
  *  QofQuery object matches nothing (qof_query_run() will return NULL).
  */
 QofQuery *qof_query_create (void);
+
+/** create a query with a search type preset. */
 QofQuery *qof_query_create_for (QofIdTypeConst obj_type);
 
-/** Frees the resources associate with a Query object.  */
+/** Frees the resources associated with a Query object.  */
 void qof_query_destroy (QofQuery * q);
 
 /** Set the object type to be searched for.  The results of 
@@ -160,31 +162,32 @@ qof_query_search_for (QofQuery * query, QofIdTypeConst obj_type);
  */
 void qof_query_set_book (QofQuery * q, QofBook * book);
 
+/** This is the general function that adds a new Query Term to a
+query. It will find the 'obj_type' object of the search item and 
+compare the 'param_list' parameter to the predicate data via the 
+comparator. The param_list is a recursive list of parameters. 
+The list becomes the property of the Query.
 
-/** This is the general function that adds a new Query Term to a query.
- * It will find the 'obj_type' object of the search item and compare
- * the 'param_list' parameter to the predicate data via the comparitor.
- *
- * The param_list is a recursive list of parameters.  For example, you
- * can say 'split->memo' by creating a list of one element, "SPLIT_MEMO".
- * You can say 'split->account->name' by creating a list of two elements,
- * "SPLIT_ACCOUNT" and "ACCOUNT_NAME".  The list becomes the property of
- * the Query.
- *
- * For example:
- *
- * acct_name_pred_data = make_string_pred_data(QOF_STRING_MATCH_CASEINSENSITIVE,
- *                                          account_name);
- * param_list = make_list (SPLIT_ACCOUNT, ACCOUNT_NAME, NULL);
- * qof_query_add_term (query, param_list, QOF_COMPARE_EQUAL,
- *                    acct_name_pred_data, QOF_QUERY_AND);
- *
- * Please note that QofQuery does not, at this time, support joins.
- * That is, one cannot specify a predicate that is a parameter list.
- * Put another way, one cannot search for objects where 
- *   obja->thingy == objb->stuff
- */
+\verbatim
+QofQueryPredData *time_pred_data;
+QofQuery *query;
+QofParam *param;
+QofTime *qoftime;
 
+time_pred_data = qof_query_time_predicate (QOF_COMPARE_GTE,
+	QOF_DATE_MATCH_DAY, qoftime);
+qof_query_add_term (query, 
+	qof_query_build_param_list ((gchar*)param->param_name, 
+	NULL), time_pred_data, QOF_QUERY_AND);
+\endverbatim
+
+ \note QofQuery does not, at this time, support joins.
+ That is, one cannot specify a predicate that is a parameter list.
+ Put another way, one cannot search for objects where 
+   obja->thingy == objb->stuff
+ You can simulate a join by using recursive or sequential
+ queries.
+*/
 void qof_query_add_term (QofQuery * query, GSList * param_list,
 						 QofQueryPredData * pred_data, QofQueryOp op);
 
@@ -214,25 +217,26 @@ void qof_query_add_boolean_match (QofQuery * q,
  *  Do NOT free the resulting list.  This list is managed internally
  *  by QofQuery.
  */
-GList *qof_query_run (QofQuery * query);
+GList *
+qof_query_run (QofQuery * query);
 
 /** Return the results of the last query, without causing the query to
  *  be re-run.  Do NOT free the resulting list.  This list is managed
  *  internally by QofQuery.
  */
-GList *qof_query_last_run (QofQuery * query);
+GList *
+qof_query_last_run (QofQuery * query);
 
 /** Remove all query terms from query.  query matches nothing 
  *  after qof_query_clear().
  */
 void qof_query_clear (QofQuery * query);
 
-/** Remove query terms of a particular type from q.  The "type" of a term
- *  is determined by the type of data that gets passed to the predicate
- *  function.  
- * XXX ??? Huh? remove anything of that predicate type, or just 
- * the particular predicate ?
- */
+/** Remove query terms of a particular QofType from the query. 
+The "type" of a term is determined by the QofType that gets 
+passed to the predicate function. All query terms of this
+type are removed.
+*/
 void qof_query_purge_terms (QofQuery * q, GSList * param_list);
 
 /** Return boolean FALSE if there are no terms in the query 
@@ -265,7 +269,8 @@ QofQuery *qof_query_copy (QofQuery * q);
  *  This will return a newly allocated QofQuery object, or NULL
  *  on error. Free it with qof_query_destroy() when no longer needed.
  */
-QofQuery *qof_query_invert (QofQuery * q);
+QofQuery *
+qof_query_invert (QofQuery * q);
 
 /** Combine two queries together using the Boolean set (logical) 
  *  operator 'op'.  For example, if the operator 'op' is set to
