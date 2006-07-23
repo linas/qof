@@ -1447,8 +1447,17 @@ run_qoftime_test (void)
 		do_test ((g_date_get_month (test) == 5), "gdate month fail");
 		do_test ((g_date_get_year (test) == 2006), "gdate year fail");
 		do_test ((qof_time_to_gtimeval (time, &gtv)), "gtimeval fail");
-		do_test ((qof_time_add_secs (time, 26451) != NULL),
-				 "add seconds failed");
+		{
+			QofTime *copy, *diff;
+
+			qof_time_add_secs (time, 26451);
+			copy = qof_time_add_secs_copy (time, -26451);
+			diff = qof_time_diff (time, copy);
+			do_test ((qof_time_get_secs (diff) == 26451), 
+				"add seconds failed");
+			qof_time_free (copy);
+			qof_time_free (diff);
+		}
 		g_date_free (date);
 		g_date_free (test);
 		qof_time_free (time);
