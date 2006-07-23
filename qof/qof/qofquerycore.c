@@ -44,7 +44,7 @@ typedef QofQueryPredData *(*QueryPredicateCopyFunc) (QofQueryPredData *
  *
  * Note that this string MUST be freed by the caller.
  */
-typedef char *(*QueryToString) (gpointer object, QofParam * getter);
+typedef gchar *(*QueryToString) (gpointer object, QofParam * getter);
 
 /* A function to test for equality of predicate data */
 typedef gboolean (*QueryPredicateEqual) (QofQueryPredData * p1,
@@ -275,7 +275,6 @@ string_to_string (gpointer object, QofParam * getter)
 static gint
 time_compare (QofTime *ta, QofTime *tb, QofDateMatch options)
 {
-
 	if (options == QOF_DATE_MATCH_DAY)
 	{
 		qof_time_set_day_start (ta);
@@ -288,7 +287,7 @@ static int
 time_match_predicate (gpointer object, QofParam * getter,
 					  QofQueryPredData * pd)
 {
-	query_date_t pdata = (query_date_t) pd;
+	query_time_t pdata = (query_time_t) pd;
 	QofTime *objtime;
 	gint compare;
 
@@ -345,7 +344,7 @@ time_free_pdata (QofQueryPredData * pd)
 static QofQueryPredData *
 time_copy_predicate (QofQueryPredData * pd)
 {
-	query_date_t pdata = (query_date_t) pd;
+	query_time_t pdata = (query_time_t) pd;
 
 	VERIFY_PDATA_R (query_time_type);
 
@@ -356,8 +355,8 @@ time_copy_predicate (QofQueryPredData * pd)
 static gboolean
 time_predicate_equal (QofQueryPredData * p1, QofQueryPredData * p2)
 {
-	query_date_t pd1 = (query_date_t) p1;
-	query_date_t pd2 = (query_date_t) p2;
+	query_time_t pd1 = (query_time_t) p1;
+	query_time_t pd2 = (query_time_t) p2;
 
 	if (pd1->options != pd2->options)
 		return FALSE;
@@ -368,9 +367,9 @@ QofQueryPredData *
 qof_query_time_predicate (QofQueryCompare how,
 	QofDateMatch options, QofTime *qt)
 {
-	query_date_t pdata;
+	query_time_t pdata;
 
-	pdata = g_new0 (query_date_def, 1);
+	pdata = g_new0 (query_time_def, 1);
 	pdata->pd.type_name = query_time_type;
 	pdata->pd.how = how;
 	pdata->options = options;
@@ -382,7 +381,7 @@ gboolean
 qof_query_time_predicate_get_time (QofQueryPredData * pd, 
 								   QofTime *qt)
 {
-	query_date_t pdata = (query_date_t) pd;
+	query_time_t pdata = (query_time_t) pd;
 
 	if (pdata->pd.type_name != query_time_type)
 		return FALSE;
@@ -1766,39 +1765,36 @@ date_compare (Timespec ta, Timespec tb, QofDateMatch options)
 	return 0;
 }
 
-static gint
-date_match_predicate (gpointer object, QofParam * getter,
-	QofQueryPredData * pd)
+static int
+date_match_predicate (gpointer object, QofParam *getter,
+                                 QofQueryPredData *pd)
 {
-	query_date_t pdata = (query_date_t) pd;
-	Timespec objtime, date;
-	gint compare;
+  query_date_t pdata = (query_date_t)pd;
+  Timespec objtime;
+  int compare;
 
-	VERIFY_PREDICATE (query_date_type);
+  VERIFY_PREDICATE (query_date_type);
 
-	date.tv_sec = qof_time_get_secs (pdata->qt);
-	date.tv_nsec = qof_time_get_nanosecs (pdata->qt);
-	objtime = ((query_date_getter) getter->param_getfcn) (object, getter);
-	compare = date_compare (objtime, date, pdata->options);
+  objtime = ((query_date_getter)getter->param_getfcn) (object, getter);
+  compare = date_compare (objtime, pdata->date, pdata->options);
 
-	switch (pd->how)
-	{
-	case QOF_COMPARE_LT:
-		return (compare < 0);
-	case QOF_COMPARE_LTE:
-		return (compare <= 0);
-	case QOF_COMPARE_EQUAL:
-		return (compare == 0);
-	case QOF_COMPARE_GT:
-		return (compare > 0);
-	case QOF_COMPARE_GTE:
-		return (compare >= 0);
-	case QOF_COMPARE_NEQ:
-		return (compare != 0);
-	default:
-		PWARN ("bad match type: %d", pd->how);
-		return 0;
-	}
+  switch (pd->how) {
+  case QOF_COMPARE_LT:
+    return (compare < 0);
+  case QOF_COMPARE_LTE:
+    return (compare <= 0);
+  case QOF_COMPARE_EQUAL:
+    return (compare == 0);
+  case QOF_COMPARE_GT:
+    return (compare > 0);
+  case QOF_COMPARE_GTE:
+    return (compare >= 0);
+  case QOF_COMPARE_NEQ:
+    return (compare != 0);
+  default:
+    PWARN ("bad match type: %d", pd->how);
+    return 0;
+  }
 }
 
 static gint
@@ -1826,65 +1822,48 @@ date_free_pdata (QofQueryPredData * pd)
 }
 
 static QofQueryPredData *
-date_copy_predicate (QofQueryPredData * pd)
+date_copy_predicate (QofQueryPredData *pd)
 {
-	Timespec date;
-	query_date_t pdata = (query_date_t) pd;
+  query_date_t pdata = (query_date_t)pd;
 
-	VERIFY_PDATA_R (query_date_type);
+  VERIFY_PDATA_R (query_date_type);
 
-	date.tv_sec = qof_time_get_secs (pdata->qt);
-	date.tv_nsec = qof_time_get_nanosecs (pdata->qt);
-	return qof_query_date_predicate (pd->how, pdata->options, date);
+  return qof_query_date_predicate (pd->how, pdata->options, pdata->date);
 }
 
 static gboolean
-date_predicate_equal (QofQueryPredData * p1, QofQueryPredData * p2)
+date_predicate_equal (QofQueryPredData *p1, QofQueryPredData *p2)
 {
-	query_date_t pd1 = (query_date_t) p1;
-	query_date_t pd2 = (query_date_t) p2;
-	Timespec t1, t2;
+  query_date_t pd1 = (query_date_t) p1;
+  query_date_t pd2 = (query_date_t) p2;
 
-	if (pd1->options != pd2->options)
-		return FALSE;
-	t1.tv_sec = qof_time_get_secs (pd1->qt);
-	t1.tv_nsec = qof_time_get_nanosecs (pd1->qt);
-	t2.tv_sec = qof_time_get_secs (pd2->qt);
-	t2.tv_nsec = qof_time_get_nanosecs (pd2->qt);
-	return timespec_equal (&t1, &t2);
+  if (pd1->options != pd2->options) return FALSE;
+  return timespec_equal (&(pd1->date), &(pd2->date));
 }
 
 QofQueryPredData *
 qof_query_date_predicate (QofQueryCompare how,
-	QofDateMatch options, Timespec date)
+                          QofDateMatch options, Timespec date)
 {
-	QofTime *qt;
-	query_date_t pdata;
+  query_date_t pdata;
 
-	pdata = g_new0 (query_date_def, 1);
-	pdata->pd.type_name = query_date_type;
-	pdata->pd.how = how;
-	pdata->options = options;
-
-	qt = qof_time_new ();
-	qof_time_set_secs (qt, date.tv_sec);
-	qof_time_set_nanosecs (qt, date.tv_nsec);
-	pdata->qt = qt;
-	return ((QofQueryPredData *) pdata);
+  pdata = g_new0 (query_date_def, 1);
+  pdata->pd.type_name = query_date_type;
+  pdata->pd.how = how;
+  pdata->options = options;
+  pdata->date = date;
+  return ((QofQueryPredData*)pdata);
 }
 
 gboolean
-qof_query_date_predicate_get_date (QofQueryPredData * pd, 
-								   Timespec * date)
+qof_query_date_predicate_get_date (QofQueryPredData *pd, Timespec *date)
 {
-	query_date_t pdata = (query_date_t) pd;
+  query_date_t pdata = (query_date_t)pd;
 
-	if (pdata->pd.type_name != query_date_type)
-		return FALSE;
-	date->tv_sec = qof_time_get_secs (pdata->qt);
-	date->tv_nsec = qof_time_get_nanosecs (pdata->qt);
-
-	return TRUE;
+  if (pdata->pd.type_name != query_date_type)
+    return FALSE;
+  *date = pdata->date;
+  return TRUE;
 }
 
 static gchar *
@@ -1899,7 +1878,7 @@ date_to_string (gpointer object, QofParam * getter)
 	return NULL;
 }
 
-#endif
+#endif // QOF_DISABLE_DEPRECATED QOF_TYPE_DATE
 
 static void
 init_tables (void)
