@@ -534,8 +534,6 @@ qof_date_parse (const gchar * str, QofDateFormat df)
 	if (error != ERR_NO_ERROR)
 	{
 		qof_date_free (date);
-		PERR (" strptime %s\n", 
-			QofDateErrorasString (error));
 		return NULL;
 	}
 	date = date_normalise (date);
