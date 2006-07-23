@@ -95,7 +95,7 @@ collect_reference_cb (QofEntity * ent, gpointer user_data)
 	s->linkedEntList = g_slist_prepend (s->linkedEntList, ent);
 }
 
-static int
+static gint
 qof_book_merge_compare (QofBookMergeData * mergeData)
 {
 	QofBookMergeRule *currentRule;
@@ -173,8 +173,8 @@ qof_book_merge_compare (QofBookMergeData * mergeData)
 			{
 				currentRule = qof_book_merge_update_rule (currentRule,
 					mergeMatch, DEFAULT_MERGE_WEIGHT);
-				knowntype = TRUE;
 			}
+			knowntype = TRUE;
 		}
 #ifndef QOF_DISABLE_DEPRECATED
 		if (safe_strcmp (mergeType, QOF_TYPE_DATE) == 0)
@@ -820,11 +820,16 @@ qof_book_merge_commit_rule_loop (QofBookMergeData * mergeData,
 		}
 		if (safe_strcmp (rule->mergeType, QOF_TYPE_TIME) == 0)
 		{
-			cm_qt = cm_param->param_getfcn (rule->importEnt, cm_param);
+			QofTime *(*time_getter) (QofEntity *, QofParam *);
+
+			time_getter =
+				(QofTime* (*)(QofEntity *, QofParam *))cm_param->param_getfcn;
+			cm_qt = qof_time_copy (
+				time_getter (rule->importEnt, cm_param));
 			time_setter = 
 				(void (*)(QofEntity *, QofTime *))
 				cm_param->param_setfcn;
-			if (time_setter != NULL)
+			if ((time_setter != NULL) && (qof_time_is_valid (cm_qt)))
 			{
 				time_setter (rule->targetEnt, cm_qt);
 			}
@@ -1120,7 +1125,8 @@ qof_book_merge_param_as_string (QofParam * qtparam, QofEntity * qtEnt)
 	{
 		QofDate *qd;
 
-		param_qt = qtparam->param_getfcn (qtEnt, qtparam);
+		param_qt = qof_time_copy (
+			qtparam->param_getfcn (qtEnt, qtparam));
 		if (!param_qt)
 			return NULL;
 		qd = qof_date_from_qtime (param_qt);
