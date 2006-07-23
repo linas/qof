@@ -105,9 +105,9 @@ typedef struct timespec64
 /** \name QofTime functions.
  @{
 */
-/** \brief Use a 64-bit signed int QofTimespec64
+/** \brief Use a 64-bit signed int QofTime
 
-  struct QofTimespec64 is a lot like the unix 'struct timespec'
+  QofTime is a lot like the unix 'struct timespec'
   except that it uses a 64-bit signed int to store the seconds.
   This should adequately cover dates in the distant future as 
   well as the distant past, as long as these are not more than 
@@ -115,7 +115,7 @@ typedef struct timespec64
   this type can range from -9,223,372,036,854,775,808 to 
   9,223,372,036,854,775,807.
 */
-typedef struct QofTimespec64 QofTime;
+typedef struct QofTime64 QofTime;
 
 /** \brief Replacement for time_t
 
@@ -128,14 +128,27 @@ typedef gint64 QofTimeSecs;
 
 /** \brief Add (or subtract) seconds from a QofTime.
 
- \param time A valid QofTime.
+ \param qt A valid QofTime.
  \param secs A 64bit number of seconds to add (or subtract
 if secs is negative) from the QofTime.
 
- \return The altered QofTime.
+The QofTime is altered in place. To assign the new value
+to a new QofTime, use ::qof_time_add_secs_copy
+*/
+void
+qof_time_add_secs (QofTime * qt, QofTimeSecs secs);
+
+/** \brief Create a new QofTime, secs different to an original.
+
+ \param qt a valid QofTime to use as the base.
+ \param secs a 64bit number of seconds to add (or subtract
+ if secs is negative) from the original to create the copy.
+ 
+ \return a new, valid, QofTime that is secs different to the
+ original.
 */
 QofTime *
-qof_time_add_secs (QofTime * time, QofTimeSecs secs);
+qof_time_add_secs_copy (QofTime * qt, QofTimeSecs secs);
 
 /** \brief create an empty QofTime
 
@@ -144,6 +157,16 @@ freed with qof_time_free when no longer required.
 */
 QofTime *
 qof_time_new (void);
+
+/** \brief Create a copy of a QofTime.
+
+ \param qt A valid QofTime to copy.
+ 
+ \return NULL on error, otherwise a new, valid and
+ normalised QofTime set to the same time as the original.
+*/
+QofTime *
+qof_time_copy (const QofTime *qt);
 
 /** \brief Free a QofTime when no longer required. */
 void 

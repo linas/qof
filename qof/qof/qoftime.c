@@ -34,7 +34,7 @@
 
 static QofLogModule log_module = QOF_MOD_TIME;
 
-struct QofTimespec64
+struct QofTime64
 {
 	QofTimeSecs qt_sec;
 	glong qt_nsec;
@@ -60,12 +60,24 @@ qof_time_free (QofTime * qt)
 	qt = NULL;
 }
 
-QofTime *
+void
 qof_time_add_secs (QofTime * qt, QofTimeSecs secs)
 {
-	g_return_val_if_fail (qt->valid, NULL);
+	g_return_if_fail (qt);
+	g_return_if_fail (qt->valid);
 	qt->qt_sec += secs;
-	return qt;
+}
+
+QofTime *
+qof_time_add_secs_copy (QofTime * qt, QofTimeSecs secs)
+{
+	QofTime *copy;
+
+	g_return_val_if_fail (qt, NULL);
+	g_return_val_if_fail (qt->valid, NULL);
+	copy = qof_time_copy (qt);
+	copy->qt_sec += secs;
+	return copy;
 }
 
 static QofTime *
@@ -204,6 +216,14 @@ qof_time_set (QofTimeSecs t, glong nanosecs)
 	qt->valid = TRUE;
 	time_normalize (qt);
 	return qt;
+}
+
+QofTime *
+qof_time_copy (const QofTime *qt)
+{
+	g_return_val_if_fail (qt, NULL);
+	g_return_val_if_fail (qt->valid, NULL);
+	return qof_time_set (qt->qt_sec, qt->qt_nsec);
 }
 
 QofTime *
