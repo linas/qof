@@ -44,7 +44,9 @@ static void test_rule_loop (QofBookMergeData *, QofBookMergeRule *,
 							guint);
 static void test_merge (void);
 gboolean myobjRegister (void);
+#ifdef TEST_DEBUG
 static QofLogModule log_module = QOF_MOD_MERGE;
+#endif
 
 /* simple object structure */
 typedef struct obj_s
