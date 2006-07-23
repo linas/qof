@@ -685,7 +685,7 @@ qof_date_from_struct_tm (const struct tm *stm)
 	d->qd_min  = stm->tm_min;
 	d->qd_hour = stm->tm_hour;
 	d->qd_mday = stm->tm_mday;
-	d->qd_mon  = stm->tm_mon + 1;
+	d->qd_mon  = stm->tm_mon;
 	d->qd_year = stm->tm_year + 1900;
 	d->qd_wday = stm->tm_wday;
 	d->qd_yday = stm->tm_yday;
