@@ -20,12 +20,7 @@
  * Boston, MA  02110-1301,  USA       gnu@gnu.org                   *
  *                                                                   *
  ********************************************************************/
- /* Test the qof_book_merge infrastructure.
-
-    This is an external QOF test routine that cannot use
-    Gtk, Guile, Scheme or gnc-module handlers. The only
-    libraries that can be used here are Glib and QOF itself.
-  */
+ /* Test the qof_book_merge infrastructure.  */
 
 #include <glib.h>
 #include "qof.h"
@@ -45,16 +40,18 @@
 #define OBJ_ACTIVE "ofcourse"
 #define OBJ_FLAG   "tiny_flag"
 
-static void test_rule_loop (QofBookMergeData *, QofBookMergeRule *, guint);
+static void test_rule_loop (QofBookMergeData *, QofBookMergeRule *,
+							guint);
 static void test_merge (void);
 gboolean myobjRegister (void);
+static QofLogModule log_module = QOF_MOD_MERGE;
 
 /* simple object structure */
 typedef struct obj_s
 {
 	QofInstance inst;
-	char *Name;
-	char flag;
+	gchar *Name;
+	gchar flag;
 	gnc_numeric Amount;
 	const GUID *obj_guid;
 	QofTime *date;
@@ -64,146 +61,7 @@ typedef struct obj_s
 	gint64 minor;
 } myobj;
 
-myobj *obj_create (QofBook *);
-
-/* obvious setter functions */
-void obj_setName (myobj *, char *);
-void obj_setGUID (myobj *, const GUID *);
-void obj_setAmount (myobj *, gnc_numeric);
-void obj_setDate (myobj *, QofTime *h);
-void obj_setDiscount (myobj *, double);
-void obj_setActive (myobj *, gboolean);
-void obj_setVersion (myobj *, gint32);
-void obj_setMinor (myobj *, gint64);
-void obj_setFlag (myobj *, char);
-
-/* obvious getter functions */
-char *obj_getName (myobj *);
-const GUID *obj_getGUID (myobj *);
-gnc_numeric obj_getAmount (myobj *);
-QofTime *obj_getDate (myobj *);
-double obj_getDiscount (myobj *);
-gboolean obj_getActive (myobj *);
-gint32 obj_getVersion (myobj *);
-gint64 obj_getMinor (myobj *);
-char obj_getFlag (myobj *);
-
-myobj *
-obj_create (QofBook * book)
-{
-	myobj *g;
-	g_return_val_if_fail (book, NULL);
-	g = g_new (myobj, 1);
-	qof_instance_init (&g->inst, TEST_MODULE_NAME, book);
-	obj_setGUID (g, qof_instance_get_guid (&g->inst));
-	g->date = qof_time_new ();
-	g->discount = 0;
-	g->active = TRUE;
-	g->version = 1;
-	g->minor = 1;
-	g->flag = 'n';
-	g->date = qof_time_get_current ();
-	do_test ((qof_time_is_valid (g->date) == TRUE), "init time invalid");
-	qof_event_gen (&g->inst.entity, QOF_EVENT_CREATE, NULL);
-	return g;
-}
-
-void
-obj_setFlag (myobj * g, char f)
-{
-	g_return_if_fail (g);
-	g->flag = f;
-}
-
-char
-obj_getFlag (myobj * g)
-{
-	g_return_val_if_fail (g, 'n');
-	return g->flag;
-}
-
-void
-obj_setMinor (myobj * g, gint64 h)
-{
-	g_return_if_fail (g != NULL);
-	g->minor = h;
-}
-
-gint64
-obj_getMinor (myobj * g)
-{
-	g_return_val_if_fail ((g != NULL), 0);
-	return g->minor;
-}
-
-void
-obj_setVersion (myobj * g, gint32 h)
-{
-	g_return_if_fail (g != NULL);
-	g->version = h;
-}
-
-gint32
-obj_getVersion (myobj * g)
-{
-	if (!g)
-		return 0;
-	return g->version;
-}
-
-void
-obj_setActive (myobj * g, gboolean h)
-{
-	if (!g)
-		return;
-	g->active = h;
-}
-
-gboolean
-obj_getActive (myobj * g)
-{
-	if (!g)
-		return FALSE;
-	return g->active;
-}
-
-void
-obj_setDiscount (myobj * g, double h)
-{
-	if (!g)
-		return;
-	g->discount = h;
-}
-
-double
-obj_getDiscount (myobj * g)
-{
-	if (!g)
-		return 0;
-	return g->discount;
-}
-
-void
-obj_setDate (myobj * g, QofTime *h)
-{
-	if (!g)
-		return;
-	do_test ((h != NULL), "passed a NULL time");
-	do_test ((qof_time_is_valid (h) == TRUE), "passed an invalid time");
-	g->date = h;
-}
-
-QofTime *
-obj_getDate (myobj * g)
-{
-	if (!g)
-		return NULL;
-	do_test ((g->date != NULL), "stored time is NULL");
-	do_test ((qof_time_is_valid (g->date) == TRUE), "stored time is invalid");
-	return g->date;
-}
-
-void
+static void
 obj_setGUID (myobj * g, const GUID * h)
 {
 	if (!g)
@@ -211,7 +69,121 @@ obj_setGUID (myobj * g, const GUID * h)
 	g->obj_guid = h;
 }
 
-const GUID *
+static myobj *
+obj_create (QofBook * book)
+{
+	myobj *g;
+	g_return_val_if_fail (book, NULL);
+	g = g_new (myobj, 1);
+	qof_instance_init (&g->inst, TEST_MODULE_NAME, book);
+	obj_setGUID (g, qof_instance_get_guid (&g->inst));
+	g->discount = 0;
+	g->active = TRUE;
+	g->version = 1;
+	g->minor = 1;
+	g->flag = 'n';
+	qof_event_gen (&g->inst.entity, QOF_EVENT_CREATE, NULL);
+	return g;
+}
+
+static void
+obj_setFlag (myobj * g, char f)
+{
+	g_return_if_fail (g);
+	g->flag = f;
+}
+
+static gchar
+obj_getFlag (myobj * g)
+{
+	g_return_val_if_fail (g, 'n');
+	return g->flag;
+}
+
+static void
+obj_setMinor (myobj * g, gint64 h)
+{
+	g_return_if_fail (g != NULL);
+	g->minor = h;
+}
+
+static gint64
+obj_getMinor (myobj * g)
+{
+	g_return_val_if_fail ((g != NULL), 0);
+	return g->minor;
+}
+
+static void
+obj_setVersion (myobj * g, gint32 h)
+{
+	g_return_if_fail (g != NULL);
+	g->version = h;
+}
+
+static gint32
+obj_getVersion (myobj * g)
+{
+	if (!g)
+		return 0;
+	return g->version;
+}
+
+static void
+obj_setActive (myobj * g, gboolean h)
+{
+	if (!g)
+		return;
+	g->active = h;
+}
+
+static gboolean
+obj_getActive (myobj * g)
+{
+	if (!g)
+		return FALSE;
+	return g->active;
+}
+
+static void
+obj_setDiscount (myobj * g, double h)
+{
+	if (!g)
+		return;
+	g->discount = h;
+}
+
+static double
+obj_getDiscount (myobj * g)
+{
+	if (!g)
+		return 0;
+	return g->discount;
+}
+
+static void
+obj_setDate (myobj * g, QofTime *h)
+{
+	if (!g)
+		return;
+	do_test ((h != NULL), "passed a NULL time");
+	do_test ((qof_time_is_valid (h) == TRUE), 
+		"passed an invalid time");
+	g->date = h;
+}
+
+static QofTime *
+obj_getDate (myobj * g)
+{
+	if (!g)
+		return NULL;
+	do_test ((g->date != NULL), "stored time is NULL");
+	do_test ((qof_time_is_valid (g->date) == TRUE), 
+		"stored time is invalid");
+	return g->date;
+}
+
+static const GUID *
 obj_getGUID (myobj * g)
 {
 	if (!g)
@@ -219,7 +191,7 @@ obj_getGUID (myobj * g)
 	return g->obj_guid;
 }
 
-void
+static void
 obj_setName (myobj * g, char *h)
 {
 	if (!g || !h)
@@ -227,7 +199,7 @@ obj_setName (myobj * g, char *h)
 	g->Name = strdup (h);
 }
 
-char *
+static gchar *
 obj_getName (myobj * g)
 {
 	if (!g)
@@ -235,7 +207,7 @@ obj_getName (myobj * g)
 	return g->Name;
 }
 
-void
+static void
 obj_setAmount (myobj * g, gnc_numeric h)
 {
 	if (!g)
@@ -243,7 +215,7 @@ obj_setAmount (myobj * g, gnc_numeric h)
 	g->Amount = h;
 }
 
-gnc_numeric
+static gnc_numeric
 obj_getAmount (myobj * g)
 {
 	if (!g)
@@ -306,7 +278,7 @@ test_merge (void)
 	double init_value, discount;
 	myobj *import_obj, *target_obj, *new_obj;
 	gint result;
-	QofTime *ts, *tc;
+	QofTime *base_time, *temp_time;
 	gboolean active;
 	gint32 version;
 	gint64 minor;
@@ -326,13 +298,26 @@ test_merge (void)
 	minor = get_random_int_in_range (1000001, 2000000);
 	import_init = "test";
 	target_init = "testing";
-	ts = qof_time_get_current ();
-	do_test ((TRUE == qof_time_is_valid (ts)), "invalid current time");
+	base_time = qof_time_set (1153309194, 568714241);
+	do_test ((TRUE == qof_time_is_valid (base_time)), 
+		"invalid init time");
+	{
+		gchar *str;
+		QofDate *qd;
+
+		qd = qof_date_from_qtime (base_time);
+		str = qof_date_print (qd, QOF_DATE_FORMAT_ISO8601);
+		do_test ((0 == safe_strcmp (
+			"2006-07-19 11:39:54.568714241 +0000", str)),
+			"failed to compare base_time correctly.");
+		g_free (str);
+		qof_date_free (qd);
+	}
 
 	do_test ((NULL != target), "#1 target book is NULL");
+	do_test ((NULL != import), "#2 import book is NULL");
 
 	/* import book objects - tests used */
-	do_test ((NULL != import), "#2 import book is NULL");
 	import_obj = g_new (myobj, 1);
 	do_test ((NULL != import_obj), "#3 new object create");
 	qof_instance_init (&import_obj->inst, TEST_MODULE_NAME, import);
@@ -355,11 +340,25 @@ test_merge (void)
 	do_test ((version == import_obj->version), "#11 gint32 set");
 	obj_setMinor (import_obj, minor);
 	do_test ((minor == import_obj->minor), "#12 gint64 set");
-	do_test ((TRUE == qof_time_is_valid (ts)), "invalid import time ts");
-	obj_setDate (import_obj, ts);
-	tc = import_obj->date;
-	do_test ((TRUE == qof_time_is_valid (tc)), "invalid import time tc");
-	do_test ((qof_time_cmp (ts, tc) == 0), "#13 date set");
+	do_test ((TRUE == qof_time_is_valid (base_time)), 
+		"invalid import time ts");
+	{
+		gchar *str;
+		QofDate *qd;
+
+		qd = qof_date_from_qtime (base_time);
+		str = qof_date_print (qd, QOF_DATE_FORMAT_ISO8601);
+		do_test ((0 == safe_strcmp (
+			"2006-07-19 11:39:54.568714241 +0000", str)),
+			"failed to compare base_time correctly.");
+		g_free (str);
+		qof_date_free (qd);
+	}
+	obj_setDate (import_obj, base_time);
+	do_test ((TRUE == qof_time_is_valid (import_obj->date)), 
+		"invalid import time");
+	do_test ((qof_time_cmp (base_time, import_obj->date) == 0), 
+		"test #13 date set");
 	obj_setFlag (import_obj, flag);
 	do_test ((flag == obj_getFlag (import_obj)), "#14 flag set");
 
@@ -380,8 +379,21 @@ test_merge (void)
 	obj_setDiscount (new_obj, discount);
 	obj_setVersion (new_obj, version);
 	obj_setMinor (new_obj, minor);
-	do_test ((TRUE == qof_time_is_valid (ts)), "second import time invalid");
-	obj_setDate (new_obj, ts);
+	do_test ((TRUE == qof_time_is_valid (base_time)), 
+		"second import time invalid");
+	{
+		gchar *str;
+		QofDate *qd;
+
+		qd = qof_date_from_qtime (base_time);
+		str = qof_date_print (qd, QOF_DATE_FORMAT_ISO8601);
+		do_test ((0 == safe_strcmp (
+			"2006-07-19 11:39:54.568714241 +0000", str)),
+			"failed to compare base_time correctly.");
+		g_free (str);
+		qof_date_free (qd);
+	}
+	obj_setDate (new_obj, base_time);
 	obj_setFlag (new_obj, flag);
 
 	obj_amount =
@@ -390,9 +402,6 @@ test_merge (void)
 	version = 2;
 	minor = 3;
 	flag = 'z';
-	tc = qof_time_add_secs (ts, -1);
-	do_test ((TRUE == qof_time_is_valid (tc)), "time add secs returned invalid");
-	qof_time_set_nanosecs (tc, 0);
 
 	/* target object - test results would be the same, so not tested. */
 	target_obj = g_new (myobj, 1);
@@ -405,8 +414,22 @@ test_merge (void)
 	obj_setDiscount (target_obj, discount);
 	obj_setVersion (target_obj, version);
 	obj_setMinor (target_obj, minor);
-	do_test ((TRUE == qof_time_is_valid (tc)), "target time invalid");
-	obj_setDate (target_obj, tc);
+	{
+		gchar *str;
+		QofDate *qd;
+
+		qd = qof_date_from_qtime (base_time);
+		str = qof_date_print (qd, QOF_DATE_FORMAT_ISO8601);
+		do_test ((0 == safe_strcmp (
+			"2006-07-19 11:39:54.568714241 +0000", str)),
+			"failed to compare base_time correctly.");
+		g_free (str);
+		qof_date_free (qd);
+	}
+	temp_time = qof_time_add_secs_copy (base_time, 65);
+	do_test ((TRUE == qof_time_is_valid (temp_time)), 
+		"time add secs returned invalid");
+	obj_setDate (target_obj, temp_time);
 	obj_setFlag (target_obj, flag);
 	do_test ((flag == obj_getFlag (target_obj)), "#15 flag set");
 
@@ -422,9 +445,9 @@ test_merge (void)
 	qof_book_merge_rule_foreach (mergeData, test_rule_loop, MERGE_DUPLICATE);
 
 	/* import should not be in the target - pass if import_init fails match with target */
-	do_test (((safe_strcmp
-			   (obj_getName (import_obj), obj_getName (target_obj))) != 0),
-			 "Init value test #1");
+	do_test (((safe_strcmp (obj_getName (import_obj), 
+			   obj_getName (target_obj))) != 0), 
+			   "Init value test #1");
 
 	/* a good commit returns zero */
 	do_test (qof_book_merge_commit (mergeData) == 0, "Commit failed");
@@ -453,13 +476,68 @@ test_merge (void)
 			  GNC_ERROR_OK), "gnc_numeric value check #2");
 
 	/* target had a different date, so import date should now be set */
-	tc = target_obj->date;
-	do_test ((qof_time_cmp (ts, tc) == 0), "date value check: 1");
-	tc = import_obj->date;
-	do_test ((qof_time_cmp (tc, ts) == 0), "date value check: 2");
-	do_test ((qof_time_cmp (import_obj->date, target_obj->date) == 0),
-			 "date value check: 3");
+	qof_time_free (temp_time);
+	temp_time = target_obj->date;
+	{
+		gchar *str;
+		QofDate *qd;
 
+		qd = qof_date_from_qtime (base_time);
+		str = qof_date_print (qd, QOF_DATE_FORMAT_ISO8601);
+		do_test ((0 == safe_strcmp (
+			"2006-07-19 11:39:54.568714241 +0000", str)),
+			"failed to compare base_time after merge.");
+		g_free (str);
+		qof_date_free (qd);
+	}
+	{
+		gchar *str;
+		QofDate *qd;
+
+		qd = qof_date_from_qtime (temp_time);
+		str = qof_date_print (qd, QOF_DATE_FORMAT_ISO8601);
+		do_test ((0 == safe_strcmp (
+			"2006-07-19 11:39:54.568714241 +0000", str)),
+			"failed to compare target time after merge.");
+		g_free (str);
+		qof_date_free (qd);
+	}
+	do_test ((qof_time_cmp (base_time, temp_time) == 0), 
+		"date value check: 1");
+#ifdef TEST_DEBUG
+	DEBUG (" import<->target=%d\n", 
+		(qof_time_cmp (base_time, target_obj->date)));
+	{
+		QofDate *qd;
+		gchar *check;
+
+		qd = qof_date_from_qtime (base_time);
+		DEBUG (" base_time=%" G_GINT64_FORMAT
+		" nsecs=%ld", qof_time_get_secs (base_time),
+		qof_time_get_nanosecs (base_time));
+		DEBUG (" import:\nyear=%" G_GINT64_FORMAT
+		" month=%ld day=%ld hour=%ld min=%ld sec=%"
+		G_GINT64_FORMAT "nsecs=%ld\n",
+		qd->qd_year, qd->qd_mon, qd->qd_mday, qd->qd_hour,
+		qd->qd_min, qd->qd_sec, qd->qd_nanosecs);
+		check = qof_date_print (qd, QOF_DATE_FORMAT_ISO8601);
+		DEBUG (" import=%s\n", check);
+		qof_date_free (qd);
+		qd = qof_date_from_qtime (target_obj->date);
+		if (!qd)
+			PERR ("qd failed");
+		DEBUG (" target:\nyear=%" G_GINT64_FORMAT
+		" month=%ld day=%ld hour=%ld min=%ld sec=%"
+		G_GINT64_FORMAT "nsecs=%ld\n",
+		qd->qd_year, qd->qd_mon, qd->qd_mday, qd->qd_hour,
+		qd->qd_min, qd->qd_sec, qd->qd_nanosecs);
+		check = qof_date_print (qd, QOF_DATE_FORMAT_ISO8601);
+		DEBUG (" target=%s\n", check);
+		g_free (check);
+		qof_date_free (qd);
+	}
+#endif
+	qof_time_free (base_time);
 	/* import should be the same as target - pass if values are the same */
 	flag_check = obj_getFlag (target_obj);
 	do_test ((flag_check == obj_getFlag (import_obj)), "flag value check: 1");
@@ -473,8 +551,8 @@ test_rule_loop (QofBookMergeData * mergeData, QofBookMergeRule * rule,
 {
 	GSList *testing;
 	QofParam *eachParam;
-	char *importstring;
-	char *targetstring;
+	gchar *importstring;
+	gchar *targetstring;
 	gboolean skip_target;
 
 	importstring = NULL;
@@ -485,7 +563,8 @@ test_rule_loop (QofBookMergeData * mergeData, QofBookMergeRule * rule,
 	do_test (remainder > 0, "loop:#2 remainder error.");
 	do_test ((safe_strcmp (NULL, rule->mergeLabel) != 0),
 			 "loop:#3 object label\n");
-	do_test ((rule->importEnt != NULL), "loop:#4 empty import entity");
+	do_test ((rule->importEnt != NULL), 
+		"loop:#4 empty import entity");
 	/* targetEnt is always NULL at this stage if MERGE_NEW is set */
 	if (rule->targetEnt == NULL)
 	{
@@ -497,7 +576,8 @@ test_rule_loop (QofBookMergeData * mergeData, QofBookMergeRule * rule,
 				  (rule->importEnt->e_type, rule->targetEnt->e_type) == 0),
 				 "loop: entity type mismatch");
 	}
-	do_test ((rule->mergeParam != NULL), "loop: empty parameter list");
+	do_test ((rule->mergeParam != NULL), 
+		"loop: empty parameter list");
 	testing = rule->mergeParam;
 
 	while (testing != NULL)
@@ -544,11 +624,12 @@ test_rule_loop (QofBookMergeData * mergeData, QofBookMergeRule * rule,
 					 "loop:#17 target param_as_string is null");
 		}
 		testing = g_slist_next (testing);
-	}							// end param loop
+	}		// end param loop
 	/* set each rule dependent on the user involvement response above. */
 	/* test routine just sets all MERGE_REPORT to MERGE_UPDATE */
 	mergeData = qof_book_merge_update_result (mergeData, MERGE_UPDATE);
-	do_test ((rule->mergeResult != MERGE_REPORT), "update result fail");
+	do_test ((rule->mergeResult != MERGE_REPORT), 
+		"update result fail");
 }
 
 int
