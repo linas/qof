@@ -1658,7 +1658,7 @@ qof_query_printTerms (QofQuery * query, GList * output)
 	for (lst = terms; lst; lst = lst->next)
 	{
 		output =
-			g_list_append (output, g_string_new ("OR and AND Terms:"));
+			g_list_append (output, g_string_new ("OR Terms:"));
 
 		if (lst->data)
 		{
