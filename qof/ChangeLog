@@ -1,3 +1,38 @@
+2006-07-23  Neil Williams <linux@codehelp.co.uk>
+
+	* qof/qofdate.c : Fix qof_date_from_struct_tm 
+	and qof_date_to_struct_tm. Remove duplicate debug 
+	log command.
+	* qof/qof/qofstrptime.c,
+	qof/qof/qofdate-p.h :
+	ERR_RECURSIVE_F is not an error, remove.
+	* qof/qofquery.c : Prevent typos by using the qofutil
+	enum to string macro.
+	
+	* qof/deprecated.c : Tidy up, remove old comments.
+	* qof/deprecated.h : Clarifying change from query_date_t
+	to query_time_t.
+	* qof/qofbookmerge.c : Fix known_types handling for
+	QofTime merge. Fix QofTime get and set routines.
+	* qof/qofdate.c : Move to revised prototype of
+	qof_time_add_secs.
+	* qof/qofquery.c : debug tweak.
+	* qof/qofquery.h : Doxygen tweaks.
+	* qof/qofquerycore-p.h : Move from query_date_t to
+	query_time_t.
+	* qof/qofquerycore.c : Reinstate old deprecated code
+	for QOF_TYPE_DATE handling.
+
+	* qof/qoftime.h :
+	* qof/qoftime.c : Review qof_time_add_secs and implement
+	new functions, qof_time_add_secs_copy and qof_time_copy.
+
+	* qof/test/test-book-merge.c : Implement QofTime in book
+	merge tests.
+	* qof/test/test-date.c : Test revised prototype of
+	qof_time_add_secs.
+
+
 2006-07-18  Neil Williams <linux@codehelp.co.uk>
 
 	* backend/file/qsf-backend.c :
