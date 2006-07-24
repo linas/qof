@@ -265,34 +265,7 @@ SQL directly in the future.</p>
 <p>Outline plan of the next few releases. All items are subject to 
 change, but this is how it looks so far.</p>
 
-<h4>QOF 0.7.0</h4>
-
-<ol><li>QOF 0.6.5 is reserved in case there are critical bugs 
-besides the 64bit issue already patched.</li>
-
-<li>The next release is intended to be QOF 0.7.0 which will include
-QofUndo from CashUtil and an overhaul of the QOF date handling. 0.7.0
-will replace the test-date.c check code completely - implementing 
-a new and more robust check.</li>
-
-<li>There will be a delay before the 0.7.0 release - I expect it to 
-be ready in July or August.</li>
-
-<li>Changes from 0.6.4 to 0.7.0 will primarily be made to provide 
-support and bug fixes for CashUtil and pilot-qof, including QofLogic 
-at some point during the life of 0.7.x.</li>
-
-<li>When pilot-link 0.12 is finally released, an interim release of
-pilot-qof will follow (the much awaited 0.1.x series). This will 
-occur with or without QOF 0.7.0, depending on exactly when 
-pilot-link 0.12 is released.</li>
-
-<li>QOF 0.7.x will still be libqof1 - the same API, same SONAME - in
-0.7.0 deprecated gnc-date.c code will be moved into deprecated.c 
-as before.</li>
-</ol>
-<h4>Plans beyond 0.7.0</h4>
-
+<h4>QOF 0.7.1</h4>
 <ol>
 <li><h4>QofNumeric</h4><p>
 The next section to be converted to the QOF naming conventions will be
@@ -305,7 +278,7 @@ This will be a GModule that can replace the QSF Backend for embedded
 systems that cannot use the ever expanding libxml2. QSQL will only be
 suitable for embedded systems - it is not intended for use on larger
 systems. In particular, it might not support the full range of QOF
-operations. <b>Possibly in 0.7.0, otherwise 0.7.1, September 2006.</b></p></li>
+operations. <b>Expected 0.7.1, September 2006.</b></p></li>
 
 <li><h4>QOF/GDA Backend</h4><p>
 A more comprehensive backend based on libgda is planned, supporting
@@ -356,7 +329,7 @@ and the website content:
 
 <hr>
 <div><p>Written by Neil Williams &lt;linux@codehelp.co.uk&gt; December 2005.
-</p><p>Last updated by Neil Williams &lt;linux@codehelp.co.uk&gt; May 2006.
+</p><p>Last updated by Neil Williams &lt;linux@codehelp.co.uk&gt; July 2006.
 </p></div>
 <hr>
 <div><a href="http://sourceforge.net/projects/qof/">

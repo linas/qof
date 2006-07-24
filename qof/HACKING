@@ -235,28 +235,7 @@ Roadmap
 Outline plan of the next few releases. All items are subject 
 to change, but this is how it looks so far.
 
-QOF 0.7.0
-
-   1. QOF 0.6.5 is reserved in case there are critical bugs 
-   besides the 64bit issue already patched.
-   2. The next release is intended to be QOF 0.7.0 which will 
-   include QofUndo from CashUtil and an overhaul of the QOF 
-   date handling. 0.7.0 will replace the test-date.c check 
-   code completely - implementing a new and more robust check.
-   3. There will be a delay before the 0.7.0 release - I 
-   expect it to be ready in July or August.
-   4. Changes from 0.6.4 to 0.7.0 will primarily be made to 
-   provide support and bug fixes for CashUtil and pilot-qof, 
-   including QofLogic at some point during the life of 0.7.x.
-   5. When pilot-link 0.12 is finally released, an interim 
-   release of pilot-qof will follow (the much awaited 0.1.x series). 
-   This will occur with or without QOF 0.7.0, depending on 
-   exactly when pilot-link 0.12 is released.
-   6. QOF 0.7.x will still be libqof1 - the same API, same 
-   SONAME - in 0.7.0 deprecated gnc-date.c code will be moved 
-   into deprecated.c as before.
-
-Plans beyond 0.7.0
+QOF 0.7.1
 
    1.
       QofNumeric
@@ -275,7 +254,7 @@ Plans beyond 0.7.0
 	  embedded systems - it is not intended for use on larger 
 	  systems. In particular, it might not support the full 
 	  range of QOF operations. 
-	  Possibly in 0.7.0, otherwise 0.7.1, September 2006.
+	  Expected :  0.7.1, September 2006.
    3.
       QOF/GDA Backend
 
@@ -330,7 +309,7 @@ and the website content:
 
 
 Written by Neil Williams <linux@codehelp.co.uk> December 2005.
-Last updated by Neil Williams <linux@codehelp.co.uk> May 2006.
+Last updated by Neil Williams <linux@codehelp.co.uk> July 2006.
 The copyright licensing notice below applies to this text.
 Copyright © 2005,2006 Neil Williams
 

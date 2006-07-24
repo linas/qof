@@ -1,3 +1,9 @@
+July 2006: Implemented QofTime and QofDate throughout
+	the rest of the library. Enabled configure option
+	to build without deprecated code in preparation
+	for libqof1 on embedded systems and for libqof2
+	more generally: --disable-deprecated-qof
+
 June 2006: Replaced gnc-date with QofTime and a new
 	QofDate, splitting time handling (seconds) from
 	date handling (calendar). Full 64bit support

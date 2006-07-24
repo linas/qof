@@ -1,3 +1,11 @@
+2006-07-24  Neil Williams <linux@codehelp.co.uk>
+
+	* qof/qofquerycore.c : Fix --disable-deprecated-qof
+	build.
+	* website/hacking.html :
+	* NEWS : 
+	* HACKING : Prepare for 0.7.0 release.
+
 2006-07-23  Neil Williams <linux@codehelp.co.uk>
 
 	* qof/qofdate.c : Fix qof_date_from_struct_tm 
