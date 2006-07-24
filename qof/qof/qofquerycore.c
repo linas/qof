@@ -334,7 +334,7 @@ time_compare_func (gpointer a, gpointer b, gint options,
 static void
 time_free_pdata (QofQueryPredData * pd)
 {
-	query_date_t pdata = (query_date_t) pd;
+	query_time_t pdata = (query_time_t) pd;
 
 	VERIFY_PDATA (query_time_type);
 
