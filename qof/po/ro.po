@@ -1,0 +1,49 @@
+# Mesajele în limba românã pentru qof
+# Copyright (C) 2006 Free Software Foundation, Inc.
+# Laurentiu Buzdugan <lbuz@rolix.org>, 2006.
+#
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: qof 0.7.0\n"
+"Report-Msgid-Bugs-To: qof-devel@lists.sourceforge.net\n"
+"POT-Creation-Date: 2006-07-14 22:59+0100\n"
+"PO-Revision-Date: 2006-07-25 12:00-0500\n"
+"Last-Translator: Laurentiu Buzdugan <lbuz@rolix.org>\n"
+"Language-Team: Romanian <translation-team-ro@lists.sourceforge.net>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=ISO-8859-2\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : (n==0 || ((n%100) > 0 && (n%100) < 20)) ? 1 : 2);\n"
+
+#: ../backend/file/qsf-backend.c:117
+msgid "Level of compression to use: 0 for none, 9 for highest."
+msgstr "Foloseºte nivel de comprimare: 0 pentru deloc, 9 pentru cel mai înalt."
+
+#: ../backend/file/qsf-backend.c:119
+msgid "QOF can compress QSF XML files using gzip. Note that compression is not used when outputting to STDOUT."
+msgstr "QOF poate comprima fiºiere XML QSF folosind gzip.  De notat cã nu este folositã comprimarea când ieºirea este direcþionatã cãtre  STDOUT."
+
+#: ../backend/file/qsf-backend.c:129
+msgid "List of QSF map files to use for this session."
+msgstr "Lista fiºierelor map QSF de folosit în aceastã sesiune."
+
+#: ../backend/file/qsf-backend.c:131
+msgid "QOF can convert objects within QSF XML files using a map of the changes required."
+msgstr "QOF poate converti obiecte din fiºiere XML QSF folosind o mapare a schimbãrilor necesare."
+
+#: ../backend/file/qsf-backend.c:140
+msgid "Encoding string to use when writing the XML file."
+msgstr "ªir de encodare de folosit la scrierea fiºierului XML."
+
+#: ../backend/file/qsf-backend.c:142
+msgid "QSF defaults to UTF-8. Other encodings are supported by passing the encoding string in this option."
+msgstr "QSF foloseºte UTF-8 în mod implicit.  Alte encodãri sunt suportate pasând ºirul de encodare în aceastã opþiune."
+
+#: ../backend/file/qsf-backend.c:151
+msgid "Convert deprecated date values to time values."
+msgstr "Converteºte valorile de date învechite în valori de timp."
+
+#: ../backend/file/qsf-backend.c:153
+msgid "Applications that support the new QOF time format need to enable this option to convert older date values into time. Applications that still use date should not set this option until time values are supported."
+msgstr "Aplicaþiile care suportã noul format de timp QOF trebuie sã permitã aceastã opþiune pentru a converti valorile de date vechi în valori de timp.  Aplicaþiile cate mai folosesc data ar trebui sã nu foloseascã aceastã opþiune pânã când nu sunt suportate valori de timp."
