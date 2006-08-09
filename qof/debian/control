@@ -55,7 +55,7 @@ Package: libqof-doc
 Priority: optional
 Section: doc
 Architecture: all
-Recommends: firefox|x-www-browser|www-browser, dwww
+Recommends: firefox|www-browser, dwww
 Description: Query Object Framework - API Documentation
  A framework to allow the execution of SQL-type queries
  using collections of in-memory objects as tables.
