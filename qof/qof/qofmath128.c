@@ -181,7 +181,7 @@ div128 (qofint128 n, gint64 d)
 {
 	qofint128 quotient;
 	int i;
-	guint64 remainder = 0;
+	gint64 remainder = 0;
 
 	quotient = n;
 	if (0 > d)

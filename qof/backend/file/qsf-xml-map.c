@@ -508,8 +508,8 @@ qsf_map_top_node_handler (xmlNodePtr child, xmlNsPtr ns,
 }
 
 static char *
-qsf_else_set_value (xmlNodePtr parent, GHashTable * default_hash,
-	gchar * content, xmlNsPtr map_ns)
+qsf_else_set_value (xmlNodePtr parent, gchar * content, 
+					xmlNsPtr map_ns)
 {
 	xmlNodePtr cur_node;
 
@@ -611,7 +611,6 @@ qsf_calculate_else (xmlNodePtr param_node, xmlNodePtr child,
 					xmlGetProp (param_node, BAD_CAST MAP_TYPE_ATTR);
 				object_data =
 					BAD_CAST qsf_else_set_value (param_node,
-					params->qsf_default_hash,
 					(gchar *) output_content, params->map_ns);
 				output_content =
 					BAD_CAST xmlGetProp ((xmlNodePtr)

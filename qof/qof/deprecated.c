@@ -90,18 +90,27 @@ gnc_log_prettify (const char *name)
 }
 
 void
-gnc_start_clock (int a, QofLogModule b, gncLogLevel c, const char *d,
-	const char *e, ...)
+gnc_start_clock (int a __attribute__ ((unused)), 
+	QofLogModule b __attribute__ ((unused)), 
+	gncLogLevel c __attribute__ ((unused)), 
+	const char *d __attribute__ ((unused)),
+	const char *e __attribute__ ((unused)), ...)
 {
 }
 void
-gnc_report_clock (int a, QofLogModule b, gncLogLevel c, const char *d,
-	const char *e, ...)
+gnc_report_clock (int a __attribute__ ((unused)), 
+	QofLogModule b __attribute__ ((unused)), 
+	gncLogLevel c __attribute__ ((unused)), 
+	const char *d __attribute__ ((unused)),
+	const char *e __attribute__ ((unused)), ...)
 {
 }
 void
-gnc_report_clock_total (int a, QofLogModule b, gncLogLevel c,
-	const char *d, const char *e, ...)
+gnc_report_clock_total (int a __attribute__ ((unused)), 
+	QofLogModule b __attribute__ ((unused)), 
+	gncLogLevel c __attribute__ ((unused)),
+	const char *d __attribute__ ((unused)), 
+	const char *e __attribute__ ((unused)), ...)
 {
 }
 
@@ -736,7 +745,8 @@ qof_print_date_buff (char *buff, size_t len, time_t t)
 }
 
 size_t
-qof_print_gdate (gchar * buf, size_t len, GDate * gd)
+qof_print_gdate (gchar * buf, size_t len __attribute__ ((unused)), 
+	GDate * gd)
 {
 	QofDateFormat df;
 	QofDate *qd;
@@ -1166,14 +1176,15 @@ gnc_iso8601_to_timespec_gmt (const gchar * str)
 		stm.tm_min -= (tz % 3600) / 60;
 		stm.tm_isdst = tmp_tm.tm_isdst;
 		ts.tv_sec = mktime (&stm);
-		if (ts.tv_sec < 0)
+		/* unreachable code */
+/*		if (ts.tv_sec < 0)
 		{
 			PWARN (" mktime failed to adjust calculated time:"
 				" tm_hour=%d tm_year=%d tm_min=%d tm_sec=%d tm_isdst=%d",
 				stm.tm_hour, stm.tm_year, stm.tm_min,
 				stm.tm_sec, stm.tm_isdst);
 			ts.tv_sec = secs - tz;
-		}
+		}*/
 		ts.tv_nsec = nsec;
 	}
 	g_free (dupe);
@@ -1453,7 +1464,8 @@ kvp_frame_add_timespec (KvpFrame * frame, const char *path, Timespec ts)
 }
 
 Timespec
-kvp_frame_get_timespec (const KvpFrame * frame, const char *path)
+kvp_frame_get_timespec (const KvpFrame * frame, 
+	const char *path __attribute__ ((unused)))
 {
 	QofTime *qt;
 	Timespec ts;
@@ -1504,9 +1516,10 @@ static struct timeval qof_clock_total[NUM_CLOCKS] = {
 };
 
 void
-qof_start_clock (gint clockno, QofLogModule log_module,
-	QofLogLevel log_level, const gchar * function_name,
-	const gchar * format, ...)
+qof_start_clock (gint clockno, 
+	QofLogModule log_module __attribute__ ((unused)),
+	QofLogLevel log_level __attribute__ ((unused)), 
+	const gchar * function_name, const gchar * format, ...)
 {
 	va_list ap;
 
@@ -1536,9 +1549,10 @@ qof_start_clock (gint clockno, QofLogModule log_module,
 }
 
 void
-qof_report_clock (gint clockno, QofLogModule log_module,
-	QofLogLevel log_level, const gchar * function_name,
-	const gchar * format, ...)
+qof_report_clock (gint clockno, 
+	QofLogModule log_module __attribute__ ((unused)),
+	QofLogLevel log_level __attribute__ ((unused)), 
+	const gchar * function_name, const gchar * format, ...)
 {
 	struct timeval now;
 	va_list ap;
@@ -1582,7 +1596,8 @@ qof_report_clock (gint clockno, QofLogModule log_module,
 
 void
 qof_report_clock_total (gint clockno,
-	QofLogModule log_module, QofLogLevel log_level,
+	QofLogModule log_module __attribute__ ((unused)), 
+	QofLogLevel log_level __attribute__ ((unused)),
 	const gchar * function_name, const gchar * format, ...)
 {
 	va_list ap;

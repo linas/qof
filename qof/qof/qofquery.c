@@ -643,7 +643,8 @@ merge_books (GList * l1, GList * l2)
 }
 
 static gboolean
-query_free_compiled (gpointer key, gpointer value, gpointer not_used)
+query_free_compiled (gpointer key, gpointer value, 
+		gpointer user_data __attribute__ ((unused)))
 {
 	QofBook *book = key;
 	QofBackend *be = book->backend;

@@ -108,7 +108,8 @@ kvp_frame_new (void)
 }
 
 static void
-kvp_frame_delete_worker (gpointer key, gpointer value, gpointer user_data)
+kvp_frame_delete_worker (gpointer key, gpointer value, 
+	gpointer user_data __attribute__ ((unused)))
 {
 	qof_util_string_cache_remove (key);
 	kvp_value_delete ((KvpValue *) value);
@@ -1809,8 +1810,8 @@ kvp_value_glist_to_string (const GList * list)
 }
 
 static void
-kvp_frame_to_bare_string_helper (gpointer key, gpointer value,
-	gpointer data)
+kvp_frame_to_bare_string_helper (gpointer key __attribute__ ((unused)), 
+	gpointer value,	gpointer data)
 {
 	gchar **str = (gchar **) data;
 	*str =

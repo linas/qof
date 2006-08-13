@@ -145,7 +145,8 @@ qof_date_init (void)
 }
 
 static void
-hash_value_free (gpointer key, gpointer value, gpointer data)
+hash_value_free (gpointer key __attribute__ ((unused)), gpointer value, 
+	gpointer data __attribute__ ((unused)))
 {
 	g_free (value);
 }
@@ -365,7 +366,8 @@ struct iter
 };
 
 static void
-lookup_name (gpointer key, gpointer value, gpointer data)
+lookup_name (gpointer key __attribute__ ((unused)), gpointer value, 
+	gpointer data)
 {
 	struct iter *i;
 	QofDateEntry *d;
@@ -918,7 +920,8 @@ qof_date_to_qtime (const QofDate *qd)
 }
 
 QofTime *
-qof_date_time_difference (const QofDate * date1, const QofDate * date2)
+qof_date_time_difference (const QofDate * date1, 
+	const QofDate * date2)
 {
 	gint64 days;
 	QofTime *secs;
@@ -926,7 +929,7 @@ qof_date_time_difference (const QofDate * date1, const QofDate * date2)
 	secs = qof_time_new ();
 	days = days_between (date1->qd_year, date2->qd_year);
 	qof_time_add_secs(secs, QOF_DAYS_TO_SEC(days));
-	if (days_between >= 0)
+	if (days >= 0)
 	{
 		/* positive value, add date2 secs, subtract date1 */
 		qof_time_add_secs(secs, -1 *
@@ -940,7 +943,7 @@ qof_date_time_difference (const QofDate * date1, const QofDate * date2)
 		qof_time_set_nanosecs(secs, 
 			(date1->qd_nanosecs - date2->qd_nanosecs));
 	}
-	if (days_between < 0)
+	if (days < 0)
 	{
 		/* negative value*/
 		qof_time_add_secs (secs, 

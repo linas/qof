@@ -466,8 +466,8 @@ numeric_match_predicate (gpointer object, QofParam * getter,
 }
 
 static int
-numeric_compare_func (gpointer a, gpointer b, gint options,
-	QofParam * getter)
+numeric_compare_func (gpointer a, gpointer b, 
+	gint options __attribute__ ((unused)), QofParam * getter)
 {
 	gnc_numeric va, vb;
 
@@ -755,7 +755,8 @@ int32_match_predicate (gpointer object, QofParam * getter,
 }
 
 static int
-int32_compare_func (gpointer a, gpointer b, gint options,
+int32_compare_func (gpointer a, gpointer b, 
+	gint options __attribute__ ((unused)),
 	QofParam * getter)
 {
 	gint32 v1, v2;
@@ -851,8 +852,8 @@ int64_match_predicate (gpointer object, QofParam * getter,
 }
 
 static int
-int64_compare_func (gpointer a, gpointer b, gint options,
-	QofParam * getter)
+int64_compare_func (gpointer a, gpointer b, 
+	gint options __attribute__ ((unused)), QofParam * getter)
 {
 	gint64 v1, v2;
 	g_return_val_if_fail (a && b && getter
@@ -947,8 +948,8 @@ double_match_predicate (gpointer object, QofParam * getter,
 }
 
 static int
-double_compare_func (gpointer a, gpointer b, gint options,
-	QofParam * getter)
+double_compare_func (gpointer a, gpointer b, 
+	gint options __attribute__ ((unused)), QofParam * getter)
 {
 	double v1, v2;
 	g_return_val_if_fail (a && b && getter
@@ -1034,8 +1035,8 @@ boolean_match_predicate (gpointer object, QofParam * getter,
 }
 
 static int
-boolean_compare_func (gpointer a, gpointer b, gint options,
-	QofParam * getter)
+boolean_compare_func (gpointer a, gpointer b, 
+	gint options __attribute__ ((unused)), QofParam * getter)
 {
 	gboolean va, vb;
 	g_return_val_if_fail (a && b && getter
@@ -1127,7 +1128,8 @@ char_match_predicate (gpointer object, QofParam * getter,
 }
 
 static int
-char_compare_func (gpointer a, gpointer b, gint options, QofParam * getter)
+char_compare_func (gpointer a, gpointer b, 
+	gint options __attribute__ ((unused)), QofParam * getter)
 {
 	char va, vb;
 	g_return_val_if_fail (a && b && getter
@@ -1436,7 +1438,8 @@ collect_match_predicate (gpointer object, QofParam * getter,
 }
 
 static int
-collect_compare_func (gpointer a, gpointer b, gint options,
+collect_compare_func (gpointer a, gpointer b, 
+	gint options __attribute__ ((unused)),
 	QofParam * getter)
 {
 	gint result;

@@ -64,7 +64,8 @@ qof_log_drop_indent (void)
 }
 
 static void
-fh_printer (const gchar * log_domain, GLogLevelFlags log_level, 
+fh_printer (const gchar * log_domain __attribute__ ((unused)), 
+	GLogLevelFlags log_level __attribute__ ((unused)), 
 	const gchar * message, gpointer user_data)
 {
 	FILE *fh = user_data;
@@ -112,7 +113,8 @@ qof_log_set_level (QofLogModule log_module, QofLogLevel level)
 }
 
 static void
-log_module_foreach (gpointer key, gpointer value, gpointer data)
+log_module_foreach (gpointer key, 
+	gpointer value __attribute__ ((unused)), gpointer data)
 {
 	g_hash_table_insert (log_table, key, data);
 }
@@ -211,7 +213,7 @@ qof_log_check (QofLogModule log_module, QofLogLevel log_level)
 	log_string = NULL;
 	if (log_level > QOF_LOG_TRACE)
 		log_level = QOF_LOG_TRACE;
-	if (!log_table || log_module == NULL || log_level < 0)
+	if (!log_table || log_module == NULL)
 	{
 		return FALSE;
 	}

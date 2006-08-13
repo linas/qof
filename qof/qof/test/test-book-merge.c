@@ -244,28 +244,28 @@ myobjRegister (void)
 {
 	static QofParam params[] = {
 		{OBJ_NAME, QOF_TYPE_STRING, (QofAccessFunc) obj_getName,
-		 (QofSetterFunc) obj_setName},
+		 (QofSetterFunc) obj_setName, NULL},
 		{OBJ_AMOUNT, QOF_TYPE_NUMERIC, (QofAccessFunc) obj_getAmount,
-		 (QofSetterFunc) obj_setAmount},
+		 (QofSetterFunc) obj_setAmount, NULL},
 		{OBJ_GUID, QOF_TYPE_GUID, (QofAccessFunc) obj_getGUID,
-		 (QofSetterFunc) obj_setGUID},
+		 (QofSetterFunc) obj_setGUID, NULL},
 		{OBJ_DATE, QOF_TYPE_TIME, (QofAccessFunc) obj_getDate,
-		 (QofSetterFunc) obj_setDate},
+		 (QofSetterFunc) obj_setDate, NULL},
 		{OBJ_DISCOUNT, QOF_TYPE_DOUBLE, (QofAccessFunc) obj_getDiscount,
-		 (QofSetterFunc) obj_setDiscount},
+		 (QofSetterFunc) obj_setDiscount, NULL},
 		{OBJ_ACTIVE, QOF_TYPE_BOOLEAN, (QofAccessFunc) obj_getActive,
-		 (QofSetterFunc) obj_setActive},
+		 (QofSetterFunc) obj_setActive, NULL},
 		{OBJ_VERSION, QOF_TYPE_INT32, (QofAccessFunc) obj_getVersion,
-		 (QofSetterFunc) obj_setVersion},
+		 (QofSetterFunc) obj_setVersion, NULL},
 		{OBJ_MINOR, QOF_TYPE_INT64, (QofAccessFunc) obj_getMinor,
-		 (QofSetterFunc) obj_setMinor},
+		 (QofSetterFunc) obj_setMinor, NULL},
 		{OBJ_FLAG, QOF_TYPE_CHAR, (QofAccessFunc) obj_getFlag,
-		 (QofSetterFunc) obj_setFlag},
+		 (QofSetterFunc) obj_setFlag, NULL},
 		{QOF_PARAM_BOOK, QOF_ID_BOOK, (QofAccessFunc) qof_instance_get_book,
-		 NULL},
+		 NULL, NULL},
 		{QOF_PARAM_GUID, QOF_TYPE_GUID, (QofAccessFunc) qof_instance_get_guid,
-		 NULL},
-		{NULL},
+		 NULL, NULL},
+		{NULL, NULL, NULL, NULL, NULL},
 	};
 
 	qof_class_register (TEST_MODULE_NAME, NULL, params);
@@ -635,7 +635,8 @@ test_rule_loop (QofBookMergeData * mergeData, QofBookMergeRule * rule,
 }
 
 int
-main (int argc, const char *argv[])
+main (int argc __attribute__ ((unused)), 
+	  const char *argv[] __attribute__ ((unused)))
 {
 	qof_init ();
 	myobjRegister ();

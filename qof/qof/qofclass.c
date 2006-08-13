@@ -35,7 +35,8 @@ static GHashTable *sortTable = NULL;
 static gboolean initialized = FALSE;
 
 static gboolean
-clear_table (gpointer key, gpointer value, gpointer user_data)
+clear_table (gpointer key __attribute__ ((unused)), gpointer value, 
+			 gpointer user_data __attribute__ ((unused)))
 {
 	g_hash_table_destroy (value);
 	return TRUE;
@@ -218,7 +219,9 @@ struct class_iterate
 };
 
 static void
-class_foreach_cb (gpointer key, gpointer item, gpointer arg)
+class_foreach_cb (gpointer key __attribute__ ((unused)), 
+				  gpointer item __attribute__ ((unused)), 
+				  gpointer arg)
 {
 	struct class_iterate *qiter = arg;
 	QofIdTypeConst id = key;
@@ -251,7 +254,8 @@ struct parm_iterate
 };
 
 static void
-param_foreach_cb (gpointer key, gpointer item, gpointer arg)
+param_foreach_cb (gpointer key __attribute__ ((unused)), 
+				  gpointer item, gpointer arg)
 {
 	struct parm_iterate *qiter = arg;
 	QofParam *parm = item;

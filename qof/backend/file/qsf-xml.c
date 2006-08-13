@@ -364,6 +364,9 @@ static void
 qsf_parameter_handler (xmlNodePtr child, xmlNsPtr qsf_ns,
 	qsf_param * params)
 {
+	/* spurious */
+	if (!qsf_ns)
+		return;
 	params->param_node = child;
 	g_slist_foreach (params->supported_types, qsf_supported_data_types,
 		params);

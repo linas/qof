@@ -688,7 +688,7 @@ qof_book_merge_rule_cb (gpointer rule, gpointer arg)
 
 static void
 qof_book_merge_commit_rule_loop (QofBookMergeData * mergeData,
-	QofBookMergeRule * rule, guint remainder)
+	QofBookMergeRule * rule, guint remainder __attribute__ ((unused)))
 {
 	QofInstance *inst;
 	gboolean registered_type;

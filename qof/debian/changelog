@@ -13,6 +13,7 @@ qof (0.7.0-1) unstable; urgency=low
   - Upgrade to debhelper compat 5, standards version 3.7.2
   - Add linda override for lib-not-in-shlibs (see #345871)
   - Run make check during preparation of package.
+  - Incorporate QSF patch to free the XML document correctly.
 
  -- Neil Williams <linux@codehelp.co.uk>  Mon, 10 Jul 2006 22:02:26 +0100
 

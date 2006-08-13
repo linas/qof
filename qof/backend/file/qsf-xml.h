@@ -436,7 +436,7 @@ typedef struct qsf_validates
 								by this map. ::MAP_OBJECT_TAG. */
 	gint qof_registered_count; /**< Number of objects (in either the QSF 
 								or the map) that are registered with QofObject. */
-	gint incoming_count;	   /**< Number of unique objects in the incoming
+	guint incoming_count;	   /**< Number of unique objects in the incoming
 								QSF file. Used to ensure all incoming objects are used.*/
 } qsf_validator;
 

@@ -47,7 +47,7 @@ static gboolean debug = FALSE;
 /* deliberately make these global to the file to pick up
 errors where developers access handlers directly. This practice
 will be deprecated in qofevent. */
-static gint test, foo;
+static guint test, foo;
 
 /* simple object structure */
 typedef struct e_obj
@@ -225,26 +225,26 @@ event_objRegister (void)
 {
 	static QofParam params[] = {
 		{OBJ_NAME, QOF_TYPE_STRING, (QofAccessFunc) event_getName,
-		 (QofSetterFunc) event_setName},
+		 (QofSetterFunc) event_setName, NULL},
 		{OBJ_AMOUNT, QOF_TYPE_NUMERIC, (QofAccessFunc) event_getAmount,
-		 (QofSetterFunc) event_setAmount},
+		 (QofSetterFunc) event_setAmount, NULL},
 		{OBJ_DATE, QOF_TYPE_TIME, (QofAccessFunc) event_getDate,
-		 (QofSetterFunc) event_setDate},
+		 (QofSetterFunc) event_setDate, NULL},
 		{OBJ_DISCOUNT, QOF_TYPE_DOUBLE, (QofAccessFunc) event_getDiscount,
-		 (QofSetterFunc) event_setDiscount},
+		 (QofSetterFunc) event_setDiscount, NULL},
 		{OBJ_ACTIVE, QOF_TYPE_BOOLEAN, (QofAccessFunc) event_getActive,
-		 (QofSetterFunc) event_setActive},
+		 (QofSetterFunc) event_setActive, NULL},
 		{OBJ_VERSION, QOF_TYPE_INT32, (QofAccessFunc) event_getVersion,
-		 (QofSetterFunc) event_setVersion},
+		 (QofSetterFunc) event_setVersion, NULL},
 		{OBJ_MINOR, QOF_TYPE_INT64, (QofAccessFunc) event_getMinor,
-		 (QofSetterFunc) event_setMinor},
+		 (QofSetterFunc) event_setMinor, NULL},
 		{OBJ_FLAG, QOF_TYPE_CHAR, (QofAccessFunc) event_getFlag,
-		 (QofSetterFunc) event_setFlag},
+		 (QofSetterFunc) event_setFlag, NULL},
 		{QOF_PARAM_BOOK, QOF_ID_BOOK, (QofAccessFunc) qof_instance_get_book,
-		 NULL},
+		 NULL, NULL},
 		{QOF_PARAM_GUID, QOF_TYPE_GUID, (QofAccessFunc) qof_instance_get_guid,
-		 NULL},
-		{NULL},
+		 NULL, NULL},
+		{NULL, NULL, NULL, NULL, NULL},
 	};
 
 	qof_class_register (OBJ_EVENT_NAME, NULL, params);
@@ -266,7 +266,8 @@ typedef struct event_context_s
 
 static void
 test_event_handler (QofEntity *ent, QofEventId event_type, 
-					gpointer handler_data, gpointer user_data)
+					gpointer handler_data, 
+					gpointer user_data __attribute__ ((unused)))
 {
 	event_context *context;
 
@@ -326,7 +327,8 @@ test_event_handler (QofEntity *ent, QofEventId event_type,
 
 static void
 foo_event_handler (QofEntity *ent, QofEventId event_type,
-				   gpointer handler_data, gpointer user_data)
+				   gpointer handler_data, 
+				   gpointer user_data __attribute__ ((unused)))
 {
 	event_context *context;
 
@@ -487,7 +489,7 @@ create_data (QofSession * original, event_context * context)
 }
 
 int
-main (int argc, const char *argv[])
+main (int argc __attribute__ ((unused)), const char *argv[] __attribute__ ((unused)))
 {
 	QofSession *original;
 	event_context context;

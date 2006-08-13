@@ -408,7 +408,8 @@ struct _iterate
 };
 
 static void
-foreach_cb (gpointer key, gpointer item, gpointer arg)
+foreach_cb (gpointer key __attribute__ ((unused)), gpointer item, 
+			gpointer arg)
 {
 	struct _iterate *qiter = arg;
 	QofEntity *ent = item;

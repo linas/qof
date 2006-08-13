@@ -285,6 +285,7 @@ qsf_session_begin (QofBackend * be, QofSession * session,
 	PINFO (" ignore_lock=%d create_if_nonexistent=%d", ignore_lock,
 		create_if_nonexistent);
 	g_return_if_fail (be != NULL);
+	g_return_if_fail (session);
 	qsf_be = (QSFBackend *) be;
 	g_return_if_fail (qsf_be->params != NULL);
 	qsf_be->fullpath = NULL;
@@ -334,8 +335,8 @@ qsf_free_params (qsf_param * params)
 	g_slist_free (params->supported_types);
 	if (params->map_ns)
 		xmlFreeNs (params->map_ns);
-	if (params->input_doc)
-		xmlFreeDoc (params->input_doc);
+	if (params->output_doc)
+		xmlFreeDoc (params->output_doc);
 }
 
 static void
@@ -407,7 +408,7 @@ insert_ref_cb (QofObject * obj, gpointer user_data)
 ==================================================*/
 
 static gboolean
-qsfdoc_to_qofbook (xmlDocPtr doc, qsf_param * params)
+qsfdoc_to_qofbook (qsf_param * params)
 {
 	QofInstance *inst;
 	struct qsf_node_iterate qiter;
@@ -495,13 +496,12 @@ load_qsf_object (QofBook * book, const gchar * fullpath,
 	map_root = xmlDocGetRootElement (mapDoc);
 	params->map_ns = map_root->ns;
 	params->input_doc = qsf_object_convert (mapDoc, qsf_root, params);
-	qsfdoc_to_qofbook (params->input_doc, params);
+	qsfdoc_to_qofbook (params);
 	return TRUE;
 }
 
 static gboolean
-load_our_qsf_object (QofBook * book, const gchar * fullpath,
-	qsf_param * params)
+load_our_qsf_object (const gchar * fullpath, qsf_param * params)
 {
 	xmlNodePtr qsf_root;
 
@@ -514,7 +514,7 @@ load_our_qsf_object (QofBook * book, const gchar * fullpath,
 	qsf_root = NULL;
 	qsf_root = xmlDocGetRootElement (params->input_doc);
 	params->qsf_ns = qsf_root->ns;
-	return qsfdoc_to_qofbook (params->input_doc, params);
+	return qsfdoc_to_qofbook (params);
 }
 
 /* Determine the type of QSF and load it into the QofBook
@@ -563,7 +563,7 @@ qsf_file_type (QofBackend * be, QofBook * book)
 	if (result)
 	{
 		params->file_type = OUR_QSF_OBJ;
-		result = load_our_qsf_object (book, path, params);
+		result = load_our_qsf_object (path, params);
 		if (!result)
 		{
 			qof_backend_set_error (be, ERR_FILEIO_PARSE_ERROR);
@@ -1151,7 +1151,6 @@ write_qsf_from_book (const gchar *path, QofBook * book,
 		qof_backend_set_error (be, ERR_FILEIO_WRITE_ERROR);
 		return;
 	}
-	xmlFreeDoc (qsf_doc);
 }
 
 static void
@@ -1166,7 +1165,6 @@ write_qsf_to_stdout (QofBook * book, qsf_param * params)
 		params->use_gz_level, params->encoding);
 	xmlSaveFormatFileEnc ("-", qsf_doc, params->encoding, 1);
 	fprintf (stdout, "\n");
-	xmlFreeDoc (qsf_doc);
 }
 
 static void

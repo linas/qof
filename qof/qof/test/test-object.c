@@ -78,7 +78,8 @@ test_object (void)
 }
 
 static void
-obj_foreach (QofCollection * col, QofEntityForeachCB cb, gpointer u_d)
+obj_foreach (QofCollection * col, 
+	QofEntityForeachCB cb __attribute__ ((unused)), gpointer u_d)
 {
 	int *foo = u_d;
 
@@ -89,7 +90,8 @@ obj_foreach (QofCollection * col, QofEntityForeachCB cb, gpointer u_d)
 }
 
 static void
-foreachCB (QofEntity * ent, gpointer u_d)
+foreachCB (QofEntity * ent __attribute__ ((unused)), 
+		gpointer u_d __attribute__ ((unused)))
 {
 	do_test (FALSE, "FAIL");
 }
@@ -146,7 +148,7 @@ test_printable (const char *name, gpointer obj)
 }
 
 int
-main (int argc, char **argv)
+main (int argc __attribute__ ((unused)), char **argv __attribute__ ((unused)))
 {
 	qof_init ();
 	test_object ();

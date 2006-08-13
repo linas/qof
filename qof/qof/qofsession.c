@@ -160,7 +160,7 @@ qof_session_get_error (QofSession * session)
 }
 
 static const gchar *
-get_default_error_message (QofBackendError err)
+get_default_error_message (QofBackendError err __attribute__ ((unused)))
 {
 	return "";
 }

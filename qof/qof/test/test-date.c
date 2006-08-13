@@ -47,7 +47,8 @@ typedef struct
 }QTestDate;
 
 static void
-check_date_cycles (gpointer data, gpointer user_data)
+check_date_cycles (gpointer data, 
+	gpointer user_data __attribute__ ((unused)))
 {
 	QofDateFormat df;
 	gchar *str, *cmp;
@@ -730,7 +731,7 @@ test_date_init (void)
 }
 
 static void
-free_test_data (gpointer data, gpointer user_data)
+free_test_data (gpointer data, gpointer user_data __attribute__ ((unused)))
 {
 	QTestDate *td;
 
@@ -1668,7 +1669,7 @@ run_qoftime_test (void)
 }
 
 int
-main (int argc, char **argv)
+main (int argc __attribute__ ((unused)), char **argv __attribute__ ((unused)))
 {
 	qof_init ();
 #ifdef TEST_DEBUG

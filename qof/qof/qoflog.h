@@ -73,13 +73,13 @@ FROM_STRING_DEC (QofLogLevel, LOG_LEVEL_LIST)
 void qof_log_add_indent (void);
 
 /** gets the running total of the indent */
-	 gint qof_log_get_indent (void);
+gint qof_log_get_indent (void);
 
 /** drops back one indent for each LEAVE macro
 
 indent is reset to zero if less than a single indent would exist.
 */
-	 void qof_log_drop_indent (void);
+void qof_log_drop_indent (void);
 
 /** Initialize the error logging subsystem
 

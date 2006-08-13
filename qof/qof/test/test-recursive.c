@@ -686,30 +686,30 @@ mygrandRegister (void)
 {
 	static QofParam params[] = {
 		{OBJ_NAME, QOF_TYPE_STRING, (QofAccessFunc) grand_getName,
-		 (QofSetterFunc) grand_setName},
+		 (QofSetterFunc) grand_setName, NULL},
 		{OBJ_AMOUNT, QOF_TYPE_NUMERIC, (QofAccessFunc) grand_getAmount,
-		 (QofSetterFunc) grand_setAmount},
+		 (QofSetterFunc) grand_setAmount, NULL},
 		{OBJ_DATE, QOF_TYPE_TIME, (QofAccessFunc) grand_getDate,
-		 (QofSetterFunc) grand_setDate},
+		 (QofSetterFunc) grand_setDate, NULL},
 		{OBJ_DISCOUNT, QOF_TYPE_DOUBLE, (QofAccessFunc) grand_getDiscount,
-		 (QofSetterFunc) grand_setDiscount},
+		 (QofSetterFunc) grand_setDiscount, NULL},
 		{OBJ_ACTIVE, QOF_TYPE_BOOLEAN, (QofAccessFunc) grand_getActive,
-		 (QofSetterFunc) grand_setActive},
+		 (QofSetterFunc) grand_setActive, NULL},
 		{OBJ_VERSION, QOF_TYPE_INT32, (QofAccessFunc) grand_getVersion,
-		 (QofSetterFunc) grand_setVersion},
+		 (QofSetterFunc) grand_setVersion, NULL},
 		{OBJ_MINOR, QOF_TYPE_INT64, (QofAccessFunc) grand_getMinor,
-		 (QofSetterFunc) grand_setMinor},
+		 (QofSetterFunc) grand_setMinor, NULL},
 		{OBJ_FLAG, QOF_TYPE_CHAR, (QofAccessFunc) grand_getFlag,
-		 (QofSetterFunc) grand_setFlag},
+		 (QofSetterFunc) grand_setFlag, NULL},
 		{OBJ_RELATIVE, PARENT_MODULE_NAME, (QofAccessFunc) grand_getChild,
-		 (QofSetterFunc) grand_setChild},
+		 (QofSetterFunc) grand_setChild, NULL},
 		{OBJ_LIST, QOF_TYPE_COLLECT, (QofAccessFunc) grand_getDescend,
-		 (QofSetterFunc) grand_setDescend},
+		 (QofSetterFunc) grand_setDescend, NULL},
 		{QOF_PARAM_BOOK, QOF_ID_BOOK, (QofAccessFunc) qof_instance_get_book,
-		 NULL},
+		 NULL, NULL},
 		{QOF_PARAM_GUID, QOF_TYPE_GUID, (QofAccessFunc) qof_instance_get_guid,
-		 NULL},
-		{NULL},
+		 NULL, NULL},
+		{NULL, NULL, NULL, NULL, NULL},
 	};
 
 	qof_class_register (GRAND_MODULE_NAME, NULL, params);
@@ -737,28 +737,28 @@ myparentRegister (void)
 {
 	static QofParam params[] = {
 		{OBJ_NAME, QOF_TYPE_STRING, (QofAccessFunc) parent_getName,
-		 (QofSetterFunc) parent_setName},
+		 (QofSetterFunc) parent_setName, NULL},
 		{OBJ_AMOUNT, QOF_TYPE_NUMERIC, (QofAccessFunc) parent_getAmount,
-		 (QofSetterFunc) parent_setAmount},
+		 (QofSetterFunc) parent_setAmount, NULL},
 		{OBJ_DATE, QOF_TYPE_TIME, (QofAccessFunc) parent_getDate,
-		 (QofSetterFunc) parent_setDate},
+		 (QofSetterFunc) parent_setDate, NULL},
 		{OBJ_DISCOUNT, QOF_TYPE_DOUBLE, (QofAccessFunc) parent_getDiscount,
-		 (QofSetterFunc) parent_setDiscount},
+		 (QofSetterFunc) parent_setDiscount, NULL},
 		{OBJ_ACTIVE, QOF_TYPE_BOOLEAN, (QofAccessFunc) parent_getActive,
-		 (QofSetterFunc) parent_setActive},
+		 (QofSetterFunc) parent_setActive, NULL},
 		{OBJ_VERSION, QOF_TYPE_INT32, (QofAccessFunc) parent_getVersion,
-		 (QofSetterFunc) parent_setVersion},
+		 (QofSetterFunc) parent_setVersion, NULL},
 		{OBJ_MINOR, QOF_TYPE_INT64, (QofAccessFunc) parent_getMinor,
-		 (QofSetterFunc) parent_setMinor},
+		 (QofSetterFunc) parent_setMinor, NULL},
 		{OBJ_FLAG, QOF_TYPE_CHAR, (QofAccessFunc) parent_getFlag,
-		 (QofSetterFunc) parent_setFlag},
+		 (QofSetterFunc) parent_setFlag, NULL},
 		{OBJ_RELATIVE, CHILD_MODULE_NAME, (QofAccessFunc) parent_getChild,
-		 (QofSetterFunc) parent_setChild},
+		 (QofSetterFunc) parent_setChild, NULL},
 		{QOF_PARAM_BOOK, QOF_ID_BOOK, (QofAccessFunc) qof_instance_get_book,
-		 NULL},
+		 NULL, NULL},
 		{QOF_PARAM_GUID, QOF_TYPE_GUID, (QofAccessFunc) qof_instance_get_guid,
-		 NULL},
-		{NULL},
+		 NULL, NULL},
+		{NULL, NULL, NULL, NULL, NULL},
 	};
 
 	qof_class_register (PARENT_MODULE_NAME, NULL, params);
@@ -785,26 +785,26 @@ mychildRegister (void)
 {
 	static QofParam params[] = {
 		{OBJ_NAME, QOF_TYPE_STRING, (QofAccessFunc) child_getName,
-		 (QofSetterFunc) child_setName},
+		 (QofSetterFunc) child_setName, NULL},
 		{OBJ_AMOUNT, QOF_TYPE_NUMERIC, (QofAccessFunc) child_getAmount,
-		 (QofSetterFunc) child_setAmount},
+		 (QofSetterFunc) child_setAmount, NULL},
 		{OBJ_DATE, QOF_TYPE_TIME, (QofAccessFunc) child_getDate,
-		 (QofSetterFunc) child_setDate},
+		 (QofSetterFunc) child_setDate, NULL},
 		{OBJ_DISCOUNT, QOF_TYPE_DOUBLE, (QofAccessFunc) child_getDiscount,
-		 (QofSetterFunc) child_setDiscount},
+		 (QofSetterFunc) child_setDiscount, NULL},
 		{OBJ_ACTIVE, QOF_TYPE_BOOLEAN, (QofAccessFunc) child_getActive,
-		 (QofSetterFunc) child_setActive},
+		 (QofSetterFunc) child_setActive, NULL},
 		{OBJ_VERSION, QOF_TYPE_INT32, (QofAccessFunc) child_getVersion,
-		 (QofSetterFunc) child_setVersion},
+		 (QofSetterFunc) child_setVersion, NULL},
 		{OBJ_MINOR, QOF_TYPE_INT64, (QofAccessFunc) child_getMinor,
-		 (QofSetterFunc) child_setMinor},
+		 (QofSetterFunc) child_setMinor, NULL},
 		{OBJ_FLAG, QOF_TYPE_CHAR, (QofAccessFunc) child_getFlag,
-		 (QofSetterFunc) child_setFlag},
+		 (QofSetterFunc) child_setFlag, NULL},
 		{QOF_PARAM_BOOK, QOF_ID_BOOK, (QofAccessFunc) qof_instance_get_book,
-		 NULL},
+		 NULL, NULL},
 		{QOF_PARAM_GUID, QOF_TYPE_GUID, (QofAccessFunc) qof_instance_get_guid,
-		 NULL},
-		{NULL},
+		 NULL, NULL},
+		{NULL, NULL, NULL, NULL, NULL},
 	};
 
 	qof_class_register (CHILD_MODULE_NAME, NULL, params);
@@ -1050,7 +1050,7 @@ test_recursion (QofSession * original, guint counter)
 }
 
 int
-main (int argc, const char *argv[])
+main (int argc __attribute__ ((unused)), const char *argv[] __attribute__ ((unused)))
 {
 	QofSession *original;
 	guint counter;

@@ -1,3 +1,40 @@
+2006-08-13  Neil Williams <linux@codehelp.co.uk>
+
+	* configure.in : Enable -Wextra under
+	--enable-compiler-warnings.
+
+	Implement -Wextra. File list:
+	* backend/file/qsf-backend.c :
+	* backend/file/qsf-xml-map.c :
+	* backend/file/qsf-xml.c :
+	* backend/file/qsf-xml.h :
+	* debian/changelog :
+	* qof/deprecated.c :
+	* qof/kvp-util.c :
+	* qof/kvp_frame.c :
+	* qof/qofbook.c :
+	* qof/qofbookmerge.c :
+	* qof/qofclass.c :
+	* qof/qofdate.c :
+	* qof/qofgobj.c :
+	* qof/qofid.c :
+	* qof/qoflog.c :
+	* qof/qoflog.h :
+	* qof/qofmath128.c :
+	* qof/qofobject.c :
+	* qof/qofquery.c :
+	* qof/qofquerycore.c :
+	* qof/qofsession.c :
+	* qof/qofsql.c :
+	* qof/test/test-book-merge.c :
+	* qof/test/test-date.c :
+	* qof/test/test-event.c :
+	* qof/test/test-guid.c :
+	* qof/test/test-numeric.c :
+	* qof/test/test-object.c :
+	* qof/test/test-querynew.c :
+	* qof/test/test-recursive.c :
+
 2006-07-26  Neil Williams <linux@codehelp.co.uk>
 
 	* po/vi.po : Updated Vietnamese translation by

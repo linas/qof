@@ -118,7 +118,7 @@ qof_gobject_getter (gpointer data, QofParam * getter)
 	 * mapping below ... */
 	if (G_IS_PARAM_SPEC_STRING (gps))
 	{
-		GValue gval = { G_TYPE_INVALID };
+		GValue gval;
 		g_value_init (&gval, G_TYPE_STRING);
 		g_object_get_property (gob, getter->param_name, &gval);
 
@@ -129,7 +129,7 @@ qof_gobject_getter (gpointer data, QofParam * getter)
 	{
 		long ival;
 
-		GValue gval = { G_TYPE_INVALID };
+		GValue gval;
 		g_value_init (&gval, G_TYPE_INT);
 		g_object_get_property (gob, getter->param_name, &gval);
 
@@ -139,7 +139,7 @@ qof_gobject_getter (gpointer data, QofParam * getter)
 	else if (G_IS_PARAM_SPEC_UINT (gps))
 	{
 		long ival;
-		GValue gval = { G_TYPE_INVALID };
+		GValue gval;
 		g_value_init (&gval, G_TYPE_UINT);
 		g_object_get_property (gob, getter->param_name, &gval);
 
@@ -150,7 +150,7 @@ qof_gobject_getter (gpointer data, QofParam * getter)
 	{
 		gboolean ival;
 
-		GValue gval = { G_TYPE_INVALID };
+		GValue gval;
 		g_value_init (&gval, G_TYPE_BOOLEAN);
 		g_object_get_property (gob, getter->param_name, &gval);
 
@@ -176,7 +176,7 @@ qof_gobject_double_getter (gpointer data, QofParam * getter)
 	 * mapping below ... */
 	if (G_IS_PARAM_SPEC_FLOAT (gps))
 	{
-		GValue gval = { G_TYPE_INVALID };
+		GValue gval;
 		g_value_init (&gval, G_TYPE_FLOAT);
 		g_object_get_property (gob, getter->param_name, &gval);
 
@@ -185,7 +185,7 @@ qof_gobject_double_getter (gpointer data, QofParam * getter)
 	}
 	else if (G_IS_PARAM_SPEC_DOUBLE (gps))
 	{
-		GValue gval = { G_TYPE_INVALID };
+		GValue gval;
 		g_value_init (&gval, G_TYPE_DOUBLE);
 		g_object_get_property (gob, getter->param_name, &gval);
 
@@ -219,7 +219,7 @@ qof_gobject_foreach (QofCollection * coll, QofEntityForeachCB cb,
 void
 qof_gobject_register (QofType e_type, GObjectClass * obclass)
 {
-	gint i, j;
+	guint i, j;
 	QofParam *qof_param_list, *qpar;
 	QofObject *class_def;
 	GParamSpec **prop_list, *gparam;

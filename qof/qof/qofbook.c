@@ -240,7 +240,7 @@ struct _iterate
 };
 
 static void
-foreach_cb (gpointer key, gpointer item, gpointer arg)
+foreach_cb (gpointer key __attribute__ ((unused)), gpointer item, gpointer arg)
 {
 	struct _iterate *qiter = arg;
 	QofCollection *col = item;
@@ -314,7 +314,7 @@ qof_book_set_version (QofBook * book, gint32 version)
 void
 qof_book_set_idata (QofBook * book, guint32 idata)
 {
-	if (!book && idata < 0)
+	if (!book && idata == 0)
 	{
 		return;
 	}
@@ -378,11 +378,11 @@ qof_book_register (void)
 	static QofParam params[] = {
 		{QOF_PARAM_GUID, QOF_TYPE_GUID,
 				(QofAccessFunc) qof_entity_get_guid,
-			NULL},
+			NULL, NULL},
 		{QOF_PARAM_KVP, QOF_TYPE_KVP,
 				(QofAccessFunc) qof_instance_get_slots,
-			NULL},
-		{NULL},
+			NULL, NULL},
+		{NULL, NULL, NULL, NULL, NULL},
 	};
 
 	qof_class_register (QOF_ID_BOOK, NULL, params);

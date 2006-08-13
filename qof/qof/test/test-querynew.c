@@ -35,7 +35,8 @@
 #define BAD_PARAM		"bad-param"
 
 static void
-obj_foreach (QofCollection * col, QofEntityForeachCB cb, gpointer u_d)
+obj_foreach (QofCollection * col, 
+	QofEntityForeachCB cb __attribute__ ((unused)), gpointer u_d)
 {
 	int *foo = u_d;
 
@@ -68,13 +69,13 @@ static QofObject bus_obj = {
 };
 
 static int
-test_sort (gpointer a, gpointer b)
+test_sort (gpointer a __attribute__ ((unused)), gpointer b __attribute__ ((unused)))
 {
 	return 0;
 }
 
 static int
-test_core_param (gpointer a)
+test_core_param (gpointer a __attribute__ ((unused)))
 {
 	return 0;
 }
@@ -83,8 +84,9 @@ static void
 test_class (void)
 {
 	static QofParam params[] = {
-		{TEST_PARAM, TEST_CORE, (QofAccessFunc) test_core_param, NULL},
-		{NULL},
+		{TEST_PARAM, TEST_CORE, (QofAccessFunc) test_core_param,
+			NULL, NULL},
+		{NULL, NULL, NULL, NULL, NULL},
 	};
 
 	fprintf (stderr, "\tTesting the qof_query_object interface. \n"
@@ -130,7 +132,7 @@ test_querynew (void)
 }
 
 int
-main (int argc, char **argv)
+main (int argc __attribute__ ((unused)), char **argv __attribute__ ((unused)))
 {
 	qof_init ();
 	test_query_core ();

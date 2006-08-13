@@ -158,7 +158,7 @@ handle_single_condition (QofSqlQuery * query, sql_condition * cond)
 	KvpValue *kv, *kval;
 	KvpValueType kvt;
 	QofQueryCompare qop;
-	gint len;
+	guint len;
 	QofType param_type;
 	QofGuidMatch gm;
 

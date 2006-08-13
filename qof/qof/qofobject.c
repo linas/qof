@@ -235,7 +235,8 @@ qof_object_get_type_label (QofIdTypeConst type_name)
 }
 
 static gboolean
-clear_table (gpointer key, gpointer value, gpointer user_data)
+clear_table (gpointer key __attribute__ ((unused)), gpointer value, 
+			 gpointer user_data __attribute__ ((unused)))
 {
 	g_hash_table_destroy (value);
 	return TRUE;
