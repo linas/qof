@@ -51,21 +51,21 @@ printable (gpointer obj)
 {
 	do_test (obj != NULL, "printable: object is NULL");
 	success ("called printable callback");
-	return ((const char *) obj);
+	return ((const gchar *) obj);
 }
 
 static QofObject bus_obj = {
-  interface_version:QOF_OBJECT_VERSION,
-  e_type:TEST_MODULE_NAME,
-  type_label:TEST_MODULE_DESC,
-  create:NULL,
-  book_begin:NULL,
-  book_end:NULL,
-  is_dirty:NULL,
-  mark_clean:NULL,
-  foreach:obj_foreach,
-  printable:printable,
-  version_cmp:NULL,
+  .interface_version = QOF_OBJECT_VERSION,
+  .e_type = TEST_MODULE_NAME,
+  .type_label = TEST_MODULE_DESC,
+  .create = NULL,
+  .book_begin = NULL,
+  .book_end = NULL,
+  .is_dirty = NULL,
+  .mark_clean = NULL,
+  .foreach = obj_foreach,
+  .printable = printable,
+  .version_cmp = NULL,
 };
 
 static int
@@ -132,7 +132,7 @@ test_querynew (void)
 }
 
 int
-main (int argc __attribute__ ((unused)), char **argv __attribute__ ((unused)))
+main (void)
 {
 	qof_init ();
 	test_query_core ();

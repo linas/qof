@@ -226,17 +226,18 @@ obj_getAmount (myobj * g)
 }
 
 static QofObject obj_object_def = {
-  interface_version:QOF_OBJECT_VERSION,
-  e_type:TEST_MODULE_NAME,
-  type_label:TEST_MODULE_DESC,
-  create:(gpointer) obj_create,
-  book_begin:NULL,
-  book_end:NULL,
-  is_dirty:NULL,
-  mark_clean:NULL,
-  foreach:qof_collection_foreach,
-  printable:NULL,
-  version_cmp:(gint (*)(gpointer, gpointer)) qof_instance_version_cmp,
+  .interface_version = QOF_OBJECT_VERSION,
+  .e_type = TEST_MODULE_NAME,
+  .type_label = TEST_MODULE_DESC,
+  .create = (gpointer) obj_create,
+  .book_begin = NULL,
+  .book_end = NULL,
+  .is_dirty = NULL,
+  .mark_clean = NULL,
+  .foreach = qof_collection_foreach,
+  .printable = NULL,
+  .version_cmp = (gint (*)(gpointer, gpointer)) 
+				qof_instance_version_cmp,
 };
 
 gboolean
@@ -635,8 +636,7 @@ test_rule_loop (QofBookMergeData * mergeData, QofBookMergeRule * rule,
 }
 
 int
-main (int argc __attribute__ ((unused)), 
-	  const char *argv[] __attribute__ ((unused)))
+main (void)
 {
 	qof_init ();
 	myobjRegister ();

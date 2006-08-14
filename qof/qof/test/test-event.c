@@ -207,17 +207,18 @@ event_getAmount (event_obj * e)
 }
 
 static QofObject event_object_def = {
-  interface_version:QOF_OBJECT_VERSION,
-  e_type:OBJ_EVENT_NAME,
-  type_label:OBJ_EVENT_DESC,
-  create:(gpointer) event_create,
-  book_begin:NULL,
-  book_end:NULL,
-  is_dirty:NULL,
-  mark_clean:NULL,
-  foreach:qof_collection_foreach,
-  printable:NULL,
-  version_cmp:(int (*)(gpointer, gpointer)) qof_instance_version_cmp,
+  .interface_version = QOF_OBJECT_VERSION,
+  .e_type = OBJ_EVENT_NAME,
+  .type_label = OBJ_EVENT_DESC,
+  .create = (gpointer) event_create,
+  .book_begin = NULL,
+  .book_end = NULL,
+  .is_dirty = NULL,
+  .mark_clean = NULL,
+  .foreach = qof_collection_foreach,
+  .printable = NULL,
+  .version_cmp = (gint (*)(gpointer, gpointer)) 
+				qof_instance_version_cmp,
 };
 
 static gboolean
@@ -489,7 +490,7 @@ create_data (QofSession * original, event_context * context)
 }
 
 int
-main (int argc __attribute__ ((unused)), const char *argv[] __attribute__ ((unused)))
+main (void)
 {
 	QofSession *original;
 	event_context context;

@@ -81,7 +81,7 @@ run_test (void)
 }
 
 int
-main (int argc __attribute__ ((unused)), char **argv __attribute__ ((unused)))
+main (void)
 {
 	guid_init ();
 	g_log_set_always_fatal (G_LOG_LEVEL_CRITICAL | G_LOG_LEVEL_WARNING);

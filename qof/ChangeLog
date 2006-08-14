@@ -1,3 +1,15 @@
+2006-08-14  Neil Williams <linux@codehelp.co.uk>
+
+	* qof/test/test-book-merge.c : 
+	* qof/test/test-date.c :
+	* qof/test/test-event.c :
+	* qof/test/test-guid.c :
+	* qof/test/test-numeric.c :
+	* qof/test/test-object.c :
+	* qof/test/test-querynew.c :
+	* qof/test/test-recursive.c : Remove obsolete
+	struct initialisers.
+
 2006-08-13  Neil Williams <linux@codehelp.co.uk>
 
 	* configure.in : Enable -Wextra under

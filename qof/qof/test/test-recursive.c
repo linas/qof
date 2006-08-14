@@ -668,17 +668,18 @@ child_getAmount (mychild * c)
 }
 
 static QofObject grand_object_def = {
-  interface_version:QOF_OBJECT_VERSION,
-  e_type:GRAND_MODULE_NAME,
-  type_label:GRAND_MODULE_DESC,
-  create:(gpointer) grand_create,
-  book_begin:NULL,
-  book_end:NULL,
-  is_dirty:qof_collection_is_dirty,
-  mark_clean:qof_collection_mark_clean,
-  foreach:qof_collection_foreach,
-  printable:NULL,
-  version_cmp:(int (*)(gpointer, gpointer)) qof_instance_version_cmp,
+  .interface_version = QOF_OBJECT_VERSION,
+  .e_type = GRAND_MODULE_NAME,
+  .type_label = GRAND_MODULE_DESC,
+  .create = (gpointer) grand_create,
+  .book_begin = NULL,
+  .book_end = NULL,
+  .is_dirty = qof_collection_is_dirty,
+  .mark_clean = qof_collection_mark_clean,
+  .foreach = qof_collection_foreach,
+  .printable = NULL,
+  .version_cmp = (gint (*)(gpointer, gpointer)) 
+			qof_instance_version_cmp,
 };
 
 gboolean
@@ -719,17 +720,18 @@ mygrandRegister (void)
 }
 
 static QofObject parent_object_def = {
-  interface_version:QOF_OBJECT_VERSION,
-  e_type:PARENT_MODULE_NAME,
-  type_label:PARENT_MODULE_DESC,
-  create:(gpointer) parent_create,
-  book_begin:NULL,
-  book_end:NULL,
-  is_dirty:qof_collection_is_dirty,
-  mark_clean:qof_collection_mark_clean,
-  foreach:qof_collection_foreach,
-  printable:NULL,
-  version_cmp:(int (*)(gpointer, gpointer)) qof_instance_version_cmp,
+  .interface_version = QOF_OBJECT_VERSION,
+  .e_type = PARENT_MODULE_NAME,
+  .type_label = PARENT_MODULE_DESC,
+  .create = (gpointer) parent_create,
+  .book_begin = NULL,
+  .book_end = NULL,
+  .is_dirty = qof_collection_is_dirty,
+  .mark_clean = qof_collection_mark_clean,
+  .foreach = qof_collection_foreach,
+  .printable = NULL,
+  .version_cmp = (gint (*)(gpointer, gpointer)) 
+				qof_instance_version_cmp,
 };
 
 gboolean
@@ -767,17 +769,18 @@ myparentRegister (void)
 }
 
 static QofObject child_object_def = {
-  interface_version:QOF_OBJECT_VERSION,
-  e_type:CHILD_MODULE_NAME,
-  type_label:CHILD_MODULE_DESC,
-  create:(gpointer) child_create,
-  book_begin:NULL,
-  book_end:NULL,
-  is_dirty:qof_collection_is_dirty,
-  mark_clean:qof_collection_mark_clean,
-  foreach:qof_collection_foreach,
-  printable:NULL,
-  version_cmp:(int (*)(gpointer, gpointer)) qof_instance_version_cmp,
+  .interface_version = QOF_OBJECT_VERSION,
+  .e_type = CHILD_MODULE_NAME,
+  .type_label = CHILD_MODULE_DESC,
+  .create = (gpointer) child_create,
+  .book_begin = NULL,
+  .book_end = NULL,
+  .is_dirty = qof_collection_is_dirty,
+  .mark_clean = qof_collection_mark_clean,
+  .foreach = qof_collection_foreach,
+  .printable = NULL,
+  .version_cmp = (gint (*)(gpointer, gpointer)) 
+				qof_instance_version_cmp,
 };
 
 gboolean
@@ -1050,7 +1053,7 @@ test_recursion (QofSession * original, guint counter)
 }
 
 int
-main (int argc __attribute__ ((unused)), const char *argv[] __attribute__ ((unused)))
+main (void)
 {
 	QofSession *original;
 	guint counter;
