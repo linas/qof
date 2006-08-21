@@ -30,27 +30,34 @@
 #define QOF_INSTANCE_P_H
 #include "config.h"
 #include "qofinstance.h"
+#include "qofclass.h"
 
 struct QofInstance_s
 {
-	/* Globally unique id identifying this instance */
+	/** Globally unique id identifying this instance */
 	QofEntity entity;
 
-	/* The entity_table in which this instance is stored */
+	/** The entity_table in which this instance is stored */
 	QofBook *book;
 
-	/* kvp_data is a key-value pair database for storing arbirtary
+	/** kvp_data is a key-value pair database for storing arbirtary
 	 * information associated with this instance.  
 	 * See src/engine/kvp_doc.txt for a list and description of the 
 	 * important keys. */
 	KvpFrame *kvp_data;
 
-	/*  Time of the last modification to this 
-	 *  instance.  Typically used to compare two versions of the
-	 *  same object, to see which is newer.  When used with the 
-	 *  SQL backend, this field is reserved for SQL use, to compare
-	 *  the version in local memory to the remote, server version.
-	 */
+	/** Current QofParam being edited / committed 
+	\since 0.7.1
+	*/
+	const QofParam * param;
+
+	/**  Time of the last modification to this 
+	instance.  Typically used to compare two versions of the
+	same object, to see which is newer.  Reserved for SQL use, 
+	to compare the version in local memory to the remote, 
+	server version.
+	\since 0.7.0
+	*/
 	QofTime *update_time;
 #ifndef QOF_DISABLE_DEPRECATED
 	Timespec last_update;
