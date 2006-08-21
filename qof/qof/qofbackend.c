@@ -141,11 +141,12 @@ qof_backend_init (QofBackend * be)
 	be->error_msg = NULL;
 	be->percentage = NULL;
 	be->backend_configuration = kvp_frame_new ();
-
+#ifndef QOF_DISABLE_DEPRECATED
 	/** \deprecated */
 	be->price_lookup = NULL;
 	/** \deprecated */
 	be->export = NULL;
+#endif
 }
 
 void
