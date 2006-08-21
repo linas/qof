@@ -1,5 +1,14 @@
 2006-08-21  Neil Williams <linux@codehelp.co.uk>
 
+	*  qof/qofdate.c,
+	qof/qofstrftime.c :  Protect against timezone
+	errors.
+	* qof/qoftime.c : Re-implement qof_time_to_gdate,
+	qof_time_from_gdate and qof_time_set_day_start
+	to avoid using GDate.
+
+2006-08-21  Neil Williams <linux@codehelp.co.uk>
+
 	* qof/deprecated.h,
 	qof/deprecated.c : Deprecate qof_begin_edit,
 	qof_commit_edit and MACRO versions in favour of

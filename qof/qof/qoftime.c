@@ -31,6 +31,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "qof.h"
+#include "qofdate-p.h"
 
 static QofLogModule log_module = QOF_MOD_TIME;
 
@@ -297,27 +298,11 @@ qof_time_from_gtimeval (QofTime * qt, GTimeVal * gtv)
 GDate *
 qof_time_to_gdate (QofTime * qt)
 {
+	QofDate *qd;
 	GDate *d;
-	time_t t;
-	glong nsecs;
-	gboolean success;
-	struct tm utc;
 
-	/** \todo replace with qofstrftime ( [qof]strptime actually)
-	%Y for 2006 == (tm_year)
-	%m for 05   == (tm_mon + 1)
-	%d for 22
-	to avoid range problems with time_t
-	then g_date_set_parse (GDate, gchar*)
-	gchar* str = "%d/%m/%Y";
-	
-	*/
-	success = qof_time_to_time_t (qt, &t, &nsecs);
-	if (!success)
-		return NULL;
-	utc = *gmtime_r (&t, &utc);
-	d = g_date_new_dmy (utc.tm_mday, utc.tm_mon + 1, 
-		utc.tm_year + 1900);
+	qd = qof_date_from_qtime (qt);
+	d = g_date_new_dmy (qd->qd_mday, qd->qd_mon, qd->qd_year);
 	if (g_date_valid (d))
 		return d;
 	return NULL;
@@ -326,23 +311,15 @@ qof_time_to_gdate (QofTime * qt)
 QofTime *
 qof_time_from_gdate (GDate * date)
 {
-	GTimeVal *current, from_date;
-	GDate *now;
-	gint days_between;
-	gint64 secs_between;
+	struct tm gtm;
 	QofTime *qt;
+	QofDate *qd;
 
 	g_return_val_if_fail (date, NULL);
-	current = qof_time_get_current_start ();
-	now = g_date_new ();
-	g_date_set_time_val (now, current);
-	/* if date is in the future, days_between is negative */
-	days_between = g_date_days_between (date, now);
-	qt = qof_time_new ();
-	qof_time_from_gtimeval (qt, &from_date);
-	secs_between = days_between * SECS_PER_DAY;
-	qof_time_set_secs (qt, current->tv_sec - secs_between);
-	qof_time_set_nanosecs (qt, 0);
+	g_date_to_struct_tm (date, &gtm);
+	qd = qof_date_from_struct_tm (&gtm);
+	qt = qof_date_to_qtime (qd);
+	qof_date_free (qd);
 	return qt;
 }
 
@@ -396,25 +373,28 @@ qof_time_get_current (void)
 gboolean
 qof_time_set_day_start (QofTime * qt)
 {
-	GDate *d, *now;
-	GTimeVal *current, from_date;
-	gint days_between;
-
-	/** \todo convert to QofDate */
+	QofDate *qd;
+	QofTimeSecs c;
+	
 	g_return_val_if_fail (qt, FALSE);
-	d = qof_time_to_gdate (qt);
-	if (!d)
-		return FALSE;
-	now = g_date_new ();
-	current = qof_time_get_current_start ();
-	g_date_set_time_val (now, current);
-	/* if date is in the future, days_between is negative */
-	days_between = g_date_days_between (d, now);
-	from_date.tv_sec = current->tv_sec - (days_between * SECS_PER_DAY);
-	from_date.tv_usec = 0;
-	qof_time_from_gtimeval (qt, &from_date);
-	g_date_free (d);
-	g_free (current);
+	qd = qof_date_from_qtime (qt);
+	if (qd->qd_year < 1970)
+	{
+		c = QOF_DAYS_TO_SEC(qd->qd_yday);
+		c -= QOF_DAYS_TO_SEC(days_between (1970, qd->qd_year));
+		c -= qd->qd_gmt_off;
+		qt->qt_sec = c;
+		qt->qt_nsec = 0;
+	}
+	if (qd->qd_year >= 1970)
+	{
+		c = QOF_DAYS_TO_SEC(qd->qd_yday);
+		c += QOF_DAYS_TO_SEC(days_between (1970, qd->qd_year));
+		c -= qd->qd_gmt_off;
+		qt->qt_sec = c;
+		qt->qt_nsec = 0;
+	}
+	qof_date_free (qd);
 	return TRUE;
 }
 

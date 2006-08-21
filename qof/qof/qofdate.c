@@ -26,6 +26,7 @@
 #include "config.h"
 #include <glib.h>
 #include <glib/gprintf.h>
+#include <stdlib.h>
 #include <time.h>
 #include "qof.h"
 #include "qofdate-p.h"
@@ -857,6 +858,7 @@ qof_date_from_qtime (const QofTime *qt)
 	g_return_val_if_fail (qof_time_is_valid (qt), NULL);
 	qd = qof_date_new ();
 	leap_extra_secs = 0;
+	setenv ("TZ", "GMT", 1);
 	tzset();
 	leap_extra_secs = extract_interval (qt);
 	qof_date_offset (qt, leap_extra_secs, qd);

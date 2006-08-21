@@ -1,3 +1,9 @@
+qof (0.7.0-2) unstable; urgency=low
+
+  * FTBFS on hppa, sparc and m68k: date test failures (Closes: #383746)
+
+ -- Neil Williams <linux@codehelp.co.uk>  Mon, 21 Aug 2006 20:22:34 +0100
+
 qof (0.7.0-1) unstable; urgency=low
 
   * New upstream release.

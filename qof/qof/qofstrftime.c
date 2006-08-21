@@ -176,12 +176,15 @@ strftime_case (gboolean upcase, gchar * s,
 	if (ut)
 	{
 		if (!(zone && *zone))
+		{
+			setenv ("TZ", "GMT", 1);
 			zone = "GMT";
+		}
 	}
 	else
 	{
-		/* POSIX.1 requires that local time zone information be used as
-		   though strftime called tzset.  */
+		/* POSIX.1 requires that local time zone information be 
+		used as though strftime called tzset.  */
 		tzset ();
 	}
 
