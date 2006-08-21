@@ -1699,5 +1699,85 @@ gnc_kvp_bag_merge (KvpFrame * kvp_into, const char *intopath,
 	qof_kvp_bag_merge (kvp_into, intopath, kvp_from, frompath);
 }
 
+gboolean qof_begin_edit (QofInstance * inst)
+{
+	return qof_util_param_edit (inst, NULL);
+}
+
+gboolean
+qof_commit_edit (QofInstance * inst)
+{
+	QofBackend *be;
+
+	if (!inst)
+		return FALSE;
+	(inst->editlevel)--;
+	if (0 < inst->editlevel)
+		return FALSE;
+	if ((-1 == inst->editlevel) && inst->dirty)
+	{
+		be = qof_book_get_backend ((inst)->book);
+		if (be && qof_backend_begin_exists (be))
+			qof_backend_run_begin (be, inst);
+		inst->editlevel = 0;
+	}
+	if (0 > inst->editlevel)
+		inst->editlevel = 0;
+	return TRUE;
+}
+
+
+gboolean
+qof_commit_edit_part2 (QofInstance * inst,
+	void (*on_error) (QofInstance *, QofBackendError),
+	void (*on_done) (QofInstance *), void (*on_free) (QofInstance *))
+{
+	QofBackend *be;
+
+	/* See if there's a backend.  If there is, invoke it. */
+	be = qof_book_get_backend (inst->book);
+	if (be && qof_backend_commit_exists (be))
+	{
+		QofBackendError errcode;
+
+		/* clear errors */
+		do
+		{
+			errcode = qof_backend_get_error (be);
+		}
+		while (ERR_BACKEND_NO_ERR != errcode);
+
+		qof_backend_run_commit (be, inst);
+		errcode = qof_backend_get_error (be);
+		if (ERR_BACKEND_NO_ERR != errcode)
+		{
+			/* XXX Should perform a rollback here */
+			inst->do_free = FALSE;
+
+			/* Push error back onto the stack */
+			qof_backend_set_error (be, errcode);
+			if (on_error)
+				on_error (inst, errcode);
+			return FALSE;
+		}
+		/* XXX the backend commit code should clear dirty!! */
+		inst->dirty = FALSE;
+	}
+	if (inst->do_free)
+	{
+		if (on_free)
+			on_free (inst);
+		return TRUE;
+	}
+	if (on_done)
+		on_done (inst);
+	return TRUE;
+}
+
+gchar *
+qof_util_param_as_string (QofEntity * ent, QofParam * param)
+{
+	return qof_util_param_to_string (ent, param);
+}
 /* ==================================================================== */
 #endif /* QOF_DISABLE_DEPRECATED */

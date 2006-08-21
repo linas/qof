@@ -27,11 +27,14 @@
 
 #include "config.h"
 
+#include <errno.h>
 #include <ctype.h>
 #include <glib.h>
 #include <stdlib.h>
 #include <string.h>
 #include "qof.h"
+#include "qofundo-p.h"
+#include "qofbook-p.h"
 
 static QofLogModule log_module = QOF_MOD_UTIL;
 
@@ -259,9 +262,10 @@ qof_util_bool_to_int (const gchar * val)
 /* =================================================================== */
 
 gboolean
-qof_begin_edit (QofInstance * inst)
+qof_util_param_edit (QofInstance * inst, const QofParam *param)
 {
 	QofBackend *be;
+	QofUndo *undo_data;
 
 	if (!inst)
 		return FALSE;
@@ -271,6 +275,13 @@ qof_begin_edit (QofInstance * inst)
 	if (0 >= inst->editlevel)
 		inst->editlevel = 1;
 	be = qof_book_get_backend (inst->book);
+	if (param != NULL)
+	{
+		undo_data = inst->book->undo_data;
+		inst->param = param;
+		if (undo_data->undo_operation_open)
+			qof_undo_modify (inst, param);
+	}
 	if (be && qof_backend_begin_exists (be))
 		qof_backend_run_begin (be, inst);
 	else
@@ -279,42 +290,16 @@ qof_begin_edit (QofInstance * inst)
 }
 
 gboolean
-qof_commit_edit (QofInstance * inst)
+qof_util_param_commit (QofInstance * inst, const QofParam * param)
 {
-	QofBackend *be;
+	QofUndo *undo_data;
+	QofBackend * be;
 
-	if (!inst)
-		return FALSE;
-	(inst->editlevel)--;
-	if (0 < inst->editlevel)
-		return FALSE;
-	if ((-1 == inst->editlevel) && inst->dirty)
-	{
-		be = qof_book_get_backend ((inst)->book);
-		if (be && qof_backend_begin_exists (be))
-			qof_backend_run_begin (be, inst);
-		inst->editlevel = 0;
-	}
-	if (0 > inst->editlevel)
-		inst->editlevel = 0;
-	return TRUE;
-}
-
-
-gboolean
-qof_commit_edit_part2 (QofInstance * inst,
-	void (*on_error) (QofInstance *, QofBackendError),
-	void (*on_done) (QofInstance *), void (*on_free) (QofInstance *))
-{
-	QofBackend *be;
-
-	/* See if there's a backend.  If there is, invoke it. */
 	be = qof_book_get_backend (inst->book);
 	if (be && qof_backend_commit_exists (be))
 	{
 		QofBackendError errcode;
 
-		/* clear errors */
 		do
 		{
 			errcode = qof_backend_get_error (be);
@@ -325,26 +310,18 @@ qof_commit_edit_part2 (QofInstance * inst,
 		errcode = qof_backend_get_error (be);
 		if (ERR_BACKEND_NO_ERR != errcode)
 		{
-			/* XXX Should perform a rollback here */
-			inst->do_free = FALSE;
-
 			/* Push error back onto the stack */
 			qof_backend_set_error (be, errcode);
-			if (on_error)
-				on_error (inst, errcode);
 			return FALSE;
 		}
-		/* XXX the backend commit code should clear dirty!! */
-		inst->dirty = FALSE;
 	}
-	if (inst->do_free)
+	if (param != NULL)
 	{
-		if (on_free)
-			on_free (inst);
-		return TRUE;
+		undo_data = inst->book->undo_data;
+		inst->param = param;
+		if (undo_data->undo_operation_open)
+			qof_undo_commit (inst, param);
 	}
-	if (on_done)
-		on_done (inst);
 	return TRUE;
 }
 
@@ -441,19 +418,19 @@ qof_util_string_cache_insert (gconstpointer key)
 }
 
 gchar *
-qof_util_param_as_string (QofEntity * ent, QofParam * param)
+qof_util_param_to_string (QofEntity * ent, const QofParam * param)
 {
 	gchar *param_string;
 	gchar param_sa[GUID_ENCODING_LENGTH + 1];
 	gboolean known_type;
 	QofType paramType;
 	const GUID *param_guid;
-	gnc_numeric param_numeric, (*numeric_getter) (QofEntity *, QofParam *);
-	double param_double, (*double_getter) (QofEntity *, QofParam *);
-	gboolean param_boolean, (*boolean_getter) (QofEntity *, QofParam *);
-	gint32 param_i32, (*int32_getter) (QofEntity *, QofParam *);
-	gint64 param_i64, (*int64_getter) (QofEntity *, QofParam *);
-	gchar param_char, (*char_getter) (QofEntity *, QofParam *);
+	gnc_numeric param_numeric, (*numeric_getter) (QofEntity *, const QofParam *);
+	double param_double, (*double_getter) (QofEntity *, const QofParam *);
+	gboolean param_boolean, (*boolean_getter) (QofEntity *, const QofParam *);
+	gint32 param_i32, (*int32_getter) (QofEntity *, const QofParam *);
+	gint64 param_i64, (*int64_getter) (QofEntity *, const QofParam *);
+	gchar param_char, (*char_getter) (QofEntity *, const QofParam *);
 
 	param_string = NULL;
 	known_type = FALSE;
@@ -479,12 +456,12 @@ qof_util_param_as_string (QofEntity * ent, QofParam * param)
 #ifndef QOF_DISABLE_DEPRECATED
 	if (safe_strcmp (paramType, QOF_TYPE_DATE) == 0)
 	{
-		Timespec param_ts, (*date_getter) (QofEntity *, QofParam *);
+		Timespec param_ts, (*date_getter) (QofEntity *, const QofParam *);
 		time_t param_t;
 		gchar param_date[MAX_DATE_LENGTH];
 
 		date_getter =
-			(Timespec (*)(QofEntity *, QofParam *)) param->param_getfcn;
+			(Timespec (*)(QofEntity *, const QofParam *)) param->param_getfcn;
 		param_ts = date_getter (ent, param);
 		param_t = param_ts.tv_sec;
 		strftime (param_date, MAX_DATE_LENGTH,
@@ -498,7 +475,7 @@ qof_util_param_as_string (QofEntity * ent, QofParam * param)
 		(safe_strcmp (paramType, QOF_TYPE_DEBCRED) == 0))
 	{
 		numeric_getter =
-			(gnc_numeric (*)(QofEntity *, QofParam *)) param->param_getfcn;
+			(gnc_numeric (*)(QofEntity *, const QofParam *)) param->param_getfcn;
 		param_numeric = numeric_getter (ent, param);
 		param_string = g_strdup (gnc_numeric_to_string (param_numeric));
 		known_type = TRUE;
@@ -515,7 +492,7 @@ qof_util_param_as_string (QofEntity * ent, QofParam * param)
 	if (safe_strcmp (paramType, QOF_TYPE_INT32) == 0)
 	{
 		int32_getter =
-			(gint32 (*)(QofEntity *, QofParam *)) param->param_getfcn;
+			(gint32 (*)(QofEntity *, const QofParam *)) param->param_getfcn;
 		param_i32 = int32_getter (ent, param);
 		param_string = g_strdup_printf ("%d", param_i32);
 		known_type = TRUE;
@@ -524,7 +501,7 @@ qof_util_param_as_string (QofEntity * ent, QofParam * param)
 	if (safe_strcmp (paramType, QOF_TYPE_INT64) == 0)
 	{
 		int64_getter =
-			(gint64 (*)(QofEntity *, QofParam *)) param->param_getfcn;
+			(gint64 (*)(QofEntity *, const QofParam *)) param->param_getfcn;
 		param_i64 = int64_getter (ent, param);
 		param_string = g_strdup_printf ("%" G_GINT64_FORMAT, param_i64);
 		known_type = TRUE;
@@ -533,7 +510,7 @@ qof_util_param_as_string (QofEntity * ent, QofParam * param)
 	if (safe_strcmp (paramType, QOF_TYPE_DOUBLE) == 0)
 	{
 		double_getter =
-			(double (*)(QofEntity *, QofParam *)) param->param_getfcn;
+			(double (*)(QofEntity *, const QofParam *)) param->param_getfcn;
 		param_double = double_getter (ent, param);
 		param_string = g_strdup_printf ("%f", param_double);
 		known_type = TRUE;
@@ -542,7 +519,7 @@ qof_util_param_as_string (QofEntity * ent, QofParam * param)
 	if (safe_strcmp (paramType, QOF_TYPE_BOOLEAN) == 0)
 	{
 		boolean_getter =
-			(gboolean (*)(QofEntity *, QofParam *)) param->param_getfcn;
+			(gboolean (*)(QofEntity *, const QofParam *)) param->param_getfcn;
 		param_boolean = boolean_getter (ent, param);
 		/* Boolean values need to be lowercase for QSF validation. */
 		if (param_boolean == TRUE)
@@ -573,7 +550,7 @@ qof_util_param_as_string (QofEntity * ent, QofParam * param)
 	if (safe_strcmp (paramType, QOF_TYPE_CHAR) == 0)
 	{
 		char_getter =
-			(gchar (*)(QofEntity *, QofParam *)) param->param_getfcn;
+			(gchar (*)(QofEntity *, const QofParam *)) param->param_getfcn;
 		param_char = char_getter (ent, param);
 		known_type = TRUE;
 		return g_strdup_printf ("%c", param_char);
@@ -635,6 +612,195 @@ qof_util_param_as_string (QofEntity * ent, QofParam * param)
 	}
 	return g_strdup ("");
 }
+
+gboolean
+qof_util_param_set_string (QofEntity * ent, const QofParam * param,
+	const gchar * value_string)
+{
+	void (*string_setter) (QofEntity *, const gchar *);
+	void (*time_setter) (QofEntity *, QofTime *);
+	void (*numeric_setter) (QofEntity *, gnc_numeric);
+	void (*guid_setter) (QofEntity *, const GUID *);
+	void (*double_setter) (QofEntity *, double);
+	void (*boolean_setter) (QofEntity *, gboolean);
+	void (*i32_setter) (QofEntity *, gint32);
+	void (*i64_setter) (QofEntity *, gint64);
+	void (*char_setter) (QofEntity *, gchar);
+/*	void (*kvp_frame_setter) (QofEntity *, KvpFrame *);
+	void (*reference_setter) (QofEntity *, QofEntity *);
+	void (*collection_setter) (QofEntity *, QofCollection *);*/
+
+	g_return_val_if_fail (ent, FALSE);
+	g_return_val_if_fail (param, FALSE);
+	g_return_val_if_fail (value_string, FALSE);
+
+	if (safe_strcmp (param->param_type, QOF_TYPE_STRING) == 0)
+	{
+		string_setter =
+			(void (*)(QofEntity *,
+				const gchar *)) param->param_setfcn;
+		if (string_setter != NULL)
+			string_setter (ent, value_string);
+//		registered_type = TRUE;
+	}
+	if (safe_strcmp (param->param_type, QOF_TYPE_TIME) == 0)
+	{
+		QofTime *qt;
+		QofDate *qd;
+
+		qd = qof_date_parse (value_string, QOF_DATE_FORMAT_UTC);
+		if (!qd)
+			return FALSE;
+		qt = qof_date_to_qtime (qd);
+		time_setter = 
+			(void (*)(QofEntity *, QofTime *))
+			param->param_setfcn;
+		if ((time_setter != NULL) && (qof_time_is_valid (qt)))
+			time_setter (ent, qt);
+		qof_date_free (qd);
+//		registered_type = TRUE;
+	}
+#ifndef QOF_DISABLE_DEPRECATED
+	if (safe_strcmp (param->param_type, QOF_TYPE_DATE) == 0)
+	{
+		return FALSE;
+//		registered_type = TRUE;
+	}
+#endif
+	if ((safe_strcmp (param->param_type, QOF_TYPE_NUMERIC) == 0) ||
+		(safe_strcmp (param->param_type, QOF_TYPE_DEBCRED) == 0))
+	{
+		gnc_numeric num;
+		numeric_setter =
+			(void (*)(QofEntity *,
+				gnc_numeric)) param->param_setfcn;
+		if (!string_to_gnc_numeric (value_string, &num) ||
+			(gnc_numeric_check (num) != GNC_ERROR_OK))
+			return FALSE;
+		if (numeric_setter != NULL)
+			numeric_setter (ent, num);
+//		registered_type = TRUE;
+	}
+	if (safe_strcmp (param->param_type, QOF_TYPE_GUID) == 0)
+	{
+		GUID * guid;
+
+		guid = guid_malloc();
+		guid_new (guid);
+		guid_setter =
+			(void (*)(QofEntity *,
+				const GUID *)) param->param_setfcn;
+		if (!string_to_guid(value_string, guid))
+			return FALSE;
+		if (guid_setter != NULL)
+			guid_setter (ent, guid);
+//		registered_type = TRUE;
+	}
+	if (safe_strcmp (param->param_type, QOF_TYPE_INT32) == 0)
+	{
+		gint32 i32;
+		gchar *tail;
+
+		errno = 0;
+		i32_setter =
+			(void (*)(QofEntity *, gint32)) param->param_setfcn;
+		i32 =
+			(gint32) strtol (value_string, &tail, 0);
+		if ((i32_setter != NULL) && (errno == 0))
+
+			i32_setter (ent, i32);
+//		registered_type = TRUE;
+	}
+	if (safe_strcmp (param->param_type, QOF_TYPE_INT64) == 0)
+	{
+		gint64 i64;
+		gchar *tail;
+
+		errno = 0;
+		i64 = strtoll (value_string, &tail, 0);
+		i64_setter =
+			(void (*)(QofEntity *, gint64)) param->param_setfcn;
+		if ((i64_setter != NULL) && (errno == 0))
+			i64_setter (ent, i64);
+//		registered_type = TRUE;
+	}
+	if (safe_strcmp (param->param_type, QOF_TYPE_DOUBLE) == 0)
+	{
+		gdouble db;
+		gchar *tail;
+
+		errno = 0;
+		db = strtod (value_string, &tail);
+		double_setter =
+			(void (*)(QofEntity *, gdouble)) param->param_setfcn;
+		if ((double_setter != NULL) && (errno == 0))
+			double_setter (ent, db);
+//		registered_type = TRUE;
+	}
+	if (safe_strcmp (param->param_type, QOF_TYPE_BOOLEAN) == 0)
+	{
+		gint val;
+		gboolean b;
+
+		boolean_setter =
+			(void (*)(QofEntity *, gboolean)) param->param_setfcn;
+		val = qof_util_bool_to_int(value_string);
+		if ((val > 1) || (val < 0))
+			return FALSE;
+		b = (val == 1) ? TRUE : FALSE;
+		if (boolean_setter != NULL)
+			boolean_setter (ent, val);
+//		registered_type = TRUE;
+	}
+	if (safe_strcmp (param->param_type, QOF_TYPE_KVP) == 0)
+	{
+		/* unsupported */
+		return FALSE;
+/*		KvpFrame * frame;
+		KvpValue * value;
+
+		kvp_frame_setter =
+			(void (*)(QofEntity *, KvpFrame *)) param->param_setfcn;
+		if (kvp_frame_setter != NULL)
+			kvp_frame_setter (rule->targetEnt, cm_kvp);
+//		registered_type = TRUE;*/
+	}
+	if (safe_strcmp (param->param_type, QOF_TYPE_CHAR) == 0)
+	{
+		char_setter =
+			(void (*)(QofEntity *, gchar)) param->param_setfcn;
+		if (char_setter != NULL)
+			char_setter (ent, value_string[0]);
+//		registered_type = TRUE;
+	}
+	if (safe_strcmp (param->param_type, QOF_TYPE_COLLECT) == 0)
+	{
+		/* unsupported */
+		return FALSE;
+	}
+	if (safe_strcmp (param->param_type, QOF_TYPE_CHOICE) == 0)
+	{
+		/* unsupported*/
+		return FALSE;
+	}
+/*	if (registered_type == FALSE)
+	{
+		referenceEnt =
+			cm_param->param_getfcn (rule->importEnt, cm_param);
+		if (referenceEnt)
+		{
+			reference_setter =
+				(void (*)(QofEntity *, QofEntity *)) cm_param->
+				param_setfcn;
+			if (reference_setter != NULL)
+			{
+				reference_setter (rule->targetEnt, referenceEnt);
+			}
+		}
+	}*/
+	return TRUE;
+}
+
 
 void
 qof_init (void)

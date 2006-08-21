@@ -1,3 +1,19 @@
+2006-08-21  Neil Williams <linux@codehelp.co.uk>
+
+	* qof/deprecated.h,
+	qof/deprecated.c : Deprecate qof_begin_edit,
+	qof_commit_edit and MACRO versions in favour of
+	parameter based edit and commit to make undo and
+	SQL backends simpler.
+	* qof/qofbackend.c : Omit deprecated members of
+	QofBackend.
+	* qof/qofinstance-p.h : Track the current parameter
+	within the instance.
+	* qof/qofutil.h :
+	* qof/qofutil.c : Deprecate old edit functions and
+	insert new ones that handle parameter based edits and
+	undo handling internally.
+
 2006-08-15  Neil Williams <linux@codehelp.co.uk>
 
 	* configure.in : Enable extra compiler checks.
