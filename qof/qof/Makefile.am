@@ -5,12 +5,12 @@ lib_LTLIBRARIES = libqof.la
 libqof_la_LDFLAGS= -version-info $(LIBQOF_LIBRARY_VERSION) 
 
 libqof_la_SOURCES =  \
-   gnc-numeric.c     \
    qoflog.c          \
    guid.c            \
    kvp_frame.c       \
    kvp-util.c        \
    md5.c             \
+   qofnumeric.c      \
    qofbackend.c      \
    qofclass.c        \
    qofchoice.c       \
@@ -38,7 +38,6 @@ libqof_la_SOURCES =  \
 qofincludedir = ${pkgincludedir}
 
 qofinclude_HEADERS = \
-   gnc-numeric.h \
    qoflog.h \
    guid.h \
    kvp_frame.h \
@@ -55,6 +54,7 @@ qofinclude_HEADERS = \
    qofid-p.h \
    qofinstance-p.h \
    qofinstance.h \
+   qofnumeric.h \
    qofquery.h \
    qofquery-p.h \
    qofbook.h  \
@@ -112,4 +112,3 @@ libqof_la_LIBADD = \
 EXTRA_DIST = \
   qofla-dir.h.in \
   qofmath128.c
-

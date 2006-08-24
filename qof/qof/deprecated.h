@@ -571,5 +571,154 @@ qof_commit_edit_part2 (QofInstance * inst,
 gchar *
 qof_util_param_as_string (QofEntity * ent, QofParam * param);
 
+typedef struct _QofNumeric gnc_numeric;
+
+#define GNC_NUMERIC_RND_MASK     QOF_NUMERIC_RND_MASK
+#define GNC_NUMERIC_DENOM_MASK   QOF_NUMERIC_DENOM_MASK
+#define GNC_NUMERIC_SIGFIGS_MASK QOF_NUMERIC_SIGFIGS_MASK
+
+#define GNC_HOW_RND_FLOOR		QOF_HOW_RND_FLOOR
+#define GNC_HOW_RND_CEIL		QOF_HOW_RND_CEIL
+#define GNC_HOW_RND_TRUNC		QOF_HOW_RND_TRUNC
+#define GNC_HOW_RND_PROMOTE		QOF_HOW_RND_PROMOTE
+#define GNC_HOW_RND_ROUND_HALF_DOWN QOF_HOW_RND_ROUND_HALF_DOWN
+#define GNC_HOW_RND_ROUND_HALF_UP   QOF_HOW_RND_ROUND_HALF_UP
+#define GNC_HOW_RND_ROUND		QOF_HOW_RND_ROUND
+#define GNC_HOW_RND_NEVER		QOF_HOW_RND_NEVER
+#define GNC_HOW_DENOM_EXACT		QOF_HOW_DENOM_EXACT
+#define GNC_HOW_DENOM_REDUCE	QOF_HOW_DENOM_REDUCE
+#define GNC_HOW_DENOM_LCD		QOF_HOW_DENOM_LCD
+#define GNC_HOW_DENOM_FIXED		QOF_HOW_DENOM_FIXED
+#define GNC_HOW_DENOM_SIGFIG	QOF_HOW_DENOM_SIGFIG
+#define GNC_HOW_DENOM_SIGFIGS	QOF_HOW_DENOM_SIGFIGS
+#define GNC_HOW_GET_SIGFIGS		QOF_HOW_GET_SIGFIGS
+#define GNC_ERROR_OK			QOF_ERROR_OK
+#define GNC_ERROR_ARG			QOF_ERROR_ARG
+#define GNC_ERROR_OVERFLOW		QOF_ERROR_OVERFLOW
+#define GNC_ERROR_DENOM_DIFF	QOF_ERROR_DENOM_DIFF
+#define GNC_ERROR_REMAINDER		QOF_ERROR_REMAINDER
+#define GNCNumericErrorCode		QofNumericErrorCode
+#define GNC_DENOM_AUTO			QOF_DENOM_AUTO
+#define GNC_DENOM_RECIPROCAL	QOF_DENOM_RECIPROCAL
+static inline gnc_numeric
+gnc_numeric_create (gint64 num, gint64 denom)
+{
+	QofNumeric out;
+	out.num = num;
+	out.denom = denom;
+	return out;
+}
+static inline gnc_numeric
+gnc_numeric_zero (void)
+{
+	return qof_numeric_create (0, 1);
+}
+gnc_numeric 
+double_to_gnc_numeric (double in, gint64 denom, gint how);
+gboolean 
+string_to_gnc_numeric (const gchar * str, gnc_numeric * n);
+gnc_numeric 
+gnc_numeric_error (GNCNumericErrorCode error_code);
+static inline gint64
+gnc_numeric_num (gnc_numeric a)
+{
+	return a.num;
+}
+static inline gint64
+gnc_numeric_denom (gnc_numeric a)
+{
+	return a.denom;
+}
+gdouble 
+gnc_numeric_to_double (gnc_numeric in);
+gchar *
+gnc_numeric_to_string (gnc_numeric n);
+gchar *
+gnc_num_dbg_to_string (gnc_numeric n);
+GNCNumericErrorCode 
+gnc_numeric_check (gnc_numeric a);
+gint 
+gnc_numeric_compare (gnc_numeric a, gnc_numeric b);
+gboolean 
+gnc_numeric_zero_p (gnc_numeric a);
+gboolean 
+gnc_numeric_negative_p (gnc_numeric a);
+gboolean 
+gnc_numeric_positive_p (gnc_numeric a);
+gboolean 
+gnc_numeric_eq (gnc_numeric a, gnc_numeric b);
+gboolean 
+gnc_numeric_equal (gnc_numeric a, gnc_numeric b);
+gint 
+gnc_numeric_same (gnc_numeric a, gnc_numeric b, 
+				  gint64 denom, gint how);
+gnc_numeric 
+gnc_numeric_add (gnc_numeric a, gnc_numeric b,
+				 gint64 denom, gint how);
+gnc_numeric 
+gnc_numeric_sub (gnc_numeric a, gnc_numeric b,
+				 gint64 denom, gint how);
+gnc_numeric 
+gnc_numeric_mul (gnc_numeric a, gnc_numeric b,
+				 gint64 denom, gint how);
+gnc_numeric 
+gnc_numeric_div (gnc_numeric x, gnc_numeric y,
+				 gint64 denom, gint how);
+gnc_numeric gnc_numeric_neg (gnc_numeric a);
+gnc_numeric gnc_numeric_abs (gnc_numeric a);
+static inline gnc_numeric
+gnc_numeric_add_fixed (gnc_numeric a, gnc_numeric b)
+{
+	return qof_numeric_add (a, b, QOF_DENOM_AUTO,
+						QOF_HOW_DENOM_FIXED | QOF_HOW_RND_NEVER);
+}
+static inline gnc_numeric
+gnc_numeric_sub_fixed (gnc_numeric a, gnc_numeric b)
+{
+	return gnc_numeric_sub (a, b, QOF_DENOM_AUTO,
+						QOF_HOW_DENOM_FIXED | QOF_HOW_RND_NEVER);
+}
+gnc_numeric 
+gnc_numeric_add_with_error (gnc_numeric a, gnc_numeric b,
+							gint64 denom, gint how,
+							gnc_numeric * error);
+gnc_numeric 
+gnc_numeric_sub_with_error (gnc_numeric a, gnc_numeric b,
+							gint64 denom, gint how,
+							gnc_numeric * error);
+gnc_numeric 
+gnc_numeric_mul_with_error (gnc_numeric a, gnc_numeric b,
+							gint64 denom, gint how,
+							gnc_numeric * error);
+gnc_numeric 
+gnc_numeric_div_with_error (gnc_numeric a, gnc_numeric b,
+							gint64 denom, gint how,
+							gnc_numeric * error);
+gnc_numeric 
+gnc_numeric_convert (gnc_numeric in, gint64 denom, gint how);
+gnc_numeric 
+gnc_numeric_convert_with_error (gnc_numeric in, gint64 denom,
+								gint how, gnc_numeric * error);
+gnc_numeric gnc_numeric_reduce (gnc_numeric in);
+#define GNC_RND_FLOOR	QOF_HOW_RND_FLOOR
+#define GNC_RND_CEIL 	QOF_HOW_RND_CEIL
+#define GNC_RND_TRUNC	QOF_HOW_RND_TRUNC
+#define GNC_RND_PROMOTE 	QOF_HOW_RND_PROMOTE
+#define GNC_RND_ROUND_HALF_DOWN	QOF_HOW_RND_ROUND_HALF_DOWN
+#define GNC_RND_ROUND_HALF_UP 	QOF_HOW_RND_ROUND_HALF_UP
+#define GNC_RND_ROUND	QOF_HOW_RND_ROUND
+#define GNC_RND_NEVER	QOF_HOW_RND_NEVER
+
+#define GNC_DENOM_EXACT  	QOF_HOW_DENOM_EXACT
+#define GNC_DENOM_REDUCE 	QOF_HOW_DENOM_REDUCE
+#define GNC_DENOM_LCD   	QOF_HOW_DENOM_LCD
+#define GNC_DENOM_FIXED 	QOF_HOW_DENOM_FIXED
+#define GNC_DENOM_SIGFIG 	QOF_HOW_DENOM_SIGFIG
+
+#define GNC_DENOM_SIGFIGS(X)  QOF_HOW_DENOM_SIGFIGS(X)
+#define GNC_NUMERIC_GET_SIGFIGS(X) QOF_HOW_GET_SIGFIGS(X)
+
+
+
 #endif /* _DEPRECATED_H */
 #endif /* QOF_DISABLE_DEPRECATED */

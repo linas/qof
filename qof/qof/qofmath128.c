@@ -37,10 +37,10 @@
 /** Multiply a pair of signed 64-bit numbers, 
  *  returning a signed 128-bit number.
  */
-inline qofint128
+inline QofInt128
 mult128 (gint64 a, gint64 b)
 {
-	qofint128 prod;
+	QofInt128 prod;
 	guint64 a0, a1;
 	guint64 b0, b1;
 	guint64 d, d0, d1;
@@ -106,8 +106,8 @@ mult128 (gint64 a, gint64 b)
 }
 
 /** Shift right by one bit (i.e. divide by two) */
-inline qofint128
-shift128 (qofint128 x)
+inline QofInt128
+shift128 (QofInt128 x)
 {
 	guint64 sbit = x.hi & 0x1;
 	x.hi >>= 1;
@@ -127,8 +127,8 @@ shift128 (qofint128 x)
 }
 
 /** Shift leftt by one bit (i.e. multiply by two) */
-inline qofint128
-shiftleft128 (qofint128 x)
+inline QofInt128
+shiftleft128 (QofInt128 x)
 {
 	guint64 sbit;
 	sbit = x.lo & HIBIT;
@@ -149,8 +149,8 @@ shiftleft128 (qofint128 x)
 }
 
 /** increment a 128-bit number by one */
-inline qofint128
-inc128 (qofint128 a)
+inline QofInt128
+inc128 (QofInt128 a)
 {
 	if (0 == a.isneg)
 	{
@@ -176,10 +176,10 @@ inc128 (qofint128 a)
 /** Divide a signed 128-bit number by a signed 64-bit,
  *  returning a signed 128-bit number.
  */
-inline qofint128
-div128 (qofint128 n, gint64 d)
+inline QofInt128
+div128 (QofInt128 n, gint64 d)
 {
-	qofint128 quotient;
+	QofInt128 quotient;
 	int i;
 	gint64 remainder = 0;
 
@@ -217,11 +217,11 @@ div128 (qofint128 n, gint64 d)
  *  audited some more ... 
  */
 inline gint64
-rem128 (qofint128 n, gint64 d)
+rem128 (QofInt128 n, gint64 d)
 {
-	qofint128 quotient = div128 (n, d);
+	QofInt128 quotient = div128 (n, d);
 
-	qofint128 mu = mult128 (quotient.lo, d);
+	QofInt128 mu = mult128 (quotient.lo, d);
 
 	gint64 nn = 0x7fffffffffffffffULL & n.lo;
 	gint64 rr = 0x7fffffffffffffffULL & mu.lo;
@@ -230,7 +230,7 @@ rem128 (qofint128 n, gint64 d)
 
 /** Return true of two numbers are equal */
 inline gboolean
-equal128 (qofint128 a, qofint128 b)
+equal128 (QofInt128 a, QofInt128 b)
 {
 	if (a.lo != b.lo)
 		return 0;
@@ -243,7 +243,7 @@ equal128 (qofint128 a, qofint128 b)
 
 /** Return returns 1 if a>b, -1 if b>a, 0 if a == b */
 inline int
-cmp128 (qofint128 a, qofint128 b)
+cmp128 (QofInt128 a, QofInt128 b)
 {
 	if ((0 == a.isneg) && b.isneg)
 		return 1;
@@ -295,7 +295,7 @@ gcf64 (guint64 num, guint64 denom)
 }
 
 /** Return the least common multiple of two 64-bit numbers. */
-inline qofint128
+inline QofInt128
 lcm128 (guint64 a, guint64 b)
 {
 	guint64 gcf = gcf64 (a, b);
@@ -304,10 +304,10 @@ lcm128 (guint64 a, guint64 b)
 }
 
 /** Add a pair of 128-bit numbers, returning a 128-bit number */
-inline qofint128
-add128 (qofint128 a, qofint128 b)
+inline QofInt128
+add128 (QofInt128 a, QofInt128 b)
 {
-	qofint128 sum;
+	QofInt128 sum;
 	if (a.isneg == b.isneg)
 	{
 		sum.isneg = a.isneg;
@@ -322,7 +322,7 @@ add128 (qofint128 a, qofint128 b)
 	}
 	if ((b.hi > a.hi) || ((b.hi == a.hi) && (b.lo > a.lo)))
 	{
-		qofint128 tmp = a;
+		QofInt128 tmp = a;
 		a = b;
 		b = tmp;
 	}
@@ -345,7 +345,7 @@ add128 (qofint128 a, qofint128 b)
 static void
 pr (gint64 a, gint64 b)
 {
-	qofint128 prod = mult128 (a, b);
+	QofInt128 prod = mult128 (a, b);
 	printf ("%" G_GINT64_FORMAT " * %" G_GINT64_FORMAT " = %"
 		G_GUINT64_FORMAT " %" G_GUINT64_FORMAT " (0x%llx %llx) %hd\n", a,
 		b, prod.hi, prod.lo, prod.hi, prod.lo, prod.isbig);
@@ -354,8 +354,8 @@ pr (gint64 a, gint64 b)
 static void
 prd (gint64 a, gint64 b, gint64 c)
 {
-	qofint128 prod = mult128 (a, b);
-	qofint128 quot = div128 (prod, c);
+	QofInt128 prod = mult128 (a, b);
+	QofInt128 quot = div128 (prod, c);
 	gint64 rem = rem128 (prod, c);
 	printf ("%" G_GINT64_FORMAT " * %" G_GINT64_FORMAT " / %"
 		G_GINT64_FORMAT " = %" G_GUINT64_FORMAT " %" G_GUINT64_FORMAT
@@ -403,7 +403,7 @@ main ()
 	prd (1111, x, 11);
 
 	/* Really test division */
-	qofint128 n;
+	QofInt128 n;
 	n.hi = 0xdd91;
 	n.lo = 0x6c5abefbb9e13480ULL;
 
@@ -413,7 +413,7 @@ main ()
 	for (i = 0; i < 20; i++)
 	{
 
-		qofint128 quot = div128 (n, d);
+		QofInt128 quot = div128 (n, d);
 		printf ("%d result = %llx %llx\n", i, quot.hi, quot.lo);
 		d >>= 1;
 		n = shift128 (n);

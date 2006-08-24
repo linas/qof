@@ -33,7 +33,7 @@
 #ifndef QOF_QUERYCORE_H
 #define QOF_QUERYCORE_H
 
-#include "gnc-numeric.h"
+#include "qofnumeric.h"
 #include "qofdate.h"
 #include "kvp_frame.h"
 #include "qofclass.h"
@@ -158,7 +158,7 @@ qof_query_time_predicate (QofQueryCompare how,
 QofQueryPredData *
 qof_query_numeric_predicate (QofQueryCompare how,
 							 QofNumericMatch options,
-							 gnc_numeric value);
+							 QofNumeric value);
 
 QofQueryPredData *
 qof_query_guid_predicate (QofGuidMatch options,

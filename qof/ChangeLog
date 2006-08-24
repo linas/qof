@@ -1,3 +1,23 @@
+2006-08-24  Neil Williams <linux@codehelp.co.uk>
+
+	* qof/gnc-numeric.c,
+	qof/gnc-numeric.h : Renamed.
+
+	* qof/qofnumeric.c,
+	qof/qofnumeric.h : New names.
+
+	* qof/Makefile.am,
+	qof/deprecated.c,
+	qof/deprecated.h,
+	qof/kvp_frame.h,
+	qof/qof.h,
+	qof/qofmath128.c,
+	qof/qofmath128.h,
+	qof/qofquerycore.h,
+	qof/test/test-book-merge.c,
+	qof/test/test-numeric.c : Phase 1 of replacing
+	gnc-numeric with QofNumeric.
+
 2006-08-21  Neil Williams <linux@codehelp.co.uk>
 
 	*  qof/qofdate.c,

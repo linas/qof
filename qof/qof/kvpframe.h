@@ -61,7 +61,7 @@
 #ifndef KVP_FRAME_H
 #define KVP_FRAME_H
 
-#include "gnc-numeric.h"
+#include "qofnumeric.h"
 #include "guid.h"
 #include "qoftime.h"
 
@@ -163,7 +163,7 @@ Use kvp_frame_set_numeric instead of kvp_frame_set_gnc_numeric
  *     the path exist, they are created.
  */
 void kvp_frame_set_numeric (KvpFrame * frame, const gchar * path,
-							gnc_numeric nval);
+							QofNumeric nval);
 
 /** \deprecated
 
@@ -278,7 +278,7 @@ Use kvp_frame_add_numeric instead of kvp_frame_add_gnc_numeric
 #define kvp_frame_add_gnc_numeric kvp_frame_add_numeric
 
 void kvp_frame_add_numeric (KvpFrame * frame, const gchar * path,
-							gnc_numeric nval);
+							QofNumeric nval);
 void
 kvp_frame_add_time (KvpFrame * frame, const gchar *path, QofTime *qt);
 
@@ -362,8 +362,8 @@ KvpFrame *kvp_frame_add_value_nc (KvpFrame * frame, const gchar * path,
 */
 
 gint64 kvp_frame_get_gint64 (const KvpFrame * frame, const gchar * path);
-double kvp_frame_get_double (const KvpFrame * frame, const gchar * path);
-gnc_numeric kvp_frame_get_numeric (const KvpFrame * frame,
+gdouble kvp_frame_get_double (const KvpFrame * frame, const gchar * path);
+QofNumeric kvp_frame_get_numeric (const KvpFrame * frame,
 								   const gchar * path);
 gchar *kvp_frame_get_string (const KvpFrame * frame, const gchar * path);
 GUID *kvp_frame_get_guid (const KvpFrame * frame, const gchar * path);
@@ -572,7 +572,7 @@ KvpValue *kvp_value_new_double (double value);
 Use kvp_value_new_numeric instead of kvp_value_new_gnc_numeric
 */
 #define kvp_value_new_gnc_numeric kvp_value_new_numeric
-KvpValue *kvp_value_new_numeric (gnc_numeric value);
+KvpValue *kvp_value_new_numeric (QofNumeric value);
 KvpValue *kvp_value_new_string (const gchar * value);
 KvpValue *kvp_value_new_guid (const GUID * guid);
 KvpValue *kvp_value_new_time (QofTime *value);
@@ -635,7 +635,7 @@ KvpValueType kvp_value_get_type (const KvpValue * value);
 
 gint64 kvp_value_get_gint64 (const KvpValue * value);
 double kvp_value_get_double (const KvpValue * value);
-gnc_numeric kvp_value_get_numeric (const KvpValue * value);
+QofNumeric kvp_value_get_numeric (const KvpValue * value);
 
 /** Value accessor. This one is non-copying -- the caller can modify
  * the value directly. */

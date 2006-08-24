@@ -333,7 +333,7 @@ test_merge (void)
 	do_test ((NULL != &import_obj->Name), "#7 string set");
 	obj_amount = double_to_gnc_numeric (init_value, 1, GNC_HOW_DENOM_EXACT);
 	obj_setAmount (import_obj, obj_amount);
-	do_test ((gnc_numeric_check (obj_getAmount (import_obj)) == GNC_ERROR_OK),
+	do_test ((qof_numeric_check (obj_getAmount (import_obj)) == GNC_ERROR_OK),
 			 "#8 gnc_numeric set");
 	obj_setActive (import_obj, active);
 	do_test ((FALSE != &import_obj->active), "#9 gboolean set");
@@ -366,7 +366,7 @@ test_merge (void)
 	do_test ((flag == obj_getFlag (import_obj)), "#14 flag set");
 
 	obj_amount =
-		gnc_numeric_add (obj_amount, obj_amount, 1, GNC_HOW_DENOM_EXACT);
+		qof_numeric_add (obj_amount, obj_amount, 1, GNC_HOW_DENOM_EXACT);
 	discount = get_random_double ();
 	version = 2;
 	minor = 3;
@@ -400,7 +400,7 @@ test_merge (void)
 	obj_setFlag (new_obj, flag);
 
 	obj_amount =
-		gnc_numeric_add (obj_amount, obj_amount, 1, GNC_HOW_DENOM_EXACT);
+		qof_numeric_add (obj_amount, obj_amount, 1, GNC_HOW_DENOM_EXACT);
 	discount = get_random_double ();
 	version = 2;
 	minor = 3;
@@ -465,17 +465,17 @@ test_merge (void)
 			 "Merged value test #2");
 
 	/* check that the Amount really is a gnc_numeric */
-	do_test ((gnc_numeric_check (obj_getAmount (import_obj)) == GNC_ERROR_OK),
+	do_test ((qof_numeric_check (obj_getAmount (import_obj)) == GNC_ERROR_OK),
 			 "import gnc_numeric check");
-	do_test ((gnc_numeric_check (obj_getAmount (target_obj)) == GNC_ERROR_OK),
+	do_test ((qof_numeric_check (obj_getAmount (target_obj)) == GNC_ERROR_OK),
 			 "target gnc_numeric check");
 
 	/* obj_amount was changed after the import object was set, so expect a difference. */
-	do_test ((gnc_numeric_compare (obj_getAmount (import_obj), obj_amount) !=
+	do_test ((qof_numeric_compare (obj_getAmount (import_obj), obj_amount) !=
 			  GNC_ERROR_OK), "gnc_numeric value check #1");
 
 	/* obj_amount is in the target object with the import value, expect a difference/ */
-	do_test ((gnc_numeric_compare (obj_getAmount (target_obj), obj_amount) !=
+	do_test ((qof_numeric_compare (obj_getAmount (target_obj), obj_amount) !=
 			  GNC_ERROR_OK), "gnc_numeric value check #2");
 
 	/* target had a different date, so import date should now be set */

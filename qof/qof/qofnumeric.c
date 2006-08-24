@@ -1,7 +1,8 @@
 /********************************************************************
- * gnc-numeric.c -- an exact-number library for accounting use      *
+ * qofnumeric.c -- an exact-number library for accounting use       *
  * Copyright (C) 2000 Bill Gribble                                  *
  * Copyright (C) 2004 Linas Vepstas <linas@linas.org>               *
+ * Copyright (c) 2006 Neil Williams <linux@codehelp.co.uk>          *
  *                                                                  *
  * This program is free software; you can redistribute it and/or    *
  * modify it under the terms of the GNU General Public License as   *
@@ -30,46 +31,28 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "gnc-numeric.h"
+#include "qofnumeric.h"
 #include "qofmath128.c"
 
-/* static short module = MOD_ENGINE; */
-
-/* =============================================================== */
-
-#if 0
-static const char *_numeric_error_strings[] = {
-	"No error",
-	"Argument is not a valid number",
-	"Intermediate result overflow",
-	"Argument denominators differ in GNC_HOW_DENOM_FIXED operation",
-	"Remainder part in GNC_HOW_RND_NEVER operation"
-};
-#endif
+/*static QofLogModule log_module = QOF_MOD_ENGINE;*/
 
 /* =============================================================== */
 /* This function is small, simple, and used everywhere below, 
  * lets try to inline it.
  */
-inline GNCNumericErrorCode
-gnc_numeric_check (gnc_numeric in)
+inline QofNumericErrorCode
+qof_numeric_check (QofNumeric in)
 {
 	if (in.denom != 0)
-	{
-		return GNC_ERROR_OK;
-	}
+		return QOF_ERROR_OK;
 	else if (in.num)
 	{
 		if ((0 < in.num) || (-4 > in.num))
-		{
-			in.num = (gint64) GNC_ERROR_OVERFLOW;
-		}
-		return (GNCNumericErrorCode) in.num;
+			in.num = (gint64) QOF_ERROR_OVERFLOW;
+		return (QofNumericErrorCode) in.num;
 	}
 	else
-	{
-		return GNC_ERROR_ARG;
-	}
+		return QOF_ERROR_ARG;
 }
 
 /*
@@ -77,43 +60,33 @@ gnc_numeric_check (gnc_numeric in)
  */
 
 static inline gint64
-gnc_numeric_lcd (gnc_numeric a, gnc_numeric b)
+qof_numeric_lcd (QofNumeric a, QofNumeric b)
 {
-	qofint128 lcm;
-	if (gnc_numeric_check (a) || gnc_numeric_check (b))
-	{
-		return GNC_ERROR_ARG;
-	}
-
+	QofInt128 lcm;
+	if (qof_numeric_check (a) || qof_numeric_check (b))
+		return QOF_ERROR_ARG;
 	if (b.denom == a.denom)
 		return a.denom;
-
 	/* Special case: smaller divides smoothly into larger */
 	if ((b.denom < a.denom) && ((a.denom % b.denom) == 0))
-	{
 		return a.denom;
-	}
 	if ((a.denom < b.denom) && ((b.denom % a.denom) == 0))
-	{
 		return b.denom;
-	}
-
 	lcm = lcm128 (a.denom, b.denom);
 	if (lcm.isbig)
-		return GNC_ERROR_ARG;
+		return QOF_ERROR_ARG;
 	return lcm.lo;
 }
 
-
 /* Return the ratio n/d reduced so that there are no common factors. */
-static inline gnc_numeric
-reduce128 (qofint128 n, gint64 d)
+static inline QofNumeric
+reduce128 (QofInt128 n, gint64 d)
 {
 	gint64 t;
 	gint64 num;
 	gint64 denom;
-	gnc_numeric out;
-	qofint128 red;
+	QofNumeric out;
+	QofInt128 red;
 
 	t = rem128 (n, d);
 	num = d;
@@ -130,9 +103,7 @@ reduce128 (qofint128 n, gint64 d)
 
 	red = div128 (n, num);
 	if (red.isbig)
-	{
-		return gnc_numeric_error (GNC_ERROR_OVERFLOW);
-	}
+		return qof_numeric_error (QOF_ERROR_OVERFLOW);
 	out.num = red.lo;
 	if (red.isneg)
 		out.num = -out.num;
@@ -141,92 +112,72 @@ reduce128 (qofint128 n, gint64 d)
 }
 
 /* *******************************************************************
- *  gnc_numeric_zero_p
+ *  qof_numeric_zero_p
  ********************************************************************/
 
 gboolean
-gnc_numeric_zero_p (gnc_numeric a)
+qof_numeric_zero_p (QofNumeric a)
 {
-	if (gnc_numeric_check (a))
-	{
+	if (qof_numeric_check (a))
 		return 0;
-	}
 	else
 	{
 		if ((a.num == 0) && (a.denom != 0))
-		{
 			return 1;
-		}
 		else
-		{
 			return 0;
 		}
-	}
 }
 
 /* *******************************************************************
- *  gnc_numeric_negative_p
+ *  qof_numeric_negative_p
  ********************************************************************/
 
 gboolean
-gnc_numeric_negative_p (gnc_numeric a)
+qof_numeric_negative_p (QofNumeric a)
 {
-	if (gnc_numeric_check (a))
-	{
+	if (qof_numeric_check (a))
 		return 0;
-	}
 	else
 	{
 		if ((a.num < 0) && (a.denom != 0))
-		{
 			return 1;
-		}
 		else
-		{
 			return 0;
 		}
-	}
 }
 
 /* *******************************************************************
- *  gnc_numeric_positive_p
+ *  qof_numeric_positive_p
  ********************************************************************/
 
 gboolean
-gnc_numeric_positive_p (gnc_numeric a)
+qof_numeric_positive_p (QofNumeric a)
 {
-	if (gnc_numeric_check (a))
-	{
+	if (qof_numeric_check (a))
 		return 0;
-	}
 	else
 	{
 		if ((a.num > 0) && (a.denom != 0))
-		{
 			return 1;
-		}
 		else
-		{
 			return 0;
 		}
-	}
 }
 
 /* *******************************************************************
- *  gnc_numeric_compare
+ *  qof_numeric_compare
  *  returns 1 if a>b, -1 if b>a, 0 if a == b 
  ********************************************************************/
 
-int
-gnc_numeric_compare (gnc_numeric a, gnc_numeric b)
+gint
+qof_numeric_compare (QofNumeric a, QofNumeric b)
 {
 	gint64 aa, bb;
-	qofint128 l, r;
+	QofInt128 l, r;
 
-	if (gnc_numeric_check (a) || gnc_numeric_check (b))
-	{
+	if (qof_numeric_check (a) || qof_numeric_check (b))
 		return 0;
-	}
 
 	if (a.denom == b.denom)
 	{
@@ -265,28 +216,26 @@ gnc_numeric_compare (gnc_numeric a, gnc_numeric b)
 
 
 /* *******************************************************************
- *  gnc_numeric_eq
+ *  qof_numeric_eq
  ********************************************************************/
 
 gboolean
-gnc_numeric_eq (gnc_numeric a, gnc_numeric b)
+qof_numeric_eq (QofNumeric a, QofNumeric b)
 {
 	return ((a.num == b.num) && (a.denom == b.denom));
 }
 
-
 /* *******************************************************************
- *  gnc_numeric_equal
+ *  QofNumeric_equal
  ********************************************************************/
 
 gboolean
-gnc_numeric_equal (gnc_numeric a, gnc_numeric b)
+qof_numeric_equal (QofNumeric a, QofNumeric b)
 {
-	qofint128 l, r;
+	QofInt128 l, r;
+
 	if ((a.denom == b.denom) && (a.denom > 0))
-	{
 		return (a.num == b.num);
-	}
 	if ((a.denom > 0) && (b.denom > 0))
 	{
 		// return (a.num*b.denom == b.num*a.denom);
@@ -295,8 +244,8 @@ gnc_numeric_equal (gnc_numeric a, gnc_numeric b)
 		return equal128 (l, r);
 
 #if ALT_WAY_OF_CHECKING_EQUALITY
-		gnc_numeric ra = gnc_numeric_reduce (a);
-		gnc_numeric rb = gnc_numeric_reduce (b);
+		QofNumeric ra = QofNumeric_reduce (a);
+		QofNumeric rb = QofNumeric_reduce (b);
 		if (ra.denom != rb.denom)
 			return 0;
 		if (ra.num != rb.num)
@@ -318,59 +267,48 @@ gnc_numeric_equal (gnc_numeric a, gnc_numeric b)
 		   will simply get it wrong whenever the three multiplies
 		   overflow 64-bits.  -CAS */
 		if (a.denom < 0)
-		{
 			return ((a.num * -a.denom * b.denom) == b.num);
-		}
 		else
-		{
 			return (a.num == (b.num * a.denom * -b.denom));
 		}
-	}
-
 	return ((a.num * b.denom) == (a.denom * b.num));
 }
 
 
 /* *******************************************************************
- *  gnc_numeric_same
+ *  qof_numeric_same
  *  would a and b be equal() if they were both converted to the same 
  *  denominator? 
  ********************************************************************/
 
-int
-gnc_numeric_same (gnc_numeric a, gnc_numeric b, gint64 denom, gint how)
+gint
+qof_numeric_same (QofNumeric a, QofNumeric b, gint64 denom, gint how)
 {
-	gnc_numeric aconv, bconv;
+	QofNumeric aconv, bconv;
 
-	aconv = gnc_numeric_convert (a, denom, how);
-	bconv = gnc_numeric_convert (b, denom, how);
+	aconv = qof_numeric_convert (a, denom, how);
+	bconv = qof_numeric_convert (b, denom, how);
 
-	return (gnc_numeric_equal (aconv, bconv));
+	return (qof_numeric_equal (aconv, bconv));
 }
 
-
-
 /* *******************************************************************
- *  gnc_numeric_add
+ *  qof_numeric_add
  ********************************************************************/
 
-gnc_numeric
-gnc_numeric_add (gnc_numeric a, gnc_numeric b, gint64 denom, gint how)
+QofNumeric
+qof_numeric_add (QofNumeric a, QofNumeric b, gint64 denom, gint how)
 {
-	gnc_numeric sum;
+	QofNumeric sum;
 
-	if (gnc_numeric_check (a) || gnc_numeric_check (b))
-	{
-		return gnc_numeric_error (GNC_ERROR_ARG);
-	}
+	if (qof_numeric_check (a) || qof_numeric_check (b))
+		return qof_numeric_error (QOF_ERROR_ARG);
 
-	if ((denom == GNC_DENOM_AUTO) &&
-		(how & GNC_NUMERIC_DENOM_MASK) == GNC_HOW_DENOM_FIXED)
+	if ((denom == QOF_DENOM_AUTO) &&
+		(how & QOF_NUMERIC_DENOM_MASK) == QOF_HOW_DENOM_FIXED)
 	{
 		if (a.denom == b.denom)
-		{
 			denom = a.denom;
-		}
 		else if (b.num == 0)
 		{
 			denom = a.denom;
@@ -382,9 +320,7 @@ gnc_numeric_add (gnc_numeric a, gnc_numeric b, gint64 denom, gint how)
 			a.denom = b.denom;
 		}
 		else
-		{
-			return gnc_numeric_error (GNC_ERROR_DENOM_DIFF);
-		}
+			return qof_numeric_error (QOF_ERROR_DENOM_DIFF);
 	}
 
 	if (a.denom < 0)
@@ -414,99 +350,84 @@ gnc_numeric_add (gnc_numeric a, gnc_numeric b, gint64 denom, gint how)
 		 * Computing the LCD minimizes likelihood of overflow
 		 */
 		gint64 lcd;
-		qofint128 ca, cb, cab;
-		lcd = gnc_numeric_lcd (a, b);
-		if (GNC_ERROR_ARG == lcd)
-		{
-			return gnc_numeric_error (GNC_ERROR_OVERFLOW);
-		}
+		QofInt128 ca, cb, cab;
+
+		lcd = qof_numeric_lcd (a, b);
+		if (QOF_ERROR_ARG == lcd)
+			return qof_numeric_error (QOF_ERROR_OVERFLOW);
 		ca = mult128 (a.num, lcd / a.denom);
 		if (ca.isbig)
-			return gnc_numeric_error (GNC_ERROR_OVERFLOW);
-
+			return qof_numeric_error (QOF_ERROR_OVERFLOW);
 		cb = mult128 (b.num, lcd / b.denom);
 		if (cb.isbig)
-			return gnc_numeric_error (GNC_ERROR_OVERFLOW);
-
+			return qof_numeric_error (QOF_ERROR_OVERFLOW);
 		cab = add128 (ca, cb);
 		if (cab.isbig)
-			return gnc_numeric_error (GNC_ERROR_OVERFLOW);
-
+			return qof_numeric_error (QOF_ERROR_OVERFLOW);
 		sum.num = cab.lo;
 		if (cab.isneg)
 			sum.num = -sum.num;
 		sum.denom = lcd;
 	}
 
-	if ((denom == GNC_DENOM_AUTO) &&
-		((how & GNC_NUMERIC_DENOM_MASK) == GNC_HOW_DENOM_LCD))
+	if ((denom == QOF_DENOM_AUTO) &&
+		((how & QOF_NUMERIC_DENOM_MASK) == QOF_HOW_DENOM_LCD))
 	{
-		denom = gnc_numeric_lcd (a, b);
-		how = how & GNC_NUMERIC_RND_MASK;
+		denom = qof_numeric_lcd (a, b);
+		how = how & QOF_NUMERIC_RND_MASK;
 	}
 
-	return gnc_numeric_convert (sum, denom, how);
+	return qof_numeric_convert (sum, denom, how);
 }
 
-/* *******************************************************************
- *  gnc_numeric_sub
- ********************************************************************/
+/* ***************************************************************
+ *  qof_numeric_sub
+ *****************************************************************/
 
-gnc_numeric
-gnc_numeric_sub (gnc_numeric a, gnc_numeric b, gint64 denom, gint how)
+QofNumeric
+qof_numeric_sub (QofNumeric a, QofNumeric b, gint64 denom, gint how)
 {
-	gnc_numeric nb;
-	if (gnc_numeric_check (a) || gnc_numeric_check (b))
-	{
-		return gnc_numeric_error (GNC_ERROR_ARG);
-	}
+	QofNumeric nb;
+
+	if (qof_numeric_check (a) || qof_numeric_check (b))
+		return qof_numeric_error (QOF_ERROR_ARG);
 
 	nb = b;
 	nb.num = -nb.num;
-	return gnc_numeric_add (a, nb, denom, how);
+	return qof_numeric_add (a, nb, denom, how);
 }
 
-/* *******************************************************************
- *  gnc_numeric_mul
- ********************************************************************/
+/* ***************************************************************
+ *  qof_numeric_mul
+ *****************************************************************/
 
-gnc_numeric
-gnc_numeric_mul (gnc_numeric a, gnc_numeric b, gint64 denom, gint how)
+QofNumeric
+qof_numeric_mul (QofNumeric a, QofNumeric b, gint64 denom, gint how)
 {
-	gnc_numeric product, result;
-	qofint128 bignume, bigdeno;
+	QofNumeric product, result;
+	QofInt128 bignume, bigdeno;
 
-	if (gnc_numeric_check (a) || gnc_numeric_check (b))
-	{
-		return gnc_numeric_error (GNC_ERROR_ARG);
-	}
+	if (qof_numeric_check (a) || qof_numeric_check (b))
+		return qof_numeric_error (QOF_ERROR_ARG);
 
-	if ((denom == GNC_DENOM_AUTO) &&
-		(how & GNC_NUMERIC_DENOM_MASK) == GNC_HOW_DENOM_FIXED)
+	if ((denom == QOF_DENOM_AUTO) &&
+		(how & QOF_NUMERIC_DENOM_MASK) == QOF_HOW_DENOM_FIXED)
 	{
 		if (a.denom == b.denom)
-		{
 			denom = a.denom;
-		}
 		else if (b.num == 0)
-		{
 			denom = a.denom;
-		}
 		else if (a.num == 0)
-		{
 			denom = b.denom;
-		}
 		else
-		{
-			return gnc_numeric_error (GNC_ERROR_DENOM_DIFF);
-		}
+			return qof_numeric_error (QOF_ERROR_DENOM_DIFF);
 	}
 
-	if ((denom == GNC_DENOM_AUTO) &&
-		((how & GNC_NUMERIC_DENOM_MASK) == GNC_HOW_DENOM_LCD))
+	if ((denom == QOF_DENOM_AUTO) &&
+		((how & QOF_NUMERIC_DENOM_MASK) == QOF_HOW_DENOM_LCD))
 	{
-		denom = gnc_numeric_lcd (a, b);
-		how = how & GNC_NUMERIC_RND_MASK;
+		denom = qof_numeric_lcd (a, b);
+		how = how & QOF_NUMERIC_RND_MASK;
 	}
 
 	if (a.denom < 0)
@@ -530,14 +451,14 @@ gnc_numeric_mul (gnc_numeric a, gnc_numeric b, gint64 denom, gint how)
 	if (bignume.isbig || bigdeno.isbig)
 	{
 		gint64 tmp;
-		a = gnc_numeric_reduce (a);
-		b = gnc_numeric_reduce (b);
+
+		a = qof_numeric_reduce (a);
+		b = qof_numeric_reduce (b);
 		tmp = a.num;
 		a.num = b.num;
 		b.num = tmp;
-		a = gnc_numeric_reduce (a);
-		b = gnc_numeric_reduce (b);
-
+		a = qof_numeric_reduce (a);
+		b = qof_numeric_reduce (b);
 		bignume = mult128 (a.num, b.num);
 		bigdeno = mult128 (a.denom, b.denom);
 		product.num = a.num * b.num;
@@ -550,17 +471,13 @@ gnc_numeric_mul (gnc_numeric a, gnc_numeric b, gint64 denom, gint how)
 		/* If rounding allowed, then shift until there's no 
 		 * more overflow. The conversion at the end will fix 
 		 * things up for the final value. Else overflow. */
-		if ((how & GNC_NUMERIC_RND_MASK) == GNC_HOW_RND_NEVER)
+		if ((how & QOF_NUMERIC_RND_MASK) == QOF_HOW_RND_NEVER)
 		{
 			if (bigdeno.isbig)
-			{
-				return gnc_numeric_error (GNC_ERROR_OVERFLOW);
-			}
+				return qof_numeric_error (QOF_ERROR_OVERFLOW);
 			product = reduce128 (bignume, product.denom);
-			if (gnc_numeric_check (product))
-			{
-				return gnc_numeric_error (GNC_ERROR_OVERFLOW);
-			}
+			if (qof_numeric_check (product))
+				return qof_numeric_error (QOF_ERROR_OVERFLOW);
 		}
 		else
 		{
@@ -575,9 +492,7 @@ gnc_numeric_mul (gnc_numeric a, gnc_numeric b, gint64 denom, gint how)
 
 			product.denom = bigdeno.lo;
 			if (0 == product.denom)
-			{
-				return gnc_numeric_error (GNC_ERROR_OVERFLOW);
-			}
+				return qof_numeric_error (QOF_ERROR_OVERFLOW);
 		}
 	}
 
@@ -589,43 +504,33 @@ gnc_numeric_mul (gnc_numeric a, gnc_numeric b, gint64 denom, gint how)
 	}
 #endif
 
-	result = gnc_numeric_convert (product, denom, how);
+	result = qof_numeric_convert (product, denom, how);
 	return result;
 }
 
-
 /* *******************************************************************
- *  gnc_numeric_div
+ *  qof_numeric_div
  ********************************************************************/
 
-gnc_numeric
-gnc_numeric_div (gnc_numeric a, gnc_numeric b, gint64 denom, gint how)
+QofNumeric
+qof_numeric_div (QofNumeric a, QofNumeric b, gint64 denom, gint how)
 {
-	gnc_numeric quotient;
-	qofint128 nume, deno;
+	QofNumeric quotient;
+	QofInt128 nume, deno;
 
-	if (gnc_numeric_check (a) || gnc_numeric_check (b))
-	{
-		return gnc_numeric_error (GNC_ERROR_ARG);
-	}
+	if (qof_numeric_check (a) || qof_numeric_check (b))
+		return qof_numeric_error (QOF_ERROR_ARG);
 
-	if ((denom == GNC_DENOM_AUTO) &&
-		(how & GNC_NUMERIC_DENOM_MASK) == GNC_HOW_DENOM_FIXED)
+	if ((denom == QOF_DENOM_AUTO) &&
+		(how & QOF_NUMERIC_DENOM_MASK) == QOF_HOW_DENOM_FIXED)
 	{
 		if (a.denom == b.denom)
-		{
 			denom = a.denom;
-		}
 		else if (a.denom == 0)
-		{
 			denom = b.denom;
-		}
 		else
-		{
-			return gnc_numeric_error (GNC_ERROR_DENOM_DIFF);
+			return qof_numeric_error (QOF_ERROR_DENOM_DIFF);
 		}
-	}
-
 
 	if (a.denom < 0)
 	{
@@ -663,11 +568,11 @@ gnc_numeric_div (gnc_numeric a, gnc_numeric b, gint64 denom, gint how)
 		/* Try to avoid overflow by removing common factors */
 		if (nume.isbig && deno.isbig)
 		{
-			gnc_numeric ra = gnc_numeric_reduce (a);
-			gnc_numeric rb = gnc_numeric_reduce (b);
-
+			QofNumeric ra = qof_numeric_reduce (a);
+			QofNumeric rb = qof_numeric_reduce (b);
 			gint64 gcf_nume = gcf64 (ra.num, rb.num);
 			gint64 gcf_deno = gcf64 (rb.denom, ra.denom);
+
 			nume = mult128 (ra.num / gcf_nume, rb.denom / gcf_deno);
 			deno = mult128 (rb.num / gcf_nume, ra.denom / gcf_deno);
 		}
@@ -681,7 +586,7 @@ gnc_numeric_div (gnc_numeric a, gnc_numeric b, gint64 denom, gint how)
 		else if (0 == deno.isbig)
 		{
 			quotient = reduce128 (nume, deno.lo);
-			if (0 == gnc_numeric_check (quotient))
+			if (0 == qof_numeric_check (quotient))
 			{
 				quotient.num *= sgn;
 				goto dive_done;
@@ -691,10 +596,8 @@ gnc_numeric_div (gnc_numeric a, gnc_numeric b, gint64 denom, gint how)
 		/* If rounding allowed, then shift until there's no 
 		 * more overflow. The conversion at the end will fix 
 		 * things up for the final value. */
-		if ((how & GNC_NUMERIC_RND_MASK) == GNC_HOW_RND_NEVER)
-		{
-			return gnc_numeric_error (GNC_ERROR_OVERFLOW);
-		}
+		if ((how & QOF_NUMERIC_RND_MASK) == QOF_HOW_RND_NEVER)
+			return qof_numeric_error (QOF_ERROR_OVERFLOW);
 		while (nume.isbig || deno.isbig)
 		{
 			nume = shift128 (nume);
@@ -704,7 +607,7 @@ gnc_numeric_div (gnc_numeric a, gnc_numeric b, gint64 denom, gint how)
 		quotient.denom = deno.lo;
 		if (0 == quotient.denom)
 		{
-			return gnc_numeric_error (GNC_ERROR_OVERFLOW);
+			return qof_numeric_error (QOF_ERROR_OVERFLOW);
 		}
 	}
 
@@ -715,132 +618,113 @@ gnc_numeric_div (gnc_numeric a, gnc_numeric b, gint64 denom, gint how)
 	}
 
   dive_done:
-	if ((denom == GNC_DENOM_AUTO) &&
-		((how & GNC_NUMERIC_DENOM_MASK) == GNC_HOW_DENOM_LCD))
+	if ((denom == QOF_DENOM_AUTO) &&
+		((how & QOF_NUMERIC_DENOM_MASK) == QOF_HOW_DENOM_LCD))
 	{
-		denom = gnc_numeric_lcd (a, b);
-		how = how & GNC_NUMERIC_RND_MASK;
+		denom = qof_numeric_lcd (a, b);
+		how = how & QOF_NUMERIC_RND_MASK;
 	}
 
-	return gnc_numeric_convert (quotient, denom, how);
+	return qof_numeric_convert (quotient, denom, how);
 }
 
 /* *******************************************************************
- *  gnc_numeric_neg
+ *  qof_numeric_neg
  *  negate the argument 
  ********************************************************************/
 
-gnc_numeric
-gnc_numeric_neg (gnc_numeric a)
+QofNumeric
+qof_numeric_neg (QofNumeric a)
 {
-	if (gnc_numeric_check (a))
-	{
-		return gnc_numeric_error (GNC_ERROR_ARG);
-	}
-	return gnc_numeric_create (-a.num, a.denom);
+	if (qof_numeric_check (a))
+		return qof_numeric_error (QOF_ERROR_ARG);
+	return qof_numeric_create (-a.num, a.denom);
 }
 
 /* *******************************************************************
- *  gnc_numeric_neg
+ *  qof_numeric_neg
  *  return the absolute value of the argument 
  ********************************************************************/
 
-gnc_numeric
-gnc_numeric_abs (gnc_numeric a)
+QofNumeric
+qof_numeric_abs (QofNumeric a)
 {
-	if (gnc_numeric_check (a))
-	{
-		return gnc_numeric_error (GNC_ERROR_ARG);
-	}
-	return gnc_numeric_create (ABS (a.num), a.denom);
+	if (qof_numeric_check (a))
+		return qof_numeric_error (QOF_ERROR_ARG);
+	return qof_numeric_create (ABS (a.num), a.denom);
 }
 
 /* *******************************************************************
- *  gnc_numeric_convert
+ *  qof_numeric_convert
  ********************************************************************/
 
-gnc_numeric
-gnc_numeric_convert (gnc_numeric in, gint64 denom, gint how)
+QofNumeric
+qof_numeric_convert (QofNumeric in, gint64 denom, gint how)
 {
-	gnc_numeric out;
-	gnc_numeric temp;
+	QofNumeric out;
+	QofNumeric temp;
 	gint64 temp_bc;
 	gint64 temp_a;
 	gint64 remainder;
 	gint64 sign;
 	gint denom_neg = 0;
-	double ratio, logratio;
-	double sigfigs;
-	qofint128 nume, newm;
+	gdouble ratio, logratio;
+	gdouble sigfigs;
+	QofInt128 nume, newm;
 
 	temp.num = 0;
 	temp.denom = 0;
 
-	if (gnc_numeric_check (in))
-	{
-		return gnc_numeric_error (GNC_ERROR_ARG);
-	}
+	if (qof_numeric_check (in))
+		return qof_numeric_error (QOF_ERROR_ARG);
 
-	if (denom == GNC_DENOM_AUTO)
+	if (denom == QOF_DENOM_AUTO)
 	{
-		switch (how & GNC_NUMERIC_DENOM_MASK)
+		switch (how & QOF_NUMERIC_DENOM_MASK)
 		{
 		default:
-		case GNC_HOW_DENOM_LCD:	/* LCD is meaningless with AUTO in here */
-		case GNC_HOW_DENOM_EXACT:
+		case QOF_HOW_DENOM_LCD:	/* LCD is meaningless with AUTO in here */
+		case QOF_HOW_DENOM_EXACT:
 			return in;
 			break;
 
-		case GNC_HOW_DENOM_REDUCE:
+		case QOF_HOW_DENOM_REDUCE:
 			/* reduce the input to a relatively-prime fraction */
-			return gnc_numeric_reduce (in);
+			return qof_numeric_reduce (in);
 			break;
 
-		case GNC_HOW_DENOM_FIXED:
+		case QOF_HOW_DENOM_FIXED:
 			if (in.denom != denom)
-			{
-				return gnc_numeric_error (GNC_ERROR_DENOM_DIFF);
-			}
+				return qof_numeric_error (QOF_ERROR_DENOM_DIFF);
 			else
-			{
 				return in;
-			}
 			break;
 
-		case GNC_HOW_DENOM_SIGFIG:
-			ratio = fabs (gnc_numeric_to_double (in));
+		case QOF_HOW_DENOM_SIGFIG:
+			ratio = fabs (qof_numeric_to_double (in));
 			if (ratio < 10e-20)
-			{
 				logratio = 0;
-			}
 			else
 			{
 				logratio = log10 (ratio);
 				logratio = ((logratio > 0.0) ?
 					(floor (logratio) + 1.0) : (ceil (logratio)));
 			}
-			sigfigs = GNC_HOW_GET_SIGFIGS (how);
+			sigfigs = QOF_HOW_GET_SIGFIGS (how);
 
 			if (sigfigs - logratio >= 0)
-			{
 				denom = (gint64) (pow (10, sigfigs - logratio));
-			}
 			else
-			{
 				denom = -((gint64) (pow (10, logratio - sigfigs)));
-			}
 
-			how = how & ~GNC_HOW_DENOM_SIGFIG & ~GNC_NUMERIC_SIGFIGS_MASK;
+			how = how & ~QOF_HOW_DENOM_SIGFIG & ~QOF_NUMERIC_SIGFIGS_MASK;
 			break;
-
 		}
 	}
 
 	/* Make sure we need to do the work */
 	if (in.denom == denom)
-	{
 		return in;
-	}
 	if (in.num == 0)
 	{
 		out.num = 0;
@@ -878,7 +762,7 @@ gnc_numeric_convert (gnc_numeric in, gint64 denom, gint how)
 		 * help with range errors */
 		temp.num = denom;
 		temp.denom = in.denom;
-		temp = gnc_numeric_reduce (temp);
+		temp = qof_numeric_reduce (temp);
 
 		/* Symbolically, do the following:
 		 * out.num   = in.num * temp.num;
@@ -891,9 +775,7 @@ gnc_numeric_convert (gnc_numeric in, gint64 denom, gint how)
 		remainder = rem128 (nume, temp.denom);
 
 		if (newm.isbig)
-		{
-			return gnc_numeric_error (GNC_ERROR_OVERFLOW);
-		}
+			return qof_numeric_error (QOF_ERROR_OVERFLOW);
 
 		out.num = newm.lo;
 		out.denom = denom;
@@ -901,90 +783,68 @@ gnc_numeric_convert (gnc_numeric in, gint64 denom, gint how)
 
 	if (remainder)
 	{
-		switch (how & GNC_NUMERIC_RND_MASK)
+		switch (how & QOF_NUMERIC_RND_MASK)
 		{
-		case GNC_HOW_RND_FLOOR:
+		case QOF_HOW_RND_FLOOR:
 			if (sign < 0)
-			{
 				out.num = out.num + 1;
-			}
 			break;
 
-		case GNC_HOW_RND_CEIL:
+		case QOF_HOW_RND_CEIL:
 			if (sign > 0)
-			{
 				out.num = out.num + 1;
-			}
 			break;
 
-		case GNC_HOW_RND_TRUNC:
+		case QOF_HOW_RND_TRUNC:
 			break;
 
-		case GNC_HOW_RND_PROMOTE:
+		case QOF_HOW_RND_PROMOTE:
 			out.num = out.num + 1;
 			break;
 
-		case GNC_HOW_RND_ROUND_HALF_DOWN:
+		case QOF_HOW_RND_ROUND_HALF_DOWN:
 			if (denom_neg)
 			{
 				if ((2 * remainder) > in.denom * denom)
-				{
 					out.num = out.num + 1;
 				}
-			}
 			else if ((2 * remainder) > temp.denom)
-			{
 				out.num = out.num + 1;
-			}
 			/* check that 2*remainder didn't over-flow */
 			else if (((2 * remainder) < remainder) &&
 				(remainder > (temp.denom / 2)))
-			{
 				out.num = out.num + 1;
-			}
 			break;
 
-		case GNC_HOW_RND_ROUND_HALF_UP:
+		case QOF_HOW_RND_ROUND_HALF_UP:
 			if (denom_neg)
 			{
 				if ((2 * remainder) >= in.denom * denom)
-				{
 					out.num = out.num + 1;
 				}
-			}
 			else if ((2 * remainder) >= temp.denom)
-			{
 				out.num = out.num + 1;
-			}
 			/* check that 2*remainder didn't over-flow */
 			else if (((2 * remainder) < remainder) &&
 				(remainder >= (temp.denom / 2)))
-			{
 				out.num = out.num + 1;
-			}
 			break;
 
-		case GNC_HOW_RND_ROUND:
+		case QOF_HOW_RND_ROUND:
 			if (denom_neg)
 			{
 				if ((2 * remainder) > in.denom * denom)
-				{
 					out.num = out.num + 1;
-				}
 				else if ((2 * remainder) == in.denom * denom)
 				{
 					if (out.num % 2)
-					{
 						out.num = out.num + 1;
 					}
 				}
-			}
 			else
 			{
 				if ((2 * remainder) > temp.denom)
-				{
 					out.num = out.num + 1;
-				}
 				/* check that 2*remainder didn't over-flow */
 				else if (((2 * remainder) < remainder) &&
 					(remainder > (temp.denom / 2)))
@@ -994,24 +854,20 @@ gnc_numeric_convert (gnc_numeric in, gint64 denom, gint how)
 				else if ((2 * remainder) == temp.denom)
 				{
 					if (out.num % 2)
-					{
 						out.num = out.num + 1;
 					}
-				}
 				/* check that 2*remainder didn't over-flow */
 				else if (((2 * remainder) < remainder) &&
 					(remainder == (temp.denom / 2)))
 				{
 					if (out.num % 2)
-					{
 						out.num = out.num + 1;
 					}
 				}
-			}
 			break;
 
-		case GNC_HOW_RND_NEVER:
-			return gnc_numeric_error (GNC_ERROR_REMAINDER);
+		case QOF_HOW_RND_NEVER:
+			return qof_numeric_error (QOF_ERROR_REMAINDER);
 			break;
 		}
 	}
@@ -1021,25 +877,23 @@ gnc_numeric_convert (gnc_numeric in, gint64 denom, gint how)
 	return out;
 }
 
+/* *************************************************************
+reduce a fraction by GCF elimination.  This is NOT done as a
+part of the arithmetic API unless QOF_HOW_DENOM_REDUCE is 
+specified 
+as the output denominator.
+****************************************************************/
 
-/* *******************************************************************
- *  reduce a fraction by GCF elimination.  This is NOT done as a
- *  part of the arithmetic API unless GNC_HOW_DENOM_REDUCE is specified 
- *  as the output denominator.
- ********************************************************************/
-
-gnc_numeric
-gnc_numeric_reduce (gnc_numeric in)
+QofNumeric
+qof_numeric_reduce (QofNumeric in)
 {
 	gint64 t;
 	gint64 num = (in.num < 0) ? (-in.num) : in.num;
 	gint64 denom = in.denom;
-	gnc_numeric out;
+	QofNumeric out;
 
-	if (gnc_numeric_check (in))
-	{
-		return gnc_numeric_error (GNC_ERROR_ARG);
-	}
+	if (qof_numeric_check (in))
+		return qof_numeric_error (QOF_ERROR_ARG);
 
 	/* The strategy is to use Euclid's algorithm */
 	while (denom > 0)
@@ -1057,43 +911,37 @@ gnc_numeric_reduce (gnc_numeric in)
 	return out;
 }
 
-/* *******************************************************************
- *  double_to_gnc_numeric
- ********************************************************************/
+/* ***************************************************************
+ *  double_to_QofNumeric
+ ****************************************************************/
 
-gnc_numeric
-double_to_gnc_numeric (double in, gint64 denom, gint how)
+QofNumeric
+qof_numeric_from_double (gdouble in, gint64 denom, gint how)
 {
-	gnc_numeric out;
+	QofNumeric out;
 	gint64 int_part = 0;
-	double frac_part;
+	gdouble frac_part;
 	gint64 frac_int = 0;
-	double logval;
-	double sigfigs;
+	gdouble logval;
+	gdouble sigfigs;
 
-	if ((denom == GNC_DENOM_AUTO) && (how & GNC_HOW_DENOM_SIGFIG))
+	if ((denom == QOF_DENOM_AUTO) && (how & QOF_HOW_DENOM_SIGFIG))
 	{
 		if (fabs (in) < 10e-20)
-		{
 			logval = 0;
-		}
 		else
 		{
 			logval = log10 (fabs (in));
 			logval = ((logval > 0.0) ?
 				(floor (logval) + 1.0) : (ceil (logval)));
 		}
-		sigfigs = GNC_HOW_GET_SIGFIGS (how);
+		sigfigs = QOF_HOW_GET_SIGFIGS (how);
 		if (sigfigs - logval >= 0)
-		{
 			denom = (gint64) (pow (10, sigfigs - logval));
-		}
 		else
-		{
 			denom = -((gint64) (pow (10, logval - sigfigs)));
-		}
 
-		how = how & ~GNC_HOW_DENOM_SIGFIG & ~GNC_NUMERIC_SIGFIGS_MASK;
+		how = how & ~QOF_HOW_DENOM_SIGFIG & ~QOF_NUMERIC_SIGFIGS_MASK;
 	}
 
 	int_part = (gint64) (floor (fabs (in)));
@@ -1102,26 +950,26 @@ double_to_gnc_numeric (double in, gint64 denom, gint how)
 	int_part = int_part * denom;
 	frac_part = frac_part * (double) denom;
 
-	switch (how & GNC_NUMERIC_RND_MASK)
+	switch (how & QOF_NUMERIC_RND_MASK)
 	{
-	case GNC_HOW_RND_FLOOR:
+	case QOF_HOW_RND_FLOOR:
 		frac_int = (gint64) floor (frac_part);
 		break;
 
-	case GNC_HOW_RND_CEIL:
+	case QOF_HOW_RND_CEIL:
 		frac_int = (gint64) ceil (frac_part);
 		break;
 
-	case GNC_HOW_RND_TRUNC:
+	case QOF_HOW_RND_TRUNC:
 		frac_int = (gint64) frac_part;
 		break;
 
-	case GNC_HOW_RND_ROUND:
-	case GNC_HOW_RND_ROUND_HALF_UP:
+	case QOF_HOW_RND_ROUND:
+	case QOF_HOW_RND_ROUND_HALF_UP:
 		frac_int = (gint64) rint (frac_part);
 		break;
 
-	case GNC_HOW_RND_NEVER:
+	case QOF_HOW_RND_NEVER:
 		frac_int = (gint64) floor (frac_part);
 		if (frac_part != (double) frac_int)
 		{
@@ -1136,123 +984,109 @@ double_to_gnc_numeric (double in, gint64 denom, gint how)
 }
 
 /* *******************************************************************
- *  gnc_numeric_to_double
+ *  qof_numeric_to_double
  ********************************************************************/
 
-double
-gnc_numeric_to_double (gnc_numeric in)
+gdouble
+qof_numeric_to_double (QofNumeric in)
 {
 	if (in.denom > 0)
-	{
-		return (double) in.num / (double) in.denom;
-	}
+		return (gdouble) in.num / (gdouble) in.denom;
 	else
-	{
-		return (double) (in.num * -in.denom);
-	}
+		return (gdouble) (in.num * -in.denom);
 }
 
 /* *******************************************************************
- *  gnc_numeric_error
+ *  qof_numeric_error
  ********************************************************************/
 
-gnc_numeric
-gnc_numeric_error (GNCNumericErrorCode error_code)
+QofNumeric
+qof_numeric_error (QofNumericErrorCode error_code)
 {
-	return gnc_numeric_create (error_code, 0LL);
+	return qof_numeric_create (error_code, 0LL);
 }
 
-
 /* *******************************************************************
- *  gnc_numeric_add_with_error
+ *  qof_numeric_add_with_error
  ********************************************************************/
 
-gnc_numeric
-gnc_numeric_add_with_error (gnc_numeric a, gnc_numeric b,
-	gint64 denom, gint how, gnc_numeric * error)
+QofNumeric
+qof_numeric_add_with_error (QofNumeric a, QofNumeric b,
+	gint64 denom, gint how, QofNumeric * error)
 {
 
-	gnc_numeric sum = gnc_numeric_add (a, b, denom, how);
-	gnc_numeric exact = gnc_numeric_add (a, b, GNC_DENOM_AUTO,
-		GNC_HOW_DENOM_REDUCE);
-	gnc_numeric err = gnc_numeric_sub (sum, exact, GNC_DENOM_AUTO,
-		GNC_HOW_DENOM_REDUCE);
+	QofNumeric sum = qof_numeric_add (a, b, denom, how);
+	QofNumeric exact = qof_numeric_add (a, b, QOF_DENOM_AUTO,
+		QOF_HOW_DENOM_REDUCE);
+	QofNumeric err = qof_numeric_sub (sum, exact, QOF_DENOM_AUTO,
+		QOF_HOW_DENOM_REDUCE);
 
 	if (error)
-	{
 		*error = err;
-	}
 	return sum;
 }
 
 /* *******************************************************************
- *  gnc_numeric_sub_with_error
+ *  qof_numeric_sub_with_error
  ********************************************************************/
 
-gnc_numeric
-gnc_numeric_sub_with_error (gnc_numeric a, gnc_numeric b,
-	gint64 denom, gint how, gnc_numeric * error)
+QofNumeric
+qof_numeric_sub_with_error (QofNumeric a, QofNumeric b,
+	gint64 denom, gint how, QofNumeric * error)
 {
-	gnc_numeric diff = gnc_numeric_sub (a, b, denom, how);
-	gnc_numeric exact = gnc_numeric_sub (a, b, GNC_DENOM_AUTO,
-		GNC_HOW_DENOM_REDUCE);
-	gnc_numeric err = gnc_numeric_sub (diff, exact, GNC_DENOM_AUTO,
-		GNC_HOW_DENOM_REDUCE);
+	QofNumeric diff = qof_numeric_sub (a, b, denom, how);
+	QofNumeric exact = qof_numeric_sub (a, b, QOF_DENOM_AUTO,
+		QOF_HOW_DENOM_REDUCE);
+	QofNumeric err = qof_numeric_sub (diff, exact, QOF_DENOM_AUTO,
+		QOF_HOW_DENOM_REDUCE);
 	if (error)
-	{
 		*error = err;
-	}
 	return diff;
 }
 
-
 /* *******************************************************************
- *  gnc_numeric_mul_with_error
+ *  qof_numeric_mul_with_error
  ********************************************************************/
 
-gnc_numeric
-gnc_numeric_mul_with_error (gnc_numeric a, gnc_numeric b,
-	gint64 denom, gint how, gnc_numeric * error)
+QofNumeric
+qof_numeric_mul_with_error (QofNumeric a, QofNumeric b,
+	gint64 denom, gint how, QofNumeric * error)
 {
-	gnc_numeric prod = gnc_numeric_mul (a, b, denom, how);
-	gnc_numeric exact = gnc_numeric_mul (a, b, GNC_DENOM_AUTO,
-		GNC_HOW_DENOM_REDUCE);
-	gnc_numeric err = gnc_numeric_sub (prod, exact, GNC_DENOM_AUTO,
-		GNC_HOW_DENOM_REDUCE);
+	QofNumeric prod = qof_numeric_mul (a, b, denom, how);
+	QofNumeric exact = qof_numeric_mul (a, b, QOF_DENOM_AUTO,
+		QOF_HOW_DENOM_REDUCE);
+	QofNumeric err = qof_numeric_sub (prod, exact, QOF_DENOM_AUTO,
+		QOF_HOW_DENOM_REDUCE);
 	if (error)
-	{
 		*error = err;
-	}
 	return prod;
 }
 
 
 /* *******************************************************************
- *  gnc_numeric_div_with_error
+ *  qof_numeric_div_with_error
  ********************************************************************/
 
-gnc_numeric
-gnc_numeric_div_with_error (gnc_numeric a, gnc_numeric b,
-	gint64 denom, gint how, gnc_numeric * error)
+QofNumeric
+qof_numeric_div_with_error (QofNumeric a, QofNumeric b,
+	gint64 denom, gint how, QofNumeric * error)
 {
-	gnc_numeric quot = gnc_numeric_div (a, b, denom, how);
-	gnc_numeric exact = gnc_numeric_div (a, b, GNC_DENOM_AUTO,
-		GNC_HOW_DENOM_REDUCE);
-	gnc_numeric err = gnc_numeric_sub (quot, exact,
-		GNC_DENOM_AUTO, GNC_HOW_DENOM_REDUCE);
+	QofNumeric quot = qof_numeric_div (a, b, denom, how);
+	QofNumeric exact = qof_numeric_div (a, b, QOF_DENOM_AUTO,
+		QOF_HOW_DENOM_REDUCE);
+	QofNumeric err = qof_numeric_sub (quot, exact,
+		QOF_DENOM_AUTO, QOF_HOW_DENOM_REDUCE);
 	if (error)
-	{
 		*error = err;
-	}
 	return quot;
 }
 
-/* *******************************************************************
- *  gnc_numeric text IO
- ********************************************************************/
+/* ***************************************************************
+ *  QofNumeric text IO
+ ****************************************************************/
 
 gchar *
-gnc_numeric_to_string (gnc_numeric n)
+qof_numeric_to_string (QofNumeric n)
 {
 	gchar *result;
 	gint64 tmpnum = n.num;
@@ -1266,10 +1100,10 @@ gnc_numeric_to_string (gnc_numeric n)
 }
 
 gchar *
-gnc_num_dbg_to_string (gnc_numeric n)
+qof_numeric_dbg_to_string (QofNumeric n)
 {
-	static char buff[1000];
-	static char *p = buff;
+	static gchar buff[1000];
+	static gchar *p = buff;
 	gint64 tmpnum = n.num;
 	gint64 tmpdenom = n.denom;
 
@@ -1284,7 +1118,7 @@ gnc_num_dbg_to_string (gnc_numeric n)
 }
 
 gboolean
-string_to_gnc_numeric (const gchar * str, gnc_numeric * n)
+qof_numeric_from_string (const gchar * str, QofNumeric * n)
 {
 	size_t num_read;
 	gint64 tmpnum;
@@ -1293,9 +1127,9 @@ string_to_gnc_numeric (const gchar * str, gnc_numeric * n)
 	if (!str)
 		return FALSE;
 
-#ifdef GNC_DEPRECATED
+#ifdef QOF_DEPRECATED
 	/* must use "<" here because %n's effects aren't well defined */
-	if (sscanf (str, " " GNC_SCANF_LLD "/" GNC_SCANF_LLD "%n",
+	if (sscanf (str, " " QOF_SCANF_LLD "/" QOF_SCANF_LLD "%n",
 			&tmpnum, &tmpdenom, &num_read) < 2)
 	{
 		return FALSE;
@@ -1314,16 +1148,16 @@ string_to_gnc_numeric (const gchar * str, gnc_numeric * n)
 	return TRUE;
 }
 
-/* *******************************************************************
- *  gnc_numeric misc testing
- ********************************************************************/
-#ifdef _GNC_NUMERIC_TEST
+/* ***************************************************************
+ *  qof_numeric misc testing
+ ****************************************************************/
+#ifdef _QOF_NUMERIC_TEST
 
-static char *
-gnc_numeric_print (gnc_numeric in)
+static gchar *
+qof_numeric_print (QofNumeric in)
 {
-	char *retval;
-	if (gnc_numeric_check (in))
+	gchar *retval;
+	if (qof_numeric_check (in))
 	{
 		retval =
 			g_strdup_printf ("<ERROR> [%" G_GINT64_FORMAT " / %"
@@ -1339,43 +1173,43 @@ gnc_numeric_print (gnc_numeric in)
 }
 
 int
-main (int argc, char **argv)
+main (void)
 {
-	gnc_numeric a = gnc_numeric_create (1, 3);
-	gnc_numeric b = gnc_numeric_create (1, 4);
-	gnc_numeric c;
+	QofNumeric a = qof_numeric_create (1, 3);
+	QofNumeric b = qof_numeric_create (1, 4);
+	QofNumeric c;
 
-	gnc_numeric err;
+	QofNumeric err;
 
-	c = gnc_numeric_add_with_error (a, b, 100, GNC_HOW_RND_ROUND, &err);
+	c = qof_numeric_add_with_error (a, b, 100, QOF_HOW_RND_ROUND, &err);
 	printf ("add 100ths/error : %s + %s = %s + (error) %s\n\n",
-		gnc_numeric_print (a), gnc_numeric_print (b),
-		gnc_numeric_print (c), gnc_numeric_print (err));
+		qof_numeric_print (a), qof_numeric_print (b),
+		qof_numeric_print (c), qof_numeric_print (err));
 
-	c = gnc_numeric_sub_with_error (a, b, 100, GNC_HOW_RND_FLOOR, &err);
+	c = qof_numeric_sub_with_error (a, b, 100, QOF_HOW_RND_FLOOR, &err);
 	printf ("sub 100ths/error : %s - %s = %s + (error) %s\n\n",
-		gnc_numeric_print (a), gnc_numeric_print (b),
-		gnc_numeric_print (c), gnc_numeric_print (err));
+		qof_numeric_print (a), qof_numeric_print (b),
+		qof_numeric_print (c), qof_numeric_print (err));
 
-	c = gnc_numeric_mul_with_error (a, b, 100, GNC_HOW_RND_ROUND, &err);
+	c = qof_numeric_mul_with_error (a, b, 100, QOF_HOW_RND_ROUND, &err);
 	printf ("mul 100ths/error : %s * %s = %s + (error) %s\n\n",
-		gnc_numeric_print (a), gnc_numeric_print (b),
-		gnc_numeric_print (c), gnc_numeric_print (err));
+		qof_numeric_print (a), qof_numeric_print (b),
+		qof_numeric_print (c), qof_numeric_print (err));
 
-	c = gnc_numeric_div_with_error (a, b, 100, GNC_HOW_RND_ROUND, &err);
+	c = qof_numeric_div_with_error (a, b, 100, QOF_HOW_RND_ROUND, &err);
 	printf ("div 100ths/error : %s / %s = %s + (error) %s\n\n",
-		gnc_numeric_print (a), gnc_numeric_print (b),
-		gnc_numeric_print (c), gnc_numeric_print (err));
+		qof_numeric_print (a), qof_numeric_print (b),
+		qof_numeric_print (c), qof_numeric_print (err));
 
 	printf ("multiply (EXACT): %s * %s = %s\n",
-		gnc_numeric_print (a), gnc_numeric_print (b),
-		gnc_numeric_print (gnc_numeric_mul
-			(a, b, GNC_DENOM_AUTO, GNC_HOW_DENOM_EXACT)));
+		qof_numeric_print (a), qof_numeric_print (b),
+		qof_numeric_print (qof_numeric_mul
+			(a, b, QOF_DENOM_AUTO, QOF_HOW_DENOM_EXACT)));
 
 	printf ("multiply (REDUCE): %s * %s = %s\n",
-		gnc_numeric_print (a), gnc_numeric_print (b),
-		gnc_numeric_print (gnc_numeric_mul
-			(a, b, GNC_DENOM_AUTO, GNC_HOW_DENOM_REDUCE)));
+		qof_numeric_print (a), qof_numeric_print (b),
+		qof_numeric_print (qof_numeric_mul
+			(a, b, QOF_DENOM_AUTO, QOF_HOW_DENOM_REDUCE)));
 
 
 	return 0;

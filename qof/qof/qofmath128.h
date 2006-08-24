@@ -36,50 +36,50 @@ typedef struct
 {
 	guint64 hi;
 	guint64 lo;
-	short isneg;  /**< sign-bit -- T if number is negative */
-	short isbig;  /**< sizeflag -- T if number won't fit in signed 64-bit */
-} qofint128;
+	gshort isneg;  /**< sign-bit -- T if number is negative */
+	gshort isbig;  /**< sizeflag -- T if number won't fit in signed 64-bit */
+} QofInt128;
 
 /** Return true of two numbers are equal */
-inline gboolean equal128 (qofint128 a, qofint128 b);
+inline gboolean equal128 (QofInt128 a, QofInt128 b);
 
 /** Return returns 1 if a>b, -1 if b>a, 0 if a == b */
-inline int cmp128 (qofint128 a, qofint128 b);
+inline gint cmp128 (QofInt128 a, QofInt128 b);
 
 /** Shift right by one bit (i.e. divide by two) */
-inline qofint128 shift128 (qofint128 x);
+inline QofInt128 shift128 (QofInt128 x);
 
 /** Shift left by one bit (i.e. multiply by two) */
-inline qofint128 shiftleft128 (qofint128 x);
+inline QofInt128 shiftleft128 (QofInt128 x);
 
 /** Increment by one */
-inline qofint128 inc128 (qofint128 a);
+inline QofInt128 inc128 (QofInt128 a);
 
 /** Add a pair of 128-bit numbers, returning a 128-bit number */
-inline qofint128 add128 (qofint128 a, qofint128 b);
+inline QofInt128 add128 (QofInt128 a, QofInt128 b);
 
 /** Multiply a pair of signed 64-bit numbers, 
  *  returning a signed 128-bit number.
  */
-inline qofint128 mult128 (gint64 a, gint64 b);
+inline QofInt128 mult128 (gint64 a, gint64 b);
 
 /** Divide a signed 128-bit number by a signed 64-bit,
  *  returning a signed 128-bit number.
  */
-inline qofint128 div128 (qofint128 n, gint64 d);
+inline QofInt128 div128 (QofInt128 n, gint64 d);
 
 /** Return the remainder of a signed 128-bit number modulo 
  *  a signed 64-bit.  That is, return n%d in 128-bit math.
  *  I beleive that ths algo is overflow-free, but should be 
  *  audited some more ... 
  */
-inline gint64 rem128 (qofint128 n, gint64 d);
+inline gint64 rem128 (QofInt128 n, gint64 d);
 
 /** Return the greatest common factor of two 64-bit numbers */
 inline guint64 gcf64 (guint64 num, guint64 denom);
 
 /** Return the least common multiple of two 64-bit numbers. */
-inline qofint128 lcm128 (guint64 a, guint64 b);
+inline QofInt128 lcm128 (guint64 a, guint64 b);
 
 #endif
 

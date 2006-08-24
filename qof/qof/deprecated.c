@@ -1779,5 +1779,152 @@ qof_util_param_as_string (QofEntity * ent, QofParam * param)
 {
 	return qof_util_param_to_string (ent, param);
 }
+gnc_numeric 
+double_to_gnc_numeric (double in, gint64 denom, gint how)
+{
+	return qof_numeric_from_double (in, denom, how);
+}
+gboolean 
+string_to_gnc_numeric (const gchar * str, gnc_numeric * n)
+{
+	return qof_numeric_from_string (str, n);
+}
+gnc_numeric 
+gnc_numeric_error (GNCNumericErrorCode error_code)
+{
+	return qof_numeric_error (error_code);
+}
+gdouble 
+gnc_numeric_to_double (gnc_numeric in)
+{
+	return qof_numeric_to_double (in);
+}
+gchar *
+gnc_numeric_to_string (gnc_numeric n)
+{
+	return qof_numeric_to_string (n);
+}
+gchar *
+gnc_num_dbg_to_string (gnc_numeric n)
+{
+	return qof_numeric_dbg_to_string (n);
+}
+GNCNumericErrorCode 
+gnc_numeric_check (gnc_numeric a)
+{
+	return qof_numeric_check (a);
+}
+gint 
+gnc_numeric_compare (gnc_numeric a, gnc_numeric b)
+{
+	return qof_numeric_compare (a, b);
+}
+gboolean 
+gnc_numeric_zero_p (gnc_numeric a)
+{
+	return qof_numeric_zero_p (a);
+}
+gboolean 
+gnc_numeric_negative_p (gnc_numeric a)
+{
+	return qof_numeric_negative_p (a);
+}
+gboolean 
+gnc_numeric_positive_p (gnc_numeric a)
+{
+	return qof_numeric_positive_p (a);
+}
+gboolean 
+gnc_numeric_eq (gnc_numeric a, gnc_numeric b)
+{
+	return qof_numeric_eq (a, b);
+}
+gboolean 
+gnc_numeric_equal (gnc_numeric a, gnc_numeric b)
+{
+	return qof_numeric_equal (a, b);
+}
+gint 
+gnc_numeric_same (gnc_numeric a, gnc_numeric b, 
+				  gint64 denom, gint how)
+{
+	return qof_numeric_same (a, b, denom, how);
+}
+gnc_numeric 
+gnc_numeric_add (gnc_numeric a, gnc_numeric b,
+				 gint64 denom, gint how)
+{
+	return qof_numeric_add (a, b, denom, how);
+}
+gnc_numeric 
+gnc_numeric_sub (gnc_numeric a, gnc_numeric b,
+				 gint64 denom, gint how)
+{
+	return qof_numeric_sub (a, b, denom, how);
+}
+gnc_numeric 
+gnc_numeric_mul (gnc_numeric a, gnc_numeric b,
+				 gint64 denom, gint how)
+{
+	return qof_numeric_mul (a, b, denom, how);
+}
+gnc_numeric 
+gnc_numeric_div (gnc_numeric x, gnc_numeric y,
+				 gint64 denom, gint how)
+{
+	return qof_numeric_div (x, y, denom, how);
+}
+gnc_numeric gnc_numeric_neg (gnc_numeric a)
+{
+	return qof_numeric_neg (a);
+}
+gnc_numeric gnc_numeric_abs (gnc_numeric a)
+{
+	return qof_numeric_abs (a);
+}
+gnc_numeric 
+gnc_numeric_add_with_error (gnc_numeric a, gnc_numeric b,
+							gint64 denom, gint how,
+							gnc_numeric * error)
+{
+	return qof_numeric_add_with_error (a, b, denom, how, error);
+}
+gnc_numeric 
+gnc_numeric_sub_with_error (gnc_numeric a, gnc_numeric b,
+							gint64 denom, gint how,
+							gnc_numeric * error)
+{
+	return qof_numeric_sub_with_error (a, b, denom, how, error);
+}
+gnc_numeric 
+gnc_numeric_mul_with_error (gnc_numeric a, gnc_numeric b,
+							gint64 denom, gint how,
+							gnc_numeric * error)
+{
+	return qof_numeric_mul_with_error (a, b, denom, how, error);
+}
+gnc_numeric 
+gnc_numeric_div_with_error (gnc_numeric a, gnc_numeric b,
+							gint64 denom, gint how,
+							gnc_numeric * error)
+{
+	return qof_numeric_div_with_error (a, b, denom, how, error);
+}
+gnc_numeric 
+gnc_numeric_convert (gnc_numeric in, gint64 denom, gint how)
+{
+	return qof_numeric_convert (in, denom, how);
+}/*
+gnc_numeric 
+gnc_numeric_convert_with_error (gnc_numeric in, gint64 denom,
+								gint how, gnc_numeric * error)
+{
+	return qof_numeric_convert_with_error (in, denom, how, error);
+}*/
+gnc_numeric gnc_numeric_reduce (gnc_numeric in)
+{
+	return qof_numeric_reduce (in);
+}
+
 /* ==================================================================== */
 #endif /* QOF_DISABLE_DEPRECATED */
