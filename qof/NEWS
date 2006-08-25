@@ -1,3 +1,13 @@
+August 2006: The SQLite backend for embedded systems 
+	is now working.
+	The gnc-numeric to QofNumeric transition is 
+	complete.
+	Other bugfixes in 0.7.1 :
+	QofDate and QofTime fixes to avoid using GDate except in explicit
+		conversions (prevents build failures on hppa and sparc).
+	Fix the QSF valgrind patch to avoid seg fault on writing QSF.
+	Both these patches are already in the Debian package, 0.7.0-2.
+
 July 2006: Implemented QofTime and QofDate throughout
 	the rest of the library. Enabled configure option
 	to build without deprecated code in preparation
