@@ -60,7 +60,7 @@ static const gchar *query_string_type = QOF_TYPE_STRING;
 typedef QofTime *(*query_time_getter) (gpointer, QofParam *);
 static const gchar *query_time_type = QOF_TYPE_TIME;
 
-typedef gnc_numeric (*query_numeric_getter) (gpointer, QofParam *);
+typedef QofNumeric (*query_numeric_getter) (gpointer, QofParam *);
 static const gchar *query_numeric_type = QOF_TYPE_NUMERIC;
 
 typedef GList *(*query_glist_getter) (gpointer, QofParam *);
@@ -407,8 +407,8 @@ numeric_match_predicate (gpointer object, QofParam * getter,
 	QofQueryPredData * pd)
 {
 	query_numeric_t pdata = (query_numeric_t) pd;
-	gnc_numeric obj_val;
-	int compare;
+	QofNumeric obj_val;
+	gint compare;
 
 	VERIFY_PREDICATE (query_numeric_type);
 
@@ -418,11 +418,11 @@ numeric_match_predicate (gpointer object, QofParam * getter,
 	switch (pdata->options)
 	{
 	case QOF_NUMERIC_MATCH_CREDIT:
-		if (gnc_numeric_positive_p (obj_val))
+		if (qof_numeric_positive_p (obj_val))
 			return 0;
 		break;
 	case QOF_NUMERIC_MATCH_DEBIT:
-		if (gnc_numeric_negative_p (obj_val))
+		if (qof_numeric_negative_p (obj_val))
 			return 0;
 		break;
 	default:
@@ -433,17 +433,17 @@ numeric_match_predicate (gpointer object, QofParam * getter,
 	 * four decimal places. (epsilon=1/10000) */
 	if (pd->how == QOF_COMPARE_EQUAL || pd->how == QOF_COMPARE_NEQ)
 	{
-		gnc_numeric cmp_val = gnc_numeric_create (1, 10000);
+		QofNumeric cmp_val = qof_numeric_create (1, 10000);
 		compare =
-			(gnc_numeric_compare (gnc_numeric_abs
-				(gnc_numeric_sub (gnc_numeric_abs (obj_val),
-						gnc_numeric_abs (pdata->
+			(qof_numeric_compare (qof_numeric_abs
+				(qof_numeric_sub (qof_numeric_abs (obj_val),
+						qof_numeric_abs (pdata->
 							amount),
-						100000, GNC_HOW_RND_ROUND)), cmp_val) < 0);
+						100000, QOF_HOW_RND_ROUND)), cmp_val) < 0);
 	}
 	else
 		compare =
-			gnc_numeric_compare (gnc_numeric_abs (obj_val), pdata->amount);
+			qof_numeric_compare (qof_numeric_abs (obj_val), pdata->amount);
 
 	switch (pd->how)
 	{
@@ -469,7 +469,7 @@ static int
 numeric_compare_func (gpointer a, gpointer b, 
 	gint options __attribute__ ((unused)), QofParam * getter)
 {
-	gnc_numeric va, vb;
+	QofNumeric va, vb;
 
 	g_return_val_if_fail (a && b && getter
 		&& getter->param_getfcn, COMPARE_ERROR);
@@ -477,7 +477,7 @@ numeric_compare_func (gpointer a, gpointer b,
 	va = ((query_numeric_getter) getter->param_getfcn) (a, getter);
 	vb = ((query_numeric_getter) getter->param_getfcn) (b, getter);
 
-	return gnc_numeric_compare (va, vb);
+	return qof_numeric_compare (va, vb);
 }
 
 static void
@@ -505,12 +505,12 @@ numeric_predicate_equal (QofQueryPredData * p1, QofQueryPredData * p2)
 
 	if (pd1->options != pd2->options)
 		return FALSE;
-	return gnc_numeric_equal (pd1->amount, pd2->amount);
+	return qof_numeric_equal (pd1->amount, pd2->amount);
 }
 
 QofQueryPredData *
 qof_query_numeric_predicate (QofQueryCompare how,
-	QofNumericMatch options, gnc_numeric value)
+	QofNumericMatch options, QofNumeric value)
 {
 	query_numeric_t pdata;
 	pdata = g_new0 (query_numeric_def, 1);
@@ -524,19 +524,19 @@ qof_query_numeric_predicate (QofQueryCompare how,
 static char *
 numeric_to_string (gpointer object, QofParam * getter)
 {
-	gnc_numeric num;
+	QofNumeric num;
 	num = ((query_numeric_getter) getter->param_getfcn) (object, getter);
 
-	return gnc_numeric_to_string (num);
+	return qof_numeric_to_string (num);
 }
 
 static char *
 debcred_to_string (gpointer object, QofParam * getter)
 {
-	gnc_numeric num;
+	QofNumeric num;
 	num = ((query_numeric_getter) getter->param_getfcn) (object, getter);
 
-	return gnc_numeric_to_string (num);
+	return qof_numeric_to_string (num);
 }
 
 /* QOF_TYPE_GUID =================================================== */

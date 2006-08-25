@@ -63,11 +63,11 @@ entity_set_reference_cb (QofEntity * ent, gpointer user_data)
 			(void (*)(QofEntity *, QofEntity *)) ref->param->param_setfcn;
 		if ((reference) && (reference_setter))
 		{
-			qof_begin_edit ((QofInstance *) ent);
-			qof_begin_edit ((QofInstance *) reference);
+			qof_util_param_edit ((QofInstance *) ent, ref->param);
+			qof_util_param_edit ((QofInstance *) reference, ref->param);
 			reference_setter (ent, reference);
-			qof_commit_edit ((QofInstance *) ent);
-			qof_commit_edit ((QofInstance *) reference);
+			qof_util_param_commit ((QofInstance *) ent, ref->param);
+			qof_util_param_commit ((QofInstance *) reference, ref->param);
 		}
 		/* collect and choice handling */
 		collect_setter =
@@ -81,7 +81,7 @@ entity_set_reference_cb (QofEntity * ent, gpointer user_data)
 			&& (0 == safe_strcmp (ref->type, ent->e_type)))
 		{
 			QofCollection *temp_col;
-			char cm_sa[GUID_ENCODING_LENGTH + 1];
+			gchar cm_sa[GUID_ENCODING_LENGTH + 1];
 
 			temp_col = ref->param->param_getfcn (ent, ref->param);
 			coll = qof_book_get_collection (partial_book,
@@ -91,14 +91,14 @@ entity_set_reference_cb (QofEntity * ent, gpointer user_data)
 			if (reference)
 			{
 				qof_collection_add_entity (temp_col, reference);
-				qof_begin_edit ((QofInstance *) ent);
-				qof_begin_edit ((QofInstance *) reference);
+				qof_util_param_edit ((QofInstance *) ent, ref->param);
+				qof_util_param_edit ((QofInstance *) reference, ref->param);
 				if (collect_setter)
 				{
 					collect_setter (ent, temp_col);
 				}
-				qof_commit_edit ((QofInstance *) ent);
-				qof_commit_edit ((QofInstance *) reference);
+				qof_util_param_commit ((QofInstance *) ent, ref->param);
+				qof_util_param_commit ((QofInstance *) reference, ref->param);
 				qof_collection_destroy (temp_col);
 			}
 		}
@@ -106,14 +106,14 @@ entity_set_reference_cb (QofEntity * ent, gpointer user_data)
 		{
 			coll = qof_book_get_collection (partial_book, ref->type);
 			reference = qof_collection_lookup_entity (coll, ref->ref_guid);
-			qof_begin_edit ((QofInstance *) ent);
-			qof_begin_edit ((QofInstance *) reference);
+			qof_util_param_edit ((QofInstance *) ent, ref->param);
+			qof_util_param_edit ((QofInstance *) reference, ref->param);
 			if (choice_setter)
 			{
 				choice_setter (ent, reference);
 			}
-			qof_commit_edit ((QofInstance *) ent);
-			qof_commit_edit ((QofInstance *) reference);
+			qof_util_param_commit ((QofInstance *) ent, ref->param);
+			qof_util_param_commit ((QofInstance *) reference, ref->param);
 		}
 		book_ref_list = g_list_next (book_ref_list);
 	}

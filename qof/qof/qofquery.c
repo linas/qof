@@ -1852,8 +1852,8 @@ qof_query_printValueForParam (QofQueryPredData * pd, GString * gs)
 		query_numeric_t pdata = (query_numeric_t) pd;
 		g_string_append_printf (gs, "Match type %s ",
 			qof_query_printNumericMatch (pdata->options));
-		g_string_append_printf (gs, " gnc_numeric: %s",
-			gnc_num_dbg_to_string (pdata->amount));
+		g_string_append_printf (gs, " numeric: %s",
+			qof_numeric_dbg_to_string (pdata->amount));
 		return;
 	}
 	if (!safe_strcmp (pd->type_name, QOF_TYPE_KVP))

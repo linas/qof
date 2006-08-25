@@ -213,17 +213,17 @@ qof_backend_prepare_option (QofBackend * be,
 		}
 	case KVP_TYPE_DOUBLE:
 		{
-			value = kvp_value_new_double (*(double *) option->value);
+			value = kvp_value_new_double (*(gdouble *) option->value);
 			break;
 		}
 	case KVP_TYPE_NUMERIC:
 		{
-			value = kvp_value_new_numeric (*(gnc_numeric *) option->value);
+			value = kvp_value_new_numeric (*(QofNumeric *) option->value);
 			break;
 		}
 	case KVP_TYPE_STRING:
 		{
-			value = kvp_value_new_string ((const char *) option->value);
+			value = kvp_value_new_string ((const gchar *) option->value);
 			break;
 		}
 	case KVP_TYPE_GUID:
@@ -302,8 +302,8 @@ config_foreach_cb (const gchar * key, KvpValue * value, gpointer data)
 {
 	QofBackendOption option;
 	gint64 int64;
-	double db;
-	gnc_numeric num;
+	gdouble db;
+	QofNumeric num;
 	gchar *parent;
 	struct config_iterate *helper;
 
@@ -403,13 +403,13 @@ config_foreach_cb (const gchar * key, KvpValue * value, gpointer data)
 	case KVP_TYPE_DOUBLE:
 		{
 			kvp_frame_set_double (helper->recursive, key,
-				(*(double *) option.value));
+				(*(gdouble *) option.value));
 			break;
 		}
 	case KVP_TYPE_NUMERIC:
 		{
 			kvp_frame_set_numeric (helper->recursive, key,
-				(*(gnc_numeric *) option.value));
+				(*(QofNumeric *) option.value));
 			break;
 		}
 	case KVP_TYPE_STRING:

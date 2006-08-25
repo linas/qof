@@ -383,11 +383,11 @@ ent_ref_cb (QofEntity * ent, gpointer user_data)
 			(void (*)(QofEntity *, QofEntity *)) ref->param->param_setfcn;
 		if (reference_setter != NULL)
 		{
-			qof_begin_edit ((QofInstance *) ent);
-			qof_begin_edit ((QofInstance *) reference);
+			qof_util_param_edit ((QofInstance *) ent, ref->param);
+			qof_util_param_edit ((QofInstance *) reference, ref->param);
 			reference_setter (ent, reference);
-			qof_commit_edit ((QofInstance *) ent);
-			qof_commit_edit ((QofInstance *) reference);
+			qof_util_param_commit ((QofInstance *) ent, ref->param);
+			qof_util_param_commit ((QofInstance *) reference, ref->param);
 		}
 		params->referenceList = g_list_next (params->referenceList);
 	}
@@ -443,10 +443,8 @@ qsfdoc_to_qofbook (qsf_param * params)
 			object_type, book);
 		g_return_val_if_fail (inst != NULL, FALSE);
 		params->qsf_ent = &inst->entity;
-		qof_begin_edit (inst);
 		g_hash_table_foreach (params->qsf_parameter_hash,
 			qsf_object_commitCB, params);
-		qof_commit_edit (inst);
 	}
 	qof_object_foreach_type (insert_ref_cb, params);
 	qof_book_set_data (book, ENTITYREFERENCE, params->referenceList);
@@ -1192,8 +1190,8 @@ string_to_kvp_value (const gchar * content, KvpValueType type)
 {
 	gchar *tail;
 	gint64 cm_i64;
-	double cm_double;
-	gnc_numeric cm_numeric;
+	gdouble cm_double;
+	QofNumeric cm_numeric;
 	GUID *cm_guid;
 #ifndef QOF_DISABLE_DEPRECATED
 	struct tm kvp_time;
@@ -1225,7 +1223,7 @@ string_to_kvp_value (const gchar * content, KvpValueType type)
 		}
 	case KVP_TYPE_NUMERIC:
 		{
-			string_to_gnc_numeric (content, &cm_numeric);
+			qof_numeric_from_string (content, &cm_numeric);
 			return kvp_value_new_gnc_numeric (cm_numeric);
 			break;
 		}
@@ -1301,8 +1299,8 @@ qsf_object_commitCB (gpointer key, gpointer value, gpointer data)
 	QofIdType obj_type, reference_type;
 	gchar *tail;
 	/* cm_ prefix used for variables that hold the data to commit */
-	gnc_numeric cm_numeric;
-	double cm_double;
+	QofNumeric cm_numeric;
+	gdouble cm_double;
 	gboolean cm_boolean;
 	gint32 cm_i32;
 	gint64 cm_i64;
@@ -1315,8 +1313,8 @@ qsf_object_commitCB (gpointer key, gpointer value, gpointer data)
 	const QofParam *cm_param;
 	void (*string_setter) (QofEntity *, const gchar *);
 	void (*time_setter) (QofEntity *, QofTime *);
-	void (*numeric_setter) (QofEntity *, gnc_numeric);
-	void (*double_setter) (QofEntity *, double);
+	void (*numeric_setter) (QofEntity *, QofNumeric);
+	void (*double_setter) (QofEntity *, gdouble);
 	void (*boolean_setter) (QofEntity *, gboolean);
 	void (*i32_setter) (QofEntity *, gint32);
 	void (*i64_setter) (QofEntity *, gint64);
@@ -1343,7 +1341,9 @@ qsf_object_commitCB (gpointer key, gpointer value, gpointer data)
 		string_setter = (void (*)(QofEntity *, const gchar *)) cm_setter;
 		if (string_setter != NULL)
 		{
+			qof_util_param_edit ((QofInstance *) qsf_ent, cm_param);
 			string_setter (qsf_ent, (gchar *) xmlNodeGetContent (node));
+			qof_util_param_commit ((QofInstance *) qsf_ent, cm_param);
 		}
 	}
 #ifndef QOF_DISABLE_DEPRECATED
@@ -1369,7 +1369,9 @@ qsf_object_commitCB (gpointer key, gpointer value, gpointer data)
 			if(qd)
 			{
 				qt = qof_date_to_qtime (qd);
+				qof_util_param_edit ((QofInstance *) qsf_ent, cm_param);
 				time_setter (qsf_ent, qt);
+				qof_util_param_commit ((QofInstance *) qsf_ent, cm_param);
 				qof_date_free (qd);
 			}
 			else
@@ -1401,7 +1403,9 @@ qsf_object_commitCB (gpointer key, gpointer value, gpointer data)
 			timespecFromTime_t (&cm_date, qsf_time_t);
 			if (date_setter != NULL)
 			{
+				qof_util_param_edit ((QofInstance *) qsf_ent, cm_param);
 				date_setter (qsf_ent, cm_date);
+				qof_util_param_commit ((QofInstance *) qsf_ent, cm_param);
 			}
 		}
 	}
@@ -1410,20 +1414,22 @@ qsf_object_commitCB (gpointer key, gpointer value, gpointer data)
 		(safe_strcmp (qof_type, QOF_TYPE_DEBCRED) == 0))
 	{
 		gchar *tmp;
-		numeric_setter = (void (*)(QofEntity *, gnc_numeric)) cm_setter;
+		numeric_setter = (void (*)(QofEntity *, QofNumeric)) cm_setter;
 		tmp = (char *) xmlNodeGetContent (node);
-		string_to_gnc_numeric (tmp,	&cm_numeric);
+		qof_numeric_from_string (tmp, &cm_numeric);
 		g_free (tmp);
 		if (numeric_setter != NULL)
 		{
+			qof_util_param_edit ((QofInstance *) qsf_ent, cm_param);
 			numeric_setter (qsf_ent, cm_numeric);
+			qof_util_param_commit ((QofInstance *) qsf_ent, cm_param);
 		}
 	}
 	if (safe_strcmp (qof_type, QOF_TYPE_GUID) == 0)
 	{
 		cm_guid = g_new (GUID, 1);
 		if (TRUE !=
-			string_to_guid ((char *) xmlNodeGetContent (node), cm_guid))
+			string_to_guid ((gchar *) xmlNodeGetContent (node), cm_guid))
 		{
 			qof_backend_set_error (params->be, ERR_QSF_BAD_OBJ_GUID);
 			PINFO (" string to guid conversion failed for %s:%s:%s",
@@ -1431,10 +1437,12 @@ qsf_object_commitCB (gpointer key, gpointer value, gpointer data)
 			return;
 		}
 		reference_type =
-			(char *) xmlGetProp (node, BAD_CAST QSF_OBJECT_TYPE);
+			(gchar *) xmlGetProp (node, BAD_CAST QSF_OBJECT_TYPE);
 		if (0 == safe_strcmp (QOF_PARAM_GUID, reference_type))
 		{
+			qof_util_param_edit ((QofInstance *) qsf_ent, cm_param);
 			qof_entity_set_guid (qsf_ent, cm_guid);
+			qof_util_param_commit ((QofInstance *) qsf_ent, cm_param);
 		}
 		else
 		{
@@ -1456,7 +1464,9 @@ qsf_object_commitCB (gpointer key, gpointer value, gpointer data)
 			i32_setter = (void (*)(QofEntity *, gint32)) cm_setter;
 			if (i32_setter != NULL)
 			{
+				qof_util_param_edit ((QofInstance *) qsf_ent, cm_param);
 				i32_setter (qsf_ent, cm_i32);
+				qof_util_param_commit ((QofInstance *) qsf_ent, cm_param);
 			}
 		}
 		else
@@ -1473,7 +1483,9 @@ qsf_object_commitCB (gpointer key, gpointer value, gpointer data)
 			i64_setter = (void (*)(QofEntity *, gint64)) cm_setter;
 			if (i64_setter != NULL)
 			{
+				qof_util_param_edit ((QofInstance *) qsf_ent, cm_param);
 				i64_setter (qsf_ent, cm_i64);
+				qof_util_param_commit ((QofInstance *) qsf_ent, cm_param);
 			}
 		}
 		else
@@ -1487,10 +1499,12 @@ qsf_object_commitCB (gpointer key, gpointer value, gpointer data)
 		cm_double = strtod ((gchar *) xmlNodeGetContent (node), &tail);
 		if (errno == 0)
 		{
-			double_setter = (void (*)(QofEntity *, double)) cm_setter;
+			double_setter = (void (*)(QofEntity *, gdouble)) cm_setter;
 			if (double_setter != NULL)
 			{
+				qof_util_param_edit ((QofInstance *) qsf_ent, cm_param);
 				double_setter (qsf_ent, cm_double);
+				qof_util_param_commit ((QofInstance *) qsf_ent, cm_param);
 			}
 		}
 	}
@@ -1508,7 +1522,9 @@ qsf_object_commitCB (gpointer key, gpointer value, gpointer data)
 		boolean_setter = (void (*)(QofEntity *, gboolean)) cm_setter;
 		if (boolean_setter != NULL)
 		{
+			qof_util_param_edit ((QofInstance *) qsf_ent, cm_param);
 			boolean_setter (qsf_ent, cm_boolean);
+			qof_util_param_commit ((QofInstance *) qsf_ent, cm_param);
 		}
 	}
 	if (safe_strcmp (qof_type, QOF_TYPE_KVP) == 0)
@@ -1520,12 +1536,14 @@ qsf_object_commitCB (gpointer key, gpointer value, gpointer data)
 		{
 			return;
 		}
+		qof_util_param_edit ((QofInstance *) qsf_ent, cm_param);
 		cm_value =
 			string_to_kvp_value ((gchar *) xmlNodeGetContent (node),
 			cm_type);
 		cm_kvp = (KvpFrame *) cm_param->param_getfcn (qsf_ent, cm_param);
 		cm_kvp = kvp_frame_set_value (cm_kvp, (gchar *) xmlGetProp (node,
 				BAD_CAST QSF_OBJECT_KVP), cm_value);
+		qof_util_param_commit ((QofInstance *) qsf_ent, cm_param);
 		g_free (cm_value);
 	}
 	if (safe_strcmp (qof_type, QOF_TYPE_COLLECT) == 0)
@@ -1568,7 +1586,9 @@ qsf_object_commitCB (gpointer key, gpointer value, gpointer data)
 		char_setter = (void (*)(QofEntity *, gchar)) cm_setter;
 		if (char_setter != NULL)
 		{
+			qof_util_param_edit ((QofInstance *) qsf_ent, cm_param);
 			char_setter (qsf_ent, cm_char);
+			qof_util_param_commit ((QofInstance *) qsf_ent, cm_param);
 		}
 	}
 }

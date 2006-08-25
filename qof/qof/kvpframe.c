@@ -54,8 +54,8 @@ struct _KvpValue
 	union
 	{
 		gint64 int64;
-		double dbl;
-		gnc_numeric numeric;
+		gdouble dbl;
+		QofNumeric numeric;
 		gchar *str;
 		GUID *guid;
 		QofTime *qt;
@@ -442,8 +442,8 @@ kvp_frame_set_time (KvpFrame * frame, const gchar *path, QofTime *qt)
 }
 
 void
-kvp_frame_set_numeric (KvpFrame * frame, const char *path,
-	gnc_numeric nval)
+kvp_frame_set_numeric (KvpFrame * frame, const gchar *path,
+	QofNumeric nval)
 {
 	KvpValue *value;
 	value = kvp_value_new_gnc_numeric (nval);
@@ -625,7 +625,7 @@ kvp_frame_add_double (KvpFrame * frame, const char *path, double dval)
 
 void
 kvp_frame_add_numeric (KvpFrame * frame, const char *path,
-	gnc_numeric nval)
+	QofNumeric nval)
 {
 	KvpValue *value;
 	value = kvp_value_new_gnc_numeric (nval);
@@ -885,7 +885,7 @@ decode (char *enc)
 }
 
 void
-kvp_frame_add_url_encoding (KvpFrame * frame, const char *enc)
+kvp_frame_add_url_encoding (KvpFrame * frame, const gchar *enc)
 {
 	char *buff, *p;
 	if (!frame || !enc)
@@ -923,7 +923,7 @@ kvp_frame_add_url_encoding (KvpFrame * frame, const char *enc)
 
 
 gint64
-kvp_frame_get_gint64 (const KvpFrame * frame, const char *path)
+kvp_frame_get_gint64 (const KvpFrame * frame, const gchar *path)
 {
 	char *key = NULL;
 	frame = get_trailer_or_null (frame, path, &key);
@@ -931,15 +931,15 @@ kvp_frame_get_gint64 (const KvpFrame * frame, const char *path)
 }
 
 double
-kvp_frame_get_double (const KvpFrame * frame, const char *path)
+kvp_frame_get_double (const KvpFrame * frame, const gchar *path)
 {
 	char *key = NULL;
 	frame = get_trailer_or_null (frame, path, &key);
 	return kvp_value_get_double (kvp_frame_get_slot (frame, key));
 }
 
-gnc_numeric
-kvp_frame_get_numeric (const KvpFrame * frame, const char *path)
+QofNumeric
+kvp_frame_get_numeric (const KvpFrame * frame, const gchar *path)
 {
 	char *key = NULL;
 	frame = get_trailer_or_null (frame, path, &key);
@@ -1223,7 +1223,7 @@ kvp_value_new_double (double value)
 }
 
 KvpValue *
-kvp_value_new_numeric (gnc_numeric value)
+kvp_value_new_numeric (QofNumeric value)
 {
 	KvpValue *retval = g_new0 (KvpValue, 1);
 	retval->type = KVP_TYPE_NUMERIC;
@@ -1419,18 +1419,18 @@ kvp_value_get_double (const KvpValue * value)
 	}
 }
 
-gnc_numeric
+QofNumeric
 kvp_value_get_numeric (const KvpValue * value)
 {
 	if (!value)
-		return gnc_numeric_zero ();
+		return qof_numeric_zero ();
 	if (value->type == KVP_TYPE_NUMERIC)
 	{
 		return value->value.numeric;
 	}
 	else
 	{
-		return gnc_numeric_zero ();
+		return qof_numeric_zero ();
 	}
 }
 
@@ -1664,7 +1664,7 @@ kvp_value_compare (const KvpValue * kva, const KvpValue * kvb)
 		return double_compare (kva->value.dbl, kvb->value.dbl);
 		break;
 	case KVP_TYPE_NUMERIC:
-		return gnc_numeric_compare (kva->value.numeric,
+		return qof_numeric_compare (kva->value.numeric,
 			kvb->value.numeric);
 		break;
 	case KVP_TYPE_STRING:
@@ -1840,7 +1840,7 @@ kvp_value_to_bare_string (const KvpValue * val)
 		break;
 
 	case KVP_TYPE_NUMERIC:
-		tmp1 = gnc_numeric_to_string (kvp_value_get_numeric (val));
+		tmp1 = qof_numeric_to_string (kvp_value_get_numeric (val));
 		tmp2 = g_strdup_printf ("%s", tmp1 ? tmp1 : "");
 		g_free (tmp1);
 		return tmp2;
@@ -1927,7 +1927,7 @@ kvp_value_to_string (const KvpValue * val)
 		break;
 
 	case KVP_TYPE_NUMERIC:
-		tmp1 = gnc_numeric_to_string (kvp_value_get_numeric (val));
+		tmp1 = qof_numeric_to_string (kvp_value_get_numeric (val));
 		tmp2 = g_strdup_printf ("KVP_VALUE_NUMERIC(%s)", tmp1 ? tmp1 : "");
 		g_free (tmp1);
 		return tmp2;

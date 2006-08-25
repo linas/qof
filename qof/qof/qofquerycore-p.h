@@ -91,7 +91,7 @@ typedef struct
 {
 	QofQueryPredData pd;
 	QofNumericMatch options;
-	gnc_numeric amount;
+	QofNumeric amount;
 } query_numeric_def, *query_numeric_t;
 
 typedef struct
