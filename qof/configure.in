@@ -1,3 +1,9 @@
+# This is free software, licensed under the GNU Public License V2.
+# See the file COPYING for details.
+
+dnl ******************************
+dnl Initialise
+dnl ******************************
 
 AC_INIT(qof, 0.7.0, http://lists.sourceforge.net/lists/listinfo/qof-devel)
 
@@ -9,11 +15,11 @@ LIBQOF_BACKEND_QSF_LIBRARY_VERSION=0:5:0
 AC_SUBST(LIBQOF_LIBRARY_VERSION)
 AC_SUBST(LIBQOF_BACKEND_QSF_LIBRARY_VERSION)
 
-VERSION=0.7.0
+VERSION=AC_PACKAGE_VERSION
 AC_SUBST(VERSION)
-PACKAGE=qof
+PACKAGE=AC_PACKAGE_NAME
 AC_SUBST(PACKAGE)
-AM_INIT_AUTOMAKE([$PACKAGE], [$VERSION])
+AM_INIT_AUTOMAKE(AC_PACKAGE_NAME, AC_PACKAGE_VERSION)
 
 AC_PROG_LIBTOOL
 AM_CONFIG_HEADER(config.h)
