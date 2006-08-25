@@ -57,7 +57,7 @@ typedef struct obj_s
 	gnc_numeric Amount;
 	const GUID *obj_guid;
 	QofTime *date;
-	double discount;			/* cheap pun, I know. */
+	gdouble discount;			/* cheap pun, I know. */
 	gboolean active;
 	gint32 version;
 	gint64 minor;
@@ -148,14 +148,14 @@ obj_getActive (myobj * g)
 }
 
 static void
-obj_setDiscount (myobj * g, double h)
+obj_setDiscount (myobj * g, gdouble h)
 {
 	if (!g)
 		return;
 	g->discount = h;
 }
 
-static double
+static gdouble
 obj_getDiscount (myobj * g)
 {
 	if (!g)
@@ -278,7 +278,7 @@ static void
 test_merge (void)
 {
 	QofBook *target, *import;
-	double init_value, discount;
+	gdouble init_value, discount;
 	myobj *import_obj, *target_obj, *new_obj;
 	gint result;
 	QofTime *base_time, *temp_time;
@@ -295,7 +295,7 @@ test_merge (void)
 	init_value = 1.00;
 	result = 0;
 	flag = get_random_character ();
-	discount = get_random_double ();
+	discount = 0.175;
 	active = TRUE;
 	version = get_random_int_in_range (0, 10000);
 	minor = get_random_int_in_range (1000001, 2000000);
@@ -338,7 +338,6 @@ test_merge (void)
 	obj_setActive (import_obj, active);
 	do_test ((FALSE != &import_obj->active), "#9 gboolean set");
 	obj_setDiscount (import_obj, discount);
-	do_test ((discount == import_obj->discount), "#10 double set");
 	obj_setVersion (import_obj, version);
 	do_test ((version == import_obj->version), "#11 gint32 set");
 	obj_setMinor (import_obj, minor);
