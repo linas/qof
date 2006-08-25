@@ -425,8 +425,8 @@ qof_util_param_to_string (QofEntity * ent, const QofParam * param)
 	gboolean known_type;
 	QofType paramType;
 	const GUID *param_guid;
-	gnc_numeric param_numeric, (*numeric_getter) (QofEntity *, const QofParam *);
-	double param_double, (*double_getter) (QofEntity *, const QofParam *);
+	QofNumeric param_numeric, (*numeric_getter) (QofEntity *, const QofParam *);
+	gdouble param_double, (*double_getter) (QofEntity *, const QofParam *);
 	gboolean param_boolean, (*boolean_getter) (QofEntity *, const QofParam *);
 	gint32 param_i32, (*int32_getter) (QofEntity *, const QofParam *);
 	gint64 param_i64, (*int64_getter) (QofEntity *, const QofParam *);
@@ -475,9 +475,9 @@ qof_util_param_to_string (QofEntity * ent, const QofParam * param)
 		(safe_strcmp (paramType, QOF_TYPE_DEBCRED) == 0))
 	{
 		numeric_getter =
-			(gnc_numeric (*)(QofEntity *, const QofParam *)) param->param_getfcn;
+			(QofNumeric (*)(QofEntity *, const QofParam *)) param->param_getfcn;
 		param_numeric = numeric_getter (ent, param);
-		param_string = g_strdup (gnc_numeric_to_string (param_numeric));
+		param_string = g_strdup (qof_numeric_to_string (param_numeric));
 		known_type = TRUE;
 		return param_string;
 	}
@@ -619,9 +619,9 @@ qof_util_param_set_string (QofEntity * ent, const QofParam * param,
 {
 	void (*string_setter) (QofEntity *, const gchar *);
 	void (*time_setter) (QofEntity *, QofTime *);
-	void (*numeric_setter) (QofEntity *, gnc_numeric);
+	void (*numeric_setter) (QofEntity *, QofNumeric);
 	void (*guid_setter) (QofEntity *, const GUID *);
-	void (*double_setter) (QofEntity *, double);
+	void (*double_setter) (QofEntity *, gdouble);
 	void (*boolean_setter) (QofEntity *, gboolean);
 	void (*i32_setter) (QofEntity *, gint32);
 	void (*i64_setter) (QofEntity *, gint64);
@@ -670,12 +670,12 @@ qof_util_param_set_string (QofEntity * ent, const QofParam * param,
 	if ((safe_strcmp (param->param_type, QOF_TYPE_NUMERIC) == 0) ||
 		(safe_strcmp (param->param_type, QOF_TYPE_DEBCRED) == 0))
 	{
-		gnc_numeric num;
+		QofNumeric num;
 		numeric_setter =
 			(void (*)(QofEntity *,
-				gnc_numeric)) param->param_setfcn;
-		if (!string_to_gnc_numeric (value_string, &num) ||
-			(gnc_numeric_check (num) != GNC_ERROR_OK))
+				QofNumeric)) param->param_setfcn;
+		if (!qof_numeric_from_string (value_string, &num) ||
+			(qof_numeric_check (num) != QOF_ERROR_OK))
 			return FALSE;
 		if (numeric_setter != NULL)
 			numeric_setter (ent, num);

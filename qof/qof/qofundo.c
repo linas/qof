@@ -66,7 +66,7 @@ set_param (QofEntity * ent, const QofParam * param,
 					  gchar * value)
 {
 	gchar *tail;
-	gnc_numeric cli_numeric;
+	QofNumeric cli_numeric;
 	gboolean cli_bool;
 	gint32 cli_i32;
 	gint64 cli_i64;
@@ -76,7 +76,7 @@ set_param (QofEntity * ent, const QofParam * param,
 	void (*time_setter) (QofEntity *, QofTime *);
 	void (*i32_setter) (QofEntity *, gint32);
 	void (*i64_setter) (QofEntity *, gint64);
-	void (*numeric_setter) (QofEntity *, gnc_numeric);
+	void (*numeric_setter) (QofEntity *, QofNumeric);
 	void (*boolean_setter) (QofEntity *, gboolean);
 	void (*guid_setter) (QofEntity *, const GUID *);
 
@@ -106,8 +106,8 @@ set_param (QofEntity * ent, const QofParam * param,
 		(safe_strcmp (param->param_type, QOF_TYPE_DEBCRED) == 0))
 	{
 		numeric_setter =
-			(void (*)(QofEntity *, gnc_numeric)) param->param_setfcn;
-		string_to_gnc_numeric (value, &cli_numeric);
+			(void (*)(QofEntity *, QofNumeric)) param->param_setfcn;
+		qof_numeric_from_string (value, &cli_numeric);
 		if (numeric_setter != NULL)
 		{
 			numeric_setter (ent, cli_numeric);

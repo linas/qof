@@ -394,20 +394,20 @@ qof_entity_foreach_copy (gpointer data, gpointer user_data)
 	KvpFrame *cm_kvp;
 	QofCollection *cm_col;
 	/* function pointers and variables for parameter getters that don't use pointers normally */
-	gnc_numeric cm_numeric, (*numeric_getter) (QofEntity *, QofParam *);
-	double cm_double, (*double_getter) (QofEntity *, QofParam *);
+	QofNumeric cm_numeric, (*numeric_getter) (QofEntity *, QofParam *);
+	gdouble cm_double, (*double_getter) (QofEntity *, QofParam *);
 	gboolean cm_boolean, (*boolean_getter) (QofEntity *, QofParam *);
 	gint32 cm_i32, (*int32_getter) (QofEntity *, QofParam *);
 	gint64 cm_i64, (*int64_getter) (QofEntity *, QofParam *);
 	/* function pointers to the parameter setters */
-	void (*string_setter) (QofEntity *, const char *);
-	void (*numeric_setter) (QofEntity *, gnc_numeric);
+	void (*string_setter) (QofEntity *, const gchar *);
+	void (*numeric_setter) (QofEntity *, QofNumeric);
 	void (*guid_setter) (QofEntity *, const GUID *);
-	void (*double_setter) (QofEntity *, double);
+	void (*double_setter) (QofEntity *, gdouble);
 	void (*boolean_setter) (QofEntity *, gboolean);
 	void (*i32_setter) (QofEntity *, gint32);
 	void (*i64_setter) (QofEntity *, gint64);
-	void (*char_setter) (QofEntity *, char *);
+	void (*char_setter) (QofEntity *, gchar *);
 	void (*kvp_frame_setter) (QofEntity *, KvpFrame *);
 
 	g_return_if_fail (user_data != NULL);
@@ -428,7 +428,9 @@ qof_entity_foreach_copy (gpointer data, gpointer user_data)
 					const char *)) cm_param->param_setfcn;
 			if (string_setter != NULL)
 			{
+				qof_util_param_edit ((QofInstance *) targetEnt, cm_param);
 				string_setter (targetEnt, cm_string);
+				qof_util_param_commit ((QofInstance *) targetEnt, cm_param);
 			}
 		}
 		registered_type = TRUE;
@@ -442,7 +444,11 @@ qof_entity_foreach_copy (gpointer data, gpointer user_data)
 		time_setter = 
 			(void (*)(QofEntity *, QofTime*))cm_param->param_setfcn;
 		if (time_setter != NULL)
+		{
+			qof_util_param_edit ((QofInstance *) targetEnt, cm_param);
 			time_setter (targetEnt, qt);
+			qof_util_param_commit ((QofInstance *) targetEnt, cm_param);
+		}
 		registered_type = TRUE;
 	}
 #ifndef QOF_DISABLE_DEPRECATED
@@ -459,7 +465,11 @@ qof_entity_foreach_copy (gpointer data, gpointer user_data)
 		date_setter =
 			(void (*)(QofEntity *, Timespec)) cm_param->param_setfcn;
 		if (date_setter != NULL)
+		{
+			qof_util_param_edit ((QofInstance *) targetEnt, cm_param);
 			date_setter (targetEnt, cm_date);
+			qof_util_param_commit ((QofInstance *) targetEnt, cm_param);
+		}
 		registered_type = TRUE;
 	}
 #endif
@@ -467,14 +477,16 @@ qof_entity_foreach_copy (gpointer data, gpointer user_data)
 		(safe_strcmp (cm_param->param_type, QOF_TYPE_DEBCRED) == 0))
 	{
 		numeric_getter =
-			(gnc_numeric (*)(QofEntity *,
+			(QofNumeric (*)(QofEntity *,
 				QofParam *)) cm_param->param_getfcn;
 		cm_numeric = numeric_getter (importEnt, cm_param);
 		numeric_setter =
-			(void (*)(QofEntity *, gnc_numeric)) cm_param->param_setfcn;
+			(void (*)(QofEntity *, QofNumeric)) cm_param->param_setfcn;
 		if (numeric_setter != NULL)
 		{
+			qof_util_param_edit ((QofInstance *) targetEnt, cm_param);
 			numeric_setter (targetEnt, cm_numeric);
+			qof_util_param_commit ((QofInstance *) targetEnt, cm_param);
 		}
 		registered_type = TRUE;
 	}
@@ -486,7 +498,9 @@ qof_entity_foreach_copy (gpointer data, gpointer user_data)
 			(void (*)(QofEntity *, const GUID *)) cm_param->param_setfcn;
 		if (guid_setter != NULL)
 		{
+			qof_util_param_edit ((QofInstance *) targetEnt, cm_param);
 			guid_setter (targetEnt, cm_guid);
+			qof_util_param_commit ((QofInstance *) targetEnt, cm_param);
 		}
 		registered_type = TRUE;
 	}
@@ -499,7 +513,9 @@ qof_entity_foreach_copy (gpointer data, gpointer user_data)
 			(void (*)(QofEntity *, gint32)) cm_param->param_setfcn;
 		if (i32_setter != NULL)
 		{
+			qof_util_param_edit ((QofInstance *) targetEnt, cm_param);
 			i32_setter (targetEnt, cm_i32);
+			qof_util_param_commit ((QofInstance *) targetEnt, cm_param);
 		}
 		registered_type = TRUE;
 	}
@@ -512,20 +528,24 @@ qof_entity_foreach_copy (gpointer data, gpointer user_data)
 			(void (*)(QofEntity *, gint64)) cm_param->param_setfcn;
 		if (i64_setter != NULL)
 		{
+			qof_util_param_edit ((QofInstance *) targetEnt, cm_param);
 			i64_setter (targetEnt, cm_i64);
+			qof_util_param_commit ((QofInstance *) targetEnt, cm_param);
 		}
 		registered_type = TRUE;
 	}
 	if (safe_strcmp (cm_param->param_type, QOF_TYPE_DOUBLE) == 0)
 	{
 		double_getter =
-			(double (*)(QofEntity *, QofParam *)) cm_param->param_getfcn;
+			(gdouble (*)(QofEntity *, QofParam *)) cm_param->param_getfcn;
 		cm_double = double_getter (importEnt, cm_param);
 		double_setter =
-			(void (*)(QofEntity *, double)) cm_param->param_setfcn;
+			(void (*)(QofEntity *, gdouble)) cm_param->param_setfcn;
 		if (double_setter != NULL)
 		{
+			qof_util_param_edit ((QofInstance *) targetEnt, cm_param);
 			double_setter (targetEnt, cm_double);
+			qof_util_param_commit ((QofInstance *) targetEnt, cm_param);
 		}
 		registered_type = TRUE;
 	}
@@ -538,7 +558,9 @@ qof_entity_foreach_copy (gpointer data, gpointer user_data)
 			(void (*)(QofEntity *, gboolean)) cm_param->param_setfcn;
 		if (boolean_setter != NULL)
 		{
+			qof_util_param_edit ((QofInstance *) targetEnt, cm_param);
 			boolean_setter (targetEnt, cm_boolean);
+			qof_util_param_commit ((QofInstance *) targetEnt, cm_param);
 		}
 		registered_type = TRUE;
 	}
@@ -549,7 +571,9 @@ qof_entity_foreach_copy (gpointer data, gpointer user_data)
 			(void (*)(QofEntity *, KvpFrame *)) cm_param->param_setfcn;
 		if (kvp_frame_setter != NULL)
 		{
+			qof_util_param_edit ((QofInstance *) targetEnt, cm_param);
 			kvp_frame_setter (targetEnt, cm_kvp);
+			qof_util_param_commit ((QofInstance *) targetEnt, cm_param);
 		}
 		else
 		{
@@ -568,7 +592,9 @@ qof_entity_foreach_copy (gpointer data, gpointer user_data)
 			(void (*)(QofEntity *, char *)) cm_param->param_setfcn;
 		if (char_setter != NULL)
 		{
+			qof_util_param_edit ((QofInstance *) targetEnt, cm_param);
 			char_setter (targetEnt, cm_char);
+			qof_util_param_commit ((QofInstance *) targetEnt, cm_param);
 		}
 		registered_type = TRUE;
 	}
@@ -662,9 +688,7 @@ qof_entity_list_foreach (gpointer data, gpointer user_data)
 		qecd->param_list = NULL;
 	}
 	qof_class_param_foreach (original->e_type, qof_entity_param_cb, qecd);
-	qof_begin_edit (inst);
 	g_slist_foreach (qecd->param_list, qof_entity_foreach_copy, qecd);
-	qof_commit_edit (inst);
 }
 
 static void
@@ -710,9 +734,7 @@ qof_entity_coll_copy (QofEntity * original, gpointer user_data)
 	qecd->from = original;
 	g = qof_entity_get_guid (original);
 	qof_entity_set_guid (qecd->to, g);
-	qof_begin_edit (inst);
 	g_slist_foreach (qecd->param_list, qof_entity_foreach_copy, qecd);
-	qof_commit_edit (inst);
 }
 
 gboolean
@@ -738,9 +760,7 @@ qof_entity_copy_to_session (QofSession * new_session, QofEntity * original)
 	qecd.to = &inst->entity;
 	qecd.from = original;
 	qof_entity_set_guid (qecd.to, qof_entity_get_guid (original));
-	qof_begin_edit (inst);
 	qof_class_param_foreach (original->e_type, qof_entity_param_cb, &qecd);
-	qof_commit_edit (inst);
 	if (g_slist_length (qecd.param_list) == 0)
 		return FALSE;
 	g_slist_foreach (qecd.param_list, qof_entity_foreach_copy, &qecd);

@@ -278,7 +278,7 @@ get_random_kvp_value_depth (int type, gint depth)
 		break;
 
 	case KVP_TYPE_NUMERIC:
-		ret = kvp_value_new_gnc_numeric (get_random_gnc_numeric ());
+		ret = kvp_value_new_numeric (get_random_qof_numeric ());
 		break;
 
 	case KVP_TYPE_STRING:
@@ -407,8 +407,8 @@ get_random_kvp_value (int type)
 
 #define RAND_IN_RANGE(X) (((X)*((gint64) (rand()+1)))/RAND_MAX)
 
-gnc_numeric
-get_random_gnc_numeric (void)
+QofNumeric
+get_random_qof_numeric (void)
 {
 	gint64 numer;
 	gint64 deno;
@@ -437,7 +437,7 @@ get_random_gnc_numeric (void)
 	numer = get_random_gint64 () / 100000;
 	if (0 == numer)
 		numer = 1;
-	return gnc_numeric_create (numer, deno);
+	return qof_numeric_create (numer, deno);
 }
 
 /*

@@ -54,7 +54,7 @@ typedef struct obj_s
 	QofInstance inst;
 	gchar *Name;
 	gchar flag;
-	gnc_numeric Amount;
+	QofNumeric Amount;
 	const GUID *obj_guid;
 	QofTime *date;
 	gdouble discount;			/* cheap pun, I know. */
@@ -210,18 +210,18 @@ obj_getName (myobj * g)
 }
 
 static void
-obj_setAmount (myobj * g, gnc_numeric h)
+obj_setAmount (myobj * g, QofNumeric h)
 {
 	if (!g)
 		return;
 	g->Amount = h;
 }
 
-static gnc_numeric
+static QofNumeric
 obj_getAmount (myobj * g)
 {
 	if (!g)
-		return gnc_numeric_zero ();
+		return qof_numeric_zero ();
 	return g->Amount;
 }
 
@@ -287,7 +287,7 @@ test_merge (void)
 	gint64 minor;
 	gchar *import_init, *target_init;
 	gchar flag, flag_check;
-	gnc_numeric obj_amount;
+	QofNumeric obj_amount;
 	QofBookMergeData *mergeData;
 
 	target = qof_book_new ();
@@ -331,9 +331,9 @@ test_merge (void)
 	do_test ((NULL != &import_obj->inst.entity), "#6 gnc event create");
 	obj_setName (import_obj, import_init);
 	do_test ((NULL != &import_obj->Name), "#7 string set");
-	obj_amount = double_to_gnc_numeric (init_value, 1, GNC_HOW_DENOM_EXACT);
+	obj_amount = qof_numeric_from_double (init_value, 1, QOF_HOW_DENOM_EXACT);
 	obj_setAmount (import_obj, obj_amount);
-	do_test ((qof_numeric_check (obj_getAmount (import_obj)) == GNC_ERROR_OK),
+	do_test ((qof_numeric_check (obj_getAmount (import_obj)) == QOF_ERROR_OK),
 			 "#8 gnc_numeric set");
 	obj_setActive (import_obj, active);
 	do_test ((FALSE != &import_obj->active), "#9 gboolean set");
@@ -365,7 +365,7 @@ test_merge (void)
 	do_test ((flag == obj_getFlag (import_obj)), "#14 flag set");
 
 	obj_amount =
-		qof_numeric_add (obj_amount, obj_amount, 1, GNC_HOW_DENOM_EXACT);
+		qof_numeric_add (obj_amount, obj_amount, 1, QOF_HOW_DENOM_EXACT);
 	discount = get_random_double ();
 	version = 2;
 	minor = 3;
@@ -399,7 +399,7 @@ test_merge (void)
 	obj_setFlag (new_obj, flag);
 
 	obj_amount =
-		qof_numeric_add (obj_amount, obj_amount, 1, GNC_HOW_DENOM_EXACT);
+		qof_numeric_add (obj_amount, obj_amount, 1, QOF_HOW_DENOM_EXACT);
 	discount = get_random_double ();
 	version = 2;
 	minor = 3;
@@ -464,18 +464,18 @@ test_merge (void)
 			 "Merged value test #2");
 
 	/* check that the Amount really is a gnc_numeric */
-	do_test ((qof_numeric_check (obj_getAmount (import_obj)) == GNC_ERROR_OK),
+	do_test ((qof_numeric_check (obj_getAmount (import_obj)) == QOF_ERROR_OK),
 			 "import gnc_numeric check");
-	do_test ((qof_numeric_check (obj_getAmount (target_obj)) == GNC_ERROR_OK),
+	do_test ((qof_numeric_check (obj_getAmount (target_obj)) == QOF_ERROR_OK),
 			 "target gnc_numeric check");
 
 	/* obj_amount was changed after the import object was set, so expect a difference. */
 	do_test ((qof_numeric_compare (obj_getAmount (import_obj), obj_amount) !=
-			  GNC_ERROR_OK), "gnc_numeric value check #1");
+			  QOF_ERROR_OK), "gnc_numeric value check #1");
 
 	/* obj_amount is in the target object with the import value, expect a difference/ */
 	do_test ((qof_numeric_compare (obj_getAmount (target_obj), obj_amount) !=
-			  GNC_ERROR_OK), "gnc_numeric value check #2");
+			  QOF_ERROR_OK), "gnc_numeric value check #2");
 
 	/* target had a different date, so import date should now be set */
 	qof_time_free (temp_time);

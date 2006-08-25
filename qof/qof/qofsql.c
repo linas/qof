@@ -398,16 +398,16 @@ handle_single_condition (QofSqlQuery * query, sql_condition * cond)
 #endif
 	else if (!strcmp (param_type, QOF_TYPE_NUMERIC))
 	{
-		gnc_numeric ival;
-		string_to_gnc_numeric (qvalue_name, &ival);
+		QofNumeric ival;
+		qof_numeric_from_string (qvalue_name, &ival);
 		pred_data =
 			qof_query_numeric_predicate (qop, QOF_NUMERIC_MATCH_ANY, ival);
 	}
 	else if (!strcmp (param_type, QOF_TYPE_DEBCRED))
 	{
-		// XXX this probably needs some work ... 
-		gnc_numeric ival;
-		string_to_gnc_numeric (qvalue_name, &ival);
+		/* DEBCRED is likely to be deprecated before libqof2 */
+		QofNumeric ival;
+		qof_numeric_from_string (qvalue_name, &ival);
 		pred_data =
 			qof_query_numeric_predicate (qop, QOF_NUMERIC_MATCH_ANY, ival);
 	}
@@ -473,8 +473,8 @@ handle_single_condition (QofSqlQuery * query, sql_condition * cond)
 			((len - 1) == (strspn (str, "0123456789") +
 					strspn (p + 1, "0123456789"))))
 		{
-			gnc_numeric num;
-			string_to_gnc_numeric (str, &num);
+			QofNumeric num;
+			qof_numeric_from_string (str, &num);
 			kval = kvp_value_new_gnc_numeric (num);
 		}
 		else if ((p = strchr (str, '-')) &&
@@ -631,8 +631,8 @@ qof_sql_insertCB (const QofParam * param, const gchar * insert_string,
 	gboolean registered_type;
 	QofEntity *ent;
 	/* cm_ prefix used for variables that hold the data to commit */
-	gnc_numeric cm_numeric;
-	double cm_double;
+	QofNumeric cm_numeric;
+	gdouble cm_double;
 	gboolean cm_boolean;
 	gint32 cm_i32;
 	gint64 cm_i64;
@@ -643,8 +643,8 @@ qof_sql_insertCB (const QofParam * param, const gchar * insert_string,
 	KvpValueType   cm_type;*/
 	void (*string_setter) (QofEntity *, const gchar *);
 	void (*time_setter) (QofEntity *, QofTime *);
-	void (*numeric_setter) (QofEntity *, gnc_numeric);
-	void (*double_setter) (QofEntity *, double);
+	void (*numeric_setter) (QofEntity *, QofNumeric);
+	void (*double_setter) (QofEntity *, gdouble);
 	void (*boolean_setter) (QofEntity *, gboolean);
 	void (*i32_setter) (QofEntity *, gint32);
 	void (*i64_setter) (QofEntity *, gint64);
@@ -704,8 +704,8 @@ qof_sql_insertCB (const QofParam * param, const gchar * insert_string,
 		(safe_strcmp (param->param_type, QOF_TYPE_DEBCRED) == 0))
 	{
 		numeric_setter =
-			(void (*)(QofEntity *, gnc_numeric)) param->param_setfcn;
-		string_to_gnc_numeric (insert_string, &cm_numeric);
+			(void (*)(QofEntity *, QofNumeric)) param->param_setfcn;
+		qof_numeric_from_string (insert_string, &cm_numeric);
 		if (numeric_setter != NULL)
 		{
 			numeric_setter (ent, cm_numeric);

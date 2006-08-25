@@ -101,9 +101,9 @@ qof_book_merge_compare (QofBookMergeData * mergeData)
 	GSList *paramList;
 	gboolean absolute, mergeError, knowntype, mergeMatch, booleanImport,
 		booleanTarget, (*boolean_getter) (QofEntity *, QofParam *);
-	gnc_numeric numericImport, numericTarget,
+	QofNumeric numericImport, numericTarget,
 		(*numeric_getter) (QofEntity *, QofParam *);
-	double doubleImport, doubleTarget, (*double_getter) (QofEntity *,
+	gdouble doubleImport, doubleTarget, (*double_getter) (QofEntity *,
 		QofParam *);
 	gint32 i32Import, i32Target, (*int32_getter) (QofEntity *, QofParam *);
 	gint64 i64Import, i64Target, (*int64_getter) (QofEntity *, QofParam *);
@@ -179,11 +179,11 @@ qof_book_merge_compare (QofBookMergeData * mergeData)
 			(safe_strcmp (mergeType, QOF_TYPE_DEBCRED) == 0))
 		{
 			numeric_getter =
-				(gnc_numeric (*)(QofEntity *, QofParam *)) qtparam->
+				(QofNumeric (*)(QofEntity *, QofParam *)) qtparam->
 				param_getfcn;
 			numericImport = numeric_getter (mergeEnt, qtparam);
 			numericTarget = numeric_getter (targetEnt, qtparam);
-			if (gnc_numeric_compare (numericImport, numericTarget) == 0)
+			if (qof_numeric_compare (numericImport, numericTarget) == 0)
 				mergeMatch = TRUE;
 			currentRule = qof_book_merge_update_rule (currentRule,
 				mergeMatch, DEFAULT_MERGE_WEIGHT);
@@ -701,8 +701,8 @@ qof_book_merge_commit_rule_loop (QofBookMergeData * mergeData,
 	KvpFrame *cm_kvp;
 	QofTime *cm_qt;
 	/* function pointers and variables for parameter getters that don't use pointers normally */
-	gnc_numeric cm_numeric, (*numeric_getter) (QofEntity *, QofParam *);
-	double cm_double, (*double_getter) (QofEntity *, QofParam *);
+	QofNumeric cm_numeric, (*numeric_getter) (QofEntity *, QofParam *);
+	gdouble cm_double, (*double_getter) (QofEntity *, QofParam *);
 	gboolean cm_boolean, (*boolean_getter) (QofEntity *, QofParam *);
 	gint32 cm_i32, (*int32_getter) (QofEntity *, QofParam *);
 	gint64 cm_i64, (*int64_getter) (QofEntity *, QofParam *);
@@ -710,7 +710,7 @@ qof_book_merge_commit_rule_loop (QofBookMergeData * mergeData,
 	/* function pointers to the parameter setters */
 	void (*string_setter) (QofEntity *, const gchar *);
 	void (*time_setter) (QofEntity *, QofTime *);
-	void (*numeric_setter) (QofEntity *, gnc_numeric);
+	void (*numeric_setter) (QofEntity *, QofNumeric);
 	void (*guid_setter) (QofEntity *, const GUID *);
 	void (*double_setter) (QofEntity *, double);
 	void (*boolean_setter) (QofEntity *, gboolean);
@@ -795,12 +795,12 @@ qof_book_merge_commit_rule_loop (QofBookMergeData * mergeData,
 			(safe_strcmp (rule->mergeType, QOF_TYPE_DEBCRED) == 0))
 		{
 			numeric_getter =
-				(gnc_numeric (*)(QofEntity *, QofParam *)) cm_param->
+				(QofNumeric (*)(QofEntity *, QofParam *)) cm_param->
 				param_getfcn;
 			cm_numeric = numeric_getter (rule->importEnt, cm_param);
 			numeric_setter =
 				(void (*)(QofEntity *,
-					gnc_numeric)) cm_param->param_setfcn;
+					QofNumeric)) cm_param->param_setfcn;
 			if (numeric_setter != NULL)
 				numeric_setter (rule->targetEnt, cm_numeric);
 			registered_type = TRUE;
@@ -1018,8 +1018,8 @@ qof_book_merge_param_as_string (QofParam * qtparam, QofEntity * qtEnt)
 	QofType paramType;
 	const GUID *param_guid;
 	QofTime *param_qt;
-	gnc_numeric param_numeric, (*numeric_getter) (QofEntity *, QofParam *);
-	double param_double, (*double_getter) (QofEntity *, QofParam *);
+	QofNumeric param_numeric, (*numeric_getter) (QofEntity *, QofParam *);
+	gdouble param_double, (*double_getter) (QofEntity *, QofParam *);
 	gboolean param_boolean, (*boolean_getter) (QofEntity *, QofParam *);
 	gint32 param_i32, (*int32_getter) (QofEntity *, QofParam *);
 	gint64 param_i64, (*int64_getter) (QofEntity *, QofParam *);
@@ -1069,10 +1069,10 @@ qof_book_merge_param_as_string (QofParam * qtparam, QofEntity * qtEnt)
 		(safe_strcmp (paramType, QOF_TYPE_DEBCRED) == 0))
 	{
 		numeric_getter =
-			(gnc_numeric (*)(QofEntity *,
+			(QofNumeric (*)(QofEntity *,
 				QofParam *)) qtparam->param_getfcn;
 		param_numeric = numeric_getter (qtEnt, qtparam);
-		param_string = g_strdup (gnc_numeric_to_string (param_numeric));
+		param_string = g_strdup (qof_numeric_to_string (param_numeric));
 		return param_string;
 	}
 	if (safe_strcmp (paramType, QOF_TYPE_GUID) == 0)
