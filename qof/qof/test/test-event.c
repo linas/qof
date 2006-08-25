@@ -55,9 +55,9 @@ typedef struct e_obj
 	QofInstance inst;
 	gchar *Name;
 	gchar flag;
-	gnc_numeric Amount;
+	QofNumeric Amount;
 	QofTime *date;
-	double discount;			/* cheap pun, I know. */
+	gdouble discount;			/* cheap pun, I know. */
 	gboolean active;
 	gint32 version;
 	gint64 minor;
@@ -78,7 +78,7 @@ event_create (QofBook * book)
 	e->minor = get_random_int_in_range (100000, 99999999);
 	e->flag = get_random_character ();
 	e->Name = get_random_string ();
-	e->Amount = get_random_gnc_numeric ();
+	e->Amount = get_random_qof_numeric ();
 	qof_event_gen (&e->inst.entity, QOF_EVENT_CREATE, NULL);
 	return e;
 }
@@ -191,18 +191,18 @@ event_getName (event_obj * e)
 }
 
 static void
-event_setAmount (event_obj * e, gnc_numeric h)
+event_setAmount (event_obj * e, QofNumeric h)
 {
 	if (!e)
 		return;
 	e->Amount = h;
 }
 
-static gnc_numeric
+static QofNumeric
 event_getAmount (event_obj * e)
 {
 	if (!e)
-		return gnc_numeric_zero ();
+		return qof_numeric_zero ();
 	return e->Amount;
 }
 
@@ -290,7 +290,7 @@ test_event_handler (QofEntity *ent, QofEventId event_type,
 			do_test ((context->entity_original != NULL),
 					 "No original entity");
 			do_test ((context->event_type == QOF_EVENT_MODIFY),
-					 "wrong event sent: test (GNC_EVENT_MODIFY)");
+					 "wrong event sent: test (QOF_EVENT_MODIFY)");
 			break;
 		}
 	case QOF_EVENT_DESTROY:
@@ -298,7 +298,7 @@ test_event_handler (QofEntity *ent, QofEventId event_type,
 			do_test ((context->entity_original != NULL),
 					 "No original entity");
 			do_test ((context->event_type == QOF_EVENT_DESTROY),
-					 "wrong event sent: test (GNC_EVENT_DESTROY)");
+					 "wrong event sent: test (QOF_EVENT_DESTROY)");
 			do_test ((context->destroy_used),
 					 "destroy sent without being called");
 			/* make sure we can unregister an earlier handler */
@@ -355,7 +355,7 @@ foo_event_handler (QofEntity *ent, QofEventId event_type,
 			do_test ((context->entity_original != NULL),
 					 "No original entity");
 			do_test ((context->event_type == QOF_EVENT_DESTROY),
-					 "wrong event sent: foo (GNC_EVENT_DESTROY)");
+					 "wrong event sent: foo (QOF_EVENT_DESTROY)");
 			do_test ((context->destroy_used),
 					 "destroy sent without being called");
 			/* make sure we can unregister a later handler */

@@ -56,9 +56,9 @@ typedef struct child_s
 	QofInstance inst;
 	gchar *Name;
 	gchar flag;
-	gnc_numeric Amount;
+	QofNumeric Amount;
 	QofTime *date;
-	double discount;			/* cheap pun, I know. */
+	gdouble discount;			/* cheap pun, I know. */
 	gboolean active;
 	gint32 version;
 	gint64 minor;
@@ -71,9 +71,9 @@ typedef struct parent_s
 	mychild *child;
 	gchar *Name;
 	gchar flag;
-	gnc_numeric Amount;
+	QofNumeric Amount;
 	QofTime *date;
-	double discount;			/* cheap pun, I know. */
+	gdouble discount;			/* cheap pun, I know. */
 	gboolean active;
 	gint32 version;
 	gint64 minor;
@@ -87,9 +87,9 @@ typedef struct grand_s
 	GList *descend;
 	gchar *Name;
 	gchar flag;
-	gnc_numeric Amount;
+	QofNumeric Amount;
 	QofTime *date;
-	double discount;			/* cheap pun, I know. */
+	gdouble discount;			/* cheap pun, I know. */
 	gboolean active;
 	gint32 version;
 	gint64 minor;
@@ -105,9 +105,9 @@ gboolean mychildRegister (void);
 
 /* obvious setter functions */
 void grand_setName (mygrand *, gchar *);
-void grand_setAmount (mygrand *, gnc_numeric);
+void grand_setAmount (mygrand *, QofNumeric);
 void grand_setDate (mygrand *, QofTime *h);
-void grand_setDiscount (mygrand *, double);
+void grand_setDiscount (mygrand *, gdouble);
 void grand_setActive (mygrand *, gboolean);
 void grand_setVersion (mygrand *, gint32);
 void grand_setMinor (mygrand *, gint64);
@@ -115,9 +115,9 @@ void grand_setFlag (mygrand *, gchar);
 
 /* obvious getter functions */
 gchar *grand_getName (mygrand *);
-gnc_numeric grand_getAmount (mygrand *);
+QofNumeric grand_getAmount (mygrand *);
 QofTime *grand_getDate (mygrand *);
-double grand_getDiscount (mygrand *);
+gdouble grand_getDiscount (mygrand *);
 gboolean grand_getActive (mygrand *);
 gint32 grand_getVersion (mygrand *);
 gint64 grand_getMinor (mygrand *);
@@ -125,9 +125,9 @@ gchar grand_getFlag (mygrand *);
 
 /* obvious setter functions */
 void parent_setName (myparent *, gchar *);
-void parent_setAmount (myparent *, gnc_numeric);
+void parent_setAmount (myparent *, QofNumeric);
 void parent_setDate (myparent *, QofTime *h);
-void parent_setDiscount (myparent *, double);
+void parent_setDiscount (myparent *, gdouble);
 void parent_setActive (myparent *, gboolean);
 void parent_setVersion (myparent *, gint32);
 void parent_setMinor (myparent *, gint64);
@@ -135,9 +135,9 @@ void parent_setFlag (myparent *, gchar);
 
 /* obvious getter functions */
 gchar *parent_getName (myparent *);
-gnc_numeric parent_getAmount (myparent *);
+QofNumeric parent_getAmount (myparent *);
 QofTime *parent_getDate (myparent *);
-double parent_getDiscount (myparent *);
+gdouble parent_getDiscount (myparent *);
 gboolean parent_getActive (myparent *);
 gint32 parent_getVersion (myparent *);
 gint64 parent_getMinor (myparent *);
@@ -145,9 +145,9 @@ gchar parent_getFlag (myparent *);
 
 /* obvious setter functions */
 void child_setName (mychild *, gchar *);
-void child_setAmount (mychild *, gnc_numeric);
+void child_setAmount (mychild *, QofNumeric);
 void child_setDate (mychild *, QofTime *h);
-void child_setDiscount (mychild *, double);
+void child_setDiscount (mychild *, gdouble);
 void child_setActive (mychild *, gboolean);
 void child_setVersion (mychild *, gint32);
 void child_setMinor (mychild *, gint64);
@@ -155,9 +155,9 @@ void child_setFlag (mychild *, gchar);
 
 /* obvious getter functions */
 gchar *child_getName (mychild *);
-gnc_numeric child_getAmount (mychild *);
+QofNumeric child_getAmount (mychild *);
 QofTime *child_getDate (mychild *);
-double child_getDiscount (mychild *);
+gdouble child_getDiscount (mychild *);
 gboolean child_getActive (mychild *);
 gint32 child_getVersion (mychild *);
 gint64 child_getMinor (mychild *);
@@ -179,7 +179,7 @@ grand_create (QofBook * book)
 	g->minor = get_random_int_in_range (100001, 99999999);
 	g->flag = get_random_character ();
 	g->Name = get_random_string ();
-	g->Amount = get_random_gnc_numeric ();
+	g->Amount = get_random_qof_numeric ();
 	g->child = NULL;
 	g->descend = NULL;
 	qof_event_gen (&g->inst.entity, QOF_EVENT_CREATE, NULL);
@@ -201,7 +201,7 @@ parent_create (QofBook * book)
 	g->minor = get_random_int_in_range (100001, 99999999);
 	g->flag = get_random_character ();
 	g->Name = get_random_string ();
-	g->Amount = get_random_gnc_numeric ();
+	g->Amount = get_random_qof_numeric ();
 	g->child = NULL;
 	qof_event_gen (&g->inst.entity, QOF_EVENT_CREATE, NULL);
 	return g;
@@ -222,7 +222,7 @@ child_create (QofBook * book)
 	g->minor = get_random_int_in_range (100001, 99999999);
 	g->flag = get_random_character ();
 	g->Name = get_random_string ();
-	g->Amount = get_random_gnc_numeric ();
+	g->Amount = get_random_qof_numeric ();
 	qof_event_gen (&g->inst.entity, QOF_EVENT_CREATE, NULL);
 	return g;
 }
@@ -392,18 +392,18 @@ grand_getName (mygrand * g)
 }
 
 void
-grand_setAmount (mygrand * g, gnc_numeric h)
+grand_setAmount (mygrand * g, QofNumeric h)
 {
 	if (!g)
 		return;
 	g->Amount = h;
 }
 
-gnc_numeric
+QofNumeric
 grand_getAmount (mygrand * g)
 {
 	if (!g)
-		return gnc_numeric_zero ();
+		return qof_numeric_zero ();
 	return g->Amount;
 }
 
@@ -529,18 +529,18 @@ parent_getName (myparent * p)
 }
 
 void
-parent_setAmount (myparent * p, gnc_numeric h)
+parent_setAmount (myparent * p, QofNumeric h)
 {
 	if (!p)
 		return;
 	p->Amount = h;
 }
 
-gnc_numeric
+QofNumeric
 parent_getAmount (myparent * p)
 {
 	if (!p)
-		return gnc_numeric_zero ();
+		return qof_numeric_zero ();
 	return p->Amount;
 }
 
@@ -652,18 +652,18 @@ child_getName (mychild * c)
 }
 
 void
-child_setAmount (mychild * c, gnc_numeric h)
+child_setAmount (mychild * c, QofNumeric h)
 {
 	if (!c)
 		return;
 	c->Amount = h;
 }
 
-gnc_numeric
+QofNumeric
 child_getAmount (mychild * c)
 {
 	if (!c)
-		return gnc_numeric_zero ();
+		return qof_numeric_zero ();
 	return c->Amount;
 }
 

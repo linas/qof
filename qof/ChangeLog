@@ -1,3 +1,8 @@
+2006-08-25  Neil Williams <linux@codehelp.co.uk>
+
+	* various :
+	Build without deprecated QOF code.
+
 2006-08-24  Neil Williams <linux@codehelp.co.uk>
 
 	* qof/gnc-numeric.c,
