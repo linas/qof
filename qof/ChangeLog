@@ -3,6 +3,12 @@
 	* various :
 	Build without deprecated QOF code.
 
+	* backend/sqlite : New directory for
+	QSQLite backend that *REPLACES* QSF XML
+	for embedded systems. Host systems will get
+	comprehensive support for SQLite and other
+	database managers with gnome-db later.
+
 2006-08-24  Neil Williams <linux@codehelp.co.uk>
 
 	* qof/gnc-numeric.c,

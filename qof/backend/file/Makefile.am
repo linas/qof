@@ -15,7 +15,8 @@ libqof_backend_qsf_la_SOURCES = \
   qsf-xml-map.c \
   qsf-xml.c
 
-libqof_backend_qsf_la_LDFLAGS = -version-info $(LIBQOF_BACKEND_QSF_LIBRARY_VERSION)
+libqof_backend_qsf_la_LDFLAGS = \
+ -version-info $(LIBQOF_BACKEND_QSF_LIBRARY_VERSION)
 
 libqof_backend_qsf_la_LIBADD = \
   ${LIBXML2_LIBS} \
