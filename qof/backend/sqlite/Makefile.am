@@ -1,14 +1,12 @@
 AM_CFLAGS = \
-  -I.. -I../.. -I../../qof/ \
+  -I.. -I../.. \
+  -I${top_srcdir}/qof/ \
   -DLOCALE_DIR=\""$(datadir)/locale"\" \
-  -DPREFIX=\"@prefix@\" \
-  -I${includedir} \
   ${GLIB_CFLAGS}  \
-  ${QOF_CFLAGS} \
   ${DEPS_CFLAGS} \
   ${sqlite_CFLAGS}
 
-pkglib_LTLIBRARIES=libqof-backend-sqlite.la
+lib_LTLIBRARIES=libqof-backend-sqlite.la
 
 libqof_backend_sqlite_la_SOURCES = \
  qof-sqlite.c
