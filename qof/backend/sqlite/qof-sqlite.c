@@ -1,10 +1,10 @@
-/***************************************************************************
+/********************************************************************
  *            qof-sqlite.c
  *
  *  Sun Jan 15 12:52:46 2006
  *  Copyright  2006  Neil Williams
  *  linux@codehelp.co.uk
- ****************************************************************************/
+ ********************************************************************/
 /*
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@
 #include <glib/gstdio.h>
 #include <sqlite.h>
 #include <glib.h>
-#include <qof.h>
+#include "qof.h"
 
 #define QOF_MOD_SQLITE "qof-sqlite-module"
 #define ACCESS_METHOD "sqlite"
@@ -93,7 +93,12 @@ qsql_param_to_sql(QofParam *param)
 	}
 	if(0 == safe_strcmp(param->param_type, QOF_TYPE_INT32))
 		return g_strdup_printf(" %s int", param->param_name);
-	if(0 == safe_strcmp(param->param_type, QOF_TYPE_DATE))
+#ifndef QOF_DISABLE_DEPRECATED
+	if((0 == safe_strcmp(param->param_type, QOF_TYPE_DATE)) ||
+		(0 == safe_strcmp(param->param_type, QOF_TYPE_TIME)))
+#else
+	if(0 == safe_strcmp(param->param_type, QOF_TYPE_TIME))
+#endif
 		return g_strdup_printf(" %s datetime", param->param_name);
 	if(0 == safe_strcmp(param->param_type, QOF_TYPE_CHAR))
 		return g_strdup_printf(" %s char(1)", param->param_name);
@@ -133,7 +138,7 @@ create_each_param (QofParam *param, gpointer user_data)
 	qb = (struct qsql_builder*)user_data;
 
 	/** \todo handle KvpFrame */
-	value = qof_util_param_as_string (qb->ent, param);
+	value = qof_util_param_to_string (qb->ent, param);
 	if (!value)
 		value = g_strdup ("");
 	if (!g_str_has_suffix (qb->sql_str, "("))
