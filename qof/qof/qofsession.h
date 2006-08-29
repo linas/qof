@@ -21,7 +21,10 @@
 \********************************************************************/
 
 /** @addtogroup Backend
- *
+@{
+*/
+/** @addtogroup Session Session: Backend connections.
+
  * The QOF Session 
  * encapsulates a connection to a storage backend.  That is, it
  * manages the connection to a persistant data store; whereas
