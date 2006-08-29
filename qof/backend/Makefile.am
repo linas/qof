@@ -11,7 +11,7 @@
 # QSF added: Neil Williams <linux@codehelp.co.uk> Dec 2004
 # QSQLite added: Neil Williams <linux@codehelp.co.uk> Aug 06
 
-# Always build QSQLite, only build XML if *not* embedded.
+# Make QSQLite optional, support omitting build XML if embedded.
 
 if BUILD_DWI
 DWIBE=dwi
@@ -21,12 +21,16 @@ endif
 
 if EMBEDDED
 XML=
+SQLITE=sqlite
 else
+SQLITE=
 XML=file
 endif
 
-SUBDIRS = $(DWIBE) $(XML) sqlite
+if QSQANDQSF
+SQLITE=sqlite
+endif
+
+SUBDIRS = $(DWIBE) $(XML) $(SQLITE)
 
 DIST_SUBDIRS =  dwi file sqlite
- 
-
