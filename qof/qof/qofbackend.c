@@ -515,13 +515,13 @@ qof_load_backend_library (const gchar * directory,
 	backend = g_module_open (fullpath, G_MODULE_BIND_LAZY);
 	if (!backend)
 	{
-		g_message ("%s: %s\n", PACKAGE, g_module_error ());
+		PERR (" No backend found. %s", g_module_error ());
 		return FALSE;
 	}
 	g = &gmod_init;
 	if (!g_module_symbol (backend, init_fcn, g))
 	{
-		g_message ("%s: %s\n", PACKAGE, g_module_error ());
+		PERR (" Backend did not initialise. %s", g_module_error ());
 		return FALSE;
 	}
 	g_module_make_resident (backend);
