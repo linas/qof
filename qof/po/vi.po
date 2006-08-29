@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: qof 0.7.0\n"
 "Report-Msgid-Bugs-To: qof-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2006-07-14 22:59+0100\n"
+"POT-Creation-Date: 2006-08-29 09:19+0100\n"
 "PO-Revision-Date: 2006-07-26 16:10+0930\n"
 "Last-Translator: Clytie Siddall <clytie@riverland.net.au>\n"
 "Language-Team: Vietnamese <vi-VN@googlegroups.com>\n"
@@ -21,29 +21,48 @@ msgid "Level of compression to use: 0 for none, 9 for highest."
 msgstr "Cấp nén cần dùng: từ 0 (không có) đến 9 (cao nhất)."
 
 #: ../backend/file/qsf-backend.c:119
-msgid "QOF can compress QSF XML files using gzip. Note that compression is not used when outputting to STDOUT."
-msgstr "QOF có khả năng nén tập tin XML kiểu QSF bằng gzip. Ghi chú rằng không nén gì khi xuất ra thiết bị xuất chuẩn."
+msgid ""
+"QOF can compress QSF XML files using gzip. Note that compression is not used "
+"when outputting to STDOUT."
+msgstr ""
+"QOF có khả năng nén tập tin XML kiểu QSF bằng gzip. Ghi chú rằng không nén "
+"gì khi xuất ra thiết bị xuất chuẩn."
 
 #: ../backend/file/qsf-backend.c:129
 msgid "List of QSF map files to use for this session."
 msgstr "Danh sách các tập tin sơ đồ QSF cần dùng trong phiên chạy này."
 
 #: ../backend/file/qsf-backend.c:131
-msgid "QOF can convert objects within QSF XML files using a map of the changes required."
-msgstr "QOF có khả năng chuyển đổi đối tượng bên trong tập tin XML kiểu QSF, bằng sơ đồ các thay đổi cần thiết."
+msgid ""
+"QOF can convert objects within QSF XML files using a map of the changes "
+"required."
+msgstr ""
+"QOF có khả năng chuyển đổi đối tượng bên trong tập tin XML kiểu QSF, bằng sơ "
+"đồ các thay đổi cần thiết."
 
 #: ../backend/file/qsf-backend.c:140
 msgid "Encoding string to use when writing the XML file."
 msgstr "Chuỗi mã hoá cần dùng khi ghi tập tin XML."
 
 #: ../backend/file/qsf-backend.c:142
-msgid "QSF defaults to UTF-8. Other encodings are supported by passing the encoding string in this option."
-msgstr "Bộ ký tự mặc định của QSF là UTF-8. Cũng có khả năng hỗ trợ được bộ ký tự khác bằng cách gởi chuỗi bảng mã trong tùy chọn này."
+msgid ""
+"QSF defaults to UTF-8. Other encodings are supported by passing the encoding "
+"string in this option."
+msgstr ""
+"Bộ ký tự mặc định của QSF là UTF-8. Cũng có khả năng hỗ trợ được bộ ký tự "
+"khác bằng cách gởi chuỗi bảng mã trong tùy chọn này."
 
 #: ../backend/file/qsf-backend.c:151
 msgid "Convert deprecated date values to time values."
 msgstr "Chuyển đổi các giá trị ngày tháng bị phản đối sang giá trị giờ."
 
 #: ../backend/file/qsf-backend.c:153
-msgid "Applications that support the new QOF time format need to enable this option to convert older date values into time. Applications that still use date should not set this option until time values are supported."
-msgstr "Ứng dụng hỗ trợ được khả năng dùng dạng thức giờ QOF mới cần phải bật tùy chọn này để chuyển đổi các giá trị ngày tháng cũ sang giờ. Ứng dụng vẫn còn dùng ngày tháng không nên đặt tùy chọn này, đến khi giá trị giờ đã được hỗ trợ."
+msgid ""
+"Applications that support the new QOF time format need to enable this option "
+"to convert older date values into time. Applications that still use date "
+"should not set this option until time values are supported."
+msgstr ""
+"Ứng dụng hỗ trợ được khả năng dùng dạng thức giờ QOF mới cần phải bật tùy "
+"chọn này để chuyển đổi các giá trị ngày tháng cũ sang giờ. Ứng dụng vẫn còn "
+"dùng ngày tháng không nên đặt tùy chọn này, đến khi giá trị giờ đã được hỗ "
+"trợ."
