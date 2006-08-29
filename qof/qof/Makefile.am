@@ -87,7 +87,6 @@ noinst_HEADERS = \
 
 AM_CFLAGS = -g \
   ${warnFLAGS} \
-  ${LIBXML2_CFLAGS} \
   ${LIBGDA_CFLAGS} \
   ${GLIB_CFLAGS} 
 
