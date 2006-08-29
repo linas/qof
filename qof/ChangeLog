@@ -1,5 +1,27 @@
 2006-08-29  Neil Williams <linux@codehelp.co.uk>
 
+	* debian/changelog,
+	debian/control,
+	debian/libqof-backend-qsf0.install,
+	debian/libqof-backend-sqlite0.install,
+	debian/libqof-dev.install,
+	debian/libqof1.install,
+	debian/rules,
+	debian/linda/overrides/libqof-backend-qsf0,
+	debian/linda/overrides/libqof-backend-sqlite0 :
+	New Debian packaging for two new packages.
+	
+	* debian/linda/overrides/libqof1 : Removed.
+
+	* emdebian/changelog,
+	emdebian/control,
+	emdebian/libqof-backend-sqlite0.install,
+	emdebian/libqof-dev.install,
+	emdebian/libqof1.install,
+	emdebian/rules : New emdebian packaging that
+	is independent of libxml2 (when compiled without
+	libgda installed).
+
 	* configure.in,
 	backend/Makefile.am : Reverse previous change to 
 	always build qsqlite and omit qsf if embedded
