@@ -1,10 +1,10 @@
-/** \page gncnumericexample gnc_numeric Example
+/** \page qofnumericexample QofNumeric Example
 
 \section example EXAMPLE
 
-The following program finds the best ::gnc_numeric approximation to
+The following program finds the best ::QofNumeric approximation to
 the \a math.h constant \a M_PI given a maximum denominator. For
-large denominators, the ::gnc_numeric approximation is accurate to
+large denominators, the ::QofNumeric approximation is accurate to
 more decimal places than will generally be needed, but in some cases
 this may not be good enough. For example,
 
@@ -23,9 +23,9 @@ this may not be good enough. For example,
 int
 main(int argc, char ** argv)
 {
-  gnc_numeric approx, best;
-  double err, best_err=1.0;
-  double m_pi = M_PI;
+  QofNumeric approx, best;
+  gdouble err, best_err=1.0;
+  gdouble m_pi = M_PI;
   gint64 denom;
   gint64 max;
 
@@ -33,14 +33,14 @@ main(int argc, char ** argv)
   
   for (denom = 1; denom < max; denom++)
   {
-    approx = double_to_gnc_numeric (m_pi, denom, GNC_RND_ROUND);
-    err    = m_pi - gnc_numeric_to_double (approx);
+    approx = qof_numeric_from_double (m_pi, denom, GNC_RND_ROUND);
+    err    = m_pi - qof_numeric_to_double (approx);
     if (fabs (err) < fabs (best_err))
     {
       best = approx;
       best_err = err;
-      printf ("%Ld / %Ld = %.30f\n", gnc_numeric_num (best),
-              gnc_numeric_denom (best), gnc_numeric_to_double (best));
+      printf ("%Ld / %Ld = %.30f\n", qof_numeric_num (best),
+              qof_numeric_denom (best), qof_numeric_to_double (best));
     }
   }
 }
