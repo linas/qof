@@ -1,10 +1,10 @@
-/***************************************************************************
+/********************************************************************
  *            deprecated.h
  *
  *  Mon Nov 21 14:08:25 2005
  *  Copyright  2005  Neil Williams
  *  linux@codehelp.co.uk
- ****************************************************************************/
+ ********************************************************************/
 /*
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -112,7 +112,7 @@ typedef void (*GNCEngineEventHandler) (GUID * entity, QofIdType type,
 									   gpointer user_data);
 /** \deprecated For backwards compatibility - New code must not use
 this function. The function and the handler prototype will be remove
-from qofevent.c in libqoqf2 */
+from qofevent.c in libqof2 */
 gint qof_event_register_old_handler (GNCEngineEventHandler old_handler,
 									 gpointer user_data);
 /** \deprecated use ::qof_event_register_handler instead. */
@@ -126,7 +126,7 @@ void gnc_engine_gen_event (QofEntity * entity, GNCEngineEventType event_type);
 void gnc_engine_suspend_events (void);
 /** \deprecated use ::qof_event_resume instead. */
 void gnc_engine_resume_events (void);
-/** \deprecated use ::qof_event_generate instead. */
+/** \deprecated use ::qof_event_gen instead. */
 void gnc_engine_generate_event (const GUID * guid, QofIdType e_type,
 								GNCEngineEventType event_type);
 /** \deprecated use ::QofBookMergeResult instead. */
@@ -187,14 +187,15 @@ void gnc_engine_string_cache_destroy (void);
 void gnc_string_cache_remove (gconstpointer key);
 /** \deprecated no replacement. */
 void qof_book_set_schedxactions (QofBook * book, GList * newList);
-/** \deprecated use QofDateMonthFormat instead. */
+/** \deprecated use ::QofDateMonthFormat instead. */
 typedef enum
 {
+	/** \deprecated use ::QOF_DATE_MONTH_NUMBER. */
 	GNCDATE_MONTH_NUMBER,
-						/**< \deprecated use ::QOF_DATE_MONTH_NUMBER. */
+	/** \deprecated use ::QOF_DATE_MONTH_ABBREV. */
 	GNCDATE_MONTH_ABBREV,
-						/**< \deprecated use ::QOF_DATE_MONTH_ABBREV. */
-	GNCDATE_MONTH_NAME	/**< \deprecated use ::QOF_DATE_MONTH_NAME. */
+	/** \deprecated use ::QOF_DATE_MONTH_NAME. */
+	GNCDATE_MONTH_NAME
 } GNCDateMonthFormat;
 /** \deprecated use ::qof_date_format_to_name. */
 const gchar* gnc_date_dateformat_to_string(QofDateFormat format);
@@ -213,12 +214,6 @@ gboolean gnc_date_string_to_dateformat (const gchar * format_string,
 /** \deprecated no replacement. */
 gboolean gnc_date_string_to_monthformat (const gchar * format_string,
 										 GNCDateMonthFormat * format);
-/** \deprecated use ::QofTime. */
-/*typedef struct timespec64
-{
-   guint64 tv_sec;     
-   glong tv_nsec;
-}Timespec;*/
 /** \deprecated use ::qof_time_equal. */
 gboolean timespec_equal (const Timespec * ta, const Timespec * tb);
 /** \deprecated use ::qof_time_cmp. */
@@ -237,23 +232,20 @@ void timespecFromTime_t (Timespec * ts, time_t t);
 Timespec gnc_dmy2timespec (gint day, gint month, gint year);
 /** \deprecated use GDate instead. */
 Timespec gnc_dmy2timespec_end (gint day, gint month, gint year);
-/** \deprecated set ::QOF_DATE_FORMAT_ISO8601 and call ::qof_date_time_scan */
+/** \deprecated set ::QOF_DATE_FORMAT_ISO8601 and call ::qof_date_parse */
 Timespec gnc_iso8601_to_timespec_gmt (const gchar *);
-/** \deprecated set ::QOF_DATE_FORMAT_ISO8601 and call ::qof_date_time_stamp */
+/** \deprecated set ::QOF_DATE_FORMAT_ISO8601 and call ::qof_date_print */
 gchar *gnc_timespec_to_iso8601_buff (Timespec ts, gchar * buff);
-/** \deprecated use GDate instead. */
+/** \deprecated use ::QofDate instead. */
 void gnc_timespec2dmy (Timespec ts, gint * day, gint * month, gint * year);
 /** \deprecated use ::qof_date_time_add_months. */
 void date_add_months (struct tm *tm, gint months, gboolean track_last_day);
-
-
+/** \deprecated use ::qof_date_adddays instead. */
 gboolean qof_date_add_days(Timespec *ts, gint days);
-
+/** \deprecated use ::qof_date_addmonths instead. */
 gboolean qof_date_add_months(Timespec *ts, gint months, gboolean track_last_day);
-
+/** \deprecated no direct replacement. */
 const gchar *qof_date_format_get_string(QofDateFormat df);
-
-
 /** \deprecated use ::qof_date_dmy_to_sec. */
 time_t xaccDMYToSec (gint day, gint month, gint year);
 /** \deprecated no replacement */
@@ -267,7 +259,7 @@ const gchar *qof_date_text_format_get_string(QofDateFormat df);
 /** \deprecated use ::qof_date_format_get_date_separator */
 char dateSeparator (void);
 /** \deprecated returns incorrect values for dates before 1970.
-use ::qof_date_time_to_gdate.*/
+use ::qof_time_dmy_to_time.*/
 time_t qof_date_dmy_to_sec (gint day, gint month, gint year);
 /** \deprecated no replacement. */
 size_t qof_print_hours_elapsed_buff (char *buff, size_t len, int secs,
@@ -328,11 +320,11 @@ size_t qof_print_date_dmy_buff (gchar * buff, size_t buflen,
 size_t qof_print_date_buff (char *buff, size_t buflen, time_t secs);
 /** \deprecated no replacement */
 size_t qof_print_gdate (char *buf, size_t bufflen, GDate * gd);
-/** \deprecated no replacement */
+/** \deprecated use ::qof_date_print */
 char *qof_print_date (time_t secs);
-/** \deprecated no replacement */
+/** \deprecated use ::qof_date_print */
 const char *gnc_print_date (Timespec ts);
-/** \deprecated use ::qof_date_time_scan */
+/** \deprecated use ::qof_date_parse */
 gboolean qof_scan_date (const char *buff, int *day, int *month, int *year);
 /** \deprecated no replacement */
 gboolean qof_scan_date_secs (const char *buff, time_t * secs);
@@ -340,41 +332,41 @@ gboolean qof_scan_date_secs (const char *buff, time_t * secs);
 backends (when reading the GUID from the data source). */
 #define qof_book_set_guid(book,guid)    \
          qof_entity_set_guid(QOF_ENTITY(book), guid)
-/** \deprecated use QOF_TYPE_TIME instead */
+/** \deprecated use ::QOF_TYPE_TIME instead */
 #define QOF_TYPE_DATE      "date"
-/** \deprecated use qof_instance_set_update_time instead. */
+/** \deprecated use ::qof_instance_set_update_time instead. */
 Timespec qof_instance_get_last_update (QofInstance * inst);
 void qof_instance_set_last_update (QofInstance * inst, Timespec ts);
-/** \deprecated use kvp_frame_set_time instead. */
+/** \deprecated use ::kvp_frame_set_time instead. */
 void kvp_frame_set_timespec (KvpFrame * frame, const gchar * path,
 			 Timespec ts);
-/** \deprecated use kvp_frame_add_time instead. */
+/** \deprecated use ::kvp_frame_add_time instead. */
 void kvp_frame_add_timespec (KvpFrame * frame, const gchar * path,
 			 Timespec ts);
-/** \deprecated use kvp_value_get_time instead. */
+/** \deprecated use ::kvp_value_get_time instead. */
 Timespec kvp_value_get_timespec (const KvpValue * value);
-/** \deprecated use kvp_frame_get_time instead. */
+/** \deprecated use ::kvp_frame_get_time instead. */
 Timespec kvp_frame_get_timespec (const KvpFrame * frame, const gchar * path);
-/** \deprecated use kvp_frame_new_time instead. */
+/** \deprecated use ::kvp_value_new_time instead. */
 KvpValue *kvp_value_new_timespec (Timespec timespec);
 /** \deprecated */
 #define qof_book_get_guid(X) qof_entity_get_guid (QOF_ENTITY(X))
 /** \deprecated no replacement. */
 void qof_start_clock (gint clockno, QofLogModule log_module,
-				   QofLogLevel log_level, const gchar * function_name,
-				   const gchar * format, ...);
+	QofLogLevel log_level, const gchar * function_name,
+	const gchar * format, ...);
 /** \deprecated no replacement. */
 void qof_report_clock (gint clockno,
-					QofLogModule log_module,
-					QofLogLevel log_level,
-					const gchar * function_name,
-					const gchar * format, ...);
+	QofLogModule log_module,
+	QofLogLevel log_level,
+	const gchar * function_name,
+	const gchar * format, ...);
 /** \deprecated no replacement. */
 void qof_report_clock_total (gint clockno,
-						  QofLogModule log_module,
-						  QofLogLevel log_level,
-						  const gchar * function_name,
-						  const gchar * format, ...);
+	QofLogModule log_module,
+	QofLogLevel log_level,
+	const gchar * function_name,
+	const gchar * format, ...);
 /** \deprecated no replacement. */
 #define START_CLOCK(clockno,format, args...) do {        \
   if (qof_log_check (log_module, QOF_LOG_INFO))          \
@@ -396,18 +388,19 @@ void qof_report_clock_total (gint clockno,
 
 /** \deprecated Do not call directly, use QofLog. */
 void qof_query_print (QofQuery * query);
-/** \deprecated use query_time_t instead. */
+/** \deprecated use ::query_time_t instead. */
 typedef struct
 {
 	QofQueryPredData pd;
 	QofDateMatch options;
 	Timespec date;
 } query_date_def, *query_date_t;
-/** \deprecated use qof_query_time_predicate instead. */
+/** \deprecated use ::qof_query_time_predicate instead. */
 QofQueryPredData *
 qof_query_date_predicate (QofQueryCompare how,
 						  QofDateMatch options,
 						  Timespec date);
+/** \deprecated use ::qof_query_time_predicate_get_time instead. */
 gboolean 
 qof_query_date_predicate_get_date (QofQueryPredData * pd,
 								   Timespec * date);
@@ -421,25 +414,26 @@ void qof_session_set_current_session (QofSession * session);
 their \b own session context.*/
 void
 qof_session_clear_current_session (void);
-/** \deprecated use qof_util_string_isnum */
+/** \deprecated use ::qof_util_string_isnum */
 gboolean gnc_strisnum (const guchar * s);
-/** \deprecated use qof_kvp_bag_add instead. */
+/** \deprecated use ::qof_kvp_bag_add instead. */
 KvpFrame *
 gnc_kvp_bag_add (KvpFrame * pwd, const char *path,
 	time_t secs, const char *first_name, ...);
-/** \deprecated use qof_kvp_bag_find_by_guid instead. */
+/** \deprecated use ::qof_kvp_bag_find_by_guid instead. */
 KvpFrame *
 gnc_kvp_bag_find_by_guid (KvpFrame * root, const char *path,
 	const char *guid_name, GUID * desired_guid);
-/** \deprecated use qof_kvp_bag_remove_frame instead. */
+/** \deprecated use ::qof_kvp_bag_remove_frame instead. */
 void
 gnc_kvp_bag_remove_frame (KvpFrame * root, const char *path, 
 						  KvpFrame * fr);
-/** \deprecated use qof_kvp_bag_merge instead. */
+/** \deprecated use ::qof_kvp_bag_merge instead. */
 void
 gnc_kvp_bag_merge (KvpFrame * kvp_into, const char *intopath,
 	KvpFrame * kvp_from, const char *frompath);
-/** \deprecated */
+/** \deprecated use ::qof_util_param_edit instead
+to edit at a parameter level, instead of a complete instance. */
 #define QOF_BEGIN_EDIT(inst)                                        \
   if (!(inst)) return;                                              \
                                                                     \
@@ -464,21 +458,18 @@ gnc_kvp_bag_merge (KvpFrame * kvp_into, const char *intopath,
   }                                                                 \
   LEAVE (" ");
 
-/** \deprecated use qof_util_param_edit instead
+/** \deprecated use ::qof_util_param_edit instead
 to edit at a parameter level, instead of a complete instance.
 */
 gboolean qof_begin_edit (QofInstance * inst);
 
-/** \deprecated */
+/** \deprecated no replacement. Delayed updates are not supported. */
 #define QOF_COMMIT_EDIT_PART1(inst) {                            \
   if (!(inst)) return;                                           \
                                                                  \
   (inst)->editlevel--;                                           \
   if (0 < (inst)->editlevel) return;                             \
                                                                  \
-  /* The pricedb suffers from delayed update...     */          \
-  /* This may be setting a bad precedent for other types, I fear. */ \
-  /* Other types probably really should handle begin like this. */ \
   if ((-1 == (inst)->editlevel) && (inst)->dirty)                \
   {                                                              \
     QofBackend * be;                                             \
@@ -500,20 +491,15 @@ gboolean qof_begin_edit (QofInstance * inst);
 /** \deprecated no replacement. */
 gboolean qof_commit_edit (QofInstance * inst);
 
-/** \deprecated Macro version of ::qof_commit_edit_part2
-
-\note This macro changes programme flow if the instance is freed.
-*/
+/** \deprecated Use ::qof_util_param_commit instead. */
 #define QOF_COMMIT_EDIT_PART2(inst,on_error,on_done,on_free) {   \
   QofBackend * be;                                               \
                                                                  \
-  /* See if there's a backend.  If there is, invoke it. */       \
   be = qof_book_get_backend ((inst)->book);                      \
   if (be && qof_backend_commit_exists(be))                       \
   {                                                              \
     QofBackendError errcode;                                     \
                                                                  \
-    /* clear errors */                                           \
     do {                                                         \
       errcode = qof_backend_get_error (be);                      \
     } while (ERR_BACKEND_NO_ERR != errcode);                     \
@@ -522,14 +508,10 @@ gboolean qof_commit_edit (QofInstance * inst);
     errcode = qof_backend_get_error (be);                        \
     if (ERR_BACKEND_NO_ERR != errcode)                           \
     {                                                            \
-      /* XXX Should perform a rollback here */                   \
       (inst)->do_free = FALSE;                                   \
-                                                                 \
-      /* Push error back onto the stack */                       \
       qof_backend_set_error (be, errcode);                       \
       (on_error)((inst), errcode);                               \
     }                                                            \
-    /* XXX the backend commit code should clear dirty!! */       \
     (inst)->dirty = FALSE;                                       \
   }                                                              \
   (on_done)(inst);                                               \
@@ -542,64 +524,71 @@ gboolean qof_commit_edit (QofInstance * inst);
   }                                                              \
 }
 
-/**
- * part2 -- deal with the backend
- * 
- * @param inst: an instance of QofInstance
- * @param on_error: a function called if there is a backend error.
- *                void (*on_error)(inst, QofBackendError)
- * @param on_done: a function called after the commit is completed 
- *                successfully for an object which remained valid.
- *                void (*on_done)(inst)
- * @param on_free: a function called if the commit succeeded and the instance
- *                 is to be freed. 
- *                void (*on_free)(inst)
- * 
- * Note that only *one* callback will be called (or zero, if that
- * callback is NULL).  In particular, 'on_done' will not be called for
- * an object which is to be freed.
- *
- * Returns TRUE, if the commit succeeded, FALSE otherwise.
- */
+/** \deprecated use ::qof_util_param_commit instead. */
 gboolean
 qof_commit_edit_part2 (QofInstance * inst,
-					   void (*on_error) (QofInstance *, QofBackendError),
-					   void (*on_done) (QofInstance *),
-					   void (*on_free) (QofInstance *));
+	void (*on_error) (QofInstance *, QofBackendError),
+	void (*on_done) (QofInstance *),
+	void (*on_free) (QofInstance *));
 
-/** \deprecated use qof_util_param_to_string instead. */
+/** \deprecated use ::qof_util_param_to_string instead. */
 gchar *
 qof_util_param_as_string (QofEntity * ent, QofParam * param);
-
+/** \deprecated */
 typedef struct _QofNumeric gnc_numeric;
-
+/** \deprecated use ::QOF_NUMERIC_RND_MASK. */
 #define GNC_NUMERIC_RND_MASK     QOF_NUMERIC_RND_MASK
+/** \deprecated use ::QOF_NUMERIC_DENOM_MASK. */
 #define GNC_NUMERIC_DENOM_MASK   QOF_NUMERIC_DENOM_MASK
+/** \deprecated use ::QOF_NUMERIC_SIGFIGS_MASK. */
 #define GNC_NUMERIC_SIGFIGS_MASK QOF_NUMERIC_SIGFIGS_MASK
-
+/** \deprecated use ::QOF_HOW_RND_FLOOR. */
 #define GNC_HOW_RND_FLOOR		QOF_HOW_RND_FLOOR
+/** \deprecated use ::QOF_HOW_RND_CEIL. */
 #define GNC_HOW_RND_CEIL		QOF_HOW_RND_CEIL
+/** \deprecated use ::QOF_HOW_RND_TRUNC. */
 #define GNC_HOW_RND_TRUNC		QOF_HOW_RND_TRUNC
+/** \deprecated use ::QOF_HOW_RND_PROMOTE. */
 #define GNC_HOW_RND_PROMOTE		QOF_HOW_RND_PROMOTE
+/** \deprecated use ::QOF_HOW_RND_ROUND_HALF_DOWN. */
 #define GNC_HOW_RND_ROUND_HALF_DOWN QOF_HOW_RND_ROUND_HALF_DOWN
+/** \deprecated use ::QOF_HOW_RND_ROUND_HALF_UP. */
 #define GNC_HOW_RND_ROUND_HALF_UP   QOF_HOW_RND_ROUND_HALF_UP
+/** \deprecated use ::QOF_HOW_RND_ROUND. */
 #define GNC_HOW_RND_ROUND		QOF_HOW_RND_ROUND
+/** \deprecated use ::QOF_HOW_RND_NEVER. */
 #define GNC_HOW_RND_NEVER		QOF_HOW_RND_NEVER
+/** \deprecated use ::QOF_HOW_DENOM_EXACT. */
 #define GNC_HOW_DENOM_EXACT		QOF_HOW_DENOM_EXACT
+/** \deprecated use ::QOF_HOW_DENOM_REDUCE. */
 #define GNC_HOW_DENOM_REDUCE	QOF_HOW_DENOM_REDUCE
+/** \deprecated use ::QOF_HOW_DENOM_LCD. */
 #define GNC_HOW_DENOM_LCD		QOF_HOW_DENOM_LCD
+/** \deprecated use ::QOF_HOW_DENOM_FIXED. */
 #define GNC_HOW_DENOM_FIXED		QOF_HOW_DENOM_FIXED
+/** \deprecated use ::QOF_HOW_DENOM_SIGFIG. */
 #define GNC_HOW_DENOM_SIGFIG	QOF_HOW_DENOM_SIGFIG
+/** \deprecated use ::QOF_HOW_DENOM_SIGFIGS. */
 #define GNC_HOW_DENOM_SIGFIGS	QOF_HOW_DENOM_SIGFIGS
+/** \deprecated use ::QOF_HOW_GET_SIGFIGS. */
 #define GNC_HOW_GET_SIGFIGS		QOF_HOW_GET_SIGFIGS
+/** \deprecated use ::QOF_ERROR_OK. */
 #define GNC_ERROR_OK			QOF_ERROR_OK
+/** \deprecated use ::QOF_ERROR_ARG. */
 #define GNC_ERROR_ARG			QOF_ERROR_ARG
+/** \deprecated use ::QOF_ERROR_OVERFLOW. */
 #define GNC_ERROR_OVERFLOW		QOF_ERROR_OVERFLOW
+/** \deprecated use ::QOF_ERROR_DENOM_DIFF. */
 #define GNC_ERROR_DENOM_DIFF	QOF_ERROR_DENOM_DIFF
+/** \deprecated use ::QOF_ERROR_REMAINDER. */
 #define GNC_ERROR_REMAINDER		QOF_ERROR_REMAINDER
+/** \deprecated use ::QofNumericErrorCode. */
 #define GNCNumericErrorCode		QofNumericErrorCode
+/** \deprecated use ::QOF_DENOM_AUTO. */
 #define GNC_DENOM_AUTO			QOF_DENOM_AUTO
+/** \deprecated use ::QOF_DENOM_RECIPROCAL. */
 #define GNC_DENOM_RECIPROCAL	QOF_DENOM_RECIPROCAL
+/** \deprecated use ::qof_numeric_create */
 static inline gnc_numeric
 gnc_numeric_create (gint64 num, gint64 denom)
 {
@@ -608,117 +597,162 @@ gnc_numeric_create (gint64 num, gint64 denom)
 	out.denom = denom;
 	return out;
 }
+/** \deprecated use ::qof_numeric_zero */
 static inline gnc_numeric
 gnc_numeric_zero (void)
 {
 	return qof_numeric_create (0, 1);
 }
+/** \deprecated use ::qof_numeric_from_double */
 gnc_numeric 
 double_to_gnc_numeric (double in, gint64 denom, gint how);
+/** \deprecated use ::qof_numeric_from_string */
 gboolean 
 string_to_gnc_numeric (const gchar * str, gnc_numeric * n);
+/** \deprecated use ::qof_numeric_error */
 gnc_numeric 
 gnc_numeric_error (GNCNumericErrorCode error_code);
+/** \deprecated use ::qof_numeric_num */
 static inline gint64
 gnc_numeric_num (gnc_numeric a)
 {
 	return a.num;
 }
+/** \deprecated use ::qof_numeric_denom */
 static inline gint64
 gnc_numeric_denom (gnc_numeric a)
 {
 	return a.denom;
 }
+/** \deprecated use ::qof_numeric_to_double */
 gdouble 
 gnc_numeric_to_double (gnc_numeric in);
+/** \deprecated use ::qof_numeric_to_string */
 gchar *
 gnc_numeric_to_string (gnc_numeric n);
+/** \deprecated use ::qof_numeric_dbg_to_string */
 gchar *
 gnc_num_dbg_to_string (gnc_numeric n);
+/** \deprecated use ::qof_numeric_check */
 GNCNumericErrorCode 
 gnc_numeric_check (gnc_numeric a);
+/** \deprecated use ::qof_numeric_compare */
 gint 
 gnc_numeric_compare (gnc_numeric a, gnc_numeric b);
+/** \deprecated use ::qof_numeric_zero_p */
 gboolean 
 gnc_numeric_zero_p (gnc_numeric a);
+/** \deprecated use ::qof_numeric_negative_p */
 gboolean 
 gnc_numeric_negative_p (gnc_numeric a);
+/** \deprecated use ::qof_numeric_positive_p */
 gboolean 
 gnc_numeric_positive_p (gnc_numeric a);
+/** \deprecated use ::qof_numeric_eq */
 gboolean 
 gnc_numeric_eq (gnc_numeric a, gnc_numeric b);
+/** \deprecated use ::qof_numeric_equal */
 gboolean 
 gnc_numeric_equal (gnc_numeric a, gnc_numeric b);
+/** \deprecated use ::qof_numeric_same */
 gint 
 gnc_numeric_same (gnc_numeric a, gnc_numeric b, 
 				  gint64 denom, gint how);
+/** \deprecated use ::qof_numeric_add */
 gnc_numeric 
 gnc_numeric_add (gnc_numeric a, gnc_numeric b,
 				 gint64 denom, gint how);
+/** \deprecated use ::qof_numeric_sub */
 gnc_numeric 
 gnc_numeric_sub (gnc_numeric a, gnc_numeric b,
 				 gint64 denom, gint how);
+/** \deprecated use ::qof_numeric_mul */
 gnc_numeric 
 gnc_numeric_mul (gnc_numeric a, gnc_numeric b,
 				 gint64 denom, gint how);
+/** \deprecated use ::qof_numeric_div */
 gnc_numeric 
 gnc_numeric_div (gnc_numeric x, gnc_numeric y,
 				 gint64 denom, gint how);
+/** \deprecated use ::qof_numeric_neg */
 gnc_numeric gnc_numeric_neg (gnc_numeric a);
+/** \deprecated use ::qof_numeric_abs */
 gnc_numeric gnc_numeric_abs (gnc_numeric a);
+/** \deprecated use ::qof_numeric_add_fixed */
 static inline gnc_numeric
 gnc_numeric_add_fixed (gnc_numeric a, gnc_numeric b)
 {
 	return qof_numeric_add (a, b, QOF_DENOM_AUTO,
 						QOF_HOW_DENOM_FIXED | QOF_HOW_RND_NEVER);
 }
+/** \deprecated use ::qof_numeric_sub_fixed */
 static inline gnc_numeric
 gnc_numeric_sub_fixed (gnc_numeric a, gnc_numeric b)
 {
 	return gnc_numeric_sub (a, b, QOF_DENOM_AUTO,
 						QOF_HOW_DENOM_FIXED | QOF_HOW_RND_NEVER);
 }
+/** \deprecated use ::qof_numeric_add_with_error */
 gnc_numeric 
 gnc_numeric_add_with_error (gnc_numeric a, gnc_numeric b,
 							gint64 denom, gint how,
 							gnc_numeric * error);
+/** \deprecated use ::qof_numeric_sub_with_error */
 gnc_numeric 
 gnc_numeric_sub_with_error (gnc_numeric a, gnc_numeric b,
 							gint64 denom, gint how,
 							gnc_numeric * error);
+/** \deprecated use ::qof_numeric_mul_with_error */
 gnc_numeric 
 gnc_numeric_mul_with_error (gnc_numeric a, gnc_numeric b,
 							gint64 denom, gint how,
 							gnc_numeric * error);
+/** \deprecated use ::qof_numeric_div_with_error */
 gnc_numeric 
 gnc_numeric_div_with_error (gnc_numeric a, gnc_numeric b,
 							gint64 denom, gint how,
 							gnc_numeric * error);
+/** \deprecated use ::qof_numeric_convert */
 gnc_numeric 
 gnc_numeric_convert (gnc_numeric in, gint64 denom, gint how);
+/** \deprecated use ::qof_numeric_convert_with_error */
 gnc_numeric 
 gnc_numeric_convert_with_error (gnc_numeric in, gint64 denom,
 								gint how, gnc_numeric * error);
+/** \deprecated use ::qof_numeric_reduce */
 gnc_numeric gnc_numeric_reduce (gnc_numeric in);
+/** \deprecated use ::QOF_HOW_RND_FLOOR. */
 #define GNC_RND_FLOOR	QOF_HOW_RND_FLOOR
+/** \deprecated use ::QOF_HOW_RND_CEIL. */
 #define GNC_RND_CEIL 	QOF_HOW_RND_CEIL
+/** \deprecated use ::QOF_HOW_RND_TRUNC. */
 #define GNC_RND_TRUNC	QOF_HOW_RND_TRUNC
+/** \deprecated use ::QOF_HOW_RND_PROMOTE. */
 #define GNC_RND_PROMOTE 	QOF_HOW_RND_PROMOTE
+/** \deprecated use ::QOF_HOW_RND_ROUND_HALF_DOWN. */
 #define GNC_RND_ROUND_HALF_DOWN	QOF_HOW_RND_ROUND_HALF_DOWN
+/** \deprecated use ::QOF_HOW_RND_ROUND_HALF_UP. */
 #define GNC_RND_ROUND_HALF_UP 	QOF_HOW_RND_ROUND_HALF_UP
+/** \deprecated use ::QOF_HOW_RND_ROUND. */
 #define GNC_RND_ROUND	QOF_HOW_RND_ROUND
+/** \deprecated use ::QOF_HOW_RND_NEVER. */
 #define GNC_RND_NEVER	QOF_HOW_RND_NEVER
-
+/** \deprecated use ::QOF_HOW_DENOM_EXACT. */
 #define GNC_DENOM_EXACT  	QOF_HOW_DENOM_EXACT
+/** \deprecated use ::QOF_HOW_DENOM_REDUCE. */
 #define GNC_DENOM_REDUCE 	QOF_HOW_DENOM_REDUCE
+/** \deprecated use ::QOF_HOW_DENOM_LCD. */
 #define GNC_DENOM_LCD   	QOF_HOW_DENOM_LCD
+/** \deprecated use ::QOF_HOW_DENOM_FIXED. */
 #define GNC_DENOM_FIXED 	QOF_HOW_DENOM_FIXED
+/** \deprecated use ::QOF_HOW_DENOM_SIGFIG. */
 #define GNC_DENOM_SIGFIG 	QOF_HOW_DENOM_SIGFIG
-
+/** \deprecated use ::QOF_HOW_DENOM_SIGFIGS. */
 #define GNC_DENOM_SIGFIGS(X)  QOF_HOW_DENOM_SIGFIGS(X)
+/** \deprecated use ::QOF_HOW_GET_SIGFIGS. */
 #define GNC_NUMERIC_GET_SIGFIGS(X) QOF_HOW_GET_SIGFIGS(X)
-
-
+/** \deprecated no replacement. */
+QofBackend *gncBackendInit_file (const char *book_id, void *data);
 
 #endif /* _DEPRECATED_H */
 #endif /* QOF_DISABLE_DEPRECATED */
