@@ -1,3 +1,35 @@
+2006-08-29  Neil Williams <linux@codehelp.co.uk>
+
+	* configure.in,
+	backend/Makefile.am : Reverse previous change to 
+	always build qsqlite and omit qsf if embedded
+	enabled. Host machines build both.
+	* backend/sqlite/Makefile.am : Build qsqlite
+	as a shared module, not a package library.
+	* backend/sqlite/qof-sqlite.c : Support building
+	without deprecated code.
+
+	* debian/changelog,
+	debian/control,
+	debian/libqof-dev.install : Prepare for release.
+
+	* doc/doxygen.cfg.in : Enable qsqlite in doxygen.
+	* doc/gnc-numeric-example.txt : Update example
+	to QofNumeric.
+
+	* po/en_GB.po,
+	po/ro.po,
+	po/sv.po,
+	po/vi.po : Updated translation string locations.
+
+	* qof/deprecated.h : Documenting each new
+	deprecated function, macro and data structure.
+
+	* Various .h files : Reorganise Doxygen module
+	layout to clarify library purposes.
+
+	* website/index.html : New release.
+
 2006-08-25  Neil Williams <linux@codehelp.co.uk>
 
 	* various :

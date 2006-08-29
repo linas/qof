@@ -23,33 +23,35 @@
 #define QOF_H_
 /** @defgroup QOF Query Object Framework 
  @{
-    @addtogroup QOFTIME Time: 64bit UTC Time handling.
+	@addtogroup Book Book:        The QOF Data Set.
+	@ingroup QOF
+    @addtogroup Object Object:    Describing data structure.
     @ingroup QOF
-    @addtogroup Entity Entity: Types, Identity and Instance Framework
+    @addtogroup Class Class:      Getting and setting entity values.
     @ingroup QOF
-    @addtogroup KVP KVP: Key-Value Pairs
+    @addtogroup QOFTIME Time:     64bit UTC Time handling.
     @ingroup QOF
-    @addtogroup Math128 Math128: 128-bit Integer Math Library
+    @addtogroup Numeric Numeric:  Rational Number Handling with Rounding Error Control
     @ingroup QOF
-    @addtogroup Numeric Numeric: Rational Number Handling w/ Rounding Error Control
+    @addtogroup KVP KVP:          Key-Value Pairs
     @ingroup QOF
-    @addtogroup Object Object: Dynamic Object Class Framework
+	@addtogroup Backend Backends: Permanent storage for QOF entities.
+	@ingroup QOF
+    @addtogroup Query Query:      Querying for Objects
     @ingroup QOF
-    @addtogroup Query Query: Querying for Objects
+    @addtogroup Trace Trace:      Error Reporting and Debugging
     @ingroup QOF
-    @addtogroup Trace Trace: Error Reporting and Debugging
+    @addtogroup Event Event:      QOF event handlers.
     @ingroup QOF
-    @addtogroup Event Event: QOF event handlers.
+    @addtogroup Choice Choice:    One to many links.
     @ingroup QOF
-    @addtogroup Choice Choice and collect : One to many links.
+    @addtogroup BookMerge Merge:  Merging QofBook structures
     @ingroup QOF
-    @addtogroup BookMerge Merging QofBook structures
+    @addtogroup Reference Reference: Referring to entities outside a partial book.
     @ingroup QOF
-    @addtogroup Reference Referring to entities outside a partial book.
+    @addtogroup UNDO Undo:        Track and undo or redo entity changes
     @ingroup QOF
-    @addtogroup UNDO Undo: track and undo or redo entity changes
-    @ingroup QOF
-    @addtogroup Utilities Misc Utilities
+    @addtogroup Utilities Utilities: Miscellany
     @ingroup QOF
 @}
 */

@@ -18,9 +18,8 @@
  * Boston, MA  02110-1301,  USA       gnu@gnu.org                   *
  *                                                                  *
 \********************************************************************/
-/** @addtogroup Object
-    @{ */
 /** @addtogroup Book
+
     A QOF Book is a dataset.  It provides a single handle
     through which all the various collections of entities
     can be found.   In particular, given only the type of
@@ -170,6 +169,5 @@ gboolean qof_book_equal (QofBook * book_1, QofBook * book_2);
  */
 gint64 qof_book_get_counter (QofBook * book, const gchar *counter_name);
 
+/** @} */
 #endif /* QOF_BOOK_H */
-/** @} */
-/** @} */

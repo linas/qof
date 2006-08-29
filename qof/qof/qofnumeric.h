@@ -55,12 +55,12 @@ struct _QofNumeric
 	gint64 denom;
 };
 
-/** @brief An rational-number type
+/** @brief A rational-number type
  *
  * This is a rational number, defined by numerator and denominator. */
 typedef struct _QofNumeric QofNumeric;
 
-/** @name Arguments Standard Arguments to most functions
+/** @name Standard Arguments to most functions
 
     Most of the QofNumeric arithmetic functions take two arguments
     in addition to their numeric args: 'denom', which is the denominator

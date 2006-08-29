@@ -20,9 +20,6 @@
  *                                                                  *
 \********************************************************************/
 
-/** @addtogroup Object
-    @{ */
-
 /** @addtogroup Class
   This file defines a class messaging system reminiscent of
   traditional OO-style setter and getter interfaces to object 
@@ -63,7 +60,7 @@
     @brief API for registering paramters on objects 
     @author Copyright (C) 2002 Derek Atkins <warlord@MIT.EDU>
     @author Copyright (C) 2003 Linas Vepstas <linas@linas.org>
-    @author Copyright (c) 2005 Neil Williams <linux@codehelp.co.uk>
+    @author Copyright (c) 2005,2006 Neil Williams <linux@codehelp.co.uk>
 */
 
 #ifndef QOF_CLASS_H

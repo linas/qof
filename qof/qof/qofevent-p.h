@@ -1,5 +1,5 @@
 /********************************************************************
- * gnc-event-p.h -- private engine event handling interface         *
+ * qofevent-p.h -- private engine event handling interface         *
  * Copyright 2000 Dave Peticolas <dave@krondo.com>                  *
  *                                                                  *
  * This program is free software; you can redistribute it and/or    *

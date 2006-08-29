@@ -23,9 +23,9 @@
 #ifndef QOF_ID_H
 #define QOF_ID_H
 
-/** @addtogroup Entity 
+/** @addtogroup Class
     @{ */
-/** @addtogroup Entities
+/** @addtogroup Entity
 
     This file defines an API that adds types to the GUID's.
     GUID's with types can be used to identify and reference 

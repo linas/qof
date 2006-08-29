@@ -346,8 +346,8 @@ if (retbool)
 retbool = qof_util_param_commit (inst, param);
 \endverbatim
 
-\param inst the QofInstance.
-\param param_name Name of the parameter being modified.
+\param inst The QofInstance.
+\param param The parameter being modified.
 
 \return FALSE on error, otherwise TRUE.
 */
@@ -363,8 +363,8 @@ the undo record so the change can be undone.
 param_name can only be NULL if the QofSQLite backend is
 	\b not in use.
 
-\param inst the QofInstance.
-\param param_name Name of the parameter being modified.
+\param inst The QofInstance.
+\param param The parameter being modified.
 
 \return FALSE on error, otherwise TRUE.
 */

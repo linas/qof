@@ -26,6 +26,9 @@
 
 #include <glib.h>
 
+/** @addtogroup Numeric
+@{
+*/
 /** @addtogroup Math128
  *  Quick-n-dirty 128-bit integer math lib.   Things seem to mostly
  *  work, and have been tested, but not comprehensively tested.
@@ -81,6 +84,6 @@ inline guint64 gcf64 (guint64 num, guint64 denom);
 /** Return the least common multiple of two 64-bit numbers. */
 inline QofInt128 lcm128 (guint64 a, guint64 b);
 
-#endif
-
 /** @} */
+/** @} */
+#endif

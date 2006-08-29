@@ -24,17 +24,17 @@
 #ifndef _QOF_SQLITE_H
 #define _QOF_SQLITE_H
 
-/** @addtogroup SQLite QOF-backend-SQLite outline
+/** @addtogroup Backend
+@{
+*/
+/**	@addtogroup SQLite QOF-backend-SQLite outline
 
-This is a prototype only, it is not yet functional. This backend is likely
-to be used only by embedded systems - other, larger, systems will be able
-to use a more comprehensive libgda backend that can connect with a variety
+This is a prototype only, it is not yet fully functional. This
+backend is only to be used by embedded systems where libxml2
+is too large - other, larger, systems will be able to use a more 
+comprehensive libgda backend that can connect with a variety
 of databases using plugins.
 
-All QOF backends need to map objects between types - I expect to be able to
-map SQLite objects using SQL statements. This should allow processes to share
-information easily and for the separate sqlite databases on the iPAQ to be
-queried as a single data set.
 @{
 */
 /** @file  qof-sqlite.h
@@ -59,11 +59,12 @@ Initialises the backend and provides access to the
 functions that will load and save the data. Initialises
 default values for the QofBackendOption KvpFrame.
 
-Calls gettext because QofBackendOption
-strings are translatable.
+At present, qof_sqlite has no QofBackendOption options
+and therefore no strings that are translatable.
 */
 void qof_sqlite_provider_init(void);
 
+/** @} */
 /** @} */
 
 #endif /* _QOF_SQLITE_H */

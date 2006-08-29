@@ -63,6 +63,7 @@ any process can define their own events.
 
 \note events 6, and 7 are "undefined" as of v0.6.3
 for future libqof1 or libqof2 usage.
+@{
 */
 /** init value - invalid. */
 #define QOF_EVENT_NONE     (0)
@@ -91,7 +92,7 @@ to be undone and then redone.
 #define QOF_EVENT_COMMIT   QOF_MAKE_EVENT(5)
 #define QOF_EVENT__LAST    QOF_MAKE_EVENT(QOF_EVENT_BASE-1)
 #define QOF_EVENT_ALL      (0xff)
-
+/** @} */
 /** \brief Handler invoked when an event is generated.
 
  @param ent:      Entity generating the event
@@ -146,7 +147,7 @@ void qof_event_gen (QofEntity * entity, QofEventId event_type,
 /** \brief  Suspend all engine events.
  *
  *    This function may be called multiple times. To resume event generation,
- *   an equal number of calls to gnc_engine_resume_events
+ *   an equal number of calls to qof_event_resume
  *   must be made.
  */
 void qof_event_suspend (void);

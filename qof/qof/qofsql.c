@@ -475,7 +475,7 @@ handle_single_condition (QofSqlQuery * query, sql_condition * cond)
 		{
 			QofNumeric num;
 			qof_numeric_from_string (str, &num);
-			kval = kvp_value_new_gnc_numeric (num);
+			kval = kvp_value_new_numeric (num);
 		}
 		else if ((p = strchr (str, '-')) &&
 			(p = strchr (p + 1, '-')) &&
@@ -490,7 +490,6 @@ handle_single_condition (QofSqlQuery * query, sql_condition * cond)
 			kval =
 				kvp_value_new_time (qt);
 			qof_date_free (qd);
-/*			gnc_iso8601_to_timespec_gmt (str)*/
 		}
 
 		/* The default handler is a string */

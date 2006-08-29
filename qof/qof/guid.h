@@ -26,7 +26,7 @@
 
 #include <stddef.h>
 
-/** @addtogroup Entity
+/** @addtogroup Class
     @{ */
 /** @addtogroup GUID
     Globally Unique ID's provide a way to uniquely identify 

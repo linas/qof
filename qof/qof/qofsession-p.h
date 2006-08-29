@@ -57,7 +57,7 @@ struct _QofSession
 	 * there is only one stack.
 	 */
 	QofBackendError last_err;
-	char *error_message;
+	gchar *error_message;
 
 	/* ---------------------------------------------------- */
 	/* Pointer to the backend that is actually used to move data
@@ -69,8 +69,5 @@ struct _QofSession
 QofBackend *qof_session_get_backend (QofSession * session);
 
 void qof_session_push_error (QofSession * session, QofBackendError err,
-							 const char *message);
-
-QofBackend *gncBackendInit_file (const char *book_id, void *data);
-
+							 const gchar *message);
 #endif

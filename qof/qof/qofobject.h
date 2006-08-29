@@ -1,5 +1,5 @@
 /********************************************************************\
- * qofobject.h -- the Core Object Registration/Lookup Interface     *
+ * qofobject.h -- the Core Object Description Interface             *
  *                                                                  *
  * This program is free software; you can redistribute it and/or    *
  * modify it under the terms of the GNU General Public License as   *
@@ -20,29 +20,27 @@
  *                                                                  *
 \********************************************************************/
 /** @addtogroup Object
-    @{ */
-/** @addtogroup Objects
-    QOF Objects provide the means for associating
-    a storage backend to a set of QOF Entities.   While an entity
-    can be though of as an identified instance of some thing,  the
-    QOF Object provides for a way to associate instances with
-    a storage backend.  Storage might be file or SQL storage.
+    QOF Objects provide the means for describing a QofEntity to
+    allow a storage backend to load and write a QofBook. 
+	While an entity can be thought of as an identified instance 
+	of some thing, the QOF Object describes how that entity 
+	can be created, how to find other entities of the same type,
+	whether the object can be cached in the backend and how to
+	compare entities of the same type.
+	
+	- QofObject describes how to relate one entity to another.
+	- QofClass describes how to get and set data within the entity.
 
-    QOF Objects are also used by the query system .... 
-    
     To work with your own QOF Objects, you can use the QOF
     Generator to create sample objects and a mini-application
     with the SQL-type query interface.
     http://qof-gen.sourceforge.net/
 
-    XXX todo, we should split out the storage aspects of this 
-    thing from the 'foreach' that query depends on.  These are
-    kinda unrelated concepts.
-
     @{ */
 /** @file qofobject.h
- *  @brief the Core Object Registration/Lookup Interface
+ *  @brief the Core Object Description Interface
  *  @author Copyright (c) 2001,2002 Derek Atkins <warlord@MIT.EDU>
+ *  @author Copyright (c) 2006 Neil Williams <linux@codehelp.co.uk>
  */
 
 #ifndef QOF_OBJECT_H_
@@ -174,7 +172,6 @@ gpointer qof_object_lookup_backend (QofIdTypeConst type_name,
 void qof_object_foreach_backend (const char *backend_name,
 								 QofForeachBackendTypeCB cb,
 								 gpointer user_data);
+/** @} */
 
 #endif /* QOF_OBJECT_H_ */
-/** @} */
-/** @} */
