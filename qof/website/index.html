@@ -130,6 +130,17 @@ applications, liberating the user's data from the original application.</li>
 <li><b>Book merging</b>
 Allows easy import / export of QOF data and handles collisions and user
 intervention.</li>
+<li><b>Undo support</b>
+Allows parameter level undo and redo support with programmable begin and
+end points. Each begin and end marks a single undo operation which can 
+contain multiple parameter changes, entity creations or deletions according
+to the needs of the user. Undo currently supports up to 300 operations.
+</li>
+<li><b>SQLite backend</b>
+Intended for embedded usage only and still alpha code. Non-embedded systems
+should wait for the libgnome-db backend that will support plugins to
+various database managers, including sqlite.
+</li>
 </ul>
 </div>
 <hr>
@@ -200,8 +211,8 @@ storage backend.</p>
 <hr>
 <h2 id="download">Downloads</h2>
 <div><h3>SourceForge</h3>
-The source code release for v0.7.0 is available from <a title="qof-0.7.0.tar.gz"
-href="http://prdownloads.sourceforge.net/qof/qof-0.7.0.tar.gz?download">
+The source code release for v0.7.1 is available from <a title="qof-0.7.1.tar.gz"
+href="http://prdownloads.sourceforge.net/qof/qof-0.7.1.tar.gz?download">
 SourceForge</a>.
 <h3>Debian</h3>
 Packages are available in 
@@ -254,7 +265,7 @@ gpe-expenses</a> for embedded devices like iPAQs.</li>
 </div>
 <hr>
 <div><p>Written by Linas Vepstas &lt;linas@linas.org&gt; April 2004<br/>
-Last updated by Neil Williams &lt;linux@codehelp.co.uk&gt; June 2006.</p>
+Last updated by Neil Williams &lt;linux@codehelp.co.uk&gt; August 2006.</p>
 </div>
 <hr>
 <div><a href="http://sourceforge.net/projects/qof/">

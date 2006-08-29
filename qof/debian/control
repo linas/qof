@@ -3,7 +3,7 @@ Section: libs
 Priority: optional
 Maintainer: Debian QOF packaging team <pkg-qof-maintainers@lists.alioth.debian.org>
 Uploaders: Goedson Teixeira Paixao <goedson@debian.org>, Neil Williams <linux@codehelp.co.uk>
-Build-Depends: debhelper (>= 5), cdbs, autotools-dev, libglib2.0-dev, libxml2-dev (>= 2.5.10), binutils (>= 2.14.90.0.7), libgda2-dev, libxml-parser-perl, doxygen
+Build-Depends: debhelper (>= 5), cdbs, autotools-dev, libglib2.0-dev, libxml2-dev (>= 2.5.10), libgda2-dev, libxml-parser-perl, doxygen, libsqlite0-dev
 Standards-Version: 3.7.2
 
 Package: libqof-dev
@@ -68,4 +68,3 @@ Description: Query Object Framework - API Documentation
  /usr/share/doc/libqof-doc/html/doxy/
  .
   Homepage: http://qof.sourceforge.net/doxy/
-
