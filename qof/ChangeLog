@@ -1,5 +1,11 @@
 2006-08-29  Neil Williams <linux@codehelp.co.uk>
 
+	* qof/qofbackend.c : Log module errors instead of
+	bothering the user on stderr.
+	* qof/qofsession.c : Add the sqlite module
+	backend so it can be loaded when available.
+	* website/hacking.html :
+
 	* debian/changelog,
 	debian/control,
 	debian/libqof-backend-qsf0.install,
