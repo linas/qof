@@ -33,7 +33,7 @@ title="Query Object Framework">QOF</acronym></h1>
 symbol of the same name"></div>
 
 <h2>Advice for packagers / maintainers</h2>
-<h3>Updated July 2006 for QOF 0.7.0</h3>
+<h3>Updated August 2006 for QOF 0.7.1</h3>
 
 <ul>
 <li>Building against QOF
@@ -50,6 +50,7 @@ symbol of the same name"></div>
 <li><a href="#la">libqof-backend-qsf.la in libqof1</a></li>
 <li><a href="#libxml">libxml2 >= 2.5.10</a></li>
 <li><a href="#nogtk">There is no QOF dependency on Gtk!</a></li>
+<li><a href="#backend">Which backend to use?</a></li>
 </ul>
 </li>
 <li><a href="#dev">Using libqof-dev</a></li>
@@ -67,7 +68,7 @@ dnl *************************************
 dnl QOF
 dnl *************************************
 
-QOF_REQUIRED=0.6.0
+QOF_REQUIRED=0.7.1
 AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
 if test pkg-config = no; then
 	AC_MSG_ERROR([Please install pkgconfig])
@@ -91,7 +92,7 @@ if test x$QOF_XML_DIR = x; then
         AC_MSG_RESULT([no])
         AC_MSG_ERROR([
         The package requires the Query Object Framework: QOF.
-        You need to install QOF >= $QOF_REQUIRED (libqof1).
+        You need to install QOF >= ${QOF_REQUIRED} (libqof1).
         You can find it at http://qof.sourceforge.net/
 ])
         exit 1
@@ -194,21 +195,16 @@ directory of your build to the QOF-devel mailing list.<p>
 
 <h3 id="la">libqof-backend-qsf.la in libqof1</h3>
 <div>
-<p>This section has been re-written in the light of real usage of 
-the QOF library, in particular on embedded systems. The previous 
-statements about the .la files mainly reflected a previous 
-implementation before the switch to GModule. I would recommend 
-that the .la files are installed with the main library where 
-possible but it is no longer a requirement of QOF.
-</p>
+<h4>Updated</h4>
+<p>See the section on <a href="#backend">backends</a>.</p>
 </div>
 <hr>
 <h3 id="libxml">libxml2 &gt;= 2.5.10</h3>
 
 <p>The version string is vital. (Earlier versions will break the QSF 
 backend horribly.)</p>
-<hr>
 
+<hr>
 <h3 id="nogtk">There is no QOF dependency on Gtk!</h3>
 <div>
 <p>Do <b>not</b> list a QOF runtime or build dependency on libgtk. 
@@ -219,6 +215,32 @@ the distribution tarball along with the other (outdated) examples.
 because projects like pilot-link will not accept code that links 
 to GUI stuff for no good reason.</p>
 </div>
+
+<hr>
+<h3 id="backend">Which backend to use?</h3>
+<div>
+<ul><li><b>libqof-backend-qsf0</b> : Default XML backend for most
+applications.</li>
+<li><b>libqof-backend-sqlite0</b> : SQLite backend intended for
+embedded applications where libxml2 is simply too large for the
+available storage space.</li>
+<li><b>roll-your-own</b> : Some applications already have their
+own backends for use via QOF.</li>
+<li><b>Future backends</b> : GnomeDB support is expected for a
+future QOF release. This will add a further module which in turn
+allow for other plugins for libgda itself.</li>
+</ul>
+<p>QOF can be packaged separately from the modules but care is needed
+to ensure that existing applications can locate and load the necessary
+backend. Applications that cannot load the necessary backend will
+typically fail to start or be unable to load or save data.</p>
+<p>At present, only <a href="http://pilot-qof.sourceforge.net/">pilot-qof</a> 
+supports all available QOF backends. In most cases, it is wise to ensure that
+at least <b>libqof-backend-qsf0</b> is available for all existing QOF
+applications. New applications and new versions of existing applications
+can be configured to load new and additional backends.</p>
+</div>
+
 <hr>
 <h3 id="dev">libqof-dev usage</h3>
 <div>
