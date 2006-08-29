@@ -186,35 +186,38 @@ AC_ARG_ENABLE(deprecated-glib,
         esac])
 
 dnl **************************************************************
-dnl QofSQLite backend for embedded systems.
-dnl libxml2 for host systems.
+dnl Embedded systems only use the QofSQLite backend.
+dnl libxml2 and sqlite for host systems.
 dnl libxml2 v2.5.10 is required for QSF (backend/file)
 dnl **************************************************************
 
 AC_ARG_ENABLE(embedded,
-  [  --enable-sqlite         Enable the SQLite backend for embedded systems
+  [  --enable-embedded         Enable the SQLite backend for embedded systems
                           and DISABLE the QSF XML backend. (no)],
   [case "${enableval}" in
-  		no) sqlite="no" ;;
-		yes) sqlite="yes" ;;
-		*) AC_MSG_ERROR(bad value ${enableval} for --enable-sqlite) ;;
+  		no) embedded="no" ;;
+		yes) embedded="yes" ;;
+		*) AC_MSG_ERROR(bad value ${enableval} for --enable-embedded) ;;
 		esac])
 
-if test "$sqlite" = "yes"; then
+if test "$embedded" = "yes"; then
 	PKG_CHECK_MODULES(sqlite, sqlite >= 2.8.0)
 	AC_SUBST(sqlite_LIBS)
 	AC_SUBST(sqlite_CFLAGS)
 	backend="sqlite"
 else
+	PKG_CHECK_MODULES(sqlite, sqlite >= 2.8.0)
+	AC_SUBST(sqlite_LIBS)
+	AC_SUBST(sqlite_CFLAGS)
 	LIBXML2_REQUIRED=2.5.10
 	PKG_CHECK_MODULES(LIBXML2, libxml-2.0 >= $LIBXML2_REQUIRED)
 	LIBXML_VERSION=`xml2-config --version`
 	AC_SUBST(LIBXML2_CFLAGS)
 	AC_SUBST(LIBXML2_LIBS)
-	backend="libxml2 == $LIBXML_VERSION"
+	backend="libxml2 == $LIBXML_VERSION, sqlite"
 fi
 
-AM_CONDITIONAL(EMBEDDED, [test "$sqlite" = "yes"])
+AM_CONDITIONAL(EMBEDDED, [test "$embedded" = "yes"])
 
 dnl **************************************************************
 dnl If DWI is found on the build system, then build with it.
