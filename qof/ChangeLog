@@ -6,6 +6,14 @@
 	backend so it can be loaded when available.
 	* website/hacking.html :
 
+	* backend/file/qsf-backend.c : Make sure the
+	book_path is available to error handlers.
+
+	* qof/qofsession.h : Adjust Doxygen layout.
+
+	* backend/sqlite/qof-sqlite.c : Fix handling
+	of multiple tables.
+
 	* debian/changelog,
 	debian/control,
 	debian/libqof-backend-qsf0.install,

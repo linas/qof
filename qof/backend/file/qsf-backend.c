@@ -286,6 +286,7 @@ qsf_session_begin (QofBackend * be, QofSession * session,
 		create_if_nonexistent);
 	g_return_if_fail (be != NULL);
 	g_return_if_fail (session);
+	be->fullpath = g_strdup (book_path);
 	qsf_be = (QSFBackend *) be;
 	g_return_if_fail (qsf_be->params != NULL);
 	qsf_be->fullpath = NULL;
