@@ -1,13 +1,34 @@
+qof (0.7.1-1) unstable; urgency=low
+
+  * New upstream release. 
+  - Two new packages: XML and SQLite backend modules.
+
+ -- Neil Williams <linux@codehelp.co.uk>  Tue, 29 Aug 2006 09:25:27 +0100
+
+qof (0.7.0-2) unstable; urgency=low
+
+  * FTBFS on hppa, sparc and m68k: date test failures (Closes: #383746)
+
+ -- Neil Williams <linux@codehelp.co.uk>  Mon, 21 Aug 2006 20:22:34 +0100
+
 qof (0.7.0-1) unstable; urgency=low
 
   * New upstream release.
-  - Rewrite date and time handling.
-  - Undo and redo handling.
-  - New QOF extension for strftime, as used in coreutils.
-  - Package QOF Doxygen HTML reference.
+  - Rewritten date and time handling for full range support
+    using QofTime (seconds) and QofDate (calendar).
+  - New QOF parameter type added : QOF_TYPE_TIME
+  - QOF_TYPE_DATE and Timespec both deprecated.
+  - New QOF extension code for strftime and strptime, as used 
+    in coreutils.
+  - Added Undo and redo handling.
+  - libqof-doc : New package for QOF Doxygen Developer Reference
+    and website content.
   - Upgrade to debhelper compat 5, standards version 3.7.2
+  - Add linda override for lib-not-in-shlibs (see #345871)
+  - Run make check during preparation of package.
+  - Incorporate QSF patch to free the XML document correctly.
 
- -- Neil Williams <linux@codehelp.co.uk>  Thu, 18 May 2006 23:40:47 +0100
+ -- Neil Williams <linux@codehelp.co.uk>  Mon, 10 Jul 2006 22:02:26 +0100
 
 qof (0.6.4-2) unstable; urgency=low
 
@@ -105,4 +126,3 @@ qof (0.4.1-1) unstable; urgency=low
   * Initial Release (Closes: #245707).
 
  -- Goedson Teixeira Paixao <goedson@debian.org>  Sat, 24 Apr 2004 17:14:33 -0300
-

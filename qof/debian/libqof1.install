@@ -1,5 +1,2 @@
-debian/tmp/usr/lib/libqof*.so.*
-debian/tmp/usr/lib/libqof-backend-qsf.la
+debian/tmp/usr/lib/libqof.so.*
 debian/tmp/usr/share/locale/*
-debian/tmp/usr/share/xml/*
-debian/linda/overrides/libqof1 usr/share/linda/overrides

@@ -1,6 +1,7 @@
 qof (0.7.1-1) unstable; urgency=low
 
   * New upstream release. 
+  - Two new packages: XML and SQLite backend modules.
 
  -- Neil Williams <linux@codehelp.co.uk>  Tue, 29 Aug 2006 09:25:27 +0100
 
@@ -125,4 +126,3 @@ qof (0.4.1-1) unstable; urgency=low
   * Initial Release (Closes: #245707).
 
  -- Goedson Teixeira Paixao <goedson@debian.org>  Sat, 24 Apr 2004 17:14:33 -0300
-
