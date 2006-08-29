@@ -325,7 +325,8 @@ qsql_record_foreach(gpointer data, gint col_num, gchar **strings,
 			}
 			qof_entity_set_guid (&inst->entity, guid);
 		}
-		qof_util_param_set_string (&inst->entity, param, strings[i]);
+		if (strings[1])
+			qof_util_param_set_string (&inst->entity, param, strings[i]);
 	}
 	qof_event_resume ();
 	LEAVE (" ");
@@ -387,6 +388,14 @@ qsql_class_foreach(QofObject *obj, gpointer data)
 				qsql_param_foreach, data);
 			qsql_be->sql_str = g_strconcat(qsql_be->sql_str,
 				END_DB_VERSION, NULL);
+			if(sqlite_exec (qsql_be->sqliteh, qsql_be->sql_str, 
+				NULL, NULL, &qsql_be->err) != SQLITE_OK)
+			{
+				qof_backend_set_error(be, ERR_BACKEND_DATA_CORRUPT);
+				qsql_be->error = TRUE;
+				PERR (" %s", qsql_be->err);
+			}
+			g_free(qsql_be->sql_str);
 			break;
 		}
 		case SQL_LOAD :
@@ -422,27 +431,18 @@ qsql_backend_createdb(QofBackend *be, QofSession *session)
 	qsql_be = (QSQLiteBackend*)be;
 	qsql_be->stm_type = SQL_CREATE;
 	qsql_be->book = qof_session_get_book (session);
-	qof_object_foreach_type(qsql_class_foreach, qsql_be);
-	PINFO(" %s", qsql_be->sql_str);
 	qsql_be->sqliteh = sqlite_open (qsql_be->fullpath, 0, 
 		&qsql_be->err);
 	if(!qsql_be->sqliteh)
 	{
-		qof_backend_set_error(be, ERR_BACKEND_SERVER_ERR);
+		qof_backend_set_error(be, ERR_BACKEND_CANT_CONNECT);
 		qsql_be->error = TRUE;
 		PERR (" %s", qsql_be->err);
-		g_free(qsql_be->sql_str);
 		LEAVE (" ");
 		return;
 	}
-	if(sqlite_exec (qsql_be->sqliteh, qsql_be->sql_str, 
-		NULL, NULL, &qsql_be->err) != SQLITE_OK)
-	{
-		qof_backend_set_error(be, ERR_BACKEND_SERVER_ERR);
-		qsql_be->error = TRUE;
-		PERR (" %s", qsql_be->err);
-	}
-	g_free(qsql_be->sql_str);
+	qof_object_foreach_type(qsql_class_foreach, qsql_be);
+	PINFO(" %s", qsql_be->sql_str);
 	LEAVE (" ");
 }
 
@@ -458,10 +458,9 @@ qsql_backend_opendb (QofBackend *be, QofSession *session)
 		&qsql_be->err);
 	if(!qsql_be->sqliteh)
 	{
-		qof_backend_set_error(be, ERR_BACKEND_SERVER_ERR);
+		qof_backend_set_error(be, ERR_BACKEND_CANT_CONNECT);
 		qsql_be->error = TRUE;
 		PERR (" %s", qsql_be->err);
-		g_free(qsql_be->sql_str);
 	}
 	LEAVE (" ");
 }
@@ -480,6 +479,7 @@ qsqlite_session_begin(QofBackend *be, QofSession *session, const
 	ENTER (" book_path=%s", book_path);
 	qsql_be = (QSQLiteBackend*)be;
 	qsql_be->fullpath = NULL;
+	be->fullpath = g_strdup (book_path);
 	if(book_path == NULL)
 	{
 		qof_backend_set_error(be, ERR_BACKEND_BAD_URL);
@@ -545,7 +545,8 @@ qsqlite_session_end (QofBackend *be)
 
 	g_return_if_fail(be);
 	qsql_be = (QSQLiteBackend*)be;
-	sqlite_close (qsql_be->sqliteh);
+	if (qsql_be->sqliteh)
+		sqlite_close (qsql_be->sqliteh);
 }
 
 static void
