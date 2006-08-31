@@ -1,10 +1,10 @@
-/***************************************************************************
+/*******************************************************************
  *            qsf-backend.c
  *
  *  Sat Jan  1 15:07:14 2005
  *  Copyright  2005, 2006  Neil Williams
  *  linux@codehelp.co.uk
- ****************************************************************************/
+ *******************************************************************/
 /*
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -30,6 +30,7 @@
 #include <libxml/parser.h>
 #include <libxml/xmlschemas.h>
 #include "qof.h"
+#include "qofobject-p.h"
 #include "qof-backend-qsf.h"
 #include "qsf-xml.h"
 #include "qsf-dir.h"
@@ -1150,6 +1151,7 @@ write_qsf_from_book (const gchar *path, QofBook * book,
 		qof_backend_set_error (be, ERR_FILEIO_WRITE_ERROR);
 		return;
 	}
+	qof_object_mark_clean (book);
 }
 
 static void
@@ -1164,6 +1166,7 @@ write_qsf_to_stdout (QofBook * book, qsf_param * params)
 		params->use_gz_level, params->encoding);
 	xmlSaveFormatFileEnc ("-", qsf_doc, params->encoding, 1);
 	fprintf (stdout, "\n");
+	qof_object_mark_clean (book);
 }
 
 static void
