@@ -1,3 +1,12 @@
+2006-08-31  Neil Williams <linux@codehelp.co.uk>
+
+	* backend/file/qsf-backend.c : Ensure a book
+	is marked clean after a save.
+	* backend/sqlite/qof-sqlite.c : Fix sync method
+	to insert new data and update old.
+	* qof/qofsession.c : Tweak debug messages.
+	* qof/qofutil.c : Decrement editlevel on commit.
+
 2006-08-29  Neil Williams <linux@codehelp.co.uk>
 
 	* qof/qofbackend.c : Log module errors instead of
