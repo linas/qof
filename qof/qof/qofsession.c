@@ -38,7 +38,6 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
-
 #include <glib.h>
 #include "qof.h"
 #include "qofbackend-p.h"
@@ -50,7 +49,7 @@ static GHookList *session_closed_hooks = NULL;
 static QofLogModule log_module = QOF_MOD_SESSION;
 static GSList *provider_list = NULL;
 
-/* ====================================================================== */
+/* ============================================================= */
 
 void
 qof_backend_register_provider (QofBackendProvider * prov)
@@ -58,7 +57,7 @@ qof_backend_register_provider (QofBackendProvider * prov)
 	provider_list = g_slist_prepend (provider_list, prov);
 }
 
-/* ====================================================================== */
+/* =========================================================== */
 
 /* hook routines */
 
@@ -100,7 +99,7 @@ qof_session_call_close_hooks (QofSession * session)
 	}
 }
 
-/* ====================================================================== */
+/* ============================================================= */
 /* error handling routines */
 
 static void
@@ -125,7 +124,7 @@ qof_session_clear_error (QofSession * session)
 
 void
 qof_session_push_error (QofSession * session, QofBackendError err,
-	const char *message)
+	const gchar *message)
 {
 	if (!session)
 		return;
@@ -160,7 +159,8 @@ qof_session_get_error (QofSession * session)
 }
 
 static const gchar *
-get_default_error_message (QofBackendError err __attribute__ ((unused)))
+get_default_error_message (QofBackendError err 
+						   __attribute__ ((unused)))
 {
 	return "";
 }
@@ -189,7 +189,7 @@ qof_session_pop_error (QofSession * session)
 	return err;
 }
 
-/* ====================================================================== */
+/* =============================================================== */
 
 static void
 qof_session_init (QofSession * session)
@@ -1023,7 +1023,7 @@ qof_entity_copy_one_r (QofSession * new_session, QofEntity * ent)
 }
 
 
-/* ====================================================================== */
+/* ============================================================== */
 
 /** Programs that use their own backends also need to call
 the default QOF ones. The backends specified here are
@@ -1049,13 +1049,13 @@ struct backend_providers backend_list[] = {
 };
 
 static void
-qof_session_load_backend (QofSession * session, char *access_method)
+qof_session_load_backend (QofSession * session, gchar *access_method)
 {
 	GSList *p;
 	GList *node;
 	QofBackendProvider *prov;
 	QofBook *book;
-	char *msg;
+	gchar *msg;
 	gint num;
 	gboolean prov_type;
 	gboolean (*type_check) (const char *);
@@ -1086,7 +1086,7 @@ qof_session_load_backend (QofSession * session, char *access_method)
 			/* More than one backend could provide this
 			   access method, check file type compatibility. */
 			type_check =
-				(gboolean (*)(const char *)) prov->check_data_type;
+				(gboolean (*)(const gchar *)) prov->check_data_type;
 			prov_type = (type_check) (session->book_id);
 			if (!prov_type)
 			{
@@ -1121,7 +1121,7 @@ qof_session_load_backend (QofSession * session, char *access_method)
 	LEAVE (" ");
 }
 
-/* ====================================================================== */
+/* =============================================================== */
 
 static void
 qof_session_destroy_backend (QofSession * session)
@@ -1149,11 +1149,11 @@ qof_session_destroy_backend (QofSession * session)
 }
 
 void
-qof_session_begin (QofSession * session, const char *book_id,
+qof_session_begin (QofSession * session, const gchar *book_id,
 	gboolean ignore_lock, gboolean create_if_nonexistent)
 {
-	char *p, *access_method, *msg;
-	int err;
+	gchar *p, *access_method, *msg;
+	gint err;
 
 	if (!session)
 		return;
@@ -1168,7 +1168,7 @@ qof_session_begin (QofSession * session, const char *book_id,
 	if (session->book_id)
 	{
 		qof_session_push_error (session, ERR_BACKEND_LOCKED, NULL);
-		LEAVE ("push error book is already open ");
+		LEAVE (" push error book is already open ");
 		return;
 	}
 
@@ -1176,7 +1176,7 @@ qof_session_begin (QofSession * session, const char *book_id,
 	if (!book_id)
 	{
 		qof_session_push_error (session, ERR_BACKEND_BAD_URL, NULL);
-		LEAVE ("push error missing book_id");
+		LEAVE (" push error missing book_id");
 		return;
 	}
 
@@ -1220,7 +1220,7 @@ qof_session_begin (QofSession * session, const char *book_id,
 
 		(session->backend->session_begin) (session->backend, session,
 			session->book_id, ignore_lock, create_if_nonexistent);
-		PINFO ("Done running session_begin on backend");
+		PINFO (" Done running session_begin on backend");
 		err = qof_backend_get_error (session->backend);
 		msg = qof_backend_get_message (session->backend);
 		if (err != ERR_BACKEND_NO_ERR)
@@ -1233,7 +1233,7 @@ qof_session_begin (QofSession * session, const char *book_id,
 		}
 		if (msg != NULL)
 		{
-			PWARN ("%s", msg);
+			PWARN (" %s", msg);
 			g_free (msg);
 		}
 	}
@@ -1241,7 +1241,7 @@ qof_session_begin (QofSession * session, const char *book_id,
 	LEAVE (" sess=%p book-id=%s", session, book_id ? book_id : "(null)");
 }
 
-/* ====================================================================== */
+/* ============================================================== */
 
 void
 qof_session_load (QofSession * session, QofPercentageFunc percentage_func)
@@ -1256,7 +1256,7 @@ qof_session_load (QofSession * session, QofPercentageFunc percentage_func)
 	if (!session->book_id)
 		return;
 
-	ENTER ("sess=%p book_id=%s", session, session->book_id
+	ENTER (" sess=%p book_id=%s", session, session->book_id
 		? session->book_id : "(null)");
 
 	/* At this point, we should are supposed to have a valid book 
@@ -1270,7 +1270,7 @@ qof_session_load (QofSession * session, QofPercentageFunc percentage_func)
 	 */
 	newbook = qof_book_new ();
 	session->books = g_list_append (NULL, newbook);
-	PINFO ("new book=%p", newbook);
+	PINFO (" new book=%p", newbook);
 
 	qof_session_clear_error (session);
 
@@ -1315,7 +1315,7 @@ qof_session_load (QofSession * session, QofPercentageFunc percentage_func)
 		qof_book_destroy (newbook);
 		g_list_free (session->books);
 		session->books = oldbooks;
-		LEAVE ("error from backend %d", qof_session_get_error (session));
+		LEAVE (" error from backend %d", qof_session_get_error (session));
 		return;
 	}
 
@@ -1327,11 +1327,11 @@ qof_session_load (QofSession * session, QofPercentageFunc percentage_func)
 	}
 	g_list_free (oldbooks);
 
-	LEAVE ("sess = %p, book_id=%s", session, session->book_id
+	LEAVE (" sess = %p, book_id=%s", session, session->book_id
 		? session->book_id : "(null)");
 }
 
-/* ====================================================================== */
+/* ============================================================= */
 
 gboolean
 qof_session_save_may_clobber_data (QofSession * session)
@@ -1361,7 +1361,8 @@ save_error_handler (QofBackend * be, QofSession * session)
 }
 
 void
-qof_session_save (QofSession * session, QofPercentageFunc percentage_func)
+qof_session_save (QofSession * session, 
+				  QofPercentageFunc percentage_func)
 {
 	GList *node;
 	QofBackend *be;
@@ -1369,13 +1370,13 @@ qof_session_save (QofSession * session, QofPercentageFunc percentage_func)
 	QofBackendProvider *prov;
 	GSList *p;
 	QofBook *book, *abook;
-	int err;
+	gint err;
 	gint num;
-	char *msg, *book_id;
+	gchar *msg, *book_id;
 
 	if (!session)
 		return;
-	ENTER ("sess=%p book_id=%s",
+	ENTER (" sess=%p book_id=%s",
 		session, session->book_id ? session->book_id : "(null)");
 	/* Partial book handling. */
 	book = qof_session_get_book (session);
@@ -1443,7 +1444,7 @@ qof_session_save (QofSession * session, QofPercentageFunc percentage_func)
 					(session->backend->session_begin) (session->backend,
 						session, book_id, TRUE, TRUE);
 					PINFO
-						("Done running session_begin on changed backend");
+						(" Done running session_begin on changed backend");
 					err = qof_backend_get_error (session->backend);
 					msg = qof_backend_get_message (session->backend);
 					if (err != ERR_BACKEND_NO_ERR)
@@ -1451,7 +1452,7 @@ qof_session_save (QofSession * session, QofPercentageFunc percentage_func)
 						g_free (session->book_id);
 						session->book_id = NULL;
 						qof_session_push_error (session, err, msg);
-						LEAVE ("changed backend error %d", err);
+						LEAVE (" changed backend error %d", err);
 						return;
 					}
 					if (msg != NULL)
@@ -1475,7 +1476,7 @@ qof_session_save (QofSession * session, QofPercentageFunc percentage_func)
 		}
 		if (!session->backend)
 		{
-			msg = g_strdup_printf ("failed to load backend");
+			msg = g_strdup_printf (" failed to load backend");
 			qof_session_push_error (session, ERR_BACKEND_NO_HANDLER, msg);
 			return;
 		}
@@ -1509,18 +1510,18 @@ qof_session_save (QofSession * session, QofPercentageFunc percentage_func)
 		 * just fine, and we are done. So return. */
 		/* Return the book_id to previous value. */
 		qof_session_clear_error (session);
-		LEAVE ("Success");
+		LEAVE (" Success");
 		return;
 	}
 	else
 	{
-		msg = g_strdup_printf ("failed to load backend");
+		msg = g_strdup_printf (" failed to load backend");
 		qof_session_push_error (session, ERR_BACKEND_NO_HANDLER, msg);
 	}
-	LEAVE ("error -- No backend!");
+	LEAVE (" error -- No backend!");
 }
 
-/* ====================================================================== */
+/* ============================================================= */
 
 void
 qof_session_end (QofSession * session)
@@ -1528,7 +1529,7 @@ qof_session_end (QofSession * session)
 	if (!session)
 		return;
 
-	ENTER ("sess=%p book_id=%s", session, session->book_id
+	ENTER (" sess=%p book_id=%s", session, session->book_id
 		? session->book_id : "(null)");
 
 	/* close down the backend first */
@@ -1542,7 +1543,7 @@ qof_session_end (QofSession * session)
 	g_free (session->book_id);
 	session->book_id = NULL;
 
-	LEAVE ("sess=%p book_id=%s", session, session->book_id
+	LEAVE (" sess=%p book_id=%s", session, session->book_id
 		? session->book_id : "(null)");
 }
 
@@ -1553,7 +1554,7 @@ qof_session_destroy (QofSession * session)
 	if (!session)
 		return;
 
-	ENTER ("sess=%p book_id=%s", session, session->book_id
+	ENTER (" sess=%p book_id=%s", session, session->book_id
 		? session->book_id : "(null)");
 
 	qof_session_end (session);
@@ -1575,11 +1576,10 @@ qof_session_destroy (QofSession * session)
 #endif
 	g_free (session);
 
-	LEAVE ("sess=%p", session);
+	LEAVE (" sess=%p", session);
 }
 
-/* ====================================================================== */
-/* this call is weird. */
+/* ============================================================= */
 
 void
 qof_session_swap_data (QofSession * session_1, QofSession * session_2)
@@ -1591,7 +1591,7 @@ qof_session_swap_data (QofSession * session_1, QofSession * session_2)
 	if (!session_1 || !session_2)
 		return;
 
-	ENTER ("sess1=%p sess2=%p", session_1, session_2);
+	ENTER (" sess1=%p sess2=%p", session_1, session_2);
 
 	books_1 = session_1->books;
 	books_2 = session_2->books;
@@ -1613,7 +1613,7 @@ qof_session_swap_data (QofSession * session_1, QofSession * session_2)
 	LEAVE (" ");
 }
 
-/* ====================================================================== */
+/* ============================================================= */
 
 gboolean
 qof_session_events_pending (QofSession * session)
@@ -1641,4 +1641,4 @@ qof_session_process_events (QofSession * session)
 	return session->backend->process_events (session->backend);
 }
 
-/* =================== END OF FILE ====================================== */
+/* ============== END OF FILE ========================== */
