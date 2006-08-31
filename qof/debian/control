@@ -19,7 +19,7 @@ Description: Query Object Framework - Development Headers
  This package provides the files needed to develop 
  applications using QOF.
  .
-  Homepage: http://qof.sourceforge.net/
+ Homepage: http://qof.sourceforge.net/
 
 Package: libqof1
 Priority: optional
@@ -33,7 +33,7 @@ Description: Query Object Framework
  This package provides the shared libraries needed 
  to run programs developed using QOF.
  .
-  Homepage: http://qof.sourceforge.net/
+ Homepage: http://qof.sourceforge.net/
 
 Package: libqof-backend-qsf0
 Priority: extra
@@ -53,7 +53,7 @@ Description: Query Object Framework - XML backend module
  This package provides the XML schemas to validate files 
  and the QSF XML backend module.
  .
-  Homepage: http://qof.sourceforge.net/
+ Homepage: http://qof.sourceforge.net/
  
 Package: libqof-backend-sqlite0
 Priority: extra
@@ -69,7 +69,7 @@ Description: Query Object Framework - SQLite backend module
  is a problem. The package can also be installed alongside 
  the default QSF XML backend.
  .
-  Homepage: http://qof.sourceforge.net/
+ Homepage: http://qof.sourceforge.net/
 
 Package: libqof1-dbg
 Priority: extra
@@ -84,7 +84,7 @@ Description: Query Object Framework - Debug Symbols
  This package provides the debugging symbols that may be
  useful when developing applications using QOF.
  .
-  Homepage: http://qof.sourceforge.net/
+ Homepage: http://qof.sourceforge.net/
 
 Package: libqof-doc
 Priority: optional
@@ -102,4 +102,4 @@ Description: Query Object Framework - API Documentation
  Doxygen in 
  /usr/share/doc/libqof-doc/html/doxy/
  .
-  Homepage: http://qof.sourceforge.net/doxy/
+ Homepage: http://qof.sourceforge.net/doxy/
