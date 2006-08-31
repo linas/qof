@@ -1,10 +1,10 @@
-/********************************************************************
+/****************************************************************
  *            qof-sqlite.c
  *
  *  Sun Jan 15 12:52:46 2006
  *  Copyright  2006  Neil Williams
  *  linux@codehelp.co.uk
- ********************************************************************/
+ ****************************************************************/
 /*
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -55,7 +55,7 @@ typedef enum
 	SQL_UPDATE     /* Run a single UPDATE statement. */
 }qsql_statement_type;
 
-struct QSQLiteBackend_s
+typedef struct
 {
 	QofBackend be;
 	sqlite *sqliteh;
@@ -67,14 +67,8 @@ struct QSQLiteBackend_s
 	gboolean error;
 	QofIdType e_type;
 	QofBook * book;
-};
+} QSQLiteBackend;
 
-typedef struct QSQLiteBackend_s QSQLiteBackend;
-
-static void
-qsql_backend_createdb(QofBackend *be, QofSession *session);
-
-/* FIXME: stop duplicating strings, leaks memory! */
 static gchar*
 qsql_param_to_sql(QofParam *param)
 {
@@ -139,14 +133,16 @@ create_each_param (QofParam *param, gpointer user_data)
 
 	/** \todo handle KvpFrame */
 	value = qof_util_param_to_string (qb->ent, param);
+	if (value)
+		g_strescape (value, NULL);
 	if (!value)
 		value = g_strdup ("");
 	if (!g_str_has_suffix (qb->sql_str, "("))
-		qb->sql_str = g_strconcat (qb->sql_str, ", '", 
-			value, "'", NULL);
+		qb->sql_str = g_strconcat (qb->sql_str, ", \"", 
+			value, "\"", NULL);
 	else
-		qb->sql_str = g_strconcat (qb->sql_str, "'",
-			value, "'", NULL);
+		qb->sql_str = g_strconcat (qb->sql_str, "\"",
+			value, "\"", NULL);
 }
 
 /* need new-style event handlers for insert and update 
@@ -232,6 +228,8 @@ create_event (QofEntity *ent, QofEventId event_type,
 				qsql_be->error = TRUE;
 				PERR (" %s", qsql_be->err);
 			}
+			else
+				((QofInstance*)ent)->dirty = FALSE;
 			break;
 		}
 		default : break;
@@ -245,6 +243,7 @@ qsql_modify (QofBackend *be, QofInstance *inst)
 	struct qsql_builder qb;
 	QSQLiteBackend *qsql_be;
 	gchar gstr[GUID_ENCODING_LENGTH+1];
+	gchar * param_str;
 
 	qsql_be = (QSQLiteBackend*)be;
 	if (!inst)
@@ -255,13 +254,14 @@ qsql_modify (QofBackend *be, QofInstance *inst)
 
 	guid_to_string_buff (qof_instance_get_guid (inst), gstr);
 	qb.ent = (QofEntity*)inst;
-	qb.sql_str = g_strdup_printf ("UPDATE %s SET %s='",
+	param_str = qof_util_param_to_string (qb.ent, inst->param);
+	g_strescape (param_str, NULL);
+	qb.sql_str = g_strdup_printf ("UPDATE %s SET %s=\"",
 		qb.ent->e_type, inst->param->param_name);
-	qb.sql_str = g_strconcat (qb.sql_str, 
-	qof_util_param_to_string (qb.ent, inst->param), 
-		"' WHERE ", QOF_TYPE_GUID, "='", gstr,
+	qb.sql_str = g_strconcat (qb.sql_str, param_str, 
+		"\" WHERE ", QOF_TYPE_GUID, "='", gstr,
 		"';", NULL);
-	DEBUG (" sql_str=%s", qb.sql_str);
+	DEBUG (" sql_str=%s param_Str=%s", qb.sql_str, param_str);
 	if(sqlite_exec (qsql_be->sqliteh, qb.sql_str, 
 		NULL, qsql_be, &qsql_be->err) !=
 		SQLITE_OK)
@@ -270,26 +270,9 @@ qsql_modify (QofBackend *be, QofInstance *inst)
 		qsql_be->error = TRUE;
 		PERR (" %s", qsql_be->err);
 	}
+	else
+		inst->dirty = FALSE;
 	LEAVE (" ");
-}
-
-static gint 
-qsql_write_foreach (gpointer data, gint col_num, gchar **strings,
-					gchar **columnNames)
-{
-	QSQLiteBackend *qsql_be;
-	gint i;
-
-	g_return_val_if_fail(data, -1);
-	qsql_be = (QSQLiteBackend*)data;
-	for(i = 0;i < col_num; i++)
-	{
-		DEBUG (" write strings[%d]=%s", i, strings[i]);
-		DEBUG (" write columnNames[%d]=%s", i, columnNames[i]);
-		/* read an entity, populate columnNames[i] 
-		param with strings[i] */
-	}
-	return SQLITE_OK;
 }
 
 static gint 
@@ -301,12 +284,12 @@ qsql_record_foreach(gpointer data, gint col_num, gchar **strings,
 	QofInstance * inst;
 	gint i;
 
-	g_return_val_if_fail(data, -1);
+	g_return_val_if_fail(data, QSQL_ERROR);
 	qsql_be = (QSQLiteBackend*)data;
 	qof_event_suspend ();
 	inst = (QofInstance*)qof_object_new_instance (qsql_be->e_type,
 		qsql_be->book);
-	ENTER (" creating %s", qsql_be->e_type);
+	ENTER (" loading %s", qsql_be->e_type);
 	for(i = 0;i < col_num; i++)
 	{
 		/* get param and set as string */
@@ -346,6 +329,102 @@ qsql_param_foreach(QofParam *param, gpointer data)
 	g_free(p_str);
 }
 
+static gint 
+qsql_update_foreach (gpointer data, gint col_num, gchar **strings,
+					gchar **columnNames)
+{
+	const QofParam * param;
+	QofInstance * inst;
+	struct qsql_builder * qb;
+	QSQLiteBackend *qsql_be;
+	QofBackend * be;
+	gchar gstr[GUID_ENCODING_LENGTH+1];
+	gchar * param_str;
+	gint i;
+
+	qb = (struct qsql_builder*) data;
+	qsql_be = qb->qsql_be;
+	be = (QofBackend*)qsql_be;
+	inst = (QofInstance*) qb->ent;
+	if (!inst->dirty)
+		return SQLITE_OK;
+	ENTER (" ");
+	guid_to_string_buff (qof_entity_get_guid (qb->ent), gstr);
+	for(i = 0;i < col_num; i++)
+	{
+		param = qof_class_get_parameter (qb->ent->e_type, 
+			columnNames[i]);
+		if (!param)
+			continue;
+		param_str = qof_util_param_to_string (qb->ent, param);
+		g_strescape (param_str, NULL);
+		qb->sql_str = g_strdup_printf ("UPDATE %s SET %s=\"",
+			qb->ent->e_type, param->param_name);
+		qb->sql_str = g_strconcat (qb->sql_str, param_str, 
+			"\" WHERE ", QOF_TYPE_GUID, "='", gstr, "';", NULL);
+		DEBUG (" sql_str=%s param_str=%s", qb->sql_str, param_str);
+		if(sqlite_exec (qsql_be->sqliteh, qb->sql_str, 
+			NULL, qsql_be, &qsql_be->err) != SQLITE_OK)
+		{
+			qof_backend_set_error(be, ERR_BACKEND_SERVER_ERR);
+			qsql_be->error = TRUE;
+			PERR (" %s", qsql_be->err);
+		}
+		else
+			inst->dirty = FALSE;
+	}
+	LEAVE (" ");
+	return SQLITE_OK;
+}
+
+static void
+check_state (QofEntity * ent, gpointer user_data)
+{
+	gchar gstr[GUID_ENCODING_LENGTH+1];
+	QSQLiteBackend *qsql_be;
+	struct qsql_builder qb;
+	QofBackend *be;
+
+	qsql_be = (QSQLiteBackend*) user_data;
+	be = (QofBackend*)qsql_be;
+	/* check if this entity already exists */
+	guid_to_string_buff (qof_entity_get_guid (ent), gstr);
+	qsql_be->sql_str = g_strdup_printf(
+		"SELECT * FROM %s where guid = \"%s\";", ent->e_type, gstr);
+	PINFO (" write: %s", qsql_be->sql_str);
+	qb.ent = ent;
+	/* update each dirty instance */
+	if(sqlite_exec (qsql_be->sqliteh, qsql_be->sql_str, 
+		qsql_update_foreach, &qb, &qsql_be->err) !=
+		SQLITE_OK)
+	{
+		qof_backend_set_error(be, ERR_BACKEND_SERVER_ERR);
+		qsql_be->error = TRUE;
+		PERR (" %s", qsql_be->err);
+	}
+	else
+	{
+		/* create new entity */
+		g_free (qsql_be->sql_str);
+		qb.sql_str = g_strdup_printf ("INSERT into %s (", 
+			ent->e_type);
+		qof_class_param_foreach (ent->e_type, 
+			create_param_list, &qb);
+		qb.sql_str = g_strconcat (qb.sql_str, ") VALUES (", NULL);
+		qof_class_param_foreach (ent->e_type, 
+			create_each_param, &qb);
+		qb.sql_str = g_strconcat (qb.sql_str, ");", NULL);
+		DEBUG (" sql_str= %s", qb.sql_str);
+		if(sqlite_exec (qsql_be->sqliteh, qb.sql_str, 
+			NULL, qsql_be, &qsql_be->err) != SQLITE_OK)
+		{
+			qof_backend_set_error(be, ERR_BACKEND_SERVER_ERR);
+			qsql_be->error = TRUE;
+			PERR (" %s", qsql_be->err);
+		}
+	}
+}
+
 static void
 qsql_class_foreach(QofObject *obj, gpointer data)
 {
@@ -361,23 +440,8 @@ qsql_class_foreach(QofObject *obj, gpointer data)
 		case SQL_NONE :
 		case SQL_INSERT :
 		case SQL_DELETE :
-		{
-			break;
-		}
 		case SQL_UPDATE :
 		{
-			qsql_be->sql_str = g_strdup_printf(
-				"UPDATE %s SET form_of_payment='Visa' "
-				"where guid = 2;", obj->e_type);
-			PINFO (" write:%s", qsql_be->sql_str);
-			if(sqlite_exec (qsql_be->sqliteh, qsql_be->sql_str, 
-				qsql_write_foreach, qsql_be, &qsql_be->err) !=
-				SQLITE_OK)
-			{
-				qof_backend_set_error(be, ERR_BACKEND_SERVER_ERR);
-				qsql_be->error = TRUE;
-				PERR (" %s", qsql_be->err);
-			}
 			break;
 		}
 		case SQL_CREATE :
@@ -415,6 +479,12 @@ qsql_class_foreach(QofObject *obj, gpointer data)
 		}
 		case SQL_WRITE : 
 		{
+			if (!qof_book_not_saved (qsql_be->book))
+				break;
+			/* not all objects generate a create event
+			when the entity is created. */
+			qof_object_foreach (obj->e_type, qsql_be->book,
+				check_state, qsql_be);
 			break;
 		}
 	}
@@ -498,7 +568,11 @@ qsqlite_session_begin(QofBackend *be, QofSession *session, const
 	if (!S_ISREG (statinfo.st_mode) || statinfo.st_size == 0)
 		qsql_backend_createdb (be, session);
 	qsql_backend_opendb (be, session);
-	if(qsql_be->error) { LEAVE(" open failed"); return; }
+	if(qsql_be->error) 
+	{ 
+		LEAVE(" open failed"); 
+		return; 
+	}
 	qof_backend_set_error(be, ERR_BACKEND_NO_ERR);
 	qof_event_register_handler (create_event, qsql_be);
 	qof_event_register_handler (delete_event, qsql_be);
@@ -528,6 +602,7 @@ qsqlite_write_db (QofBackend *be, QofBook *book)
 	g_return_if_fail(be);
 	qsql_be = (QSQLiteBackend*)be;
 	qsql_be->stm_type = SQL_WRITE;
+	qsql_be->book = book;
 	/* update each record with current state */
 	qof_object_foreach_type(qsql_class_foreach, qsql_be);
 }
@@ -581,17 +656,14 @@ qsql_backend_new(void)
 	be->destroy_backend = qsqlite_destroy_backend;
 	be->load = qsqlite_db_load;
 	be->save_may_clobber_data = NULL;
-	/* begin: prepare undo. */
 	be->begin = NULL;
 	/* commit: write to sqlite, commit undo record. */
 	be->commit = qsql_modify;
-	/* perform the undo? */
 	be->rollback = NULL;
 	/* would need a QofQuery back to QofSqlQuery conversion. */
 	be->compile_query = NULL;
 	/* unused */
 	be->free_query = NULL;
-	/* sqlite_exec */
 	be->run_query = NULL;
 	be->counter = NULL;
 	/* The QOF SQLite backend is not multi-user - all QOF users are the same. */
@@ -613,7 +685,7 @@ void qof_sqlite_provider_init(void)
 	prov = g_new0 (QofBackendProvider, 1);
 	prov->provider_name = "QOF SQLite Backend Version 0.1";
 	prov->access_method = ACCESS_METHOD;
-	prov->partial_book_supported = FALSE;
+	prov->partial_book_supported = TRUE;
 	prov->backend_new = qsql_backend_new;
 	prov->check_data_type = qsql_determine_file_type;
 	prov->provider_free = qsql_provider_free;
@@ -621,4 +693,4 @@ void qof_sqlite_provider_init(void)
 	LEAVE (" ");
 }
 
-/* ==================== END OF FILE ========================== */
+/* ================= END OF FILE =================== */

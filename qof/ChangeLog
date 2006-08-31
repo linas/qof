@@ -12,7 +12,8 @@
 	* qof/qofsession.h : Adjust Doxygen layout.
 
 	* backend/sqlite/qof-sqlite.c : Fix handling
-	of multiple tables.
+	of multiple tables. Implement sync: method to
+	support conversion from other data sources.
 
 	* debian/changelog,
 	debian/control,
