@@ -1740,7 +1740,6 @@ qof_commit_edit_part2 (QofInstance * inst,
 	{
 		QofBackendError errcode;
 
-		/* clear errors */
 		do
 		{
 			errcode = qof_backend_get_error (be);
@@ -1751,16 +1750,13 @@ qof_commit_edit_part2 (QofInstance * inst,
 		errcode = qof_backend_get_error (be);
 		if (ERR_BACKEND_NO_ERR != errcode)
 		{
-			/* XXX Should perform a rollback here */
 			inst->do_free = FALSE;
 
-			/* Push error back onto the stack */
 			qof_backend_set_error (be, errcode);
 			if (on_error)
 				on_error (inst, errcode);
 			return FALSE;
 		}
-		/* XXX the backend commit code should clear dirty!! */
 		inst->dirty = FALSE;
 	}
 	if (inst->do_free)
@@ -1910,17 +1906,13 @@ gnc_numeric_div_with_error (gnc_numeric a, gnc_numeric b,
 {
 	return qof_numeric_div_with_error (a, b, denom, how, error);
 }
+
 gnc_numeric 
 gnc_numeric_convert (gnc_numeric in, gint64 denom, gint how)
 {
 	return qof_numeric_convert (in, denom, how);
-}/*
-gnc_numeric 
-gnc_numeric_convert_with_error (gnc_numeric in, gint64 denom,
-								gint how, gnc_numeric * error)
-{
-	return qof_numeric_convert_with_error (in, denom, how, error);
-}*/
+}
+
 gnc_numeric gnc_numeric_reduce (gnc_numeric in)
 {
 	return qof_numeric_reduce (in);
