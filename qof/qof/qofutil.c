@@ -295,6 +295,11 @@ qof_util_param_commit (QofInstance * inst, const QofParam * param)
 	QofUndo *undo_data;
 	QofBackend * be;
 
+	if (!inst)
+		return FALSE;
+	(inst->editlevel)--;
+	if (0 < inst->editlevel)
+		return FALSE;
 	be = qof_book_get_backend (inst->book);
 	if (be && qof_backend_commit_exists (be))
 	{
