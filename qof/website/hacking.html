@@ -41,16 +41,17 @@ symbol of the same name"></div>
 <li><a href="#automake">AUTOMAKE example</a></li>
 <li><a href="#libqof1">libqof1 API/ABI compatibility</a>.</li>
 <li><a href="#required">MAX_REQUIRED specifiers</a></li>
-<li><a href="#dwi">DWI is optional</a></li>
+<li><a href="#dwi">DWI likely to be unsupported soon.</a></li>
 <li><a href="#osx">Mac OSX</a></li>
 </ul>
 </li>
 <li>Packaging QOF.
 <ul>
 <li><a href="#la">libqof-backend-qsf.la in libqof1</a></li>
-<li><a href="#libxml">libxml2 >= 2.5.10</a></li>
+<li><a href="#libxml">libxml2 &gt;= 2.5.10</a></li>
 <li><a href="#nogtk">There is no QOF dependency on Gtk!</a></li>
 <li><a href="#backend">Which backend to use?</a></li>
+<li><a href="#embedded">QOF for embedded devices</a></li>
 </ul>
 </li>
 <li><a href="#dev">Using libqof-dev</a></li>
@@ -59,8 +60,6 @@ symbol of the same name"></div>
 <h2>BUILDING AGAINST QOF</h2>
 
 <h3 id="automake">AUTOMAKE</h3>
-<div>To use QOF_TYPE_TIME or QofUndo, QOF_REQUIRED
-needs to be set to 0.7.0 in the example below.</div>
 <div>Using automake, consider this example as the basis for
 your commands for in configure.ac:</div>
 <pre>
@@ -146,18 +145,17 @@ It is recommended to only specify a minimum and accept any later
 version of QOF.</p>
 </div>
 <hr>
-<h3 id="dwi">DWI is optional</h3>
+<h3 id="dwi">DWI has stalled</h3>
+<h4>Updated for QOF 0.7.1</h4>
 <div>
-<p>DWI - Data With Interaction - is a QOF backend in development 
-and it has it's own SourceForge project and homepage.</p>
+<p>DWI - Data With Interaction - was in development 
+but it's SourceForge project has seen little recent
+activity and is now out of date with the main QOF library.</p>
 
-<p><a href="http://dwi.sourceforge.net/">
-http://dwi.sourceforge.net/</a></p>
-
-<p>DWI development seems to have stalled and it has not been tested 
-against libqof1. QOF still checks for DWI but DWI is completely 
-optional and there is no reason to include DWI with QOF at this 
-time.</p>
+<p>DWI development has stalled and it has not been tested 
+against libqof1. QOF configuration checks for DWI are likely 
+to be removed in QOF 0.8.0 and there is unlikely to be any DWI 
+support in libqof2.</p>
 
 <p>If you decide to try using DWI against libqof1, please report 
 your results (good or bad) to the QOF-devel mailing list.</p>
@@ -182,10 +180,8 @@ export ACLOCAL_FLAGS="-I /sw/share/aclocal"
 <pre>export MANPATH="/sw/share/man:&lt;build_path&gt;"
 export PAGER="less -s"
 </pre>
-
 <p>To only use these for this one build, create a bash script and 
 export the variables before calling ./autogen.sh</p>
-
 <p>QOF is no longer routinely built on OSX. If you encounter 
 problems, post the '<code>config.h</code>' file from the top 
 directory of your build to the QOF-devel mailing list.<p>
@@ -219,6 +215,11 @@ to GUI stuff for no good reason.</p>
 <hr>
 <h3 id="backend">Which backend to use?</h3>
 <div>
+<p>QSF XML has always been a separate module, the new SQLite
+backend is also a separate module. When packaging QOF &gt;=0.7.1, 
+maintainers have the option to use one or both backends (QOF requires 
+at least one backend to be available).
+</p>
 <ul><li><b>libqof-backend-qsf0</b> : Default XML backend for most
 applications.</li>
 <li><b>libqof-backend-sqlite0</b> : SQLite backend intended for
@@ -242,6 +243,45 @@ can be configured to load new and additional backends.</p>
 </div>
 
 <hr>
+<h3 id="embedded">QOF for embedded devices</h3>
+<div>
+<p>libxml2 is getting quite large; too large for some embedded devices,
+especially as it is only a backend. The SQLite backend was written especially
+for embedded devices or other situations where QOF is to be used on systems
+with limited resources. QOF 0.7.1 provides two backend modules that can be
+packaged separately:</p>
+<ul>
+<li><b>libqof-backend-qsf0</b> : Depends on libxml2.</li>
+<li><b>libqof-backend-sqlite0</b> (new) : Depends on libsqlite0.</li>
+</ul>
+<p>libqof1 requires the installation of at least one backend module,
+QSF XML should be the default for all systems that can support libxml2
+because the sqlite backend is not yet comprehensive. Full support is
+due in the next backend module based on GnomeDB (via libgda).</p>
+<dl>
+<dt>Packaging the QSF XML backend separately from the main library
+does not actually remove libxml2 from the dependency list of the library.
+Why?</dt>
+<dd>libgda includes a dependency on libxml2 that replaces the
+dependency removed by packaging QSF XML separately. If you've built QOF with
+libgda installed, the libxml2 dependency will be retained.</dd>
+<dt>What's the solution?</dt>
+<dd>To remove libxml2 from the dependency list, also remove libgda so that
+QOF uses the internal SQL handling. This leaves only a dependency on glib
+and the inevitable GNU libc. Using <code>libqof-backend-sqlite0</code>
+only adds a dependency on libsqlite0.</dd>
+</dl>
+<pre>
+ Package: libqof1
+ Version: 0.7.1-1
+ Section: libs
+ Priority: optional
+ Architecture: amd64
+ Depends: libc6 (>= 2.3.5-1), libglib2.0-0 (>= 2.10.0)
+</pre>
+</div>
+
+<hr>
 <h3 id="dev">libqof-dev usage</h3>
 <div>
 <p>The QOF API specifies the use of:</p>
@@ -257,7 +297,6 @@ need to only use qof.h to avoid problems moving to libqof2.</p>
 <hr>
 
 <h3 id="libsql">Replacement of lib/libsql</h3>
-<h4>Updated!</h4>
 <div>
 <p>
 The code in lib/libsql came from the libgda package
@@ -287,26 +326,14 @@ SQL directly in the future.</p>
 <p>Outline plan of the next few releases. All items are subject to 
 change, but this is how it looks so far.</p>
 
-<h4>QOF 0.7.1</h4>
+<h4>QOF 0.8.0</h4>
 <ol>
-<li><h4>QofNumeric</h4><p>
-The next section to be converted to the QOF naming conventions will be
-gnc_numeric (QofNumeric) - this will be a simple change of struct and
-function names. <b>Expected : 0.7.1, September 2006.</b></p></li>
-
-<li><h4>QSQLBackend</h4><p>
-Embedded users of libqof1 will benefit from a SQLite compatible backend.
-This will be a GModule that can replace the QSF Backend for embedded
-systems that cannot use the ever expanding libxml2. QSQL will only be
-suitable for embedded systems - it is not intended for use on larger
-systems. In particular, it might not support the full range of QOF
-operations. <b>Expected 0.7.1, September 2006.</b></p></li>
 
 <li><h4>QOF/GDA Backend</h4><p>
 A more comprehensive backend based on libgda is planned, supporting
 various databases via GnomeDB plugins. This will not be implemented
 directly on embedded systems. This could be a relatively large amount of
-new code, expect for early 2007. <b>Likely to take QOF to 0.8.0, still as
+new code, expect for early 2007. <b>Expected 0.8.0, still as
 libqof1.</b></p></li>
 
 <li><h4>QofKvp</h4><p>
@@ -327,7 +354,6 @@ problems. The libqof2 API will then remain stable, just as with libqof1.</p></li
 <p>Support for GLib GObject mapping (qofgobj.c) is not currently
 anticipated before QOF 0.8.0. If everything else is ready for libqof2,
 libqof2 will proceed without GLib Gobject mapping.</p>
-
 </div>
 
 <h3 id="docs">Packaging documentation</h3>
@@ -351,7 +377,7 @@ and the website content:
 
 <hr>
 <div><p>Written by Neil Williams &lt;linux@codehelp.co.uk&gt; December 2005.
-</p><p>Last updated by Neil Williams &lt;linux@codehelp.co.uk&gt; July 2006.
+</p><p>Last updated by Neil Williams &lt;linux@codehelp.co.uk&gt; September 2006.
 </p></div>
 <hr>
 <div><a href="http://sourceforge.net/projects/qof/">

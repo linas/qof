@@ -2,18 +2,20 @@ Packaging and building against QOF
 ==================================
 
 Advice for packagers / maintainers
-Updated July 2006 for QOF 0.7.0
+Updated August 2006 for QOF 0.7.1
 
     * Building against QOF
           o AUTOMAKE example
           o libqof1 API/ABI compatibility.
           o MAX_REQUIRED specifiers
-          o DWI is optional
+          o DWI likely to be unsupported soon.
           o Mac OSX
     * Packaging QOF.
           o libqof-backend-qsf.la in libqof1
           o libxml2 >= 2.5.10
           o There is no QOF dependency on Gtk!
+          o Which backend to use?
+          o QOF for embedded devices
     * Using libqof-dev
 
 
@@ -23,8 +25,6 @@ BUILDING AGAINST QOF
 AUTOMAKE
 --------
 
-To use QOF_TYPE_TIME or QofUndo, QOF_REQUIRED needs to be set 
-to 0.7.0 in the example below.
 Using automake, consider this example as the basis for your 
 commands for in configure.ac:
 
@@ -32,7 +32,7 @@ dnl *************************************
 dnl QOF
 dnl *************************************
 
-QOF_REQUIRED=0.6.0
+QOF_REQUIRED=0.7.1
 AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
 if test pkg-config = no; then
 	AC_MSG_ERROR([Please install pkgconfig])
@@ -56,7 +56,7 @@ if test x$QOF_XML_DIR = x; then
         AC_MSG_RESULT([no])
         AC_MSG_ERROR([
         The package requires the Query Object Framework: QOF.
-        You need to install QOF >= $QOF_REQUIRED (libqof1).
+        You need to install QOF >= ${QOF_REQUIRED} (libqof1).
         You can find it at http://qof.sourceforge.net/
 ])
         exit 1
@@ -78,9 +78,10 @@ http://gpe-expenses.sourceforge.net/
 libqof1 API/ABI compatibility.
 ------------------------------
 
+
 During the life of the QOF the 0.6.x, 0.7.x and 0.8.x trees, 
 various functions will be deprecated and renamed - leaving a 
-#define or deprecated version to support the old name. New code 
+#define or deprecated version to support the old name. New code
 will be expected to use the new name and old code the deprecated 
 version. Then when all such code has been sorted out, applications 
 have two choices:
@@ -92,8 +93,9 @@ Either way, the deprecated functions will then be removed from
 QOF in a single operation that takes us smoothly from libqof1 to 
 libqof2.
 
+
 MAX_REQUIRED specifiers
------------------------
+------------------------------
 
 Some packages have previously used:
 
@@ -107,18 +109,19 @@ It is recommended to only specify a minimum and accept any
 later version of QOF.
 
 
-DWI is optional
----------------
+DWI has stalled
+------------------------------
 
-DWI - Data With Interaction - is a QOF backend in development 
-and it has it's own SourceForge project and homepage.
+Updated for QOF 0.7.1
 
-http://dwi.sourceforge.net/
+DWI - Data With Interaction - was in development but it's 
+SourceForge project has seen little recent activity and is now 
+out of date with the main QOF library.
 
-DWI development seems to have stalled and it has not been 
-tested against libqof1. QOF still checks for DWI but DWI is 
-completely optional and there is no reason to include DWI with 
-QOF at this time.
+DWI development has stalled and it has not been tested against 
+libqof1. QOF configuration checks for DWI are likely to be 
+removed in QOF 0.8.0 and there is unlikely to be any DWI support 
+in libqof2.
 
 If you decide to try using DWI against libqof1, please report 
 your results (good or bad) to the QOF-devel mailing list.
@@ -127,7 +130,7 @@ http://lists.sourceforge.net/lists/listinfo/qof-devel
 
 
 Mac OSX
--------
+------------------------------
 
 Specify your Mac OSX compiler settings as environment variables. 
 e.g. for fink use:
@@ -138,18 +141,18 @@ export LIBTOOL="glibtool"
 export PATH="/sw/bin:$PATH"
 export ACLOCAL_FLAGS="-I /sw/share/aclocal"
 
-Helpful pair of settings for general manpage usage (to go 
-into .bashrc in your home directory):
+Helpful pair of settings for general manpage usage (to go into 
+.bashrc in your home directory):
 
 export MANPATH="/sw/share/man:<build_path>"
 export PAGER="less -s"
 
-To only use these for this one build, create a bash script 
-and export the variables before calling ./autogen.sh
+To only use these for this one build, create a bash script and 
+export the variables before calling ./autogen.sh
 
 QOF is no longer routinely built on OSX. If you encounter 
-problems, post the 'config.h' file from the top directory of 
-your build to the QOF-devel mailing list.
+problems, post the 'config.h' file from the top directory of your 
+build to the QOF-devel mailing list.
 
 PACKAGING QOF
 =============
@@ -157,36 +160,107 @@ PACKAGING QOF
 libqof-backend-qsf.la in libqof1
 --------------------------------
 
-This section has been re-written in the light of real usage 
-of the QOF library, in particular on embedded systems. The 
-previous statements about the .la files mainly reflected a 
-previous implementation before the switch to GModule. I would 
-recommend that the .la files are installed with the main 
-library where possible but it is no longer a requirement of 
-QOF.
+Updated!
+
+See the section on backends.
 
 
 libxml2 >= 2.5.10
------------------
+--------------------------------
 
-The version string is vital. (Earlier versions will break the 
-QSF backend horribly.)
+
+The version string is vital. (Earlier versions will break the QSF 
+backend horribly.)
 
 
 There is no QOF dependency on Gtk!
-----------------------------------
+--------------------------------
 
-Do not list a QOF runtime or build dependency on libgtk. The 
-one example that could use Gtk has now been removed from the 
-distribution tarball along with the other (outdated) examples.
 
-That's all there ever was to the Gtk stuff. It's important 
-because projects like pilot-link will not accept code that 
-links to GUI stuff for no good reason.
+Do not list a QOF runtime or build dependency on libgtk. The one 
+example that could use Gtk has now been removed from the distribution 
+tarball along with the other (outdated) examples.
+
+That's all there ever was to the Gtk stuff. It's important because 
+projects like pilot-link will not accept code that links to GUI 
+stuff for no good reason.
+
+
+Which backend to use?
+--------------------------------
+
+
+QSF XML has always been a separate module, the new SQLite backend 
+is also a separate module. When packaging QOF >=0.7.1, maintainers 
+have the option to use one or both backends (QOF requires at least 
+one backend to be available).
+
+    * libqof-backend-qsf0 : Default XML backend for most 
+		applications.
+    * libqof-backend-sqlite0 : SQLite backend intended for embedded 
+		applications where libxml2 is simply too large for the 
+		available storage space.
+    * roll-your-own : Some applications already have their own 
+		backends for use via QOF.
+    * Future backends : GnomeDB support is expected for a future 
+		QOF release. This will add a further module which in turn 
+		allow for other plugins for libgda itself.
+
+QOF can be packaged separately from the modules but care is needed 
+to ensure that existing applications can locate and load the 
+necessary backend. Applications that cannot load the necessary 
+backend will typically fail to start or be unable to load or save 
+data.
+
+At present, only pilot-qof supports all available QOF backends. In 
+most cases, it is wise to ensure that at least libqof-backend-qsf0 
+is available for all existing QOF applications. New applications 
+and new versions of existing applications can be configured to load 
+new and additional backends.
+
+
+QOF for embedded devices
+--------------------------------
+
+libxml2 is getting quite large; too large for some embedded devices, 
+especially as it is only a backend. The SQLite backend was written 
+especially for embedded devices or other situations where QOF is to 
+be used on systems with limited resources. QOF 0.7.1 provides two 
+backend modules that can be packaged separately:
+
+    * libqof-backend-qsf0 : Depends on libxml2.
+    * libqof-backend-sqlite0 (new) : Depends on libsqlite0.
+
+libqof1 requires the installation of at least one backend module, 
+QSF XML should be the default for all systems that can support libxml2 
+because the sqlite backend is not yet comprehensive. Full support is 
+due in the next backend module based on GnomeDB (via libgda).
+
+Q: Packaging the QSF XML backend separately from the main library does 
+	not actually remove libxml2 from the dependency list of the 
+	library. Why?
+
+A: libgda includes a dependency on libxml2 that replaces the dependency 
+	removed by packaging QSF XML separately. If you've built QOF with 
+	libgda installed, the libxml2 dependency will be retained.
+
+Q: What's the solution?
+
+A: To remove libxml2 from the dependency list, also remove libgda so 
+that QOF uses the internal SQL handling. This leaves only a dependency 
+on glib and the inevitable GNU libc. Using libqof-backend-sqlite0 
+only adds a dependency on libsqlite0.
+
+ Package: libqof1
+ Version: 0.7.1-1
+ Section: libs
+ Priority: optional
+ Architecture: amd64
+ Depends: libc6 (>= 2.3.5-1), libglib2.0-0 (>= 2.10.0)
 
 
 libqof-dev usage
-----------------
+--------------------------------
 
 The QOF API specifies the use of:
 
@@ -196,107 +270,85 @@ or
 
 #include <qof.h>
 
-- this is because some headers in libqof-dev need to be 
-included in the correct sequence. Individual filenames and 
-file contents are also subject to change during the life of 
-libqof1 and packages using QOF need to only use qof.h to 
-avoid problems moving to libqof2.
+- this is because some headers in libqof-dev need to be included in 
+the correct sequence. Individual filenames and file contents are 
+also subject to change during the life of libqof1 and packages using 
+QOF need to only use qof.h to avoid problems moving to libqof2.
 
 
 Replacement of lib/libsql
--------------------------
+--------------------------------
 
-Updated!
+The code in lib/libsql came from the libgda package at about v1.0.3 
+and is now commonly available, including on Mac OSX via fink - albeit 
+at only v1.0.4-3.
 
-The code in lib/libsql came from the libgda package at about 
-v1.0.3 and is now commonly available, including on Mac OSX via 
-fink - albeit at only v1.0.4-3.
-
-Fedora Core 3 has 1.0.4, Fedora Core 4 has 1.2.0 and Debian 
-has 1.2.2.
+Fedora Core 3 has 1.0.4, Fedora Core 4 has 1.2.0 and Debian has 
+1.2.2.
 
 libgda comes in stable and unstable releases. At time of writing, 
 the stable release is 1.2.2 (libgda2-3 in Debian). QOF does not 
-support the unstable libgda releases. If your distribution has 
-libgda 1.3.x or 1.9.x, please do not patch QOF to use the unstable 
-code. Instead, let QOF use it's internal code. QOF currently uses 
-a fraction of the libgda codebase and until a full QOF/GDA backend 
-is available, QOF will not be supporting any of the unstable 
-libgda releases.
+support the unstable libgda releases. If your distribution has libgda 
+1.3.x or 1.9.x, please do not patch QOF to use the unstable code. 
+Instead, let QOF use it's internal code. QOF currently uses a 
+fraction of the libgda codebase and until a full QOF/GDA backend is 
+available, QOF will not be supporting any of the unstable libgda 
+releases.
 
-This also helps complete the CashUtil project that will need the 
-SQL handling in QOF and GnuCash itself which is likely to use 
-more SQL directly in the future.
+This also helps complete the CashUtil project that will need the SQL 
+handling in QOF and GnuCash itself which is likely to use more SQL 
+directly in the future.
 
 
 Roadmap
--------
+--------------------------------
 
-Outline plan of the next few releases. All items are subject 
-to change, but this is how it looks so far.
+Outline plan of the next few releases. All items are subject to 
+change, but this is how it looks so far.
 
-QOF 0.7.1
+QOF 0.8.0
 
    1.
-      QofNumeric
-
-      The next section to be converted to the QOF naming 
-	  conventions will be gnc_numeric (QofNumeric) - this will 
-	  be a simple change of struct and function names. 
-	  Expected : 0.7.1, September 2006.
-   2.
-      QSQLBackend
-
-      Embedded users of libqof1 will benefit from a SQLite 
-	  compatible backend. This will be a GModule that can replace 
-	  the QSF Backend for embedded systems that cannot use the 
-	  ever expanding libxml2. QSQL will only be suitable for 
-	  embedded systems - it is not intended for use on larger 
-	  systems. In particular, it might not support the full 
-	  range of QOF operations. 
-	  Expected :  0.7.1, September 2006.
-   3.
       QOF/GDA Backend
 
       A more comprehensive backend based on libgda is planned, 
-	  supporting various databases via GnomeDB plugins. This 
-	  will not be implemented directly on embedded systems. 
-	  This could be a relatively large amount of new code, 
-	  expect for early 2007. Likely to take QOF to 0.8.0, 
-	  still as libqof1.
-   4.
+		supporting various databases via GnomeDB plugins. This will 
+		not be implemented directly on embedded systems. This could 
+		be a relatively large amount of new code, expect for early 
+		2007. Expected 0.8.0, still as libqof1.
+   2.
       QofKvp
 
-      Various Kvp functions need to be reviewed, a 
-	  KVP_TYPE_BOOLEAN is long overdue and the split between 
-	  public and private Kvp functions needs to be completely 
-	  redone. Expected: Late 2006, early 2007.
-   5.
+      Various Kvp functions need to be reviewed, a KVP_TYPE_BOOLEAN 
+		is long overdue and the split between public and private Kvp 
+		functions needs to be completely redone. Expected: Late 
+		2006, early 2007.
+   3.
       libqof2
 
       Once these steps are complete, the rest of QOF will be 
-	  reviewed - including moving certain sections of code around 
-	  within the codebase to make the overview clearer and the 
-	  library easier to follow. A series of pre-releases for 
-	  libqof2 can then begin. Expect pre-releases Summer 2007 
-	  and libqof2, QOF 1.0.0, Autumn 2007. Note that libqof2 will 
-	  start with the last release of libqof1 but with all 
-	  deprecated code removed. Users who migrate with libqof1 will 
-	  be able to transfer to libqof2 without problems. The 
-	  libqof2 API will then remain stable, just as with libqof1.
+		reviewed - including moving certain sections of code around 
+		within the codebase to make the overview clearer and the 
+		library easier to follow. A series of pre-releases for libqof2 
+		can then begin. Expect pre-releases Summer 2007 and libqof2, 
+		QOF 1.0.0, Autumn 2007. Note that libqof2 will start with the 
+		last release of libqof1 but with all deprecated code removed. 
+		Users who migrate with libqof1 will be able to transfer to 
+		libqof2 without problems. The libqof2 API will then remain 
+		stable, just as with libqof1.
 
 Support for GLib GObject mapping (qofgobj.c) is not currently 
-anticipated before QOF 0.8.0. If everything else is ready for 
-libqof2, libqof2 will proceed without GLib Gobject mapping.
+anticipated before QOF 0.8.0. If everything else is ready for libqof2,
+libqof2 will proceed without GLib Gobject mapping.
 
 
 Packaging documentation
------------------------
+--------------------------------
 
-The doxy symlink in the website directory is provided for CVS 
-users and the main SourceForge site. When packaging the website 
-HTML alongside the Doxygen output, ignore the symlink and just 
-package the Doxygen output:
+The doxy symlink in the website directory is provided for CVS users 
+and the main SourceForge site. When packaging the website HTML 
+alongside the Doxygen output, ignore the symlink and just package 
+the Doxygen output:
 
     * doc/html/* => /usr/share/doc/libqof-doc/html/doxy/
 
@@ -309,7 +361,7 @@ and the website content:
 
 
 Written by Neil Williams <linux@codehelp.co.uk> December 2005.
-Last updated by Neil Williams <linux@codehelp.co.uk> July 2006.
+Last updated by Neil Williams <linux@codehelp.co.uk> September 2006.
 The copyright licensing notice below applies to this text.
 Copyright © 2005,2006 Neil Williams
 
