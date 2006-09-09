@@ -219,11 +219,14 @@ Packages are available in
 <a href="http://packages.debian.org/unstable/libs/libqof1">unstable</a>
 and <a href="http://packages.debian.org/testing/libs/libqof1">testing</a>.
 <ul><li>
-There are <b>test packages</b> available using a trivial apt repository.
-(the / at the end of the URL is important.)<br/>
-<code>deb http://www.linux.codehelp.co.uk/ packages/unstable/$(ARCH)/<br/>
-deb http://www.linux.codehelp.co.uk/ packages/unstable/all/<br/>
-deb-src http://www.linux.codehelp.co.uk/ packages/unstable/source/</code><br/>
+There are <b>test packages</b> available using an apt repository.
+<br/><code>
+deb http://www.linux.codehelp.co.uk/packages unstable main<br/>
+deb-src http://www.linux.codehelp.co.uk/packages unstable main<br/>
+<br/>
+deb http://www.linux.codehelp.co.uk/packages experimental main<br/>
+deb-src http://www.linux.codehelp.co.uk/packages experimental main<br/>
+</code><br/>
 Please note that these are not the usual quality-assured Debian packages,
 these are only tests - demos if you will.</li></ul>
 <h3>Ubuntu</h3>
