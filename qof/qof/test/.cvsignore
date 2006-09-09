@@ -12,3 +12,4 @@ test-event
 *.o
 .libs
 .deps
+date-perl.pl
