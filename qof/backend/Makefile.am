@@ -31,6 +31,12 @@ if QSQANDQSF
 SQLITE=sqlite
 endif
 
-SUBDIRS = $(DWIBE) $(XML) $(SQLITE)
+if USE_LIBGDA
+GDA=gda
+else
+GDA=
+endif
 
-DIST_SUBDIRS =  dwi file sqlite
+SUBDIRS = $(DWIBE) $(XML) $(SQLITE) $(GDA)
+
+DIST_SUBDIRS =  dwi file sqlite gda

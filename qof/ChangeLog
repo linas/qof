@@ -1,3 +1,18 @@
+2006-09-09  Neil Williams <linux@codehelp.co.uk>
+
+	* configure.in : Support for gda backend.
+	* backend/Makefile.am : Build GDA only when
+	libgda2 is available.
+	* backend/gda/.cvsignore : new file.
+	* backend/gda/Makefile.am : new file.
+	* backend/gda/qof-gda.c : Outline.
+	* backend/gda/qof-gda.h : Outline.
+	* doc/doxygen.cfg.in : Include GDA in libqof-doc.
+
+	* backend/sqlite/qof-sqlite.c,
+	backend/sqlite/qof-sqlite.h : unregister 
+	handlers and tidy up g_free use.
+
 2006-08-31  Neil Williams <linux@codehelp.co.uk>
 
 	* backend/file/qsf-backend.c : Ensure a book

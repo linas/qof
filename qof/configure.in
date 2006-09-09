@@ -13,9 +13,12 @@ AC_GNU_SOURCE
 LIBQOF_LIBRARY_VERSION=1:7:0
 LIBQOF_BACKEND_QSF_LIBRARY_VERSION=0:6:0
 LIBQOF_BACKEND_QSQL_VERSION=0:0:0
+LIBQOF_BACKEND_QGDA_VERSION=0:0:0
+
 AC_SUBST(LIBQOF_LIBRARY_VERSION)
 AC_SUBST(LIBQOF_BACKEND_QSF_LIBRARY_VERSION)
 AC_SUBST(LIBQOF_BACKEND_QSQL_VERSION)
+AC_SUBST(LIBQOF_BACKEND_QGDA_VERSION)
 
 VERSION=AC_PACKAGE_VERSION
 AC_SUBST(VERSION)
@@ -110,6 +113,7 @@ esac
 
 dnl **************************************************************
 dnl  GNOME Data Access library for GNOME2 libgda
+dnl  Enables use of gda within libqof1 *and* the gda backend.
 dnl **************************************************************
 
 GDA_REQUIRED=1.2.0
@@ -440,6 +444,7 @@ backend/dwi/Makefile
 backend/file/Makefile
 backend/file/qsf-dir.h
 backend/sqlite/Makefile
+backend/gda/Makefile
 doc/Makefile
 doc/html/Makefile
 doc/doxygen.cfg
