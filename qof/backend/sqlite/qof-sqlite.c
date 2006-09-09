@@ -61,6 +61,8 @@ typedef struct
 	sqlite *sqliteh;
 	qsql_statement_type stm_type;
 	gint dbversion;
+	gint create_handler;
+	gint delete_handler;
 	const gchar *fullpath;
 	gchar *err;
 	gchar *sql_str;
@@ -393,6 +395,8 @@ check_state (QofEntity * ent, gpointer user_data)
 		"SELECT * FROM %s where guid = \"%s\";", ent->e_type, gstr);
 	PINFO (" write: %s", qsql_be->sql_str);
 	qb.ent = ent;
+	/** \todo check from gpe-expenses */
+	qb.qsql_be = qsql_be;
 	/* update each dirty instance */
 	if(sqlite_exec (qsql_be->sqliteh, qsql_be->sql_str, 
 		qsql_update_foreach, &qb, &qsql_be->err) !=
@@ -574,8 +578,10 @@ qsqlite_session_begin(QofBackend *be, QofSession *session, const
 		return; 
 	}
 	qof_backend_set_error(be, ERR_BACKEND_NO_ERR);
-	qof_event_register_handler (create_event, qsql_be);
-	qof_event_register_handler (delete_event, qsql_be);
+	qsql_be->create_handler = 
+		qof_event_register_handler (create_event, qsql_be);
+	qsql_be->delete_handler = 
+		qof_event_register_handler (delete_event, qsql_be);
 	LEAVE (" db=%s", qsql_be->fullpath);
 }
 
@@ -610,6 +616,8 @@ qsqlite_write_db (QofBackend *be, QofBook *book)
 static gboolean
 qsql_determine_file_type (const gchar *path)
 {
+	if (!path)
+		return FALSE;
 	return TRUE;
 }
 
@@ -627,7 +635,14 @@ qsqlite_session_end (QofBackend *be)
 static void
 qsqlite_destroy_backend (QofBackend *be)
 {
+	QSQLiteBackend *qsql_be;
+
+	g_return_if_fail(be);
+	qsql_be = (QSQLiteBackend*)be;
+	qof_event_unregister_handler (qsql_be->create_handler);
+	qof_event_unregister_handler (qsql_be->delete_handler);
 	g_free (be);
+	g_free (qsql_be);
 }
 
 static void

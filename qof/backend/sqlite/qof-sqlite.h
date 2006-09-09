@@ -42,7 +42,7 @@ of databases using plugins.
 	@author Copyright 2006 Neil Williams <linux@codehelp.co.uk>
 */
 
-/** \brief Describe this backend to the application. 
+/** \brief Initialises the SQLite backend. 
 
 Sets QOF SQLite Backend Version 0.1, access method = sqlite:
 
