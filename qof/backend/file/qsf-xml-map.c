@@ -75,7 +75,7 @@ qsf_string_default_handler (const gchar * default_name,
 
 static void
 qsf_map_validation_handler (xmlNodePtr child, xmlNsPtr ns,
-	qsf_validator * valid)
+	QsfValidator * valid)
 {
 	xmlChar *qof_version, *obj_type;
 	gboolean match, is_registered;
@@ -95,8 +95,7 @@ qsf_map_validation_handler (xmlNodePtr child, xmlNsPtr ns,
 		{
 			PERR (" Wrong QOF_VERSION in map '%s', should be %s",
 				qof_version, buff);
-			/** \todo change error_state to gboolean */
-			valid->error_state = ERR_QSF_BAD_QOF_VERSION;
+			valid->error_state = QOF_FATAL;
 			g_free (buff);
 			return;
 		}
@@ -173,17 +172,17 @@ qsf_map_validation_handler (xmlNodePtr child, xmlNsPtr ns,
 		PINFO (" final type=%s result=%d", obj_type, type);
 		if (type == QSF_INVALID_OBJECT)
 		{
-			valid->error_state = ERR_QSF_WRONG_MAP;
+			valid->error_state = QOF_FATAL;
 		}
 	}
 }
 
-static QofBackendError
+static QofErrorId
 check_qsf_object_with_map_internal (xmlDocPtr map_doc, xmlDocPtr doc)
 {
 	xmlNodePtr map_root, object_root;
-	struct qsf_node_iterate iter;
-	qsf_validator valid;
+	struct QsfNodeIterate qsfiter;
+	QsfValidator valid;
 	xmlNsPtr map_ns;
 
 	valid.map_table = g_hash_table_new (g_str_hash, g_str_equal);
@@ -194,15 +193,15 @@ check_qsf_object_with_map_internal (xmlDocPtr map_doc, xmlDocPtr doc)
 	valid.valid_object_count = 0;
 	valid.qof_registered_count = 0;
 	valid.incoming_count = 0;
-	valid.error_state = ERR_BACKEND_NO_ERR;
+	valid.error_state = QOF_SUCCESS;
 	map_ns = map_root->ns;
-	iter.ns = object_root->ns;
-	qsf_valid_foreach (object_root, qsf_object_validation_handler, &iter,
+	qsfiter.ns = object_root->ns;
+	qsf_valid_foreach (object_root, qsf_object_validation_handler, 
+		&qsfiter, &valid);
+	qsfiter.ns = map_ns;
+	qsf_valid_foreach (map_root, qsf_map_validation_handler, &qsfiter,
 		&valid);
-	iter.ns = map_ns;
-	qsf_valid_foreach (map_root, qsf_map_validation_handler, &iter,
-		&valid);
-	if (valid.error_state != ERR_BACKEND_NO_ERR)
+	if (valid.error_state != QOF_SUCCESS)
 	{
 		PINFO (" Map is wrong. Trying the next map.");
 		g_hash_table_destroy (valid.object_table);
@@ -228,24 +227,20 @@ check_qsf_object_with_map_internal (xmlDocPtr map_doc, xmlDocPtr doc)
 			valid.map_calculated_count, valid.valid_object_count,
 			valid.qof_registered_count, valid.incoming_count,
 			g_hash_table_size (valid.object_table));
-		if (valid.error_state != ERR_BACKEND_NO_ERR)
-		{
-			valid.error_state = ERR_QSF_WRONG_MAP;
-		}
 		g_hash_table_destroy (valid.object_table);
 		g_hash_table_destroy (valid.map_table);
 		return valid.error_state;
 	}
 	g_hash_table_destroy (valid.object_table);
 	g_hash_table_destroy (valid.map_table);
-	return ERR_BACKEND_NO_ERR;
+	return QOF_SUCCESS;
 }
 
 gboolean
-is_qsf_object_with_map_be (gchar * map_file, qsf_param * params)
+is_qsf_object_with_map_be (gchar * map_file, QsfParam * params)
 {
 	xmlDocPtr doc, map_doc;
-	QofBackendError result;
+	QofErrorId result;
 	gchar *path, *map_path;
 
 	g_return_val_if_fail ((params != NULL), FALSE);
@@ -254,41 +249,48 @@ is_qsf_object_with_map_be (gchar * map_file, qsf_param * params)
 	PINFO (" checking map file '%s'", map_path);
 	if (path == NULL)
 	{
-		qof_backend_set_error (params->be, ERR_FILEIO_FILE_NOT_FOUND);
+		qof_error_set_be (params->be, qof_error_register
+		(_("The QSF XML file '%s' could not be found."), TRUE));
 		return FALSE;
 	}
 	doc = xmlParseFile (path);
 	if (doc == NULL)
 	{
-		qof_backend_set_error (params->be, ERR_FILEIO_PARSE_ERROR);
+		qof_error_set_be (params->be, qof_error_register
+		(_("There was an error parsing the file '%s'."), TRUE));
 		return FALSE;
 	}
 	if (TRUE != qsf_is_valid (QSF_SCHEMA_DIR, QSF_OBJECT_SCHEMA, doc))
 	{
-		qof_backend_set_error (params->be, ERR_QSF_INVALID_OBJ);
+		qof_error_set_be (params->be, qof_error_register
+		(_("Invalid QSF Object file! The QSF object file '%s' "
+		" failed to validate  against the QSF object schema. "
+		"The XML structure of the file is either not well-formed "
+		"or the file contains illegal data."), TRUE));
 		return FALSE;
 	}
 	if (map_path == NULL)
 	{
-		qof_backend_set_error (params->be, ERR_FILEIO_FILE_NOT_FOUND);
+		qof_error_set_be (params->be, qof_error_register
+		(_("The QSF map file '%s' could not be found."), TRUE));
 		return FALSE;
 	}
 	map_doc = xmlParseFile (map_path);
 	if (map_doc == NULL)
 	{
-		qof_backend_set_error (params->be, ERR_FILEIO_PARSE_ERROR);
+		qof_error_set_be (params->be, qof_error_register
+		(_("There was an error parsing the file '%s'."), TRUE));
 		return FALSE;
 	}
 	result = check_qsf_object_with_map_internal (map_doc, doc);
-	qof_backend_set_error (params->be, result);
-	return (result == ERR_BACKEND_NO_ERR) ? TRUE : FALSE;
+	return (result == QOF_SUCCESS) ? TRUE : FALSE;
 }
 
 gboolean
 is_qsf_object_with_map (const gchar * path, gchar * map_file)
 {
 	xmlDocPtr doc, map_doc;
-	QofBackendError result;
+	QofErrorId result;
 	gchar *map_path;
 
 	map_path = g_strdup_printf ("%s/%s", QSF_SCHEMA_DIR, map_file);
@@ -311,31 +313,32 @@ is_qsf_object_with_map (const gchar * path, gchar * map_file)
 	}
 	map_doc = xmlParseFile (map_path);
 	result = check_qsf_object_with_map_internal (map_doc, doc);
-	return (result == ERR_BACKEND_NO_ERR) ? TRUE : FALSE;
+	return (result == QOF_SUCCESS) ? TRUE : FALSE;
 }
 
 gboolean
-is_qsf_map_be (qsf_param * params)
+is_qsf_map_be (QsfParam * params)
 {
 	xmlDocPtr doc;
-	struct qsf_node_iterate iter;
-	qsf_validator valid;
+	struct QsfNodeIterate qsfiter;
+	QsfValidator valid;
 	xmlNodePtr map_root;
 	xmlNsPtr map_ns;
 	gchar *path;
 
 	g_return_val_if_fail ((params != NULL), FALSE);
-	qof_backend_get_error (params->be);
 	path = g_strdup (params->filepath);
 	if (path == NULL)
 	{
-		qof_backend_set_error (params->be, ERR_FILEIO_FILE_NOT_FOUND);
+		qof_error_set_be (params->be, qof_error_register
+		(_("The QSF XML file '%s' could not be found."), TRUE));
 		return FALSE;
 	}
 	doc = xmlParseFile (path);
 	if (doc == NULL)
 	{
-		qof_backend_set_error (params->be, ERR_FILEIO_PARSE_ERROR);
+		qof_error_set_be (params->be, qof_error_register
+		(_("There was an error parsing the file '%s'."), TRUE));
 		return FALSE;
 	}
 	if (TRUE != qsf_is_valid (QSF_SCHEMA_DIR, QSF_MAP_SCHEMA, doc))
@@ -345,24 +348,22 @@ is_qsf_map_be (qsf_param * params)
 			_("Invalid QSF Map file! The QSF map file "
 			  "failed to validate against the QSF map schema. "
 			  "The XML structure of the file is either not well-formed "
-			  "or the file contains illegal data.")));
+			  "or the file contains illegal data."), FALSE));
 		return FALSE;
 	}
 	map_root = xmlDocGetRootElement (doc);
 	map_ns = map_root->ns;
-	iter.ns = map_ns;
+	qsfiter.ns = map_ns;
 	valid.object_table = g_hash_table_new (g_str_hash, g_str_equal);
 	valid.map_table = g_hash_table_new (g_str_hash, g_str_equal);
-	valid.error_state = ERR_BACKEND_NO_ERR;
-	qsf_valid_foreach (map_root, qsf_map_validation_handler, &iter,
-		&valid);
-	if (valid.error_state != ERR_BACKEND_NO_ERR)
+	valid.error_state = QOF_SUCCESS;
+	qsf_valid_foreach (map_root, qsf_map_validation_handler, 
+		&qsfiter, &valid);
+	if (valid.error_state != QOF_SUCCESS)
 	{
-		qof_backend_set_error (params->be, valid.error_state);
 		g_hash_table_destroy (valid.object_table);
 		return FALSE;
 	}
-	qof_backend_get_error (params->be);
 	g_hash_table_destroy (valid.object_table);
 	return TRUE;
 }
@@ -371,8 +372,8 @@ gboolean
 is_qsf_map (const gchar * path)
 {
 	xmlDocPtr doc;
-	struct qsf_node_iterate iter;
-	qsf_validator valid;
+	struct QsfNodeIterate qsfiter;
+	QsfValidator valid;
 	xmlNodePtr map_root;
 	xmlNsPtr map_ns;
 
@@ -392,12 +393,12 @@ is_qsf_map (const gchar * path)
 	}
 	map_root = xmlDocGetRootElement (doc);
 	map_ns = map_root->ns;
-	iter.ns = map_ns;
-	valid.error_state = ERR_BACKEND_NO_ERR;
+	qsfiter.ns = map_ns;
+	valid.error_state = QOF_SUCCESS;
 	valid.map_table = g_hash_table_new (g_str_hash, g_str_equal);
-	qsf_valid_foreach (map_root, qsf_map_validation_handler, &iter,
-		&valid);
-	if (valid.error_state != ERR_BACKEND_NO_ERR)
+	qsf_valid_foreach (map_root, qsf_map_validation_handler, 
+		&qsfiter, &valid);
+	if (valid.error_state != QOF_SUCCESS)
 	{
 		g_hash_table_destroy (valid.map_table);
 		return FALSE;
@@ -407,13 +408,19 @@ is_qsf_map (const gchar * path)
 }
 
 static void
-qsf_map_default_handler (xmlNodePtr child, xmlNsPtr ns, qsf_param * params)
+qsf_map_default_handler (xmlNodePtr child, xmlNsPtr ns, QsfParam * params)
 {
 	xmlChar *qsf_enum;
 	gchar *iterate;
+	QofErrorId bad_map;
 
 	g_return_if_fail (params->qsf_define_hash != NULL);
 	iterate = NULL;
+	bad_map = qof_error_register
+			(_("The selected QSF map '%s' contains unusable or "
+			 "missing data. This is usually because not all the "
+			 "required parameters for the defined objects have "
+			 "calculations described in the map."), TRUE);
 	if (qsf_is_element (child, ns, MAP_DEFINE_TAG))
 	{
 		iterate = xmlGetProp (child, MAP_ITERATE_ATTR);
@@ -433,7 +440,7 @@ qsf_map_default_handler (xmlNodePtr child, xmlNsPtr ns, qsf_param * params)
 		}
 		else
 		{
-			qof_backend_set_error (params->be, ERR_QSF_BAD_MAP);
+			qof_error_set_be (params->be, bad_map);
 			PERR (" ERR_QSF_BAD_MAP set");
 			return;
 		}
@@ -457,7 +464,7 @@ qsf_map_default_handler (xmlNodePtr child, xmlNsPtr ns, qsf_param * params)
 			}
 			else
 			{
-				qof_backend_set_error (params->be, ERR_QSF_BAD_MAP);
+				qof_error_set_be (params->be, bad_map);
 				PERR (" ERR_QSF_BAD_MAP set");
 				return;
 			}
@@ -475,7 +482,7 @@ qsf_map_default_handler (xmlNodePtr child, xmlNsPtr ns, qsf_param * params)
 /*					if(0 != xmlHashAddEntry(params->default_map,
 				xmlGetProp(child_node, MAP_NAME_ATTR), child_node))*/
 			{
-				qof_backend_set_error (params->be, ERR_QSF_BAD_MAP);
+				qof_error_set_be (params->be, bad_map);
 				PERR (" ERR_QSF_BAD_MAP set");
 				return;
 			}
@@ -485,11 +492,11 @@ qsf_map_default_handler (xmlNodePtr child, xmlNsPtr ns, qsf_param * params)
 
 static void
 qsf_map_top_node_handler (xmlNodePtr child, xmlNsPtr ns,
-	qsf_param * params)
+						  QsfParam * params)
 {
 	xmlChar *qof_version;
 	gchar *buff;
-	struct qsf_node_iterate iter;
+	struct QsfNodeIterate qsfiter;
 
 	if (!params->qsf_define_hash)
 		return;
@@ -506,12 +513,12 @@ qsf_map_top_node_handler (xmlNodePtr child, xmlNsPtr ns,
 			qof_error_set_be (params->be, qof_error_register(
 			_("The QSF Map file '%s' was written for a different "
 			 "version of QOF. It may need to be modified to work with "
-			 "your current QOF installation.")));
+			 "your current QOF installation."), TRUE));
 			LEAVE (" BAD QOF VERSION");
 			return;
 		}
-		iter.ns = ns;
-		qsf_node_foreach (child, qsf_map_default_handler, &iter, params);
+		qsfiter.ns = ns;
+		qsf_node_foreach (child, qsf_map_default_handler, &qsfiter, params);
 	}
 	LEAVE (" ");
 }
@@ -541,7 +548,7 @@ QOF hook required for "Lookup in the receiving application"
 */
 static gchar *
 qsf_set_handler (xmlNodePtr parent, GHashTable * default_hash,
-	gchar * content, qsf_param * params)
+				 gchar * content, QsfParam * params)
 {
 	xmlNodePtr cur_node, lookup_node;
 
@@ -601,7 +608,7 @@ qsf_set_handler (xmlNodePtr parent, GHashTable * default_hash,
 
 static void
 qsf_calculate_else (xmlNodePtr param_node, xmlNodePtr child,
-	qsf_param * params)
+					QsfParam * params)
 {
 	xmlNodePtr export_node;
 	xmlChar *output_content, *object_data;
@@ -654,7 +661,7 @@ qsf_calculate_else (xmlNodePtr param_node, xmlNodePtr child,
 
 static void
 qsf_set_format_value (xmlChar * format, gchar * qsf_time_now_as_string,
-	xmlNodePtr cur_node, qsf_param * params)
+					  xmlNodePtr cur_node, QsfParam * params)
 {
 	gint result;
 	xmlChar *content;
@@ -714,7 +721,7 @@ qsf_set_format_value (xmlChar * format, gchar * qsf_time_now_as_string,
 }
 
 static void
-qsf_boolean_set_value (xmlNodePtr parent, qsf_param * params,
+qsf_boolean_set_value (xmlNodePtr parent, QsfParam * params,
 	gchar * content, xmlNsPtr map_ns)
 {
 	xmlNodePtr cur_node;
@@ -735,7 +742,7 @@ qsf_boolean_set_value (xmlNodePtr parent, qsf_param * params,
 
 static void
 qsf_calculate_conditional (xmlNodePtr param_node, xmlNodePtr child,
-	qsf_param * params)
+	QsfParam * params)
 {
 	xmlNodePtr export_node;
 	xmlChar *output_content;
@@ -788,7 +795,7 @@ qsf_calculate_conditional (xmlNodePtr param_node, xmlNodePtr child,
 }
 
 static void
-qsf_add_object_tag (qsf_param * params, gint count)
+qsf_add_object_tag (QsfParam * params, gint count)
 {
 	xmlNodePtr extra_node;
 	GString *str;
@@ -810,14 +817,14 @@ static gint
 identify_source_func (gconstpointer qsf_object, gconstpointer map)
 {
 	PINFO (" qsf_object=%s, map=%s",
-		((qsf_objects *) qsf_object)->object_type, (QofIdType) map);
-	return safe_strcmp (((qsf_objects *) qsf_object)->object_type,
+		((QsfObject *) qsf_object)->object_type, (QofIdType) map);
+	return safe_strcmp (((QsfObject *) qsf_object)->object_type,
 		(QofIdType) map);
 }
 
 static void
 qsf_map_calculate_output (xmlNodePtr param_node, xmlNodePtr child,
-	qsf_param * params)
+	QsfParam * params)
 {
 	xmlNodePtr export_node;
 	xmlChar *output_content;
@@ -851,7 +858,7 @@ qsf_map_calculate_output (xmlNodePtr param_node, xmlNodePtr child,
 }
 
 static void
-qsf_map_object_handler (xmlNodePtr child, xmlNsPtr ns, qsf_param * params)
+qsf_map_object_handler (xmlNodePtr child, xmlNsPtr ns, QsfParam * params)
 {
 	xmlNodePtr param_node;
 	xmlNsPtr map_ns, qsf_ns;
@@ -928,7 +935,7 @@ qsf_map_object_handler (xmlNodePtr child, xmlNsPtr ns, qsf_param * params)
 }
 
 static void
-iterator_cb (xmlNodePtr child, xmlNsPtr ns, qsf_param * params)
+iterator_cb (xmlNodePtr child, xmlNsPtr ns, QsfParam * params)
 {
 	gchar *object_name;
 
@@ -945,10 +952,10 @@ iterator_cb (xmlNodePtr child, xmlNsPtr ns, qsf_param * params)
 
 xmlDocPtr
 qsf_object_convert (xmlDocPtr mapDoc, xmlNodePtr qsf_root,
-	qsf_param * params)
+	QsfParam * params)
 {
 	/* mapDoc : map document. qsf_root: incoming QSF root node. */
-	struct qsf_node_iterate iter;
+	struct QsfNodeIterate qsfiter;
 	xmlDocPtr output_doc;
 	xmlNode *cur_node;
 	xmlNode *map_root, *output_root;
@@ -956,7 +963,7 @@ qsf_object_convert (xmlDocPtr mapDoc, xmlNodePtr qsf_root,
 	g_return_val_if_fail ((mapDoc && qsf_root && params), NULL);
 	ENTER (" root=%s", qsf_root->name);
 	/* prepare the intermediary document */
-	iter.ns = params->qsf_ns;
+	qsfiter.ns = params->qsf_ns;
 	output_doc = xmlNewDoc (BAD_CAST QSF_XML_VERSION);
 	output_root = xmlNewNode (NULL, BAD_CAST QSF_ROOT_TAG);
 	xmlDocSetRootElement (output_doc, output_root);
@@ -971,12 +978,12 @@ qsf_object_convert (xmlDocPtr mapDoc, xmlNodePtr qsf_root,
 	/* parse the map and calculate the values */
 	map_root = xmlDocGetRootElement (mapDoc);
 	params->foreach_limit = 0;
-	iter.ns = params->map_ns;
+	qsfiter.ns = params->map_ns;
 	/* sets qof_foreach iterator, defines and defaults. */
-	qsf_node_foreach (map_root, qsf_map_top_node_handler, &iter, params);
+	qsf_node_foreach (map_root, qsf_map_top_node_handler, &qsfiter, params);
 	/* identify the entities of iterator type. */
-	iter.ns = params->qsf_ns;
-	qsf_node_foreach (qsf_root->children->next, iterator_cb, &iter,
+	qsfiter.ns = params->qsf_ns;
+	qsf_node_foreach (qsf_root->children->next, iterator_cb, &qsfiter,
 		params);
 	PINFO (" counted %d records", params->foreach_limit);
 	params->count = 0;
@@ -998,12 +1005,12 @@ qsf_object_convert (xmlDocPtr mapDoc, xmlNodePtr qsf_root,
 			}
 			qsf_add_object_tag (params, params->count);
 			params->count++;
-			iter.ns = params->map_ns;
+			qsfiter.ns = params->map_ns;
 			PINFO (" params->foreach_limit=%d", params->foreach_limit);
 			for (i = -1; i < params->foreach_limit; i++)
 			{
-				qsf_node_foreach (cur_node, qsf_map_object_handler, &iter,
-					params);
+				qsf_node_foreach (cur_node, qsf_map_object_handler, 
+					&qsfiter, params);
 				params->qsf_object_list =
 					g_list_next (params->qsf_object_list);
 				params->count++;

@@ -66,7 +66,7 @@ qsf_is_element (xmlNodePtr a, xmlNsPtr ns, gchar * c)
 }
 
 gint
-qsf_check_tag (qsf_param * params, gchar * qof_type)
+qsf_check_tag (QsfParam * params, gchar * qof_type)
 {
 	return qsf_is_element (params->child_node, params->qsf_ns, qof_type);
 }
@@ -99,37 +99,37 @@ qsf_is_valid (const gchar * schema_dir, const gchar * schema_filename,
 }
 
 void
-qsf_valid_foreach (xmlNodePtr parent, qsf_validCB cb,
-	struct qsf_node_iterate *iter, qsf_validator * valid)
+qsf_valid_foreach (xmlNodePtr parent, QsfValidCB cb,
+	struct QsfNodeIterate *qsfiter, QsfValidator * valid)
 {
 	xmlNodePtr cur_node;
 
-	iter->v_fcn = &cb;
+	qsfiter->v_fcn = &cb;
 	for (cur_node = parent->children; cur_node != NULL;
 		cur_node = cur_node->next)
 	{
-		cb (cur_node, iter->ns, valid);
+		cb (cur_node, qsfiter->ns, valid);
 	}
 }
 
 void
-qsf_node_foreach (xmlNodePtr parent, qsf_nodeCB cb,
-	struct qsf_node_iterate *iter, qsf_param * params)
+qsf_node_foreach (xmlNodePtr parent, QsfNodeCB cb,
+	struct QsfNodeIterate *qsfiter, QsfParam * params)
 {
 	xmlNodePtr cur_node;
 
-	g_return_if_fail (iter->ns);
-	iter->fcn = &cb;
+	g_return_if_fail (qsfiter->ns);
+	qsfiter->fcn = &cb;
 	for (cur_node = parent->children; cur_node != NULL;
 		cur_node = cur_node->next)
 	{
-		cb (cur_node, iter->ns, params);
+		cb (cur_node, qsfiter->ns, params);
 	}
 }
 
 void
 qsf_object_validation_handler (xmlNodePtr child, xmlNsPtr ns,
-	qsf_validator * valid)
+	QsfValidator * valid)
 {
 	xmlNodePtr cur_node;
 	xmlChar *object_declaration;
@@ -177,9 +177,9 @@ gboolean
 is_our_qsf_object (const gchar * path)
 {
 	xmlDocPtr doc;
-	struct qsf_node_iterate iter;
+	struct QsfNodeIterate qsfiter;
 	xmlNodePtr object_root;
-	qsf_validator valid;
+	QsfValidator valid;
 	gint table_count;
 
 	g_return_val_if_fail ((path != NULL), FALSE);
@@ -199,9 +199,9 @@ is_our_qsf_object (const gchar * path)
 	valid.object_table = g_hash_table_new (g_str_hash, g_str_equal);
 	valid.qof_registered_count = 0;
 	valid.valid_object_count = 0;
-	iter.ns = object_root->ns;
-	qsf_valid_foreach (object_root, qsf_object_validation_handler, &iter,
-		&valid);
+	qsfiter.ns = object_root->ns;
+	qsf_valid_foreach (object_root, qsf_object_validation_handler, 
+		&qsfiter, &valid);
 	table_count = g_hash_table_size (valid.object_table);
 	g_hash_table_destroy (valid.object_table);
 	xmlFreeDoc (doc);
@@ -237,18 +237,19 @@ is_qsf_object (const gchar * path)
 }
 
 gboolean
-is_our_qsf_object_be (qsf_param * params)
+is_our_qsf_object_be (QsfParam * params)
 {
 	xmlDocPtr doc;
-	struct qsf_node_iterate iter;
+	struct QsfNodeIterate qsfiter;
 	xmlNodePtr object_root;
-	qsf_validator valid;
+	QsfValidator valid;
 	gint table_count;
 
 	g_return_val_if_fail ((params != NULL), FALSE);
 	if (params->filepath == NULL)
 	{
-		qof_backend_set_error (params->be, ERR_FILEIO_FILE_NOT_FOUND);
+		qof_error_set_be (params->be, qof_error_register
+		(_("The QSF XML file '%s' could not be found."), TRUE));
 		return FALSE;
 	}
 	if (params->file_type != QSF_UNDEF)
@@ -258,12 +259,17 @@ is_our_qsf_object_be (qsf_param * params)
 	doc = xmlParseFile (params->filepath);
 	if (doc == NULL)
 	{
-		qof_backend_set_error (params->be, ERR_FILEIO_PARSE_ERROR);
+		qof_error_set_be (params->be, qof_error_register
+		(_("There was an error parsing the file '%s'."), TRUE));
 		return FALSE;
 	}
 	if (TRUE != qsf_is_valid (QSF_SCHEMA_DIR, QSF_OBJECT_SCHEMA, doc))
 	{
-		qof_backend_set_error (params->be, ERR_QSF_INVALID_OBJ);
+		qof_error_set_be (params->be, qof_error_register
+		(_("Invalid QSF Object file! The QSF object file '%s' "
+		" failed to validate  against the QSF object schema. "
+		"The XML structure of the file is either not well-formed "
+		"or the file contains illegal data."), TRUE));
 		xmlFreeDoc (doc);
 		return FALSE;
 	}
@@ -272,23 +278,22 @@ is_our_qsf_object_be (qsf_param * params)
 	xmlFreeDoc (doc);
 	valid.object_table = g_hash_table_new (g_str_hash, g_str_equal);
 	valid.qof_registered_count = 0;
-	iter.ns = object_root->ns;
-	qsf_valid_foreach (object_root, qsf_object_validation_handler, &iter,
-		&valid);
+	qsfiter.ns = object_root->ns;
+	qsf_valid_foreach (object_root, qsf_object_validation_handler, 
+		&qsfiter, &valid);
 	table_count = g_hash_table_size (valid.object_table);
 	if (table_count == valid.qof_registered_count)
 	{
 		g_hash_table_destroy (valid.object_table);
-		qof_backend_set_error (params->be, ERR_BACKEND_NO_ERR);
 		return TRUE;
 	}
 	g_hash_table_destroy (valid.object_table);
-	qof_backend_set_error (params->be, ERR_QSF_NO_MAP);
+	qof_error_set_be (params->be, params->err_nomap);
 	return FALSE;
 }
 
 gboolean
-is_qsf_object_be (qsf_param * params)
+is_qsf_object_be (QsfParam * params)
 {
 	gboolean result;
 	xmlDocPtr doc;
@@ -299,25 +304,31 @@ is_qsf_object_be (qsf_param * params)
 	path = g_strdup (params->filepath);
 	if (path == NULL)
 	{
-		qof_backend_set_error (params->be, ERR_FILEIO_FILE_NOT_FOUND);
+		qof_error_set_be (params->be, qof_error_register
+		(_("The QSF XML file '%s' could not be found."), TRUE));
 		return FALSE;
 	}
 	/* skip validation if is_our_qsf_object has already been called. */
-	if (ERR_QSF_INVALID_OBJ == qof_backend_get_error (params->be))
+/*	if (ERR_QSF_INVALID_OBJ == qof_backend_get_error (params->be))
 	{
 		return FALSE;
-	}
+	}*/
 	if (params->file_type == QSF_UNDEF)
 	{
 		doc = xmlParseFile (path);
 		if (doc == NULL)
 		{
-			qof_backend_set_error (params->be, ERR_FILEIO_PARSE_ERROR);
+			qof_error_set_be (params->be, qof_error_register
+			(_("There was an error parsing the file '%s'."), TRUE));
 			return FALSE;
 		}
 		if (TRUE != qsf_is_valid (QSF_SCHEMA_DIR, QSF_OBJECT_SCHEMA, doc))
 		{
-			qof_backend_set_error (params->be, ERR_QSF_INVALID_OBJ);
+			qof_error_set_be (params->be, qof_error_register
+			(_("Invalid QSF Object file! The QSF object file '%s' "
+			" failed to validate  against the QSF object schema. "
+			"The XML structure of the file is either not well-formed "
+			"or the file contains illegal data."), TRUE));
 			return FALSE;
 		}
 	}
@@ -325,19 +336,14 @@ is_qsf_object_be (qsf_param * params)
 	/* retrieve list of maps from config frame. */
 	for (maps = params->map_files; maps; maps = maps->next)
 	{
-		QofBackendError err;
+		QofErrorId err;
 		result = is_qsf_object_with_map_be (maps->data, params);
-		err = qof_backend_get_error (params->be);
-		if ((err == ERR_BACKEND_NO_ERR) && result)
+		err = qof_error_check_be (params->be);
+		if ((err == QOF_SUCCESS) && result)
 		{
 			params->map_path = maps->data;
 			PINFO ("map chosen = %s", params->map_path);
 			break;
-		}
-		/* pop the error back on the stack. */
-		else
-		{
-			qof_backend_set_error (params->be, err);
 		}
 	}
 	return result;
@@ -346,11 +352,11 @@ is_qsf_object_be (qsf_param * params)
 static void
 qsf_supported_data_types (gpointer type, gpointer user_data)
 {
-	qsf_param *params;
+	QsfParam *params;
 
 	g_return_if_fail (user_data != NULL);
 	g_return_if_fail (type != NULL);
-	params = (qsf_param *) user_data;
+	params = (QsfParam *) user_data;
 	if (qsf_is_element (params->param_node, params->qsf_ns,
 			(gchar *) type))
 	{
@@ -362,7 +368,7 @@ qsf_supported_data_types (gpointer type, gpointer user_data)
 
 static void
 qsf_parameter_handler (xmlNodePtr child, xmlNsPtr qsf_ns,
-	qsf_param * params)
+	QsfParam * params)
 {
 	/* spurious */
 	if (!qsf_ns)
@@ -374,10 +380,10 @@ qsf_parameter_handler (xmlNodePtr child, xmlNsPtr qsf_ns,
 
 void
 qsf_object_node_handler (xmlNodePtr child, xmlNsPtr qsf_ns,
-	qsf_param * params)
+	QsfParam * params)
 {
-	struct qsf_node_iterate iter;
-	qsf_objects *object_set;
+	struct QsfNodeIterate qsfiter;
+	QsfObject *object_set;
 	gchar *tail, *object_count_s;
 	gint64 c;
 
@@ -388,7 +394,7 @@ qsf_object_node_handler (xmlNodePtr child, xmlNsPtr qsf_ns,
 	{
 		params->qsf_parameter_hash = NULL;
 		c = 0;
-		object_set = g_new (qsf_objects, 1);
+		object_set = g_new (QsfObject, 1);
 		params->object_set = object_set;
 		object_set->object_count = 0;
 		object_set->parameters =
@@ -402,19 +408,19 @@ qsf_object_node_handler (xmlNodePtr child, xmlNsPtr qsf_ns,
 		g_free (object_count_s);
 		params->qsf_object_list =
 			g_list_prepend (params->qsf_object_list, object_set);
-		iter.ns = qsf_ns;
+		qsfiter.ns = qsf_ns;
 		params->qsf_parameter_hash = object_set->parameters;
-		qsf_node_foreach (child, qsf_parameter_handler, &iter, params);
+		qsf_node_foreach (child, qsf_parameter_handler, &qsfiter, params);
 	}
 }
 
 void
-qsf_book_node_handler (xmlNodePtr child, xmlNsPtr ns, qsf_param * params)
+qsf_book_node_handler (xmlNodePtr child, xmlNsPtr ns, QsfParam * params)
 {
 	gchar *book_count_s, *tail;
 	gint book_count;
 	xmlNodePtr child_node;
-	struct qsf_node_iterate iter;
+	struct QsfNodeIterate qsfiter;
 	gchar *buffer;
 	GUID book_guid;
 
@@ -432,7 +438,7 @@ qsf_book_node_handler (xmlNodePtr child, xmlNsPtr ns, qsf_param * params)
 			g_free (book_count_s);
 			g_return_if_fail (book_count == 1);
 		}
-		iter.ns = ns;
+		qsfiter.ns = ns;
 		child_node = child->children->next;
 		if (qsf_is_element (child_node, ns, QSF_BOOK_GUID))
 		{
@@ -444,7 +450,7 @@ qsf_book_node_handler (xmlNodePtr child, xmlNsPtr ns, qsf_param * params)
 				BAD_CAST QSF_BOOK_GUID, BAD_CAST buffer);
 			xmlFree (buffer);
 		}
-		qsf_node_foreach (child, qsf_object_node_handler, &iter, params);
+		qsf_node_foreach (child, qsf_object_node_handler, &qsfiter, params);
 	}
 	LEAVE (" ");
 }
