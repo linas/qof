@@ -20,14 +20,15 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
- 
-#define _GNU_SOURCE
+
 #include "config.h"
 #include <glib/gstdio.h>
 #include <sqlite.h>
 #include <glib.h>
+#include <libintl.h>
 #include "qof.h"
 
+#define _(String) dgettext (GETTEXT_PACKAGE, String)
 #define QOF_MOD_SQLITE "qof-sqlite-module"
 #define ACCESS_METHOD "sqlite"
 
@@ -182,7 +183,7 @@ delete_event (QofEntity *ent, QofEventId event_type,
 				NULL, qsql_be, &qsql_be->err) !=
 				SQLITE_OK)
 			{
-				qof_backend_set_error(be, ERR_BACKEND_SERVER_ERR);
+//				qof_backend_set_error(be, ERR_BACKEND_SERVER_ERR);
 				qsql_be->error = TRUE;
 				PERR (" %s", qsql_be->err);
 			}
@@ -226,7 +227,7 @@ create_event (QofEntity *ent, QofEventId event_type,
 				NULL, qsql_be, &qsql_be->err) !=
 				SQLITE_OK)
 			{
-				qof_backend_set_error(be, ERR_BACKEND_SERVER_ERR);
+//				qof_backend_set_error(be, ERR_BACKEND_SERVER_ERR);
 				qsql_be->error = TRUE;
 				PERR (" %s", qsql_be->err);
 			}
@@ -268,7 +269,7 @@ qsql_modify (QofBackend *be, QofInstance *inst)
 		NULL, qsql_be, &qsql_be->err) !=
 		SQLITE_OK)
 	{
-		qof_backend_set_error(be, ERR_BACKEND_SERVER_ERR);
+//		qof_backend_set_error(be, ERR_BACKEND_SERVER_ERR);
 		qsql_be->error = TRUE;
 		PERR (" %s", qsql_be->err);
 	}
@@ -368,7 +369,7 @@ qsql_update_foreach (gpointer data, gint col_num, gchar **strings,
 		if(sqlite_exec (qsql_be->sqliteh, qb->sql_str, 
 			NULL, qsql_be, &qsql_be->err) != SQLITE_OK)
 		{
-			qof_backend_set_error(be, ERR_BACKEND_SERVER_ERR);
+//			qof_backend_set_error(be, ERR_BACKEND_SERVER_ERR);
 			qsql_be->error = TRUE;
 			PERR (" %s", qsql_be->err);
 		}
@@ -402,7 +403,7 @@ check_state (QofEntity * ent, gpointer user_data)
 		qsql_update_foreach, &qb, &qsql_be->err) !=
 		SQLITE_OK)
 	{
-		qof_backend_set_error(be, ERR_BACKEND_SERVER_ERR);
+//		qof_backend_set_error(be, ERR_BACKEND_SERVER_ERR);
 		qsql_be->error = TRUE;
 		PERR (" %s", qsql_be->err);
 	}
@@ -422,7 +423,7 @@ check_state (QofEntity * ent, gpointer user_data)
 		if(sqlite_exec (qsql_be->sqliteh, qb.sql_str, 
 			NULL, qsql_be, &qsql_be->err) != SQLITE_OK)
 		{
-			qof_backend_set_error(be, ERR_BACKEND_SERVER_ERR);
+//			qof_backend_set_error(be, ERR_BACKEND_SERVER_ERR);
 			qsql_be->error = TRUE;
 			PERR (" %s", qsql_be->err);
 		}
@@ -459,7 +460,7 @@ qsql_class_foreach(QofObject *obj, gpointer data)
 			if(sqlite_exec (qsql_be->sqliteh, qsql_be->sql_str, 
 				NULL, NULL, &qsql_be->err) != SQLITE_OK)
 			{
-				qof_backend_set_error(be, ERR_BACKEND_DATA_CORRUPT);
+//				qof_backend_set_error(be, ERR_BACKEND_DATA_CORRUPT);
 				qsql_be->error = TRUE;
 				PERR (" %s", qsql_be->err);
 			}
@@ -475,7 +476,7 @@ qsql_class_foreach(QofObject *obj, gpointer data)
 				qsql_record_foreach, qsql_be, &qsql_be->err) !=
 					SQLITE_OK)
 			{
-				qof_backend_set_error(be, ERR_BACKEND_SERVER_ERR);
+//				qof_backend_set_error(be, ERR_BACKEND_SERVER_ERR);
 				qsql_be->error = TRUE;
 				PERR (" %s", qsql_be->err);
 			}
@@ -509,7 +510,7 @@ qsql_backend_createdb(QofBackend *be, QofSession *session)
 		&qsql_be->err);
 	if(!qsql_be->sqliteh)
 	{
-		qof_backend_set_error(be, ERR_BACKEND_CANT_CONNECT);
+//		qof_backend_set_error(be, ERR_BACKEND_CANT_CONNECT);
 		qsql_be->error = TRUE;
 		PERR (" %s", qsql_be->err);
 		LEAVE (" ");
@@ -532,7 +533,7 @@ qsql_backend_opendb (QofBackend *be, QofSession *session)
 		&qsql_be->err);
 	if(!qsql_be->sqliteh)
 	{
-		qof_backend_set_error(be, ERR_BACKEND_CANT_CONNECT);
+//		qof_backend_set_error(be, ERR_BACKEND_CANT_CONNECT);
 		qsql_be->error = TRUE;
 		PERR (" %s", qsql_be->err);
 	}
@@ -556,7 +557,7 @@ qsqlite_session_begin(QofBackend *be, QofSession *session, const
 	be->fullpath = g_strdup (book_path);
 	if(book_path == NULL)
 	{
-		qof_backend_set_error(be, ERR_BACKEND_BAD_URL);
+//		qof_backend_set_error(be, ERR_BACKEND_BAD_URL);
 		qsql_be->error = TRUE;
 		LEAVE (" bad URL");
 		return;
@@ -577,7 +578,7 @@ qsqlite_session_begin(QofBackend *be, QofSession *session, const
 		LEAVE(" open failed"); 
 		return; 
 	}
-	qof_backend_set_error(be, ERR_BACKEND_NO_ERR);
+//	qof_backend_set_error(be, ERR_BACKEND_NO_ERR);
 	qsql_be->create_handler = 
 		qof_event_register_handler (create_event, qsql_be);
 	qsql_be->delete_handler = 

@@ -21,14 +21,14 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#define _GNU_SOURCE
 #include "config.h"
 #include <glib.h>
 #include <glib/gstdio.h>
-#include <glib/gi18n.h>
+#include <libintl.h>
 #include <libgda/libgda.h>
 #include "qof.h"
 
+#define _(String) dgettext (GETTEXT_PACKAGE, String)
 #define ACCESS_METHOD  "gda"
 #define QOFGDA_MODULE  "qof-backend-gda"
 #define LIBGDA_DIR     ".libgda"
@@ -202,7 +202,7 @@ create_data_source (QGdaBackend * qgda_be)
 		msg = g_strdup_printf (
 			_("GDA Provider '%s' could not be found"),
 			qgda_be->provider_name);
-		qof_error_set_be (be, qof_error_register(msg));
+		qof_error_set_be (be, qof_error_register(msg, FALSE));
 		g_free (msg);
 		LEAVE (" provider '%s' not found", qgda_be->provider_name);
 		return FALSE;
@@ -238,7 +238,8 @@ qgda_session_begin(QofBackend *be, QofSession *session, const
 	if(book_path == NULL)
 	{
 		qof_error_set_be (be, 
-			qof_error_register (_("GDA: No data source path specified.")));
+			qof_error_register (
+			_("GDA: No data source path specified."), FALSE));
 		qgda_be->error = TRUE;
 		LEAVE (" bad URL");
 		return;
@@ -255,7 +256,8 @@ qgda_session_begin(QofBackend *be, QofSession *session, const
 		if (ret)
 		{
 			qof_error_set_be (be, qof_error_register
-				(_("GDA: Unable to locate your home directory.")));
+				(_("GDA: Unable to locate your home directory."),
+				FALSE));
 			qgda_be->error = TRUE;
 			LEAVE (" unable to use stat on home_dir.");
 			return;
@@ -266,7 +268,7 @@ qgda_session_begin(QofBackend *be, QofSession *session, const
 		{
 			qof_error_set_be (be, qof_error_register
 				(_("GDA: Unable to create a .libgda directory "
-				"within your home directory.")));
+				"within your home directory."), FALSE));
 			qgda_be->error = TRUE;
 			LEAVE (" unable to create '%s' 0700", gdahome);
 			return;
@@ -314,7 +316,7 @@ qgda_session_begin(QofBackend *be, QofSession *session, const
 				gda_error_get_source (qgda_be->gda_err));
 			DEBUG ("sqlstate: %s\n", 
 				gda_error_get_sqlstate (qgda_be->gda_err));
-			qof_error_set_be (be, qof_error_register (msg));
+			qof_error_set_be (be, qof_error_register (msg, FALSE));
 			g_free (msg);
 		}
 	}

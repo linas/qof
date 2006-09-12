@@ -39,11 +39,15 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <glib.h>
+#include <libintl.h>
 #include "qof.h"
+#include "qoferror-p.h"
 #include "qofbackend-p.h"
 #include "qofbook-p.h"
 #include "qofsession-p.h"
 #include "qofobject-p.h"
+
+#define _(String) dgettext (GETTEXT_PACKAGE, String)
 
 static GHookList *session_closed_hooks = NULL;
 static QofLogModule log_module = QOF_MOD_SESSION;
@@ -113,8 +117,7 @@ qof_session_init (QofSession * session)
 	session->books = g_list_append (NULL, qof_book_new ());
 	session->book_id = NULL;
 	session->backend = NULL;
-
-	qof_error_clear (session);
+	qof_error_init ();
 }
 
 QofSession *
@@ -1026,10 +1029,8 @@ qof_session_load_backend (QofSession * session, gchar *access_method)
 		}
 		p = p->next;
 	}
-	msg =
-		g_strdup_printf ("failed to load '%s' using access_method",
-		access_method);
-	qof_session_push_error (session, ERR_BACKEND_NO_HANDLER, msg);
+	msg = _("Failed to load '%s'.");
+	qof_error_set (session, qof_error_register (msg, TRUE));
 	LEAVE (" ");
 }
 
@@ -1042,10 +1043,6 @@ qof_session_destroy_backend (QofSession * session)
 
 	if (session->backend)
 	{
-		/* clear any error message */
-		char *msg = qof_backend_get_message (session->backend);
-		g_free (msg);
-
 		/* Then destroy the backend */
 		if (session->backend->destroy_backend)
 		{
@@ -1064,11 +1061,13 @@ void
 qof_session_begin (QofSession * session, const gchar *book_id,
 	gboolean ignore_lock, gboolean create_if_nonexistent)
 {
-	gchar *p, *access_method, *msg;
-	gint err;
+	gchar *p, *access_method;
+	QofErrorId err_badurl;
 
 	if (!session)
 		return;
+	err_badurl = qof_error_register (_("Cannot parse the URL '%s'"),
+		TRUE);
 
 	ENTER (" sess=%p ignore_lock=%d, book-id=%s",
 		session, ignore_lock, book_id ? book_id : "(null)");
@@ -1079,7 +1078,8 @@ qof_session_begin (QofSession * session, const gchar *book_id,
 	/* Check to see if this session is already open */
 	if (session->book_id)
 	{
-		qof_session_push_error (session, ERR_BACKEND_LOCKED, NULL);
+		qof_error_set (session, qof_error_register
+		(_("This book appears to be open already."), FALSE));
 		LEAVE (" push error book is already open ");
 		return;
 	}
@@ -1087,7 +1087,7 @@ qof_session_begin (QofSession * session, const gchar *book_id,
 	/* seriously invalid */
 	if (!book_id)
 	{
-		qof_session_push_error (session, ERR_BACKEND_BAD_URL, NULL);
+		qof_error_set (session, err_badurl);
 		LEAVE (" push error missing book_id");
 		return;
 	}
@@ -1120,7 +1120,7 @@ qof_session_begin (QofSession * session, const gchar *book_id,
 	/* No backend was found. That's bad. */
 	if (NULL == session->backend)
 	{
-		qof_session_push_error (session, ERR_BACKEND_BAD_URL, NULL);
+		qof_error_set (session, err_badurl);
 		LEAVE (" BAD: no backend: sess=%p book-id=%s",
 			session, book_id ? book_id : "(null)");
 		return;
@@ -1133,20 +1133,12 @@ qof_session_begin (QofSession * session, const gchar *book_id,
 		(session->backend->session_begin) (session->backend, session,
 			session->book_id, ignore_lock, create_if_nonexistent);
 		PINFO (" Done running session_begin on backend");
-		err = qof_backend_get_error (session->backend);
-		msg = qof_backend_get_message (session->backend);
-		if (err != ERR_BACKEND_NO_ERR)
+		if (qof_error_check(session) != QOF_SUCCESS)
 		{
 			g_free (session->book_id);
 			session->book_id = NULL;
-			qof_session_push_error (session, err, msg);
-			LEAVE (" backend error %d %s", err, msg);
+			LEAVE (" backend error ");
 			return;
-		}
-		if (msg != NULL)
-		{
-			PWARN (" %s", msg);
-			g_free (msg);
 		}
 	}
 
@@ -1161,7 +1153,6 @@ qof_session_load (QofSession * session, QofPercentageFunc percentage_func)
 	QofBook *newbook, *ob;
 	QofBookList *oldbooks, *node;
 	QofBackend *be;
-	QofBackendError err;
 
 	if (!session)
 		return;
@@ -1207,27 +1198,19 @@ qof_session_load (QofSession * session, QofPercentageFunc percentage_func)
 		if (be->load)
 		{
 			be->load (be, newbook);
-			qof_session_push_error (session, qof_backend_get_error (be),
-				NULL);
 		}
 	}
 
-	/* XXX if the load fails, then we try to restore the old set of books;
-	 * however, we don't undo the session id (the URL).  Thus if the 
-	 * user attempts to save after a failed load, they weill be trying to 
-	 * save to some bogus URL.   This is wrong. XXX  FIXME.
-	 */
-	err = qof_session_get_error (session);
-	if ((err != ERR_BACKEND_NO_ERR) &&
-		(err != ERR_FILEIO_FILE_TOO_OLD) &&
-		(err != ERR_FILEIO_NO_ENCODING) && (err != ERR_SQL_DB_TOO_OLD))
+	if (qof_error_check(session) != QOF_SUCCESS)
 	{
 		/* Something broke, put back the old stuff */
 		qof_book_set_backend (newbook, NULL);
 		qof_book_destroy (newbook);
 		g_list_free (session->books);
 		session->books = oldbooks;
-		LEAVE (" error from backend %d", qof_session_get_error (session));
+		g_free (session->book_id);
+		session->book_id = NULL;
+		LEAVE (" error from backend ");
 		return;
 	}
 
@@ -1258,20 +1241,6 @@ qof_session_save_may_clobber_data (QofSession * session)
 	return (*(session->backend->save_may_clobber_data)) (session->backend);
 }
 
-static gboolean
-save_error_handler (QofBackend * be, QofSession * session)
-{
-	int err;
-	err = qof_backend_get_error (be);
-
-	if (ERR_BACKEND_NO_ERR != err)
-	{
-		qof_session_push_error (session, err, NULL);
-		return TRUE;
-	}
-	return FALSE;
-}
-
 void
 qof_session_save (QofSession * session, 
 				  QofPercentageFunc percentage_func)
@@ -1282,7 +1251,6 @@ qof_session_save (QofSession * session,
 	QofBackendProvider *prov;
 	GSList *p;
 	QofBook *book, *abook;
-	gint err;
 	gint num;
 	gchar *msg, *book_id;
 
@@ -1357,20 +1325,12 @@ qof_session_save (QofSession * session,
 						session, book_id, TRUE, TRUE);
 					PINFO
 						(" Done running session_begin on changed backend");
-					err = qof_backend_get_error (session->backend);
-					msg = qof_backend_get_message (session->backend);
-					if (err != ERR_BACKEND_NO_ERR)
+					if (qof_error_check (session) != QOF_SUCCESS)
 					{
 						g_free (session->book_id);
 						session->book_id = NULL;
-						qof_session_push_error (session, err, msg);
-						LEAVE (" changed backend error %d", err);
+						LEAVE (" changed backend error");
 						return;
-					}
-					if (msg != NULL)
-					{
-						PWARN ("%s", msg);
-						g_free (msg);
 					}
 				}
 				/* Tell the books about the backend that they'll be using. */
@@ -1389,7 +1349,9 @@ qof_session_save (QofSession * session,
 		if (!session->backend)
 		{
 			msg = g_strdup_printf (" failed to load backend");
-			qof_session_push_error (session, ERR_BACKEND_NO_HANDLER, msg);
+			qof_error_set (session, qof_error_register
+			(_("Failed to load backend, no suitable handler."), 
+			FALSE));
 			return;
 		}
 	}
@@ -1412,11 +1374,7 @@ qof_session_save (QofSession * session,
 			qof_book_set_backend (abook, be);
 			be->percentage = percentage_func;
 			if (be->sync)
-			{
 				(be->sync) (be, abook);
-				if (save_error_handler (be, session))
-					return;
-			}
 		}
 		/* If we got to here, then the backend saved everything 
 		 * just fine, and we are done. So return. */
@@ -1428,7 +1386,9 @@ qof_session_save (QofSession * session,
 	else
 	{
 		msg = g_strdup_printf (" failed to load backend");
-		qof_session_push_error (session, ERR_BACKEND_NO_HANDLER, msg);
+		qof_error_set (session, qof_error_register
+			(_("Failed to load backend, no suitable handler."), 
+			FALSE));
 	}
 	LEAVE (" error -- No backend!");
 }
@@ -1487,6 +1447,7 @@ qof_session_destroy (QofSession * session)
 		qof_session_clear_current_session();
 #endif
 	g_free (session);
+	qof_error_close ();
 
 	LEAVE (" sess=%p", session);
 }

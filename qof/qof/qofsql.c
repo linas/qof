@@ -30,7 +30,8 @@
 #include "config.h"
 #include <stdlib.h>				/* for working atoll */
 #include <errno.h>
-#include "glib.h"
+#include <glib.h>
+#include <libintl.h>
 #ifdef HAVE_GDA
 #include <sql/sql_parser.h>
 #else
@@ -39,6 +40,8 @@
 #include <time.h>
 #include "qof.h"
 #include "qofquery-p.h"
+
+#define _(String) dgettext (GETTEXT_PACKAGE, String)
 
 static QofLogModule log_module = QOF_MOD_QUERY;
 
@@ -750,7 +753,11 @@ qof_sql_insertCB (const QofParam * param, const gchar * insert_string,
 
 			book = qof_instance_get_book ((QofInstance *) ent);
 			backend = qof_book_get_backend (book);
-			qof_backend_set_error (backend, ERR_QSF_OVERFLOW);
+			qof_error_set_be (backend, qof_error_register 
+			(_("When converting SQLite strings into numbers, an "
+			"overflow has been detected. The SQLite database "
+			"'%s' contains invalid data in a field that is meant "
+			"to hold a number."), TRUE));
 		}
 	}
 	if (safe_strcmp (param->param_type, QOF_TYPE_INT64) == 0)
@@ -773,7 +780,11 @@ qof_sql_insertCB (const QofParam * param, const gchar * insert_string,
 
 			book = qof_instance_get_book ((QofInstance *) ent);
 			backend = qof_book_get_backend (book);
-			qof_backend_set_error (backend, ERR_QSF_OVERFLOW);
+			qof_error_set_be (backend, qof_error_register 
+			(_("When converting SQLite strings into numbers, an "
+			"overflow has been detected. The SQLite database "
+			"'%s' contains invalid data in a field that is meant "
+			"to hold a number."), TRUE));
 		}
 	}
 	if (safe_strcmp (param->param_type, QOF_TYPE_DOUBLE) == 0)
