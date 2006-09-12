@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: qof 0.6.4\n"
 "Report-Msgid-Bugs-To: qof-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2006-08-29 09:19+0100\n"
+"POT-Creation-Date: 2006-09-12 16:57+0100\n"
 "PO-Revision-Date: 2006-05-19 22:58+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
@@ -15,11 +15,11 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../backend/file/qsf-backend.c:117
+#: ../backend/file/qsf-backend.c:118
 msgid "Level of compression to use: 0 for none, 9 for highest."
 msgstr "Komprimeringsnivå att använda: 0 för ingen, 9 för högsta."
 
-#: ../backend/file/qsf-backend.c:119
+#: ../backend/file/qsf-backend.c:120
 msgid ""
 "QOF can compress QSF XML files using gzip. Note that compression is not used "
 "when outputting to STDOUT."
@@ -27,11 +27,11 @@ msgstr ""
 "QOF kan komprimera QSF XML-filer med gzip. Notera att komprimering inte "
 "används när data skickas till standard ut."
 
-#: ../backend/file/qsf-backend.c:129
+#: ../backend/file/qsf-backend.c:130
 msgid "List of QSF map files to use for this session."
 msgstr "Lista av QSF-kartfiler att använda för denna session."
 
-#: ../backend/file/qsf-backend.c:131
+#: ../backend/file/qsf-backend.c:132
 msgid ""
 "QOF can convert objects within QSF XML files using a map of the changes "
 "required."
@@ -39,11 +39,11 @@ msgstr ""
 "QOF kan konvertera objekt inom QSF XML-filer med en karta av de ändringar "
 "som krävs."
 
-#: ../backend/file/qsf-backend.c:140
+#: ../backend/file/qsf-backend.c:141
 msgid "Encoding string to use when writing the XML file."
 msgstr "Teckenkodningssträng att använda när XML-fil skrivs."
 
-#: ../backend/file/qsf-backend.c:142
+#: ../backend/file/qsf-backend.c:143
 msgid ""
 "QSF defaults to UTF-8. Other encodings are supported by passing the encoding "
 "string in this option."
@@ -51,13 +51,204 @@ msgstr ""
 "Standard i QSF är UTF-8. Övriga teckenkodningar stöds genom att skicka med "
 "kodningssträngen i detta alternativ."
 
-#: ../backend/file/qsf-backend.c:151
+#: ../backend/file/qsf-backend.c:152
 msgid "Convert deprecated date values to time values."
 msgstr ""
 
-#: ../backend/file/qsf-backend.c:153
+#: ../backend/file/qsf-backend.c:154
 msgid ""
 "Applications that support the new QOF time format need to enable this option "
 "to convert older date values into time. Applications that still use date "
 "should not set this option until time values are supported."
+msgstr ""
+
+#: ../backend/file/qsf-backend.c:252
+#, c-format
+msgid ""
+"The selected QSF Object file '%s' requires a map but it was not provided."
+msgstr ""
+
+#: ../backend/file/qsf-backend.c:255
+#, c-format
+msgid ""
+"When converting XML strings into numbers, an overflow has been detected. The "
+"QSF object file '%s' contains invalid data in a field that is meant to hold "
+"a number."
+msgstr ""
+
+#: ../backend/file/qsf-backend.c:346
+#, c-format
+msgid ""
+"could not write to '%s'. That database may be on a read-only file system, or "
+"you may not have write permission for the directory.\n"
+msgstr ""
+
+#: ../backend/file/qsf-backend.c:505
+#, c-format
+msgid "There was an error parsing the file '%s'.\n"
+msgstr ""
+
+#: ../backend/file/qsf-backend.c:540 ../backend/file/qsf-backend.c:583
+#: ../backend/file/qsf-xml-map.c:260 ../backend/file/qsf-xml-map.c:282
+#: ../backend/file/qsf-xml-map.c:341 ../backend/file/qsf-xml.c:263
+#: ../backend/file/qsf-xml.c:322
+#, c-format
+msgid "There was an error parsing the file '%s'."
+msgstr ""
+
+#: ../backend/file/qsf-backend.c:590
+#, c-format
+msgid "There was an error reading the file '%s'."
+msgstr ""
+
+#: ../backend/file/qsf-backend.c:622
+#, c-format
+msgid ""
+"The selected file '%s' is a QSF map and cannot be opened as a QSF object."
+msgstr ""
+
+#: ../backend/file/qsf-backend.c:1179
+#, c-format
+msgid ""
+"Could not write to '%s'. Check that you have permission to write to this "
+"file and that there is sufficient space to create it."
+msgstr ""
+
+#: ../backend/file/qsf-backend.c:1469
+#, c-format
+msgid ""
+"The selected QSF object file '%s' contains one or more invalid GUIDs. The "
+"file cannot be processed - please check the source of the file and try again."
+msgstr ""
+
+#: ../backend/file/qsf-backend.c:1591
+#, c-format
+msgid ""
+"The selected QSF object file '%s' contains one or more invalid 'collect' "
+"values. The file cannot be processed - please check the source of the file "
+"and try again."
+msgstr ""
+
+#: ../backend/file/qsf-xml-map.c:253 ../backend/file/qsf-xml-map.c:334
+#: ../backend/file/qsf-xml.c:252 ../backend/file/qsf-xml.c:308
+#, c-format
+msgid "The QSF XML file '%s' could not be found."
+msgstr ""
+
+#: ../backend/file/qsf-xml-map.c:266 ../backend/file/qsf-xml.c:269
+#: ../backend/file/qsf-xml.c:328
+#, c-format
+msgid ""
+"Invalid QSF Object file! The QSF object file '%s'  failed to validate  "
+"against the QSF object schema. The XML structure of the file is either not "
+"well-formed or the file contains illegal data."
+msgstr ""
+
+#: ../backend/file/qsf-xml-map.c:275
+#, c-format
+msgid "The QSF map file '%s' could not be found."
+msgstr ""
+
+#: ../backend/file/qsf-xml-map.c:348
+msgid ""
+"Invalid QSF Map file! The QSF map file failed to validate against the QSF "
+"map schema. The XML structure of the file is either not well-formed or the "
+"file contains illegal data."
+msgstr ""
+
+#: ../backend/file/qsf-xml-map.c:420
+#, c-format
+msgid ""
+"The selected QSF map '%s' contains unusable or missing data. This is usually "
+"because not all the required parameters for the defined objects have "
+"calculations described in the map."
+msgstr ""
+
+#: ../backend/file/qsf-xml-map.c:514
+#, c-format
+msgid ""
+"The QSF Map file '%s' was written for a different version of QOF. It may "
+"need to be modified to work with your current QOF installation."
+msgstr ""
+
+#: ../backend/gda/qof-gda.c:203
+#, c-format
+msgid "GDA Provider '%s' could not be found"
+msgstr ""
+
+#: ../backend/gda/qof-gda.c:242
+msgid "GDA: No data source path specified."
+msgstr ""
+
+#: ../backend/gda/qof-gda.c:259
+msgid "GDA: Unable to locate your home directory."
+msgstr ""
+
+#: ../backend/gda/qof-gda.c:270
+msgid "GDA: Unable to create a .libgda directory within your home directory."
+msgstr ""
+
+#: ../backend/gda/qof-gda.c:306
+#, c-format
+msgid "GDA encountered an error '%s' using data source '%s'."
+msgstr ""
+
+#: ../backend/gda/qof-gda.c:479
+msgid "Name of the database to use."
+msgstr ""
+
+#: ../backend/gda/qof-gda.c:481
+msgid "Override the default database name with a name of your own choice."
+msgstr ""
+
+#: ../backend/gda/qof-gda.c:490
+msgid "The username to use to access this data source."
+msgstr ""
+
+#: ../backend/gda/qof-gda.c:492
+msgid ""
+"The username specified in the configuration of this data source that "
+"provides write access to the data."
+msgstr ""
+
+#: ../backend/gda/qof-gda.c:501
+msgid "Password to use with the username."
+msgstr ""
+
+#: ../backend/gda/qof-gda.c:503
+msgid "The password that is to be used with the specified username."
+msgstr ""
+
+#: ../backend/gda/qof-gda.c:512
+msgid "Name of this data source."
+msgstr ""
+
+#: ../backend/gda/qof-gda.c:514
+msgid "The name of this data source as specified in the GDA configuration."
+msgstr ""
+
+#: ../qof/qofsession.c:1030
+#, c-format
+msgid "Failed to load '%s'."
+msgstr ""
+
+#: ../qof/qofsession.c:1067
+#, c-format
+msgid "Cannot parse the URL '%s'"
+msgstr ""
+
+#: ../qof/qofsession.c:1080
+msgid "This book appears to be open already."
+msgstr ""
+
+#: ../qof/qofsession.c:1351 ../qof/qofsession.c:1388
+msgid "Failed to load backend, no suitable handler."
+msgstr ""
+
+#: ../qof/qofsql.c:755 ../qof/qofsql.c:782
+#, c-format
+msgid ""
+"When converting SQLite strings into numbers, an overflow has been detected. "
+"The SQLite database '%s' contains invalid data in a field that is meant to "
+"hold a number."
 msgstr ""
