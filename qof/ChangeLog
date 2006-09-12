@@ -12,9 +12,30 @@
 	backend/gda/qof-gda.h : improve gda backend 
 	with error handling and data sources.
 
-	* qof/qoferror-p.h,
+	* qof/qof.h,
+	qof/qoferror-p.h,
 	qof/qoferror.c,
-	qof/qoferror.h : New Error handler files.
+	qof/qoferror.h,
+	qof/Makefile.am	: New Error handler files.
+
+	* backend/file/qsf-backend.c,
+	backend/file/qsf-xml-map.c : Beginning move to QofError.
+
+	* qof/deprecated.c,
+	qof/deprecated.h : Deprecating backend and session error
+	handlers in favour of QofError.
+
+	* qof/qofbackend-p.h,
+	qof/qofbackend.c,
+	qof/qofbackend.h,
+	qof/qofsession-p.h,
+	qof/qofsession.c,
+	qof/qofsession.h : Removing deprecated code.
+
+	* qof/qofutil.c,
+	qof/qofutil.h : Start and close QofError by default.
+
+	* po/en_GB.po : New strings added.
 
 2006-09-09  Neil Williams <linux@codehelp.co.uk>
 
