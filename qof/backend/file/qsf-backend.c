@@ -248,6 +248,20 @@ qsf_param_init (qsf_param * params)
 		qsf_time_string);
 	/* default map files */
 	params->map_files = *qsf_map_prepare_list (&params->map_files);
+
+/* errors specific to this backend
+	ERR_QSF_INVALID_OBJ
+	ERR_QSF_INVALID_MAP
+	ERR_QSF_BAD_OBJ_GUID
+	ERR_QSF_BAD_QOF_VERSION
+	ERR_QSF_BAD_MAP
+	ERR_QSF_NO_MAP
+	ERR_QSF_WRONG_MAP
+	ERR_QSF_MAP_NOT_OBJ
+	ERR_QSF_OVERFLOW
+	ERR_QSF_OPEN_NOT_MERGE
+*/
+
 }
 
 static gboolean
@@ -1435,7 +1449,10 @@ qsf_object_commitCB (gpointer key, gpointer value, gpointer data)
 		if (TRUE !=
 			string_to_guid ((gchar *) xmlNodeGetContent (node), cm_guid))
 		{
-			qof_backend_set_error (params->be, ERR_QSF_BAD_OBJ_GUID);
+			qof_error_set_be (params->be, qof_error_register(
+			_("The selected QSF object file '%s' contains one or "
+			 "more invalid GUIDs. The file cannot be processed - "
+			 "please check the source of the file and try again.")));
 			PINFO (" string to guid conversion failed for %s:%s:%s",
 				xmlNodeGetContent (node), obj_type, qof_type);
 			return;
@@ -1563,7 +1580,10 @@ qsf_object_commitCB (gpointer key, gpointer value, gpointer data)
 		if (TRUE !=
 			string_to_guid ((gchar *) xmlNodeGetContent (node), cm_guid))
 		{
-			qof_backend_set_error (params->be, ERR_QSF_BAD_OBJ_GUID);
+			qof_error_set_be (params->be, (qof_error_register(
+			_("The selected QSF object file '%s' contains one or "
+			 "more invalid 'collect' values. The file cannot be processed - "
+			 "please check the source of the file and try again."))));
 			PINFO (" string to guid collect failed for %s",
 				xmlNodeGetContent (node));
 			return;

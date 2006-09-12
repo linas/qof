@@ -95,6 +95,7 @@ qsf_map_validation_handler (xmlNodePtr child, xmlNsPtr ns,
 		{
 			PERR (" Wrong QOF_VERSION in map '%s', should be %s",
 				qof_version, buff);
+			/** \todo change error_state to gboolean */
 			valid->error_state = ERR_QSF_BAD_QOF_VERSION;
 			g_free (buff);
 			return;
@@ -339,7 +340,12 @@ is_qsf_map_be (qsf_param * params)
 	}
 	if (TRUE != qsf_is_valid (QSF_SCHEMA_DIR, QSF_MAP_SCHEMA, doc))
 	{
-		qof_backend_set_error (params->be, ERR_QSF_INVALID_MAP);
+		qof_error_set_be (params->be, 
+			qof_error_register (
+			_("Invalid QSF Map file! The QSF map file "
+			  "failed to validate against the QSF map schema. "
+			  "The XML structure of the file is either not well-formed "
+			  "or the file contains illegal data.")));
 		return FALSE;
 	}
 	map_root = xmlDocGetRootElement (doc);
@@ -497,8 +503,11 @@ qsf_map_top_node_handler (xmlNodePtr child, xmlNsPtr ns,
 		buff = g_strdup_printf ("%i", QSF_QOF_VERSION);
 		if (xmlStrcmp (qof_version, BAD_CAST buff) != 0)
 		{
-			qof_backend_set_error (params->be, ERR_QSF_BAD_QOF_VERSION);
-			LEAVE (" ERR_QSF_BAD_QOF_VERSION set");
+			qof_error_set_be (params->be, qof_error_register(
+			_("The QSF Map file '%s' was written for a different "
+			 "version of QOF. It may need to be modified to work with "
+			 "your current QOF installation.")));
+			LEAVE (" BAD QOF VERSION");
 			return;
 		}
 		iter.ns = ns;
