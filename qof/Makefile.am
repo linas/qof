@@ -23,6 +23,7 @@ EXTRA_DIST = \
   HACKING \
   make-potfiles.in \
   po/POTFILES.in \
+  po/POTFILES.skip \
   intltool-extract.in \
   intltool-merge.in \
   intltool-update.in \

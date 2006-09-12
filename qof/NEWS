@@ -1,3 +1,12 @@
+September 2006: Extensible error handling.
+	The backend errors have been extended into an extensible
+	error handler that is available either through the
+	backend or through the session (for applications). QofError
+	is designed for user-friendly messages and supports setting
+	errors and error messages on-the-fly to provide user error
+	messages that are as detailed, relevant and helpful as possible.
+	Programming output should still be logged with QofLog.
+
 August 2006: The SQLite backend for embedded systems 
 	is now working.
 	The gnc-numeric to QofNumeric transition is 

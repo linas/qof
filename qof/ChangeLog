@@ -1,3 +1,21 @@
+2006-09-12  Neil Williams <linux@codehelp.co.uk>
+
+	* debian/changelog : fix priority setting for 
+	the new backend packages.
+
+	* backend/Makefile.am,
+	backend/dwi/README,
+	po/POTFILES.skip : only distribute DWI, don't 
+	try to build it anymore.
+
+	* backend/gda/qof-gda.c,
+	backend/gda/qof-gda.h : improve gda backend 
+	with error handling and data sources.
+
+	* qof/qoferror-p.h,
+	qof/qoferror.c,
+	qof/qoferror.h : New Error handler files.
+
 2006-09-09  Neil Williams <linux@codehelp.co.uk>
 
 	* configure.in : Support for gda backend.

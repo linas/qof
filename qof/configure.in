@@ -5,14 +5,15 @@ dnl ******************************
 dnl Initialise
 dnl ******************************
 
-AC_INIT(qof, 0.7.1, http://lists.sourceforge.net/lists/listinfo/qof-devel)
+AC_INIT(qof, 0.8.0, 
+	http://lists.sourceforge.net/lists/listinfo/qof-devel)
 
 AC_PREREQ(2.53)
 AC_GNU_SOURCE
 
-LIBQOF_LIBRARY_VERSION=1:7:0
-LIBQOF_BACKEND_QSF_LIBRARY_VERSION=0:6:0
-LIBQOF_BACKEND_QSQL_VERSION=0:0:0
+LIBQOF_LIBRARY_VERSION=1:8:0
+LIBQOF_BACKEND_QSF_LIBRARY_VERSION=0:7:0
+LIBQOF_BACKEND_QSQL_VERSION=0:1:0
 LIBQOF_BACKEND_QGDA_VERSION=0:0:0
 
 AC_SUBST(LIBQOF_LIBRARY_VERSION)
@@ -242,27 +243,10 @@ AM_CONDITIONAL(QSQANDQSF, [test "$sqlite" = "yes"])
 AM_CONDITIONAL(QSQANDQSF, [test "$embedded" != "yes"])
 
 dnl **************************************************************
-dnl If DWI is found on the build system, then build with it.
-dnl Need to check for libdwi-qof too ....
+dnl DWI is now unsupported.
+dnl The DWI code is still packaged for now
+dnl but will be removed in libqof2.
 dnl **************************************************************
-
-AC_MSG_CHECKING([for DWI])
-DWI_CFLAGS=`$PKG_CONFIG --silence-errors --cflags dwi-0`
-DWI_LIBS=`$PKG_CONFIG --silence-errors --libs dwi-0`
-AC_SUBST(DWI_CFLAGS)
-AC_SUBST(DWI_LIBS)
-
-if test x$DWI_LIBS = x; then
-   AC_MSG_RESULT([No, DWI was not found; build without DWI.])
-else
-   AC_MSG_RESULT([Yes, we have DWI.])
-   AC_DEFINE(HAVE_DWI,,We Have Found DWI)
-   HAVE_DWI="use_dwi"
-fi
-
-AM_CONDITIONAL(BUILD_DWI, [test "x$HAVE_DWI" != x])
-AM_CONDITIONAL(BUILD_DWI, [test "$HAVE_DWI" = "use_dwi"])
-AC_SUBST(BUILD_DWI)
 
 dnl =========================
 dnl Perl
@@ -471,7 +455,7 @@ echo "QOF_LIBS    :   $QOF_LIBS"
 echo "DWI_LIBS    :   $DWI_LIBS"
 echo "1st backend :   $backend"
 echo "2nd backend :   $backend2"
-echo "LIBGDA      :   $GDA_VERSION"
+echo "gda backend :   libgda2 == $GDA_VERSION"
 echo "prefix      :   $prefix"
 echo "data dir    :   "`eval echo $DATADIR`
 echo "XML dir     :   "`eval echo $QSF_SCHEMA_DIR`
