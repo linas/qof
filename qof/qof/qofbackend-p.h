@@ -40,8 +40,6 @@
 #ifndef QOF_BACKEND_P_H
 #define QOF_BACKEND_P_H
 
-#include "qofbackend.h"
-#include "qofbook.h"
 #include "qofinstance-p.h"
 #include "qofquery.h"
 #include "qofsession.h"
@@ -295,15 +293,15 @@ struct QofBackend_s
 	void (*begin) (QofBackend *, QofInstance *);
 	void (*commit) (QofBackend *, QofInstance *);
 	void (*rollback) (QofBackend *, QofInstance *);
-	  gpointer (*compile_query) (QofBackend *, QofQuery *);
+	gpointer (*compile_query) (QofBackend *, QofQuery *);
 	void (*free_query) (QofBackend *, gpointer);
 	void (*run_query) (QofBackend *, gpointer);
 	void (*sync) (QofBackend *, QofBook *);
 	void (*load_config) (QofBackend *, KvpFrame *);
 	KvpFrame *(*get_config) (QofBackend *);
-	  gint64 (*counter) (QofBackend *, const gchar * counter_name);
-	  gboolean (*events_pending) (QofBackend *);
-	  gboolean (*process_events) (QofBackend *);
+	gint64 (*counter) (QofBackend *, const gchar * counter_name);
+	gboolean (*events_pending) (QofBackend *);
+	gboolean (*process_events) (QofBackend *);
 	QofBePercentageFunc percentage;
 	QofBackendProvider *provider;
 
@@ -321,8 +319,16 @@ data loss, otherwise FALSE.
 */
 	gboolean (*save_may_clobber_data) (QofBackend *);
 
-	QofBackendError last_err;
+#ifndef QOF_DISABLE_DEPRECATED
+	/** \deprecated use qof_error_check instead. */
+	QofErrorId last_err;
+	/** \deprecated use stack instead. */
 	gchar *error_msg;
+#endif
+	/* stack of previous errors.
+	   Similar errors can repeat within the stack. */
+	GList * error_stack;
+
 
 	KvpFrame *backend_configuration;
 	gint config_count;
@@ -346,24 +352,8 @@ QOF infrastructure that it can handle URL's of a certain type.
 Note that a single backend library may register more than one
 provider, if it is capable of handling more than one URL access
 method. */
-void qof_backend_register_provider (QofBackendProvider *);
-
-/** The qof_backend_set_error() routine pushes an error code onto
-the error stack. (FIXME: the stack is 1 deep in current
-implementation). */
-void qof_backend_set_error (QofBackend * be, QofBackendError err);
-
-/** The qof_backend_get_error() routine pops an error code off the error stack.
- */
-QofBackendError qof_backend_get_error (QofBackend * be);
-
-/** The qof_backend_set_message() assigns a string to the backend
-error message. */
-void qof_backend_set_message (QofBackend * be, const gchar * format, ...);
-
-/** The qof_backend_get_message() pops the error message string from
-the Backend.  This string should be freed with g_free(). */
-gchar *qof_backend_get_message (QofBackend * be);
+void 
+qof_backend_register_provider (QofBackendProvider *);
 
 void qof_backend_init (QofBackend * be);
 

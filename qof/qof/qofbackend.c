@@ -23,101 +23,16 @@
 \********************************************************************/
 
 #include "config.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdarg.h>
-#include <regex.h>
 #include <glib.h>
 #include <gmodule.h>
-#include <errno.h>
 #include "qof.h"
 #include "qofbackend-p.h"
-
-static QofLogModule log_module = QOF_MOD_BACKEND;
 
 #define QOF_CONFIG_DESC    "desc"
 #define QOF_CONFIG_TIP     "tip"
 
-/* *******************************************************************\
- * error handling                                                   *
-\********************************************************************/
+static QofLogModule log_module = QOF_MOD_BACKEND;
 
-void
-qof_backend_set_error (QofBackend * be, QofBackendError err)
-{
-	if (!be)
-		return;
-
-	/* use stack-push semantics. Only the earliest error counts */
-	if (ERR_BACKEND_NO_ERR != be->last_err)
-		return;
-	be->last_err = err;
-}
-
-QofBackendError
-qof_backend_get_error (QofBackend * be)
-{
-	QofBackendError err;
-	if (!be)
-		return ERR_BACKEND_NO_BACKEND;
-
-	/* use 'stack-pop' semantics */
-	err = be->last_err;
-	be->last_err = ERR_BACKEND_NO_ERR;
-	return err;
-}
-
-void
-qof_backend_set_message (QofBackend * be, const gchar * format, ...)
-{
-	va_list args;
-	gchar *buffer;
-
-	if (!be)
-		return;
-
-	/* If there's already something here, free it */
-	if (be->error_msg)
-		g_free (be->error_msg);
-
-	if (!format)
-	{
-		be->error_msg = NULL;
-		return;
-	}
-
-	va_start (args, format);
-	buffer = (gchar *) g_strdup_vprintf (format, args);
-	va_end (args);
-
-	be->error_msg = buffer;
-}
-
-gchar *
-qof_backend_get_message (QofBackend * be)
-{
-	gchar *msg;
-
-	if (!be)
-		return g_strdup ("ERR_BACKEND_NO_BACKEND");
-	if (!be->error_msg)
-		return NULL;
-
-	/* 
-	 * Just return the contents of the error_msg and then set it to
-	 * NULL. This is necessary, because the Backends don't seem to
-	 * have a destroy_backend function to take care of freeing stuff
-	 * up. The calling function should free the copy.
-	 * Also, this is consistent with the qof_backend_get_error() popping.
-	 */
-
-	msg = be->error_msg;
-	be->error_msg = NULL;
-	return msg;
-}
-
-/***********************************************************************/
-/* Get a clean backend */
 void
 qof_backend_init (QofBackend * be)
 {

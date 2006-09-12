@@ -21,9 +21,9 @@
 \********************************************************************/
 
 /*
- * HISTORY:
- * Copyright (c) 2001 Linux Developers Group
- * Copyright (c) 1998-2003 Linas Vepstas <linas@linas.org>
+Copyright (c) 2001 Linux Developers Group
+Copyright (c) 1998-2003 Linas Vepstas <linas@linas.org>
+Copyright (c) 2006 Neil Williams <linux@codehelp.co.uk> 
  */
 
 #ifndef QOF_SESSION_P_H
@@ -34,7 +34,7 @@
 
 struct _QofSession
 {
-	/* This is just a "fake" entry point to allow me to pass a Session as
+	/** \deprecated This is just a "fake" entry point to allow me to pass a Session as
 	 * an Entity.  NOTE:  THIS IS NOT AN ENTITY!  THE ONLY PART OF ENTITY
 	 * THAT IS VALID IS E_TYPE!
 	 */
@@ -47,27 +47,23 @@ struct _QofSession
 	/* The requested book id, in the form or a URI, such as
 	 * file:/some/where, or sql:server.host.com:555
 	 */
-	char *book_id;
+	gchar *book_id;
 
-	/* If any book subroutine failed, this records the failure reason 
-	 * (file not found, etc).
-	 * This is a 'stack' that is one deep.  (Should be deeper ??)
-	 * FIXME: Each backend has its own error stack. The session
-	 * and the backends should all be using (or making it look like)
-	 * there is only one stack.
-	 */
+	/** \deprecated If any book subroutine failed, this records the failure reason 
+	* (file not found, etc).
+	*/
 	QofBackendError last_err;
+	/** \deprecated If any book subroutine failed, this records the failure reason 
+	* (file not found, etc).
+	*/
 	gchar *error_message;
 
-	/* ---------------------------------------------------- */
 	/* Pointer to the backend that is actually used to move data
-	 * between the persistant store and the local engine.  */
+	 * between the persistent store and the local engine.  */
 	QofBackend *backend;
 };
 
+QofBackend *
+qof_session_get_backend (QofSession * session);
 
-QofBackend *qof_session_get_backend (QofSession * session);
-
-void qof_session_push_error (QofSession * session, QofBackendError err,
-							 const gchar *message);
 #endif

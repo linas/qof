@@ -99,96 +99,6 @@ qof_session_call_close_hooks (QofSession * session)
 	}
 }
 
-/* ============================================================= */
-/* error handling routines */
-
-static void
-qof_session_clear_error (QofSession * session)
-{
-	QofBackendError err;
-
-	session->last_err = ERR_BACKEND_NO_ERR;
-	g_free (session->error_message);
-	session->error_message = NULL;
-
-	/* pop the stack on the backend as well. */
-	if (session->backend)
-	{
-		do
-		{
-			err = qof_backend_get_error (session->backend);
-		}
-		while (ERR_BACKEND_NO_ERR != err);
-	}
-}
-
-void
-qof_session_push_error (QofSession * session, QofBackendError err,
-	const gchar *message)
-{
-	if (!session)
-		return;
-
-	g_free (session->error_message);
-
-	session->last_err = err;
-	session->error_message = g_strdup (message);
-}
-
-QofBackendError
-qof_session_get_error (QofSession * session)
-{
-	QofBackendError err;
-
-	if (!session)
-		return ERR_BACKEND_NO_BACKEND;
-
-	/* if we have a local error, return that. */
-	if (ERR_BACKEND_NO_ERR != session->last_err)
-	{
-		return session->last_err;
-	}
-
-	/* maybe we should return a no-backend error ??? */
-	if (!session->backend)
-		return ERR_BACKEND_NO_ERR;
-
-	err = qof_backend_get_error (session->backend);
-	session->last_err = err;
-	return err;
-}
-
-static const gchar *
-get_default_error_message (QofBackendError err 
-						   __attribute__ ((unused)))
-{
-	return "";
-}
-
-const gchar *
-qof_session_get_error_message (QofSession * session)
-{
-	if (!session)
-		return "";
-	if (!session->error_message)
-		return get_default_error_message (session->last_err);
-	return session->error_message;
-}
-
-QofBackendError
-qof_session_pop_error (QofSession * session)
-{
-	QofBackendError err;
-
-	if (!session)
-		return ERR_BACKEND_NO_BACKEND;
-
-	err = qof_session_get_error (session);
-	qof_session_clear_error (session);
-
-	return err;
-}
-
 /* =============================================================== */
 
 static void
@@ -197,12 +107,14 @@ qof_session_init (QofSession * session)
 	if (!session)
 		return;
 
+#ifndef QOF_DISABLE_DEPRECATED
 	session->entity.e_type = QOF_ID_SESSION;
+#endif
 	session->books = g_list_append (NULL, qof_book_new ());
 	session->book_id = NULL;
 	session->backend = NULL;
 
-	qof_session_clear_error (session);
+	qof_error_clear (session);
 }
 
 QofSession *
@@ -1058,7 +970,7 @@ qof_session_load_backend (QofSession * session, gchar *access_method)
 	gchar *msg;
 	gint num;
 	gboolean prov_type;
-	gboolean (*type_check) (const char *);
+	gboolean (*type_check) (const gchar *);
 
 	ENTER (" list=%d", g_slist_length (provider_list));
 	prov_type = FALSE;
@@ -1162,7 +1074,7 @@ qof_session_begin (QofSession * session, const gchar *book_id,
 		session, ignore_lock, book_id ? book_id : "(null)");
 
 	/* Clear the error condition of previous errors */
-	qof_session_clear_error (session);
+	qof_error_clear (session);
 
 	/* Check to see if this session is already open */
 	if (session->book_id)
@@ -1272,7 +1184,7 @@ qof_session_load (QofSession * session, QofPercentageFunc percentage_func)
 	session->books = g_list_append (NULL, newbook);
 	PINFO (" new book=%p", newbook);
 
-	qof_session_clear_error (session);
+	qof_error_clear (session);
 
 	/* This code should be sufficient to initialize *any* backend,
 	 * whether http, postgres, or anything else that might come along.
@@ -1509,7 +1421,7 @@ qof_session_save (QofSession * session,
 		/* If we got to here, then the backend saved everything 
 		 * just fine, and we are done. So return. */
 		/* Return the book_id to previous value. */
-		qof_session_clear_error (session);
+		qof_error_clear (session);
 		LEAVE (" Success");
 		return;
 	}
@@ -1538,7 +1450,7 @@ qof_session_end (QofSession * session)
 		(session->backend->session_end) (session->backend);
 	}
 
-	qof_session_clear_error (session);
+	qof_error_clear (session);
 
 	g_free (session->book_id);
 	session->book_id = NULL;
