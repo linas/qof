@@ -527,7 +527,7 @@ gboolean qof_commit_edit (QofInstance * inst);
 /** \deprecated use ::qof_util_param_commit instead. */
 gboolean
 qof_commit_edit_part2 (QofInstance * inst,
-	void (*on_error) (QofInstance *, QofBackendError),
+	void (*on_error) (QofInstance *, QofErrorId),
 	void (*on_done) (QofInstance *),
 	void (*on_free) (QofInstance *));
 
@@ -753,6 +753,100 @@ gnc_numeric gnc_numeric_reduce (gnc_numeric in);
 #define GNC_NUMERIC_GET_SIGFIGS(X) QOF_HOW_GET_SIGFIGS(X)
 /** \deprecated no replacement. */
 QofBackend *gncBackendInit_file (const char *book_id, void *data);
+
+/** \deprecated use QofError instead.
+backend errors are to be specific to the backend responsible.
+QofBackend itself registers some errors.
+*/
+#define ENUM_LIST_DEP(_) \
+	_(ERR_BACKEND_NO_ERR, =0) \
+	_(ERR_BACKEND_NO_HANDLER,) \
+	_(ERR_BACKEND_NO_BACKEND,) \
+	_(ERR_BACKEND_BAD_URL,) \
+	_(ERR_BACKEND_NO_SUCH_DB,) \
+	_(ERR_BACKEND_CANT_CONNECT,) \
+	_(ERR_BACKEND_CONN_LOST,) \
+	_(ERR_BACKEND_LOCKED,) \
+	_(ERR_BACKEND_READONLY,) \
+	_(ERR_BACKEND_TOO_NEW,) \
+	_(ERR_BACKEND_DATA_CORRUPT,) \
+	_(ERR_BACKEND_SERVER_ERR,) \
+	_(ERR_BACKEND_ALLOC,) \
+	_(ERR_BACKEND_PERM,) \
+	_(ERR_BACKEND_MODIFIED,) \
+	_(ERR_BACKEND_MOD_DESTROY,) \
+	_(ERR_BACKEND_MISC,) \
+	_(ERR_QSF_INVALID_OBJ,) \
+	_(ERR_QSF_INVALID_MAP,) \
+	_(ERR_QSF_BAD_OBJ_GUID,) \
+	_(ERR_QSF_BAD_QOF_VERSION,) \
+	_(ERR_QSF_BAD_MAP,) \
+	_(ERR_QSF_NO_MAP,) \
+	_(ERR_QSF_WRONG_MAP,) \
+	_(ERR_QSF_MAP_NOT_OBJ,) \
+	_(ERR_QSF_OVERFLOW,) \
+	_(ERR_QSF_OPEN_NOT_MERGE,) \
+	_(ERR_FILEIO_FILE_BAD_READ, =1000) \
+	_(ERR_FILEIO_FILE_EMPTY,) \
+	_(ERR_FILEIO_FILE_LOCKERR,) \
+	_(ERR_FILEIO_FILE_NOT_FOUND,) \
+	_(ERR_FILEIO_FILE_TOO_OLD,) \
+	_(ERR_FILEIO_UNKNOWN_FILE_TYPE,) \
+	_(ERR_FILEIO_PARSE_ERROR,) \
+	_(ERR_FILEIO_BACKUP_ERROR,) \
+	_(ERR_FILEIO_WRITE_ERROR,) \
+	_(ERR_FILEIO_READ_ERROR,) \
+	_(ERR_FILEIO_NO_ENCODING,) \
+	_(ERR_NETIO_SHORT_READ, =2000) \
+	_(ERR_NETIO_WRONG_CONTENT_TYPE,) \
+	_(ERR_NETIO_NOT_GNCXML,) \
+	_(ERR_SQL_MISSING_DATA, =3000) \
+	_(ERR_SQL_DB_TOO_OLD,) \
+	_(ERR_SQL_DB_BUSY,) \
+	_(ERR_RPC_HOST_UNK, =4000) \
+	_(ERR_RPC_CANT_BIND,) \
+	_(ERR_RPC_CANT_ACCEPT,) \
+	_(ERR_RPC_NO_CONNECTION,) \
+	_(ERR_RPC_BAD_VERSION,) \
+	_(ERR_RPC_FAILED,) \
+	_(ERR_RPC_NOT_ADDED,)
+	
+DEFINE_ENUM(QofBackendError, ENUM_LIST_DEP)
+
+AS_STRING_DEC(QofBackendError, ENUM_LIST_DEP)
+
+/** \deprecated use qof_error_set instead. */
+void 
+qof_session_push_error (QofSession * session, QofBackendError err,
+						const gchar *message);
+/** \deprecated use qof_error_get_message instead but
+note that this clears the error from the session stack. */
+const gchar *
+qof_session_get_error_message (QofSession * session);
+/** \deprecated use ::qof_error_get_id or
+::qof_error_check instead. */
+QofErrorId 
+qof_session_pop_error (QofSession * session);
+QofErrorId 
+qof_session_get_error (QofSession * session);
+/** \deprecated use qof_error_set_be instead. */
+void 
+qof_backend_set_error (QofBackend * be, QofErrorId err);
+/** \deprecated use qof_error_get_be instead. */
+QofErrorId 
+qof_backend_get_error (QofBackend * be);
+/** \deprecated use qof_error_register instead. */
+void 
+qof_backend_set_message (QofBackend * be, const gchar * format, ...);
+/** \deprecated use qof_error_get_message instead.
+
+\note Unlike the deprecated function, the string
+returned by qof_error_get_message
+must \b NOT be freed by the caller.
+
+*/
+gchar *
+qof_backend_get_message (QofBackend * be);
 
 #endif /* _DEPRECATED_H */
 #endif /* QOF_DISABLE_DEPRECATED */

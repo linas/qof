@@ -45,7 +45,11 @@ including use of localtime - that's why these are deprecated! */
 #endif
 
 #include <glib.h>
+#include <glib/gi18n.h>
 #include "qof.h"
+#include "qofsession-p.h"
+#include "qoferror-p.h"
+
 static QofLogModule log_module = "deprecated";
 static FILE *fout = NULL;
 
@@ -1729,7 +1733,7 @@ qof_commit_edit (QofInstance * inst)
 
 gboolean
 qof_commit_edit_part2 (QofInstance * inst,
-	void (*on_error) (QofInstance *, QofBackendError),
+	void (*on_error) (QofInstance *, QofErrorId),
 	void (*on_done) (QofInstance *), void (*on_free) (QofInstance *))
 {
 	QofBackend *be;
@@ -1738,7 +1742,7 @@ qof_commit_edit_part2 (QofInstance * inst,
 	be = qof_book_get_backend (inst->book);
 	if (be && qof_backend_commit_exists (be))
 	{
-		QofBackendError errcode;
+		QofErrorId errcode;
 
 		do
 		{
@@ -1917,6 +1921,168 @@ gnc_numeric gnc_numeric_reduce (gnc_numeric in)
 {
 	return qof_numeric_reduce (in);
 }
+void
+qof_session_push_error (QofSession * session, QofBackendError err,
+	const gchar *message)
+{
+	if (!session)
+		return;
+	qof_error_set (session, qof_error_register (message));
+}
+const gchar *
+qof_session_get_error_message (QofSession * session)
+{
+	if (!session)
+		return "";
+	if (!session->error_message)
+		return "";
+	return session->error_message;
+}
+QofErrorId
+qof_session_pop_error (QofSession * session)
+{
+	if (!session)
+		return QOF_FATAL;
+	return qof_error_get_id (session);
+}
+QofErrorId
+qof_session_get_error (QofSession * session)
+{
+	QofErrorId err;
+
+	if (!session)
+		return ERR_BACKEND_NO_BACKEND;
+
+	/* if we have a local error, return that. */
+	if (ERR_BACKEND_NO_ERR != session->last_err)
+	{
+		return session->last_err;
+	}
+
+	/* maybe we should return a no-backend error ??? */
+	if (!session->backend)
+		return ERR_BACKEND_NO_ERR;
+
+	err = qof_backend_get_error (session->backend);
+	session->last_err = err;
+	return err;
+}
+void
+qof_backend_set_error (QofBackend * be, QofErrorId err)
+{
+	if (!be)
+		return;
+	qof_error_set_be (be, err);
+}
+QofErrorId
+qof_backend_get_error (QofBackend * be)
+{
+	QofErrorId err;
+	if (!be)
+		return ERR_BACKEND_NO_BACKEND;
+
+	/* use 'stack-pop' semantics */
+	err = be->last_err;
+	be->last_err = ERR_BACKEND_NO_ERR;
+	return err;
+}
+void
+qof_backend_set_message (QofBackend * be, const gchar * format, ...)
+{
+	va_list args;
+	gchar *buffer;
+
+	if (!be)
+		return;
+
+	/* If there's already something here, free it */
+	if (be->error_msg)
+		g_free (be->error_msg);
+
+	if (!format)
+	{
+		be->error_msg = NULL;
+		return;
+	}
+
+	va_start (args, format);
+	buffer = (gchar *) g_strdup_vprintf (format, args);
+	va_end (args);
+
+	be->error_msg = buffer;
+}
+gchar *
+qof_backend_get_message (QofBackend * be)
+{
+	if (!be)
+		return g_strdup ("ERR_BACKEND_NO_BACKEND");
+	if (!be->error_msg)
+		return NULL;
+
+	return g_strdup(qof_error_get_message_be (be));
+}
+
+/* qof_backend_set_error with old values but no strings.
+*/
+
+AS_STRING_FUNC(QofBackendError, ENUM_LIST_DEP)
+
+void
+set_deprecated_errors (void)
+{
+	QofErrorId err;
+
+	for (err = 0;err < ERR_LAST; err++)
+	{
+		switch (err)
+		{
+			case ERR_BACKEND_NO_ERR:
+			{
+				break;
+			}
+			case ERR_BACKEND_NO_HANDLER:
+			case ERR_BACKEND_NO_BACKEND:
+			case ERR_BACKEND_BAD_URL:
+			case ERR_BACKEND_CANT_CONNECT:
+			case ERR_BACKEND_CONN_LOST:
+			case ERR_BACKEND_TOO_NEW:
+			case ERR_BACKEND_NO_SUCH_DB:
+			case ERR_BACKEND_LOCKED:
+			case ERR_BACKEND_READONLY:
+			case ERR_BACKEND_DATA_CORRUPT:
+			case ERR_BACKEND_SERVER_ERR:
+			case ERR_BACKEND_PERM:
+			case ERR_BACKEND_MISC:
+			case ERR_QSF_INVALID_OBJ:
+			case ERR_QSF_INVALID_MAP:
+			case ERR_QSF_BAD_QOF_VERSION:
+			case ERR_QSF_BAD_MAP:
+			case ERR_QSF_BAD_OBJ_GUID:
+			case ERR_QSF_NO_MAP:
+			case ERR_QSF_WRONG_MAP:
+			case ERR_QSF_MAP_NOT_OBJ:
+			case ERR_QSF_OVERFLOW:
+			case ERR_QSF_OPEN_NOT_MERGE:
+			case ERR_FILEIO_FILE_BAD_READ:
+			case ERR_FILEIO_PARSE_ERROR:
+			case ERR_FILEIO_FILE_EMPTY:
+			case ERR_FILEIO_FILE_NOT_FOUND:
+			case ERR_FILEIO_FILE_TOO_OLD:
+			case ERR_FILEIO_UNKNOWN_FILE_TYPE:
+			case ERR_FILEIO_BACKUP_ERROR:
+			case ERR_FILEIO_WRITE_ERROR:
+			case ERR_SQL_DB_TOO_OLD:
+			case ERR_SQL_DB_BUSY:
+			{
+				deprecated_support (err, QofBackendErrorasString(err));
+				break;
+			}
+		default:
+			break;
+		}
+	}
+}
+
 
 /* ==================================================================== */
 #endif /* QOF_DISABLE_DEPRECATED */
