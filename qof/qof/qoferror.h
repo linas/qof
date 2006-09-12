@@ -119,11 +119,28 @@ to indicate a fatal error, e.g. g_return_val_if_fail
 
 @param err_message The user-friendly string to add as
 	an error, already marked for translation.
+@param use_file  TRUE if the session filename should be
+	substituted in the string - err_message \b must
+	contain a bare string format specifier: %s. Note that 
+	flags, width, precision or size specifiers are \b not
+	accepted and the filename is output in full,
+	complete with the access_method.
+	e.g. file:/home/user/app/data.xml
+
+To use a different presentation of the filename or other
+customised strings, prepare the error message before
+registering it with QofError.
+
+Registered errors are cleared when the session is destroyed.
+
+Applications need to plan the use of locally registered
+error codes so that the same errors are not repeatedly
+registered.
 
 @return The QofErrorId of this error.
 */
 QofErrorId
-qof_error_register (const gchar * err_message);
+qof_error_register (const gchar * err_message, gboolean use_file);
 
 /** \brief Add an error to the stack for this session.
 
@@ -144,14 +161,17 @@ presented to the user.
 void
 qof_error_clear (QofSession * session);
 
+/** \brief Check for errors
 
-/** \brief Check a session for errors
-
-@param session The session to check.
+@param be The backend to check.
 
 @return QOF_SUCCESS if no errors have been set, otherwise
 	the QofErrorId of the most recently set error.
 */
+QofErrorId
+qof_error_check_be (QofBackend * be);
+
+/** alternative for applications. */
 QofErrorId
 qof_error_check (QofSession * session);
 

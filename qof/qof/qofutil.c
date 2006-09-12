@@ -35,7 +35,6 @@
 #include "qof.h"
 #include "qofundo-p.h"
 #include "qofbook-p.h"
-#include "qoferror-p.h"
 
 static QofLogModule log_module = QOF_MOD_UTIL;
 
@@ -303,24 +302,7 @@ qof_util_param_commit (QofInstance * inst, const QofParam * param)
 		return FALSE;
 	be = qof_book_get_backend (inst->book);
 	if (be && qof_backend_commit_exists (be))
-	{
-		QofBackendError errcode;
-
-		do
-		{
-			errcode = qof_backend_get_error (be);
-		}
-		while (ERR_BACKEND_NO_ERR != errcode);
-
 		qof_backend_run_commit (be, inst);
-		errcode = qof_backend_get_error (be);
-		if (ERR_BACKEND_NO_ERR != errcode)
-		{
-			/* Push error back onto the stack */
-			qof_backend_set_error (be, errcode);
-			return FALSE;
-		}
-	}
 	if (param != NULL)
 	{
 		undo_data = inst->book->undo_data;
@@ -817,7 +799,6 @@ qof_init (void)
 	qof_object_initialize ();
 	qof_query_init ();
 	qof_book_register ();
-	qof_error_init ();
 }
 
 void
@@ -827,7 +808,6 @@ qof_close (void)
 	qof_object_shutdown ();
 	guid_shutdown ();
 	qof_date_close ();
-	qof_error_close ();
 	qof_util_string_cache_destroy ();
 }
 

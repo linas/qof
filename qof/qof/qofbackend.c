@@ -50,13 +50,13 @@ qof_backend_init (QofBackend * be)
 	be->load_config = NULL;
 	be->events_pending = NULL;
 	be->process_events = NULL;
-	be->last_err = ERR_BACKEND_NO_ERR;
-	if (be->error_msg)
-		g_free (be->error_msg);
-	be->error_msg = NULL;
 	be->percentage = NULL;
 	be->backend_configuration = kvp_frame_new ();
 #ifndef QOF_DISABLE_DEPRECATED
+	be->last_err = QOF_SUCCESS;
+	if (be->error_msg)
+		g_free (be->error_msg);
+	be->error_msg = NULL;
 	/** \deprecated */
 	be->price_lookup = NULL;
 	/** \deprecated */

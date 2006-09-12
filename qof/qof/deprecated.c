@@ -45,7 +45,8 @@ including use of localtime - that's why these are deprecated! */
 #endif
 
 #include <glib.h>
-#include <glib/gi18n.h>
+#include <libintl.h>
+#define _(String) dgettext (GETTEXT_PACKAGE, String)
 #include "qof.h"
 #include "qofsession-p.h"
 #include "qoferror-p.h"
@@ -1927,7 +1928,7 @@ qof_session_push_error (QofSession * session, QofBackendError err,
 {
 	if (!session)
 		return;
-	qof_error_set (session, qof_error_register (message));
+	qof_error_set (session, qof_error_register (message, FALSE));
 }
 const gchar *
 qof_session_get_error_message (QofSession * session)

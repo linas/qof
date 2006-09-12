@@ -10,7 +10,11 @@
 
 	* backend/gda/qof-gda.c,
 	backend/gda/qof-gda.h : improve gda backend 
-	with error handling and data sources.
+	with error handling and data sources. Correct
+	gettext setup. Move to QofError.
+	
+	* backend/sqlite/qof-sqlite.c : Implement gettext
+	handling via dgettext.
 
 	* qof/qof.h,
 	qof/qoferror-p.h,
@@ -20,6 +24,12 @@
 
 	* backend/file/qsf-backend.c,
 	backend/file/qsf-xml-map.c : Beginning move to QofError.
+
+	* backend/file/qsf-backend.c,
+	backend/file/qsf-xml-map.c,
+	backend/file/qsf-xml.c,
+	backend/file/qsf-xml.h : Fixing struct name conventions,
+	completely use of QofError.
 
 	* qof/deprecated.c,
 	qof/deprecated.h : Deprecating backend and session error

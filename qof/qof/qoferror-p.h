@@ -29,6 +29,15 @@
 #define ERR_LAST 5000
 void
 set_deprecated_errors (void);
+/** \deprecated setup the deprecated error values
+
+The deprecated error handlers only accepted the error
+number, not the string, so this is continued here. The
+err_message for deprecated error values is just the name
+of the QofBackendError as a string. No format specifiers
+are supported - the string is not intended to be passed
+to the user.
+*/
 void
 deprecated_support (QofErrorId id, const gchar * err_message);
 #endif

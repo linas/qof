@@ -48,7 +48,7 @@ struct _QofSession
 	 * file:/some/where, or sql:server.host.com:555
 	 */
 	gchar *book_id;
-
+#ifndef QOF_DISABLE_DEPRECATED
 	/** \deprecated If any book subroutine failed, this records the failure reason 
 	* (file not found, etc).
 	*/
@@ -57,7 +57,7 @@ struct _QofSession
 	* (file not found, etc).
 	*/
 	gchar *error_message;
-
+#endif
 	/* Pointer to the backend that is actually used to move data
 	 * between the persistent store and the local engine.  */
 	QofBackend *backend;
