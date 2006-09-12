@@ -10,12 +10,14 @@ use strict;
 
 use File::Basename;
 
-my @cvsignores = `find backend -name '.cvsignore'`;
-my @possible_files = `find backend -name '*.c'`;
+my @oldignores = qw(qofquery-deserial.c qofquery-serialize.c );
+my @cvsignores = `find backend qof -name '.cvsignore'`;
+my @ignore_all = (@cvsignores, @oldignores);
+my @possible_files = `find backend qof -name '*.c'`;
 
 chomp(my $cwd = `pwd`);
 
-my %ignores;
+my %ignores = ('qof/qofquery-deserial.c' => 1, 'qof/qofquery-serialize.c' => 1);
 
 foreach my $one_ignore (@cvsignores) {
   chomp($one_ignore);
