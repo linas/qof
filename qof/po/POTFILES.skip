@@ -1,2 +1,4 @@
 lib/libsql/parser.c
 lib/libsql/sql_parser.c
+backend/dwi/dwi-backend.c
+backend/dwi/qofmap.c
