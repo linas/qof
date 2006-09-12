@@ -14,6 +14,7 @@ libqof_la_SOURCES =  \
    qofbackend.c      \
    qofclass.c        \
    qofchoice.c       \
+   qoferror.c        \
    qofevent.c        \
    qofgobj.c         \
    qofid.c           \
@@ -48,6 +49,7 @@ qofinclude_HEADERS = \
    qofbackend-p.h \
    qofclass.h  \
    qofchoice.h \
+   qoferror.h \
    qofevent.h \
    qofgobj.h \
    qofid.h \
@@ -75,6 +77,7 @@ qofinclude_HEADERS = \
 noinst_HEADERS = \
    md5.h  \
    qofclass-p.h  \
+   qoferror-p.h \
    qofevent-p.h \
    qofmath128.h  \
    qofquery-deserial.h \

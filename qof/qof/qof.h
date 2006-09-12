@@ -39,7 +39,9 @@
 	@ingroup QOF
     @addtogroup Query Query:      Querying for Objects
     @ingroup QOF
-    @addtogroup Trace Trace:      Error Reporting and Debugging
+	@addtogroup Error Error: Extensible error handling.
+	@ingroup QOF
+    @addtogroup Trace Trace:      Debugging support
     @ingroup QOF
     @addtogroup Event Event:      QOF event handlers.
     @ingroup QOF
@@ -76,6 +78,7 @@
 #include "qofobject.h"
 #include "qofquery.h"
 #include "qofquerycore.h"
+#include "qoferror.h"
 #include "qofsession.h"
 #include "qofsql.h"
 #include "qofchoice.h"
