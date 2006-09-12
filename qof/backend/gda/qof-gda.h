@@ -37,6 +37,84 @@ in a GDA plugin (mysql, sqlite, postgres or odbc) when available,
 or XML if not. Data can be queried independently of which backend
 is in use via QofQuery. 
 
+<b>QofIdType and GdaValue conversions.</b>
+
+GdaValue supports a much wider range of value types than
+QofIdType provides. QOF uses a subset of GdaValueType 
+and some of the conversions may not appear intuitive.
+
+GDA_VALUE_TYPE_DATE is not equivalent to QofDate -
+the GdaValueType only supports day, month and year.
+GDA_VALUE_TYPE_TIME is not equivalent to QofTime - 
+the GdaValueType only supports hour, minute and second
+(all gushort values) and a glong for timezone (::qd_gmt_off).
+Both would involve data loss in converting to QofDate or QofTime.
+QOF therefore uses GDA_VALUE_TYPE_TIMESTAMP for QofTime.
+
+GdaValueType also includes GDA_VALUE_TYPE_MONEY and 
+GDA_VALUE_TYPE_NUMERIC but these do not match with QofNumeric.
+GDA_VALUE_TYPE_MONEY is just a double with a currency mnemonic
+as a string (QOF does not store the currency with the numeric.)
+GDA_VALUE_TYPE_NUMERIC has a string value for the number and
+requires precision and width settings as would be used by 
+printf. QofNumeric involves a denominator and numerator so
+conversion to either a string or a double is required. Currently,
+QOF uses a double.
+
+KVP is another anomaly, GDA_VALUE_TYPE_LIST may or may not work.
+
+Note that QOF_TYPE_GUID is stored as a string.
+
+\verbatim
+typedef enum {
+	GDA_VALUE_TYPE_NULL,
+	GDA_VALUE_TYPE_BIGINT,			QOF_TYPE_INT64
+	GDA_VALUE_TYPE_BIGUINT,
+	GDA_VALUE_TYPE_BINARY,
+	GDA_VALUE_TYPE_BLOB,
+	GDA_VALUE_TYPE_BOOLEAN,			QOF_TYPE_BOOLEAN
+	GDA_VALUE_TYPE_DATE,
+	GDA_VALUE_TYPE_DOUBLE,			QOF_TYPE_DOUBLE, QOF_TYPE_NUMERIC
+									QOF_TYPE_DEBCRED
+	GDA_VALUE_TYPE_GEOMETRIC_POINT,
+	GDA_VALUE_TYPE_GOBJECT,
+	GDA_VALUE_TYPE_INTEGER,			QOF_TYPE_INT32
+	GDA_VALUE_TYPE_LIST,			QOF_TYPE_KVP
+	GDA_VALUE_TYPE_MONEY,
+	GDA_VALUE_TYPE_NUMERIC,			
+	GDA_VALUE_TYPE_SINGLE,
+	GDA_VALUE_TYPE_SMALLINT,
+	GDA_VALUE_TYPE_SMALLUINT,
+	GDA_VALUE_TYPE_STRING,			QOF_TYPE_STRING, QOF_TYPE_GUID
+									QOF_TYPE_CHAR
+	GDA_VALUE_TYPE_TIME,
+	GDA_VALUE_TYPE_TIMESTAMP,		QOF_TYPE_TIME
+	GDA_VALUE_TYPE_TINYINT,
+	GDA_VALUE_TYPE_TINYUINT,
+	GDA_VALUE_TYPE_TYPE,
+	GDA_VALUE_TYPE_UINTEGER,
+	GDA_VALUE_TYPE_UNKNOWN
+} GdaValueType;
+
+typedef struct {
+	gint defined_size;
+	gchar *name;				param_name
+	gchar *table;				obj->e_type
+	gchar *caption;
+	gint scale;
+	GdaValueType gda_type;
+	gboolean allow_null;
+	gboolean primary_key;
+	gboolean unique_key;
+	gchar *references;
+	gboolean auto_increment;
+	glong auto_increment_start;
+	glong auto_increment_step;
+	gint position;
+	GdaValue *default_value;
+} GdaFieldAttributes;
+\endverbatim
+
 @{
 */
 /** @file  qof-gda.h
