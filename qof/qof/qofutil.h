@@ -33,7 +33,6 @@
 #define QOF_UTIL_H
 
 #include <stddef.h>
-#include "qof.h"
 #include "qoflog.h"
 #include "qofdate.h"
 #include "qofutil.h"

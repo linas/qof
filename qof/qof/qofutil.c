@@ -35,6 +35,7 @@
 #include "qof.h"
 #include "qofundo-p.h"
 #include "qofbook-p.h"
+#include "qoferror-p.h"
 
 static QofLogModule log_module = QOF_MOD_UTIL;
 
@@ -816,6 +817,7 @@ qof_init (void)
 	qof_object_initialize ();
 	qof_query_init ();
 	qof_book_register ();
+	qof_error_init ();
 }
 
 void
@@ -825,6 +827,7 @@ qof_close (void)
 	qof_object_shutdown ();
 	guid_shutdown ();
 	qof_date_close ();
+	qof_error_close ();
 	qof_util_string_cache_destroy ();
 }
 
