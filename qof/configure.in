@@ -454,7 +454,7 @@ echo "QOF_LIBS    :   $QOF_LIBS"
 echo "DWI_LIBS    :   $DWI_LIBS"
 echo "1st backend :   $backend"
 echo "2nd backend :   $backend2"
-echo "gda backend :   libgda2 == $GDA_VERSION"
+echo "libgda      :   $GDA_VERSION"
 echo "prefix      :   $prefix"
 echo "data dir    :   "`eval echo $DATADIR`
 echo "XML dir     :   "`eval echo $QSF_SCHEMA_DIR`
