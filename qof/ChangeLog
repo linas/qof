@@ -1,5 +1,28 @@
 2006-09-13  Neil Williams <linux@codehelp.co.uk>
 
+	* configure.in,
+	backend/Makefile.am,
+	backend/sqlite/Makefile.am : Fix detection 
+	of sqlite and backend selection options.
+
+	* backend/file/qsf-backend.c : Avoid closing
+	a test file if open failed.
+
+	* doc/Makefile.am : Ensure doxy symlink is
+	cleaned up.
+
+	* po/en_GB.po : New strings.
+
+	* qof/kvp-util.c : Tweak.
+	* qof/qofbookmerge.c : Tweak.
+
+	* qof/qoferror.c : Clarify variable names.
+	Improve handling of errors from deprecated 
+	code.
+
+	* qof/qofsession.c : Improve error handling
+	using QofError.
+
 	* backend/sqlite/qof-sqlite.c : Implement
 	QofError handling.
 	* qof/qoferror.c,
