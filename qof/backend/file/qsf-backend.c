@@ -325,7 +325,7 @@ qsf_session_begin (QofBackend * be, QofSession * session,
 		path = g_strdup (book_path);
 		if (!g_ascii_strncasecmp (path, "file:", 5))
 		{
-			p = g_new (gchar, strlen (path) - 5 + 1);
+			p = g_new0 (gchar, strlen (path) - 5 + 1);
 			strcpy (p, path + 5);
 		}
 		qsf_be->fullpath = g_strdup (p);
@@ -583,12 +583,14 @@ qsf_file_type (QofBackend * be, QofBook * book)
 		(_("There was an error parsing the file '%s'."), TRUE);
 	params = qsf_be->params;
 	params->book = book;
+	DEBUG (" qsf_be->fullpath=%s", qsf_be->fullpath);
 	path = g_strdup (qsf_be->fullpath);
 	f = fopen (path, "r");
 	if (!f)
 		qof_error_set_be (be, qof_error_register
 		(_("There was an error reading the file '%s'."), TRUE));
-	fclose (f);
+	else
+		fclose (f);
 	params->filepath = g_strdup (path);
 	result = is_our_qsf_object_be (params);
 	if (result)
@@ -916,7 +918,7 @@ reference_list_lookup (gpointer data, gpointer user_data)
 	object_node = params->output_node;
 	ent = params->qsf_ent;
 	ns = params->qsf_ns;
-	starter = g_new (QofEntityReference, 1);
+	starter = g_new0 (QofEntityReference, 1);
 	starter->ent_guid = qof_entity_get_guid (ent);
 	starter->type = g_strdup (ent->e_type);
 	starter->param = ref_param;
@@ -1268,7 +1270,7 @@ string_to_kvp_value (const gchar * content, KvpValueType type)
 		}
 	case KVP_TYPE_GUID:
 		{
-			cm_guid = g_new (GUID, 1);
+			cm_guid = g_new0 (GUID, 1);
 			if (TRUE == string_to_guid (content, cm_guid))
 			{
 				return kvp_value_new_guid (cm_guid);
@@ -1461,7 +1463,7 @@ qsf_object_commitCB (gpointer key, gpointer value, gpointer data)
 	}
 	if (safe_strcmp (qof_type, QOF_TYPE_GUID) == 0)
 	{
-		cm_guid = g_new (GUID, 1);
+		cm_guid = g_new0 (GUID, 1);
 		if (TRUE !=
 			string_to_guid ((gchar *) xmlNodeGetContent (node), cm_guid))
 		{
@@ -1583,7 +1585,7 @@ qsf_object_commitCB (gpointer key, gpointer value, gpointer data)
 		/* retrieve the *type* of the collection, ignore any contents. */
 		qsf_coll = cm_param->param_getfcn (qsf_ent, cm_param);
 		type = qof_collection_get_type (qsf_coll);
-		cm_guid = g_new (GUID, 1);
+		cm_guid = g_new0 (GUID, 1);
 		if (TRUE !=
 			string_to_guid ((gchar *) xmlNodeGetContent (node), cm_guid))
 		{
@@ -1634,7 +1636,7 @@ qsf_backend_new (void)
 	qsf_be = g_new0 (QSFBackend, 1);
 	be = (QofBackend *) qsf_be;
 	qof_backend_init (be);
-	qsf_be->params = g_new (QsfParam, 1);
+	qsf_be->params = g_new0 (QsfParam, 1);
 	qsf_be->params->be = be;
 	qsf_param_init (qsf_be->params);
 	qsf_be->be.session_begin = qsf_session_begin;
