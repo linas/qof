@@ -28,6 +28,7 @@ doc: doxygen.cfg Makefile
 
 clean-local:
 	${RM} doxygen.log
+	if test -h ../website/doxy; then rm ../website/doxy; fi
 
 qofdocdir = ${docdir}/qof/html/doxy
 
