@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: qof 0.6.4\n"
 "Report-Msgid-Bugs-To: qof-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2006-09-12 16:57+0100\n"
+"POT-Creation-Date: 2006-09-13 11:03+0100\n"
 "PO-Revision-Date: 2006-05-19 22:58+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
@@ -171,6 +171,31 @@ msgid ""
 "need to be modified to work with your current QOF installation."
 msgstr ""
 
+#: ../backend/sqlite/qof-sqlite.c:544
+#, c-format
+msgid "Unable to open the sqlite database '%s'."
+msgstr ""
+
+#: ../backend/sqlite/qof-sqlite.c:569
+msgid "Please provide a filename for sqlite."
+msgstr ""
+
+#: ../backend/sqlite/qof-sqlite.c:678
+msgid "Unable to delete record."
+msgstr ""
+
+#: ../backend/sqlite/qof-sqlite.c:680
+msgid "Unable to create record."
+msgstr ""
+
+#: ../backend/sqlite/qof-sqlite.c:682
+msgid "Unable to insert a new record."
+msgstr ""
+
+#: ../backend/sqlite/qof-sqlite.c:684
+msgid "Unable to update existing record."
+msgstr ""
+
 #: ../backend/gda/qof-gda.c:203
 #, c-format
 msgid "GDA Provider '%s' could not be found"
@@ -227,25 +252,32 @@ msgstr ""
 msgid "The name of this data source as specified in the GDA configuration."
 msgstr ""
 
-#: ../qof/qofsession.c:1030
+#: ../qof/qofsession.c:1032
 #, c-format
 msgid "Failed to load '%s'."
 msgstr ""
 
-#: ../qof/qofsession.c:1067
+#: ../qof/qofsession.c:1078
+msgid "This book appears to be open already."
+msgstr ""
+
+#: ../qof/qofsession.c:1087
 #, c-format
 msgid "Cannot parse the URL '%s'"
 msgstr ""
 
-#: ../qof/qofsession.c:1080
-msgid "This book appears to be open already."
+#: ../qof/qofsession.c:1122
+#, c-format
+msgid ""
+"Unable to locate a suitable backend for '%s' - please check your "
+"installation."
 msgstr ""
 
-#: ../qof/qofsession.c:1351 ../qof/qofsession.c:1388
+#: ../qof/qofsession.c:1356 ../qof/qofsession.c:1393
 msgid "Failed to load backend, no suitable handler."
 msgstr ""
 
-#: ../qof/qofsql.c:755 ../qof/qofsql.c:782
+#: ../qof/qofsql.c:757 ../qof/qofsql.c:784
 #, c-format
 msgid ""
 "When converting SQLite strings into numbers, an overflow has been detected. "

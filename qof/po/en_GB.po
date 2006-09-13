@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: QOF 0.8.0\n"
 "Report-Msgid-Bugs-To: qof-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2006-09-12 16:57+0100\n"
-"PO-Revision-Date: 2006-09-12 16:18+0100\n"
+"POT-Creation-Date: 2006-09-13 11:03+0100\n"
+"PO-Revision-Date: 2006-09-13 11:03+0100\n"
 "Last-Translator: Neil Williams <linux@codehelp.co.uk>\n"
 "Language-Team: English (British) <en_gb@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -200,6 +200,31 @@ msgstr ""
 "The QSF Map file '%s' was written for a different version of QOF. It may "
 "need to be modified to work with your current QOF installation."
 
+#: ../backend/sqlite/qof-sqlite.c:544
+#, c-format
+msgid "Unable to open the sqlite database '%s'."
+msgstr "Unable to open the sqlite database '%s'."
+
+#: ../backend/sqlite/qof-sqlite.c:569
+msgid "Please provide a filename for sqlite."
+msgstr "Please provide a filename for sqlite."
+
+#: ../backend/sqlite/qof-sqlite.c:678
+msgid "Unable to delete record."
+msgstr "Unable to delete record."
+
+#: ../backend/sqlite/qof-sqlite.c:680
+msgid "Unable to create record."
+msgstr "Unable to create record."
+
+#: ../backend/sqlite/qof-sqlite.c:682
+msgid "Unable to insert a new record."
+msgstr "Unable to insert a new record."
+
+#: ../backend/sqlite/qof-sqlite.c:684
+msgid "Unable to update existing record."
+msgstr "Unable to update existing record."
+
 #: ../backend/gda/qof-gda.c:203
 #, c-format
 msgid "GDA Provider '%s' could not be found"
@@ -258,25 +283,34 @@ msgstr "Name of this data source."
 msgid "The name of this data source as specified in the GDA configuration."
 msgstr "The name of this data source as specified in the GDA configuration."
 
-#: ../qof/qofsession.c:1030
+#: ../qof/qofsession.c:1032
 #, c-format
 msgid "Failed to load '%s'."
 msgstr "Failed to load '%s'."
 
-#: ../qof/qofsession.c:1067
+#: ../qof/qofsession.c:1078
+msgid "This book appears to be open already."
+msgstr "This book appears to be open already."
+
+#: ../qof/qofsession.c:1087
 #, c-format
 msgid "Cannot parse the URL '%s'"
 msgstr "Cannot parse the URL '%s'"
 
-#: ../qof/qofsession.c:1080
-msgid "This book appears to be open already."
-msgstr "This book appears to be open already."
+#: ../qof/qofsession.c:1122
+#, c-format
+msgid ""
+"Unable to locate a suitable backend for '%s' - please check your "
+"installation."
+msgstr ""
+"Unable to locate a suitable backend for '%s' - please check your "
+"installation."
 
-#: ../qof/qofsession.c:1351 ../qof/qofsession.c:1388
+#: ../qof/qofsession.c:1356 ../qof/qofsession.c:1393
 msgid "Failed to load backend, no suitable handler."
 msgstr "Failed to load backend, no suitable handler."
 
-#: ../qof/qofsql.c:755 ../qof/qofsql.c:782
+#: ../qof/qofsql.c:757 ../qof/qofsql.c:784
 #, c-format
 msgid ""
 "When converting SQLite strings into numbers, an overflow has been detected. "
