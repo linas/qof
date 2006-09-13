@@ -1,3 +1,10 @@
+September 2006: Delays in libgda support.
+	See backend/README for more information. The stable
+	release of libgda is unable to fully support a QOF backend
+	module and after the backporting and delays suffered
+	within pilot-qof, I am unwilling to go chasing an unstable
+	or CVS release. libgda support is therefore delayed.
+
 September 2006: Extensible error handling.
 	The backend errors have been extended into an extensible
 	error handler that is available either through the

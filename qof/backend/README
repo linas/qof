@@ -16,3 +16,13 @@ Future developments will include building a common SQL backend
 using libgda that will provide pluggable access to any libgda
 compatible database (currently including Oracle, Postgres, MySQL
 SQLite and others). See http://www.gnome-db.org/
+
+Unfortunately, although work has begun to use libgda, the current
+stable release does not support creating (or deleting) tables. The
+module will be revisited when this support is complete. Note that
+there are known API changes in libgda between the current stable
+libgda2-3 1.2.3 release and the unstable/CVS code. These changes 
+may become more noticeable in the period to the next stable
+release.
+September 2006.
+http://mail.gnome.org/archives/gnome-db-list/2006-September/msg00058.html

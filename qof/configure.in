@@ -428,7 +428,6 @@ backend/dwi/Makefile
 backend/file/Makefile
 backend/file/qsf-dir.h
 backend/sqlite/Makefile
-backend/gda/Makefile
 doc/Makefile
 doc/html/Makefile
 doc/doxygen.cfg

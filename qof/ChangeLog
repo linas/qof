@@ -1,6 +1,20 @@
 2006-09-13  Neil Williams <linux@codehelp.co.uk>
 
 	* configure.in,
+	NEWS,
+	doc/doxygen.cfg.in,
+	make-potfiles.in,
+	backend/Makefile.am,
+	backend/README,
+	website/index.html,
+	website/hacking.html : Explaining decision to stall
+	the libqof-backend-gda0 module until such time as
+	libgda supports creating tables in new or existing
+	data sources.
+
+2006-09-13  Neil Williams <linux@codehelp.co.uk>
+
+	* configure.in,
 	backend/Makefile.am,
 	backend/sqlite/Makefile.am : Fix detection 
 	of sqlite and backend selection options.
@@ -21,7 +35,8 @@
 	code.
 
 	* qof/qofsession.c : Improve error handling
-	using QofError.
+	using QofError. Add libgda backend to provider 
+	list.
 
 	* backend/sqlite/qof-sqlite.c : Implement
 	QofError handling.
