@@ -75,29 +75,29 @@ qof_error_close (void)
 void
 deprecated_support (QofErrorId id, const gchar * err_message)
 {
-	QofError * err;
+	QofError * qerr;
 
 	if (id >= ERR_LAST)
 		return;
-	err = g_new0 (QofError, 1);
-	err->id = id;
-	err->message = g_strdup (err_message);
-	g_hash_table_insert (error_table, GINT_TO_POINTER(id), err);
+	qerr = g_new0 (QofError, 1);
+	qerr->id = id;
+	qerr->message = g_strdup (err_message);
+	g_hash_table_insert (error_table, GINT_TO_POINTER(id), qerr);
 }
 #endif
 
 QofErrorId
 qof_error_register (const gchar * err_message, gboolean use_file)
 {
-	QofError * err;
+	QofError * qerr;
 
 	ENTER (" ");
-	err = g_new0 (QofError, 1);
+	qerr = g_new0 (QofError, 1);
 	count++;
 #ifndef QOF_DISABLE_DEPRECATED
 	count += ERR_LAST;
 #endif
-	err->id = count;
+	qerr->id = count;
 	if (use_file)
 	{
 		gchar * spec;
@@ -105,22 +105,22 @@ qof_error_register (const gchar * err_message, gboolean use_file)
 		spec = g_strrstr (err_message, "%s");
 		use_file = (spec) ? TRUE : FALSE;
 	}
-	err->use_file = use_file;
-	err->message = g_strdup (err_message);
-	g_hash_table_insert (error_table, GINT_TO_POINTER(err->id), err);
+	qerr->use_file = use_file;
+	qerr->message = g_strdup (err_message);
+	g_hash_table_insert (error_table, GINT_TO_POINTER(qerr->id), qerr);
 	LEAVE (" ");
-	return err->id;
+	return qerr->id;
 }
 
 void
 qof_error_unregister (QofErrorId id)
 {
-	QofError * err;
+	QofError * qerr;
 	gboolean result;
 
 	ENTER (" ");
-	err = g_hash_table_lookup (error_table, GINT_TO_POINTER(id));
-	qof_error_free (err);
+	qerr = g_hash_table_lookup (error_table, GINT_TO_POINTER(id));
+	qof_error_free (qerr);
 	result = g_hash_table_remove (error_table, 
 		GINT_TO_POINTER(id));
 	if (!result)
@@ -131,21 +131,31 @@ qof_error_unregister (QofErrorId id)
 void
 qof_error_set (QofSession * session, QofErrorId error)
 {
-	QofError * err, * set;
+	QofError * qerr, * set;
 
 	g_return_if_fail (session);
 	if (error == QOF_SUCCESS)
 		return;
-	err = g_hash_table_lookup (error_table, GINT_TO_POINTER(error));
-	if (!err)
+	qerr = g_hash_table_lookup (error_table, GINT_TO_POINTER(error));
+	if (!qerr)
+		return;
+#ifndef QOF_DISABLE_DEPRECATED
+	session->last_err = error;
+	if (qerr->use_file)
+		session->error_message = g_strdup_printf (qerr->message,
+			qof_session_get_url (session));
+	else
+		session->error_message = g_strdup (qerr->message);
+#endif
+	if (!session->backend)
 		return;
 	/* create a new error for the list */
 	set = g_new0 (QofError, 1);
-	if (err->use_file)
-		set->message = g_strdup_printf (err->message,
+	if (qerr->use_file)
+		set->message = g_strdup_printf (qerr->message,
 			qof_session_get_file_path (session));
 	else
-		set->message = g_strdup (err->message);
+		set->message = g_strdup (qerr->message);
 	set->id = error;
 	set->qt = qof_time_get_current ();
 	session->backend->error_stack = 
@@ -154,7 +164,6 @@ qof_error_set (QofSession * session, QofErrorId error)
 	if (session->error_message)
 		g_free (session->error_message);
 	session->error_message = g_strdup (set->message);
-	session->last_err = error;
 	session->backend->last_err = error;
 #endif
 }
@@ -162,17 +171,17 @@ qof_error_set (QofSession * session, QofErrorId error)
 void
 qof_error_set_be (QofBackend * be, QofErrorId error)
 {
-	QofError * err, * set;
+	QofError * qerr, * set;
 
 	g_return_if_fail (be);
 	if (error == QOF_SUCCESS)
 		return;
-	err = g_hash_table_lookup (error_table, GINT_TO_POINTER(error));
-	if (!err)
+	qerr = g_hash_table_lookup (error_table, GINT_TO_POINTER(error));
+	if (!qerr)
 		return;
 	/* create a new error for the list */
 	set = g_new0 (QofError, 1);
-	set->message = g_strdup (err->message);
+	set->message = g_strdup (qerr->message);
 	set->id = error;
 	set->qt = qof_time_get_current ();
 	be->error_stack = g_list_prepend (be->error_stack,
@@ -217,30 +226,31 @@ qof_error_check (QofSession * session)
 QofErrorId
 qof_error_check_be (QofBackend * be)
 {
-	QofError * err;
+	QofError * qerr;
 	GList * first;
 
-	g_return_val_if_fail (be, QOF_FATAL);
+	if (!be)
+		return QOF_FATAL;
 	if (g_list_length (be->error_stack) == 0)
 		return QOF_SUCCESS;
 	first = g_list_first (be->error_stack);
-	err = (QofError*)first->data;
-	if (!err)
+	qerr = (QofError*)first->data;
+	if (!qerr)
 		return QOF_FATAL;
-	return err->id;
+	return qerr->id;
 }
 
 QofTime *
 qof_error_get_time_be (QofBackend * be)
 {
-	QofError * err;
+	QofError * qerr;
 	GList * first;
 
 	if (g_list_length(be->error_stack) == 0)
 		return NULL;
 	first = g_list_first (be->error_stack);
-	err = (QofError*)first->data;
-	return err->qt;
+	qerr = (QofError*)first->data;
+	return qerr->qt;
 }
 
 QofTime *
@@ -253,7 +263,7 @@ qof_error_get_time (QofSession * session)
 static void
 set_previous_error (QofBackend * be)
 {
-	QofError * err;
+	QofError * qerr;
 	GList * pop;
 
 	if (!be)
@@ -261,9 +271,9 @@ set_previous_error (QofBackend * be)
 	if (g_list_length(be->error_stack) == 0)
 		return;
 	pop = g_list_last (be->error_stack);
-	err = (QofError*)pop->data;
-	be->last_err = err->id;
-	be->error_msg = err->message;
+	qerr = (QofError*)pop->data;
+	be->last_err = qerr->id;
+	be->error_msg = qerr->message;
 }
 #endif
 
@@ -276,13 +286,13 @@ qof_error_get_id (QofSession * session)
 	id = qof_error_get_id_be (session->backend);
 #ifndef QOF_DISABLE_DEPRECATED
 	{
-		QofError * err;
+		QofError * qerr;
 
-		err = g_hash_table_lookup (error_table, 
+		qerr = g_hash_table_lookup (error_table, 
 			GINT_TO_POINTER(id));
 		if (session->error_message)
 			g_free (session->error_message);
-		session->error_message = err->message;
+		session->error_message = qerr->message;
 		session->last_err = id;
 	}
 #endif
@@ -292,22 +302,23 @@ qof_error_get_id (QofSession * session)
 QofErrorId
 qof_error_get_id_be (QofBackend * be)
 {
-	QofError * err;
+	QofError * qerr;
 	GList * first;
 
-	g_return_val_if_fail (be, QOF_FATAL);
+	if (!be)
+		return QOF_FATAL;
 	if (g_list_length (be->error_stack) == 0)
 		return QOF_SUCCESS;
 	first = g_list_first (be->error_stack);
-	err = (QofError*)first->data;
-	if (!err)
+	qerr = (QofError*)first->data;
+	if (!qerr)
 		return QOF_FATAL;
 	be->error_stack = 
-		g_list_remove (be->error_stack, err);
+		g_list_remove (be->error_stack, qerr);
 #ifndef QOF_DISABLE_DEPRECATED
 	set_previous_error (be);
 #endif
-	return err->id;
+	return qerr->id;
 }
 
 const gchar *
@@ -316,18 +327,27 @@ qof_error_get_message (QofSession * session)
 	const gchar * msg;
 
 	g_return_val_if_fail (session, NULL);
-	g_return_val_if_fail (session->backend, NULL);
+	if (!session->backend)
+	{
+#ifndef QOF_DISABLE_DEPRECATED
+		return session->error_message;
+#else
+		return NULL;
+#endif
+	}
 	msg = qof_error_get_message_be (session->backend);
 #ifndef QOF_DISABLE_DEPRECATED
 	{
-		QofError * err;
+		QofError * qerr;
 
-		err = g_hash_table_lookup (error_table, 
+		qerr = g_hash_table_lookup (error_table, 
 			GINT_TO_POINTER(session->backend->last_err));
+		if (!qerr)
+			return NULL;
 		if (session->error_message)
 			g_free (session->error_message);
 		session->error_message = g_strdup(msg);
-		session->last_err = err->id;
+		session->last_err = qerr->id;
 	}
 #endif
 	return msg;
@@ -336,21 +356,21 @@ qof_error_get_message (QofSession * session)
 const gchar *
 qof_error_get_message_be (QofBackend * be)
 {
-	QofError * err;
+	QofError * qerr;
 	GList * first;
 
 	g_return_val_if_fail (be, NULL);
 	if (g_list_length (be->error_stack) == 0)
 		return NULL;
 	first = g_list_first (be->error_stack);
-	err = (QofError*)first->data;
-	if (!err)
+	qerr = (QofError*)first->data;
+	if (!qerr)
 		return NULL;
 	be->error_stack = 
-		g_list_remove (be->error_stack, err);
+		g_list_remove (be->error_stack, qerr);
 #ifndef QOF_DISABLE_DEPRECATED
-	be->error_msg = err->message;
+	be->error_msg = qerr->message;
 	set_previous_error (be);
 #endif
-	return err->message;
+	return qerr->message;
 }
