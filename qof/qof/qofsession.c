@@ -957,6 +957,7 @@ and use JUST the module name without .so - .so is not portable! */
 struct backend_providers backend_list[] = {
 	{QOF_LIB_DIR, QSF_BACKEND_LIB, QSF_MODULE_INIT},
 	{QOF_LIB_DIR, "libqof-backend-sqlite", "qof_sqlite_provider_init"},
+	{QOF_LIB_DIR, "libqof-backend-gda", "qof_gda_provider_init"},
 #ifdef HAVE_DWI
 	{QOF_LIB_DIR, "libqof_backend_dwi", "dwiend_provider_init"},
 #endif
@@ -1129,7 +1130,6 @@ qof_session_begin (QofSession * session, const gchar *book_id,
 	/* If there's a begin method, call that. */
 	if (session->backend->session_begin)
 	{
-		qof_error_clear (session);
 		(session->backend->session_begin) (session->backend, session,
 			session->book_id, ignore_lock, create_if_nonexistent);
 		PINFO (" Done running session_begin on backend");
@@ -1141,6 +1141,7 @@ qof_session_begin (QofSession * session, const gchar *book_id,
 			return;
 		}
 	}
+	qof_error_clear (session);
 	LEAVE (" sess=%p book-id=%s", session, book_id ? book_id : "(null)");
 }
 
