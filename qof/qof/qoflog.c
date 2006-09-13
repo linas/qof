@@ -247,6 +247,7 @@ qof_log_set_default (QofLogLevel log_level)
 	qof_log_set_level (QOF_MOD_TIME, log_level);
 	qof_log_set_level (QOF_MOD_DATE, log_level);
 	qof_log_set_level (QOF_MOD_UNDO, log_level);
+	qof_log_set_level (QOF_MOD_ERROR, log_level);
 }
 
 struct hash_s
