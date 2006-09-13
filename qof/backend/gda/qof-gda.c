@@ -149,6 +149,8 @@ convert_params (QofParam * param, gpointer user_data)
 	p->name = g_strdup (param->param_name);
 	p->table = g_strdup (qgda_be->table_name);
 	qgda_be->field_list = g_list_append (qgda_be->field_list, p);
+	PINFO (" name=%s table=%s type=%s", param->param_name,
+		qgda_be->table_name, param->param_type);
 }
 
 static void
@@ -163,7 +165,9 @@ build_table (gpointer value, gpointer user_data)
 		PERR (" no connection to gda available");
 		return;
 	}
-	c= g_list_length(qgda_be->field_list);
+	PINFO (" length=%d", g_list_length(qgda_be->field_list));
+	c = g_list_length(qgda_be->field_list);
+	if (c > 0)
 	{
 		const GdaFieldAttributes *attrib[c];
 		gint f;
@@ -227,7 +231,6 @@ create_data_source (QGdaBackend * qgda_be)
 /*	cnc_string = g_strconcat ("DATABASE=", qgda_be->database_name,
 		NULL);*/
 	cnc_string = g_strdup ("URI=/home/neil/gda-test.db");
-	qgda_be->source_description = "QOF GDA debug data";
 	/* creates db within source if db does not exist */
 	gda_config_save_data_source (qgda_be->data_source_name, 
 		qgda_be->provider_name, cnc_string, 
@@ -324,7 +327,7 @@ qgda_session_begin(QofBackend *be, QofSession *session, const
 	/* use the username and password that created the source */
 	qgda_be->connection = gda_client_open_connection 
 		(qgda_be->client_pool, qgda_be->data_source_name, 
-		NULL, NULL, 0);
+		NULL, NULL, GDA_CONNECTION_OPTIONS_DONT_SHARE);
 	if (qgda_be->connection)
 	{
 		PINFO (" appear to be connected.");
@@ -605,6 +608,7 @@ qgda_backend_new (void)
 	qgda_be->data_source_name = "QOF_DEBUG";
 	qgda_be->database_name = "URI=/home/neil/test.gda";
 	qgda_be->provider_name = "XML";
+	qgda_be->source_description = "QOF GDA debug data";
 /* end debug */
 	return be;
 }
