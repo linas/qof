@@ -1,8 +1,8 @@
-qof (0.8.0-1) unstable; urgency=low
+qof (0.7.2-1) unstable; urgency=low
 
   * New upstream release.
 
- -- Neil Williams <linux@codehelp.co.uk>  Wed, 13 Sep 2006 22:45:50 +0100
+ -- Neil Williams <linux@codehelp.co.uk>  Wed, 13 Sep 2006 23:08:27 +0100
 
 qof (0.7.1-2) unstable; urgency=low
 

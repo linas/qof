@@ -5,7 +5,7 @@ dnl ******************************
 dnl Initialise
 dnl ******************************
 
-AC_INIT(qof, 0.8.0, 
+AC_INIT(qof, 0.7.2, 
 	http://lists.sourceforge.net/lists/listinfo/qof-devel)
 
 AC_PREREQ(2.53)

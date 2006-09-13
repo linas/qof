@@ -116,7 +116,7 @@ http://gpe-expenses.sourceforge.net/</a></p>
 <h3 id="libqof1">libqof1 API/ABI compatibility.</h3>
 
 <div>
-<p>During the life of the QOF the 0.6.x, 0.7.x and 0.8.x trees, 
+<p>During the life of the QOF the 0.6.x and 0.7.x trees, 
 various functions will be deprecated and renamed - leaving a 
 #define or deprecated version to support the old name. New code 
 will be expected to use the new name and old code the deprecated 
@@ -153,8 +153,8 @@ but it's SourceForge project has seen little recent
 activity and is now out of date with the main QOF library.</p>
 
 <p>DWI development has stalled and it has not been tested 
-against libqof1. QOF configuration checks for DWI are likely 
-to be removed in QOF 0.8.0 and there is unlikely to be any DWI 
+against libqof1. QOF configuration checks for DWI will be
+removed in QOF 0.7.2 and there is unlikely to be any DWI 
 support in libqof2.</p>
 
 <p>If you decide to try using DWI against libqof1, please report 
@@ -308,7 +308,7 @@ on Mac OSX via fink - albeit at only v1.0.4-3.</p>
 has 1.2.2.</p>
 
 <p>libgda comes in stable and unstable releases. At time of
-writing, the stable release is 1.2.2 (libgda2-3 in Debian).
+writing, the stable release is 1.2.3 (libgda2-3 in Debian).
 <b>QOF does not support the unstable libgda releases.</b>
 If your distribution has libgda 1.3.x or 1.9.x, please do <b>not</b>
 patch QOF to use the unstable code. Instead, let QOF use it's internal
@@ -327,34 +327,48 @@ SQL directly in the future.</p>
 <p>Outline plan of the next few releases. All items are subject to 
 change, but this is how it looks so far.</p>
 
-<h4>QOF 0.8.0</h4>
+<h4>QOF 0.7.2</h4>
 <ol>
 
-<li><h4>QOF/GDA Backend</h4><p>
-A more comprehensive backend based on libgda is planned, supporting
-various databases via GnomeDB plugins. This will not be implemented
-directly on embedded systems. This could be a relatively large amount of
-new code, expect for early 2007. <b>Expected 0.8.0, still as
-libqof1.</b></p></li>
+<li><h4>QofError</h4>
+<p>In current CVS. QofError gets rid of the restrictive enum and allows
+backends, QOF and applications to define and use error codes and messages
+anywhere in the codebase, including generating the messages on-the-fly.
+This greatly increases the detail and specificity of messages presented
+to the user.</p></li>
 
-<li><h4>QofKvp</h4><p>
+<li><h4>Kvp</h4><p>
 Various Kvp functions need to be reviewed, a KVP_TYPE_BOOLEAN is long
 overdue and the split between public and private Kvp functions needs to
-be completely redone. <b>Expected: Late 2006, early 2007.</b></p></li>
+be completely redone. <b>Expected: September 2006.</b></p></li>
 
 <li><h4>libqof2</h4><p>
 Once these steps are complete, the rest of QOF will be reviewed -
 including moving certain sections of code around within the codebase to
 make the overview clearer and the library easier to follow. A series of
-pre-releases for libqof2 can then begin. <b>Expect pre-releases Summer 2007
-and libqof2, QOF 1.0.0, Autumn 2007.</b> Note that libqof2 will start with
+pre-releases for libqof2 can then begin. <b>Expect pre-releases Spring 2007
+and libqof2, QOF 1.0.0, Summer 2007.</b> Note that libqof2 will start with
 the last release of libqof1 but with all deprecated code removed. Users
 who migrate with libqof1 will be able to transfer to libqof2 without
-problems. The libqof2 API will then remain stable, just as with libqof1.</p></li>
+problems. The libqof2 API will then remain stable, just as with libqof1,
+but with a reduced release cycle. No large changes are anticipated in
+libqof2, the aim is to get all those done in libqof1.</p></li>
 </ol>
+
+<li><h4>QOF/GDA Backend</h4><p>
+A more comprehensive backend based on libgda is planned, supporting
+various databases via GnomeDB plugins. This will not be implemented
+directly on embedded systems. This could be a relatively large amount of
+new code. Early work has now stalled, pending a new stable release of
+libgda upstream that allows the creation (and deletion) of tables within
+new or existing data sources. (See <a href="#libgda">above</a>.)
+<b>Pending.</b> Hopefully before liqof2, but delays in libgda will not
+delay libqof2.</p></li>
+
 <p>Support for GLib GObject mapping (qofgobj.c) is not currently
-anticipated before QOF 0.8.0. If everything else is ready for libqof2,
+anticipated before libqof2. If everything else is ready for libqof2,
 libqof2 will proceed without GLib Gobject mapping.</p>
+
 </div>
 
 <h3 id="docs">Packaging documentation</h3>
