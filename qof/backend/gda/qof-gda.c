@@ -621,7 +621,6 @@ void qof_gda_provider_init(void)
 {
 	QofBackendProvider *prov;
 
-	ENTER (" ");
 	prov = g_new0 (QofBackendProvider, 1);
 	prov->provider_name = "QOF GDA Backend Version 0.1";
 	prov->access_method = ACCESS_METHOD;
@@ -631,5 +630,4 @@ void qof_gda_provider_init(void)
 	prov->provider_free = qgda_provider_free;
 	qof_backend_register_provider (prov);
 	qof_log_set_level (QOFGDA_MODULE, QOF_LOG_DETAIL);
-	LEAVE (" ");
 }
