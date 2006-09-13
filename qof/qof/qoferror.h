@@ -32,20 +32,32 @@ QofError supports the creation of new error codes (complete with
 error strings) along the lines of GdaError. Applications and
 backends can generate their own QofError values and register them
 with QofError. Any function can then set this error value and
-retrieve the error with the deprecated ::qof_session_get_error and 
-::qof_session_get_error_message or the new style ::qof_error_get_id
-and ::qof_error_get_message. The main advantage is that
+retrieve the error with ::qof_error_get_id or 
+::qof_error_get_message. The main advantage is that
 applications can set error states that are unrelated to the old
 QofBackendError values but retrieve all errors in the same manner.
 
 - Use QofLog to record information for programmers and maintainers.
 - Use QofError to communicate descriptive error messages to the user.
 
+An error must be registered to be set. Registered errors can be
+set repeatedly into an error stack for the relevant session.
+Setting an error copies the registered error to the error stack
+and sets a time index in the copy.
+
+Once an error has been unregistered, it cannot be set later.
+If the error has already been set on the error stack, the
+stack is \b not changed and the error remains readable.
+
 Each error stack is specific to one QofSession.
+
+Registered errors can be set in any session (if the 
+QofErrorId is known) but most errors are specific to one session.
 
 Applications can register new error values with ::qof_error_register 
 passing the error message string, already marked for translation -
-a new QofErrorId will be returned. 
+a new QofErrorId will be returned. Error values are unregistered
+when the session ends or can be unregistered manually.
 
 Each backend can also generate specific QofError values, in
 which case the translation is done within QOF.
@@ -105,6 +117,9 @@ be freed.
 /** opaque QofError type. */
 typedef struct QofError_s QofError;
 
+/** QofError log_module name. */
+#define QOF_MOD_ERROR "qof-error-module"
+
 /** success value */
 #define QOF_SUCCESS 0
 
@@ -141,6 +156,16 @@ registered.
 */
 QofErrorId
 qof_error_register (const gchar * err_message, gboolean use_file);
+
+/** \brief Unregister an error
+
+Registered errors are normally freed when the session ends.
+Errors can also be unregistered (and freed) directly.
+
+An unregistered error can not be set later. 
+*/
+void
+qof_error_unregister (QofErrorId id);
 
 /** \brief Add an error to the stack for this session.
 

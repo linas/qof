@@ -1,3 +1,13 @@
+2006-09-13  Neil Williams <linux@codehelp.co.uk>
+
+	* backend/sqlite/qof-sqlite.c : Implement
+	QofError handling.
+	* qof/qoferror.c,
+	qof/qoferror.h : Support unregistering errors
+	manually.
+	* qof/qoflog.c : Support logging of the error
+	module.
+
 2006-09-12  Neil Williams <linux@codehelp.co.uk>
 
 	* debian/changelog : fix priority setting for 

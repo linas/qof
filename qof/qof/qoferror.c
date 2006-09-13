@@ -34,9 +34,10 @@ struct QofError_s
 	QofTime * qt;
 };
 
-/* All registered errors - hashed only once. */
+/* All registered errors - hashed only once per session. */
 static GHashTable * error_table = NULL;
 static gint32 count = 0;
+static QofLogModule log_module = QOF_MOD_ERROR;
 
 void
 qof_error_init (void)
@@ -90,6 +91,7 @@ qof_error_register (const gchar * err_message, gboolean use_file)
 {
 	QofError * err;
 
+	ENTER (" ");
 	err = g_new0 (QofError, 1);
 	count++;
 #ifndef QOF_DISABLE_DEPRECATED
@@ -106,7 +108,24 @@ qof_error_register (const gchar * err_message, gboolean use_file)
 	err->use_file = use_file;
 	err->message = g_strdup (err_message);
 	g_hash_table_insert (error_table, GINT_TO_POINTER(err->id), err);
+	LEAVE (" ");
 	return err->id;
+}
+
+void
+qof_error_unregister (QofErrorId id)
+{
+	QofError * err;
+	gboolean result;
+
+	ENTER (" ");
+	err = g_hash_table_lookup (error_table, GINT_TO_POINTER(id));
+	qof_error_free (err);
+	result = g_hash_table_remove (error_table, 
+		GINT_TO_POINTER(id));
+	if (!result)
+		LEAVE ("unable to remove registered error.");
+	LEAVE (" ok.");
 }
 
 void
