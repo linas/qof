@@ -8,13 +8,13 @@ msgid ""
 msgstr ""
 "Project-Id-Version: QOF 0.8.0\n"
 "Report-Msgid-Bugs-To: qof-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2006-09-13 11:03+0100\n"
-"PO-Revision-Date: 2006-09-13 11:03+0100\n"
+"POT-Creation-Date: 2006-09-13 23:39+0100\n"
+"PO-Revision-Date: 2006-09-13 23:39+0100\n"
 "Last-Translator: Neil Williams <linux@codehelp.co.uk>\n"
 "Language-Team: English (British) <en_gb@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
+"Content-Transfer-Encoding: 8bit"
 
 #: ../backend/file/qsf-backend.c:118
 msgid "Level of compression to use: 0 for none, 9 for highest."
@@ -106,19 +106,19 @@ msgstr "There was an error parsing the file '%s'.\n"
 msgid "There was an error parsing the file '%s'."
 msgstr "There was an error parsing the file '%s'."
 
-#: ../backend/file/qsf-backend.c:590
+#: ../backend/file/qsf-backend.c:591
 #, c-format
 msgid "There was an error reading the file '%s'."
 msgstr "There was an error reading the file '%s'."
 
-#: ../backend/file/qsf-backend.c:622
+#: ../backend/file/qsf-backend.c:624
 #, c-format
 msgid ""
 "The selected file '%s' is a QSF map and cannot be opened as a QSF object."
 msgstr ""
 "The selected file '%s' is a QSF map and cannot be opened as a QSF object."
 
-#: ../backend/file/qsf-backend.c:1179
+#: ../backend/file/qsf-backend.c:1181
 #, c-format
 msgid ""
 "Could not write to '%s'. Check that you have permission to write to this "
@@ -127,7 +127,7 @@ msgstr ""
 "Could not write to '%s'. Check that you have permission to write to this "
 "file and that there is sufficient space to create it."
 
-#: ../backend/file/qsf-backend.c:1469
+#: ../backend/file/qsf-backend.c:1471
 #, c-format
 msgid ""
 "The selected QSF object file '%s' contains one or more invalid GUIDs. The "
@@ -136,7 +136,7 @@ msgstr ""
 "The selected QSF object file '%s' contains one or more invalid GUIDs. The "
 "file cannot be processed - please check the source of the file and try again."
 
-#: ../backend/file/qsf-backend.c:1591
+#: ../backend/file/qsf-backend.c:1593
 #, c-format
 msgid ""
 "The selected QSF object file '%s' contains one or more invalid 'collect' "
@@ -225,79 +225,11 @@ msgstr "Unable to insert a new record."
 msgid "Unable to update existing record."
 msgstr "Unable to update existing record."
 
-#: ../backend/gda/qof-gda.c:203
-#, c-format
-msgid "GDA Provider '%s' could not be found"
-msgstr "GDA Provider '%s' could not be found"
-
-#: ../backend/gda/qof-gda.c:242
-msgid "GDA: No data source path specified."
-msgstr "GDA: No data source path specified."
-
-#: ../backend/gda/qof-gda.c:259
-msgid "GDA: Unable to locate your home directory."
-msgstr "GDA: Unable to locate your home directory."
-
-#: ../backend/gda/qof-gda.c:270
-msgid "GDA: Unable to create a .libgda directory within your home directory."
-msgstr "GDA: Unable to create a .libgda directory within your home directory."
-
-#: ../backend/gda/qof-gda.c:306
-#, c-format
-msgid "GDA encountered an error '%s' using data source '%s'."
-msgstr "GDA encountered an error '%s' using data source '%s'."
-
-#: ../backend/gda/qof-gda.c:479
-msgid "Name of the database to use."
-msgstr "Name of the database to use."
-
-#: ../backend/gda/qof-gda.c:481
-msgid "Override the default database name with a name of your own choice."
-msgstr "Override the default database name with a name of your own choice."
-
-#: ../backend/gda/qof-gda.c:490
-msgid "The username to use to access this data source."
-msgstr "The username to use to access this data source."
-
-#: ../backend/gda/qof-gda.c:492
-msgid ""
-"The username specified in the configuration of this data source that "
-"provides write access to the data."
-msgstr ""
-"The username specified in the configuration of this data source that "
-"provides write access to the data."
-
-#: ../backend/gda/qof-gda.c:501
-msgid "Password to use with the username."
-msgstr "Password to use with the username."
-
-#: ../backend/gda/qof-gda.c:503
-msgid "The password that is to be used with the specified username."
-msgstr "The password that is to be used with the specified username."
-
-#: ../backend/gda/qof-gda.c:512
-msgid "Name of this data source."
-msgstr "Name of this data source."
-
-#: ../backend/gda/qof-gda.c:514
-msgid "The name of this data source as specified in the GDA configuration."
-msgstr "The name of this data source as specified in the GDA configuration."
-
-#: ../qof/qofsession.c:1032
-#, c-format
-msgid "Failed to load '%s'."
-msgstr "Failed to load '%s'."
-
 #: ../qof/qofsession.c:1078
 msgid "This book appears to be open already."
 msgstr "This book appears to be open already."
 
-#: ../qof/qofsession.c:1087
-#, c-format
-msgid "Cannot parse the URL '%s'"
-msgstr "Cannot parse the URL '%s'"
-
-#: ../qof/qofsession.c:1122
+#: ../qof/qofsession.c:1119
 #, c-format
 msgid ""
 "Unable to locate a suitable backend for '%s' - please check your "
@@ -306,7 +238,7 @@ msgstr ""
 "Unable to locate a suitable backend for '%s' - please check your "
 "installation."
 
-#: ../qof/qofsession.c:1356 ../qof/qofsession.c:1393
+#: ../qof/qofsession.c:1354 ../qof/qofsession.c:1391
 msgid "Failed to load backend, no suitable handler."
 msgstr "Failed to load backend, no suitable handler."
 
@@ -320,3 +252,4 @@ msgstr ""
 "When converting SQLite strings into numbers, an overflow has been detected. "
 "The SQLite database '%s' contains invalid data in a field that is meant to "
 "hold a number."
+
