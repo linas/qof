@@ -4,7 +4,7 @@ AM_CFLAGS = \
   -DLOCALE_DIR=\""$(datadir)/locale"\" \
   ${GLIB_CFLAGS}  \
   ${DEPS_CFLAGS} \
-  ${sqlite_CFLAGS}
+  ${SQLITE_CFLAGS}
 
 lib_LTLIBRARIES=libqof-backend-sqlite.la
 
@@ -16,7 +16,7 @@ libqof_backend_sqlite_la_LDFLAGS = \
 
 libqof_backend_sqlite_la_LIBADD = \
  ${GLIB_LIBS} \
- ${sqlite_LIBS}
+ ${SQLITE_LIBS}
 
 EXTRA_DIST = \
  qof-sqlite.h

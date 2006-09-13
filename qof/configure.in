@@ -206,9 +206,9 @@ AC_ARG_ENABLE(embedded,
 		esac])
 
 if test "$embedded" = "yes"; then
-	PKG_CHECK_MODULES(sqlite, sqlite >= 2.8.0)
-	AC_SUBST(sqlite_LIBS)
-	AC_SUBST(sqlite_CFLAGS)
+	PKG_CHECK_MODULES(SQLITE, sqlite >= 2.8.0)
+	AC_SUBST(SQLITE_LIBS)
+	AC_SUBST(SQLITE_CFLAGS)
 	backend="sqlite"
 else
 	LIBXML2_REQUIRED=2.5.10
@@ -232,15 +232,15 @@ AC_ARG_ENABLE(sqlite,
 
 if test "$embedded" != "yes"; then
 	if test "$sqlite" = "yes"; then
-		PKG_CHECK_MODULES(sqlite, sqlite >= 2.8.0)
-		AC_SUBST(sqlite_LIBS)
-		AC_SUBST(sqlite_CFLAGS)
+		SQLITE_REQUIRED=2.8.0
+		PKG_CHECK_MODULES(SQLITE, sqlite >= $SQLITE_REQUIRED)
+		AC_SUBST(SQLITE_LIBS)
+		AC_SUBST(SQLITE_CFLAGS)
 		backend2="sqlite"
 	fi
 fi
 
-AM_CONDITIONAL(QSQANDQSF, [test "$sqlite" = "yes"])
-AM_CONDITIONAL(QSQANDQSF, [test "$embedded" != "yes"])
+AM_CONDITIONAL(USE_SQLITE, [test "$sqlite" = "yes"])
 
 dnl **************************************************************
 dnl DWI is now unsupported.

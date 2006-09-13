@@ -3,12 +3,12 @@ if EMBEDDED
 XML=
 SQLITE=sqlite
 else
-SQLITE=
-XML=file
-endif
-
-if QSQANDQSF
+if USE_SQLITE
 SQLITE=sqlite
+else
+SQLITE=
+endif
+XML=file
 endif
 
 if USE_LIBGDA
