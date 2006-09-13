@@ -970,7 +970,6 @@ qof_session_load_backend (QofSession * session, gchar *access_method)
 	GList *node;
 	QofBackendProvider *prov;
 	QofBook *book;
-	gchar *msg;
 	gint num;
 	gboolean prov_type;
 	gboolean (*type_check) (const gchar *);
@@ -1029,8 +1028,7 @@ qof_session_load_backend (QofSession * session, gchar *access_method)
 		}
 		p = p->next;
 	}
-	msg = _("Failed to load '%s'.");
-	qof_error_set (session, qof_error_register (msg, TRUE));
+	qof_error_clear (session);
 	LEAVE (" ");
 }
 
@@ -1062,12 +1060,9 @@ qof_session_begin (QofSession * session, const gchar *book_id,
 	gboolean ignore_lock, gboolean create_if_nonexistent)
 {
 	gchar *p, *access_method;
-	QofErrorId err_badurl;
 
 	if (!session)
 		return;
-	err_badurl = qof_error_register (_("Cannot parse the URL '%s'"),
-		TRUE);
 
 	ENTER (" sess=%p ignore_lock=%d, book-id=%s",
 		session, ignore_lock, book_id ? book_id : "(null)");
@@ -1084,11 +1079,9 @@ qof_session_begin (QofSession * session, const gchar *book_id,
 		return;
 	}
 
-	/* seriously invalid */
 	if (!book_id)
 	{
-		qof_error_set (session, err_badurl);
-		LEAVE (" push error missing book_id");
+		LEAVE (" using stdout");
 		return;
 	}
 
@@ -1120,16 +1113,23 @@ qof_session_begin (QofSession * session, const gchar *book_id,
 	/* No backend was found. That's bad. */
 	if (NULL == session->backend)
 	{
-		qof_error_set (session, err_badurl);
+		gchar * msg;
+
+		msg = g_strdup_printf (_("Unable to locate a "
+		"suitable backend for '%s' - please check "
+		"your installation."), book_id);
+		qof_error_set (session, qof_error_register
+			(msg, FALSE));
 		LEAVE (" BAD: no backend: sess=%p book-id=%s",
 			session, book_id ? book_id : "(null)");
+		g_free (msg);
 		return;
 	}
 
 	/* If there's a begin method, call that. */
 	if (session->backend->session_begin)
 	{
-
+		qof_error_clear (session);
 		(session->backend->session_begin) (session->backend, session,
 			session->book_id, ignore_lock, create_if_nonexistent);
 		PINFO (" Done running session_begin on backend");
@@ -1141,7 +1141,6 @@ qof_session_begin (QofSession * session, const gchar *book_id,
 			return;
 		}
 	}
-
 	LEAVE (" sess=%p book-id=%s", session, book_id ? book_id : "(null)");
 }
 
@@ -1156,7 +1155,8 @@ qof_session_load (QofSession * session, QofPercentageFunc percentage_func)
 
 	if (!session)
 		return;
-	if (!session->book_id)
+	if ((!session->book_id) ||
+		(0 == safe_strcasecmp(session->book_id, QOF_STDOUT)))
 		return;
 
 	ENTER (" sess=%p book_id=%s", session, session->book_id
