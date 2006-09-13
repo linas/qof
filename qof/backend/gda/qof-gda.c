@@ -112,6 +112,8 @@ qoftype_to_gdafield (QofIdTypeConst qoftype)
 		p->gda_type =  GDA_VALUE_TYPE_DOUBLE;
 	if (0 == safe_strcasecmp (qoftype, QOF_TYPE_TIME))
 		p->gda_type =  GDA_VALUE_TYPE_TIMESTAMP;
+	if (0 == safe_strcasecmp (qoftype, QOF_TYPE_BOOLEAN))
+		p->gda_type =  GDA_VALUE_TYPE_BOOLEAN;
 	if (0 == safe_strcasecmp (qoftype, QOF_TYPE_INT32))
 		p->gda_type =  GDA_VALUE_TYPE_INTEGER;
 	if (0 == safe_strcasecmp (qoftype, QOF_TYPE_INT64))
@@ -135,10 +137,13 @@ convert_params (QofParam * param, gpointer user_data)
 	qgda_be = (QGdaBackend*)user_data;
 	if (!param)
 		return;
+	if (0 == safe_strcasecmp (param->param_type, QOF_ID_BOOK))
+		return;
 	p = qoftype_to_gdafield (param->param_type);
 	if (!p)
 	{
-		DEBUG (" unsupported QofParam: %s", param->param_name);
+		DEBUG (" unsupported QofParam: %s %s", 
+			param->param_name, param->param_type);
 		return;
 	}
 	p->name = g_strdup (param->param_name);
@@ -153,6 +158,11 @@ build_table (gpointer value, gpointer user_data)
 	gint c;
 
 	qgda_be = (QGdaBackend*)user_data;
+	if (!gda_connection_is_open (qgda_be->connection))
+	{
+		PERR (" no connection to gda available");
+		return;
+	}
 	c= g_list_length(qgda_be->field_list);
 	{
 		const GdaFieldAttributes *attrib[c];
@@ -194,6 +204,13 @@ create_data_source (QGdaBackend * qgda_be)
 
 	ENTER (" ");
 	be = (QofBackend*)qgda_be;
+	if (!qgda_be->data_source_name)
+	{
+		qof_error_set_be (be, qof_error_register
+			(_("GDA: Missing data source name."), FALSE));
+		LEAVE (" empty data source name");
+		return FALSE;
+	}
 	prov = gda_config_get_provider_by_name (qgda_be->provider_name);
 	if (!prov)
 	{
@@ -207,8 +224,10 @@ create_data_source (QGdaBackend * qgda_be)
 		LEAVE (" provider '%s' not found", qgda_be->provider_name);
 		return FALSE;
 	}
-	cnc_string = g_strconcat ("DATABASE=", qgda_be->database_name,
-		NULL);
+/*	cnc_string = g_strconcat ("DATABASE=", qgda_be->database_name,
+		NULL);*/
+	cnc_string = g_strdup ("URI=/home/neil/gda-test.db");
+	qgda_be->source_description = "QOF GDA debug data";
 	/* creates db within source if db does not exist */
 	gda_config_save_data_source (qgda_be->data_source_name, 
 		qgda_be->provider_name, cnc_string, 
@@ -233,6 +252,7 @@ qgda_session_begin(QofBackend *be, QofSession *session, const
 	GList * connection_errors, *node;
 
 	/* cannot use ignore_lock */
+	PINFO (" gda session start");
 	qgda_be = (QGdaBackend*)be;
 	be->fullpath = g_strdup (book_path);
 	if(book_path == NULL)
@@ -284,17 +304,32 @@ qgda_session_begin(QofBackend *be, QofSession *session, const
 		source = gda_config_find_data_source
 			(qgda_be->data_source_name);
 		if (!source && create_if_nonexistent)
+		{
+			DEBUG (" no source, creating . . .");
 			created = create_data_source (qgda_be);
+		}
 		if (!source && !created)
+		{
+			qof_error_set_be (be, qof_error_register
+				(_("GDA: No data source found at '%s' - "
+				"Try loading data from another file "
+				"and write to gda: again to create the "
+				"GDA data source."), TRUE));
+			DEBUG (" no source but set not to create.");
+			qgda_be->error = TRUE;
 			return;
+		}
 	}
+	PINFO (" trying for a connection");
 	/* use the username and password that created the source */
 	qgda_be->connection = gda_client_open_connection 
 		(qgda_be->client_pool, qgda_be->data_source_name, 
 		NULL, NULL, 0);
-	if (!qgda_be->connection)
+	if (qgda_be->connection)
 	{
-		qgda_be->error = TRUE;
+		PINFO (" appear to be connected.");
+		/* create tables per QofObject */
+		qof_object_foreach_type (create_tables, qgda_be);
 		connection_errors = (GList *) gda_connection_get_errors 
 			(qgda_be->connection);
 		for (node = g_list_first (connection_errors); node != NULL; 
@@ -319,6 +354,13 @@ qgda_session_begin(QofBackend *be, QofSession *session, const
 			qof_error_set_be (be, qof_error_register (msg, FALSE));
 			g_free (msg);
 		}
+	}
+	else
+	{
+		PERR (" failed to connect to GDA");
+		qgda_be->error = TRUE;
+		qof_error_set_be (be, qof_error_register
+			(_("Failed to connect to '%s'."), TRUE));
 	}
 }
 
@@ -558,6 +600,12 @@ qgda_backend_new (void)
 	be->load_config = load_config;
 	be->get_config = get_config;
 	LEAVE (" ");
+
+/* DEBUG */
+	qgda_be->data_source_name = "QOF_DEBUG";
+	qgda_be->database_name = "URI=/home/neil/test.gda";
+	qgda_be->provider_name = "XML";
+/* end debug */
 	return be;
 }
 
@@ -582,5 +630,6 @@ void qof_gda_provider_init(void)
 	prov->check_data_type = qgda_determine_file_type;
 	prov->provider_free = qgda_provider_free;
 	qof_backend_register_provider (prov);
+	qof_log_set_level (QOFGDA_MODULE, QOF_LOG_DETAIL);
 	LEAVE (" ");
 }
