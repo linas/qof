@@ -536,7 +536,7 @@ qof_book_merge_foreach (QofEntity * mergeEnt, gpointer user_data)
 	g_return_if_fail (currentRule != NULL);
 	g = guid_malloc ();
 	*g = mergeEnt->guid;
-	mergeRule = g_new (QofBookMergeRule, 1);
+	mergeRule = g_new0 (QofBookMergeRule, 1);
 	mergeRule->importEnt = mergeEnt;
 	mergeRule->difference = difference = 0;
 	mergeRule->mergeAbsolute = FALSE;
@@ -938,7 +938,7 @@ qof_book_merge_init (QofBook * importBook, QofBook * targetBook)
 
 	g_return_val_if_fail ((importBook != NULL)
 		&& (targetBook != NULL), NULL);
-	mergeData = g_new (QofBookMergeData, 1);
+	mergeData = g_new0 (QofBookMergeData, 1);
 	mergeData->abort = FALSE;
 	mergeData->mergeList = NULL;
 	mergeData->targetList = NULL;
@@ -948,7 +948,7 @@ qof_book_merge_init (QofBook * importBook, QofBook * targetBook)
 	mergeData->orphan_list = NULL;
 	mergeData->target_table =
 		g_hash_table_new (g_direct_hash, qof_book_merge_rule_cmp);
-	currentRule = g_new (QofBookMergeRule, 1);
+	currentRule = g_new0 (QofBookMergeRule, 1);
 	mergeData->currentRule = currentRule;
 	qof_object_foreach_type (qof_book_merge_foreach_type, mergeData);
 	g_return_val_if_fail (mergeData->mergeObjectParams, NULL);

@@ -203,7 +203,7 @@ static void
 kv_pair_helper (gpointer key, gpointer val, gpointer user_data)
 {
 	GSList **result = (GSList **) user_data;
-	GHashTableKVPair *kvp = g_new (GHashTableKVPair, 1);
+	GHashTableKVPair *kvp = g_new0 (GHashTableKVPair, 1);
 
 	kvp->key = key;
 	kvp->value = val;
