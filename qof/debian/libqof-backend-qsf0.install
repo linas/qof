@@ -1,4 +1,4 @@
 debian/tmp/usr/lib/libqof-backend-qsf.so.*
 debian/tmp/usr/lib/libqof-backend-qsf.la
 debian/tmp/usr/share/xml/*
-debian/linda/overrides/libqof-backend-sqlite0 usr/share/linda/overrides
+debian/linda/overrides/libqof-backend-qsf0 usr/share/linda/overrides

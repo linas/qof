@@ -25,7 +25,8 @@ Package: libqof1
 Priority: optional
 Section: libs
 Architecture: any
-Depends: ${shlibs:Depends}, libqof-backend-qsf0 | libqof-backend-sqlite0
+Depends: ${shlibs:Depends}
+Recommends: libqof-backend-qsf0 | libqof-backend-gda0 | libqof-backend-sqlite0
 Description: Query Object Framework
  A framework to allow the execution of SQL-type queries
  using collections of in-memory objects as 'tables'.
@@ -41,7 +42,7 @@ Section: libs
 Architecture: any
 Depends: libqof1 (= ${Source-Version}), libxml2 (>= 2.5.10)
 Recommends: xsltproc, xml-core
-Replaces: libqof1 (<= 0.7.0-2)
+Replaces: libqof1 (<= 0.7.0-2), libqof-backend-sqlite0
 Description: Query Object Framework - XML backend module
  QOF is a framework to allow the execution of SQL-type 
  queries using collections of in-memory objects as 'tables'.
@@ -68,6 +69,23 @@ Description: Query Object Framework - SQLite backend module
  embedded systems where the size of the QSF XML backend
  is a problem. The package can also be installed alongside 
  the default QSF XML backend.
+ .
+ Homepage: http://qof.sourceforge.net/
+
+Package: libqof-backend-gda0
+Priority: optional
+Section: libs
+Architecture: any
+Depends: libqof1 (= ${Source-Version}), libgda2-3
+Suggests: gda2-mysql, gda2-postgres, gda2-sqlite
+Description: Query Object Framework - Gnome Data Access module
+ QOF is a framework to allow the execution of SQL-type 
+ queries using collections of in-memory objects as 'tables'.
+ .
+ This module provides a Gnome Data Access backend for libqof1
+ using the gda plugins. Any QOF object can be written out or 
+ loaded from a gda-supported data source. This package 
+ provides the gda backend module.
  .
  Homepage: http://qof.sourceforge.net/
 

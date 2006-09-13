@@ -1,0 +1,3 @@
+debian/tmp/usr/lib/libqof-backend-gda.so.*
+debian/tmp/usr/lib/libqof-backend-gda.la
+debian/linda/overrides/libqof-backend-gda0 usr/share/linda/overrides
