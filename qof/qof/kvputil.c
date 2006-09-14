@@ -25,7 +25,7 @@
 #include <glib.h>
 #include <stdio.h>
 #include "qof.h"
-#include "kvp-util-p.h"
+#include "kvputil-p.h"
 
 static KvpFrame *
 qof_kvp_array_va (KvpFrame * kvp_root, const gchar *path,

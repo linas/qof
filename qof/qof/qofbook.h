@@ -40,7 +40,6 @@
 #define QOF_BOOK_H
 
 #include "qof.h"
-#include "kvp_frame.h"
 
 /** @brief Encapsulates all the information about a dataset
  * manipulated by QOF.  This is the top-most structure

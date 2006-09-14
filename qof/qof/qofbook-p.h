@@ -36,7 +36,7 @@
 #ifndef QOF_BOOK_P_H
 #define QOF_BOOK_P_H
 
-#include "kvp_frame.h"
+#include "kvpframe.h"
 #include "qofbackend.h"
 #include "qofbook.h"
 #include "qofid.h"

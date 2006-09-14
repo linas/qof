@@ -40,7 +40,7 @@
 #include "qofbook.h"
 #include "qofid.h"
 #include "qoftime.h"
-#include "kvp_frame.h"
+#include "kvpframe.h"
 
 /* --- type macros --- */
 /* cheesy, but will do for now, eventually should be more gtk-like, handle

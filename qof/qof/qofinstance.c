@@ -30,7 +30,7 @@
 #include "config.h"
 #include <glib.h>
 #include "qof.h"
-#include "kvp-util-p.h"
+#include "kvputil-p.h"
 #include "qofbook-p.h"
 #include "qofid-p.h"
 #include "qofinstance-p.h"

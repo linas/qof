@@ -5,45 +5,44 @@ lib_LTLIBRARIES = libqof.la
 libqof_la_LDFLAGS= -version-info $(LIBQOF_LIBRARY_VERSION) 
 
 libqof_la_SOURCES =  \
-   qoflog.c          \
-   guid.c            \
-   kvp_frame.c       \
-   kvp-util.c        \
-   md5.c             \
-   qofnumeric.c      \
-   qofbackend.c      \
-   qofclass.c        \
-   qofchoice.c       \
-   qoferror.c        \
-   qofevent.c        \
-   qofgobj.c         \
-   qofid.c           \
-   qofinstance.c     \
-   qofquery.c        \
-   qofbook.c         \
-   qofobject.c       \
-   qofquerycore.c    \
-   qofreference.c    \
-   qofsession.c      \
-   qofsql.c          \
-   qofutil.c         \
-   qofbookmerge.c    \
-   qofdate.c         \
-   qoftime.c         \
-   qofstrftime.c     \
-   qofstrptime.c     \
-   qofundo.c         \
-   deprecated.c     \
-   qofdate-p.h 
+   qoflog.c \
+   guid.c \
+   kvpframe.c \
+   kvputil.c \
+   md5.c \
+   qofnumeric.c \
+   qofbackend.c \
+   qofclass.c \
+   qofchoice.c \
+   qoferror.c \
+   qofevent.c \
+   qofgobj.c \
+   qofid.c \
+   qofinstance.c \
+   qofquery.c \
+   qofbook.c \
+   qofobject.c \
+   qofquerycore.c \
+   qofreference.c \
+   qofsession.c \
+   qofsql.c \
+   qofutil.c \
+   qofbookmerge.c \
+   qofdate.c \
+   qoftime.c \
+   qofstrftime.c \
+   qofstrptime.c \
+   qofundo.c \
+   deprecated.c
 
 qofincludedir = ${pkgincludedir}
 
 qofinclude_HEADERS = \
    qoflog.h \
    guid.h \
-   kvp_frame.h \
-   kvp-util.h  \
-   kvp-util-p.h \
+   kvpframe.h \
+   kvputil.h  \
+   kvputil-p.h \
    qof.h \
    qofbackend.h \
    qofbackend-p.h \
@@ -77,6 +76,7 @@ qofinclude_HEADERS = \
 noinst_HEADERS = \
    md5.h  \
    qofclass-p.h  \
+   qofdate-p.h \
    qoferror-p.h \
    qofevent-p.h \
    qofmath128.h  \

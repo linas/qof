@@ -1,3 +1,16 @@
+2006-09-14  Neil Williams <linux@codehelp.co.uk>
+
+	* qof/qofinstance.h,
+	qof/qof.h,
+	qof/qofbook.h,
+	qof/qofquerycore.h,
+	qof/kvputil-p.h,
+	qof/qofsql.h,
+	qof/Makefile.am,
+	qof/qofinstance.c,
+	qof/kvpframe.c,
+	qof/qofbook-p.h	: Fixing kvp filenames.
+
 2006-09-13  Neil Williams <linux@codehelp.co.uk>
 
 	* configure.in,

@@ -1,5 +1,5 @@
 /********************************************************************\
- * kvp-util-p.h -- misc odd-job kvp utils (private file)            *
+ * kvputil-p.h -- misc odd-job kvp utils (private file)             *
  *                                                                  *
  * This program is free software; you can redistribute it and/or    *
  * modify it under the terms of the GNU General Public License as   *
@@ -24,12 +24,12 @@
 #define XACC_KVP_UTIL_P_H
 
 #include "guid.h"
-#include "kvp_frame.h"
+#include "kvpframe.h"
 
 /** @addtogroup KVP
     @{ 
 */
-/** @file kvp-util-p.h
+/** @file kvputil-p.h
  * @brief misc odd-job kvp utils engine-private routines
  * @author Copyright (C) 2001, 2003 Linas Vepstas <linas@linas.org>               *
 */

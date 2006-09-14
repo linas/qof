@@ -35,7 +35,7 @@
 
 #include "qofnumeric.h"
 #include "qofdate.h"
-#include "kvp_frame.h"
+#include "kvpframe.h"
 #include "qofclass.h"
 
 /**

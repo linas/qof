@@ -32,7 +32,7 @@
 #ifndef QOF_SQL_QUERY_H
 #define QOF_SQL_QUERY_H
 
-#include "kvp_frame.h"
+#include "kvpframe.h"
 #include "qofbook.h"
 #include "qofquery.h"
 
