@@ -1,6 +1,7 @@
 /********************************************************************\
- * kvp-util.h -- misc KVP utilities                                 *
+ * kvputil.h -- miscellaneous KVP utilities                         *
  * Copyright (C) 2003 Linas Vepstas <linas@linas.org>               *
+ * Copyright (c) 2006 Neil Williams <linux@codehelp.co.uk>          *
  *                                                                  *
  * This program is free software; you can redistribute it and/or    *
  * modify it under the terms of the GNU General Public License as   *
@@ -23,15 +24,15 @@
 /** @addtogroup KVP
     @{ 
 */
-/** @file kvp-util.h 
+/** @file kvputil.h 
     @brief QOF KVP utility functions 
  */
 /**  @name Hash Utilities
  @{ 
 */
 
-#ifndef GNC_KVP_UTIL_H
-#define GNC_KVP_UTIL_H
+#ifndef KVPUTIL_H
+#define KVPUTIL_H
 
 typedef struct
 {
@@ -56,8 +57,40 @@ typedef struct
 GSList *g_hash_table_key_value_pairs (GHashTable * table);
 void g_hash_table_kv_pair_free_gfunc (gpointer data, gpointer user_data);
 
+/** @name KvpFrame URL handling
+ @{
+*/
+/** The kvp_frame_add_url_encoding() routine will parse the
+ *  value string, assuming it to be URL-encoded in the standard way,
+ *  turning it into a set of key-value pairs, and adding those to the
+ *  indicated frame.  URL-encoded strings are the things that are
+ *  returned by web browsers when a form is filled out.  For example,
+ *  'start-date=June&end-date=November' consists of two keys, 
+ *  'start-date' and 'end-date', which have the values 'June' and 
+ *  'November', respectively.  This routine also handles % encoding.
+ *
+ *  This routine treats all values as strings; it does *not* attempt
+ *  to perform any type-conversion.
+ * */
+void kvp_frame_add_url_encoding (KvpFrame * frame, const gchar * enc);
+
+/** @} */
+
+/**
+ * Similar returns as strcmp.
+ */
+gint kvp_frame_compare (const KvpFrame * fa, const KvpFrame * fb);
+
+/** \todo move to qofutil.c */
+gint double_compare (double v1, double v2);
+
+gchar *kvp_frame_to_string (const KvpFrame * frame);
+gchar *binary_to_string (const void *data, guint32 size);
+gchar *kvp_value_glist_to_string (const GList * list);
+GHashTable *kvp_frame_get_hash (const KvpFrame * frame);
+
 /***********************************************************************/
 
 /** @} */
 /** @} */
-#endif /* GNC_KVP_UTIL_H */
+#endif /* KVPUTIL_H */

@@ -238,17 +238,17 @@ handle_single_condition (QofSqlQuery * query, sql_condition * cond)
 		switch (kvt)
 		{
 		case KVP_TYPE_GINT64:
-			{
+		{
 				gint64 ival = kvp_value_get_gint64 (kv);
 				sprintf (tmpbuff, "%" G_GINT64_FORMAT "\n", ival);
 				break;
-			}
+		}
 		case KVP_TYPE_DOUBLE:
-			{
+		{
 				double ival = kvp_value_get_double (kv);
 				sprintf (tmpbuff, "%26.18g\n", ival);
 				break;
-			}
+		}
 		case KVP_TYPE_STRING:
 			/* If there's no value, its not an error; 
 			 * we just don't do this predicate */
@@ -261,6 +261,7 @@ handle_single_condition (QofSqlQuery * query, sql_condition * cond)
 #ifndef QOF_DISABLE_DEPRECATED
 		case KVP_TYPE_TIMESPEC:
 #endif
+		case KVP_TYPE_BOOLEAN :
 		case KVP_TYPE_BINARY:
 		case KVP_TYPE_GLIST:
 		case KVP_TYPE_NUMERIC:

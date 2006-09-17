@@ -1,3 +1,16 @@
+2006-09-17  Neil Williams <linux@codehelp.co.uk>
+
+	* backend/file/qsf-backend.c,
+	qof/deprecated.h,
+	qof/kvpframe.c,
+	qof/kvpframe.h,
+	qof/kvputil-p.h,
+	qof/kvputil.c,
+	qof/kvputil.h,
+	qof/qofbackend.c,
+	qof/qofsql.c : Beginning the update of KVP
+	and addition of KVP_TYPE_BOOLEAN.
+
 2006-09-14  Neil Williams <linux@codehelp.co.uk>
 
 	* qof/qofinstance.h,

@@ -1,7 +1,8 @@
 /********************************************************************
- * kvp_frame.c -- Implements a key-value frame system               *
+ * kvpframe.c -- Implements a key-value frame system                *
  * Copyright (C) 2000 Bill Gribble                                  *
  * Copyright (C) 2001,2003 Linas Vepstas <linas@linas.org>          *
+ * Copyright (c) 2006 Neil Williams <linux@codehelp.co.uk>          *
  *                                                                  *
  * This program is free software; you can redistribute it and/or    *
  * modify it under the terms of the GNU General Public License as   *
@@ -29,7 +30,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
-
 #include "qof.h"
 
  /* Note that we keep the keys for this hash table in a GCache
@@ -59,6 +59,7 @@ struct _KvpValue
 		gchar *str;
 		GUID *guid;
 		QofTime *qt;
+		gboolean gbool;     /* since 0.7.2 */
 #ifndef QOF_DISABLE_DEPRECATED
 		Timespec timespec;
 #endif
@@ -196,16 +197,10 @@ kvp_frame_replace_slot_nc (KvpFrame * frame, const char *slot,
 		qof_util_string_cache_remove (orig_key);
 	}
 	else
-	{
 		orig_value = NULL;
-	}
-
 	if (new_value)
-	{
 		g_hash_table_insert (frame->hash,
 			qof_util_string_cache_insert ((gpointer) slot), new_value);
-	}
-
 	return (KvpValue *) orig_value;
 }
 
@@ -234,9 +229,7 @@ get_or_make (KvpFrame * fr, const char *key)
 
 	value = kvp_frame_get_slot (fr, key);
 	if (value)
-	{
 		next_frame = kvp_value_get_frame (value);
-	}
 	else
 	{
 		next_frame = kvp_frame_new ();
@@ -264,9 +257,7 @@ kvp_frame_get_frame_slash_trash (KvpFrame * frame, char *key_path)
 	{
 		key++;
 		while ('/' == *key)
-		{
 			key++;
-		}
 		if (0x0 == *key)
 			break;				/* trailing slash */
 		next = strchr (key, '/');
@@ -302,9 +293,7 @@ kvp_frame_get_frame_or_null_slash_trash (const KvpFrame * frame,
 	{
 		key++;
 		while ('/' == *key)
-		{
 			key++;
-		}
 		if (0x0 == *key)
 			break;				/* trailing slash */
 		next = strchr (key, '/');
@@ -338,17 +327,11 @@ get_trailer_make (KvpFrame * frame, const char *key_path, char **end_key)
 
 	last_key = strrchr (key_path, '/');
 	if (NULL == last_key)
-	{
 		last_key = (char *) key_path;
-	}
 	else if (last_key == key_path)
-	{
 		last_key++;
-	}
 	else if (0 == last_key[1])
-	{
 		return NULL;
-	}
 	else
 	{
 		char *root, *lkey;
@@ -357,7 +340,6 @@ get_trailer_make (KvpFrame * frame, const char *key_path, char **end_key)
 		*lkey = 0;
 		frame = kvp_frame_get_frame_slash_trash (frame, root);
 		g_free (root);
-
 		last_key++;
 	}
 
@@ -382,17 +364,11 @@ get_trailer_or_null (const KvpFrame * frame, const char *key_path,
 
 	last_key = strrchr (key_path, '/');
 	if (NULL == last_key)
-	{
 		last_key = (char *) key_path;
-	}
 	else if (last_key == key_path)
-	{
 		last_key++;
-	}
 	else if (0 == last_key[1])
-	{
 		return NULL;
-	}
 	else
 	{
 		char *root, *lkey;
@@ -453,7 +429,13 @@ kvp_frame_set_numeric (KvpFrame * frame, const gchar *path,
 }
 
 void
-kvp_frame_set_string (KvpFrame * frame, const char *path, const char *str)
+kvp_frame_set_boolean (KvpFrame * frame, const gchar * path, gboolean val)
+{
+
+}
+
+void
+kvp_frame_set_string (KvpFrame * frame, const gchar *path, const char *str)
 {
 	KvpValue *value;
 	value = kvp_value_new_string (str);
@@ -463,7 +445,7 @@ kvp_frame_set_string (KvpFrame * frame, const char *path, const char *str)
 }
 
 void
-kvp_frame_set_guid (KvpFrame * frame, const char *path, const GUID * guid)
+kvp_frame_set_guid (KvpFrame * frame, const gchar *path, const GUID * guid)
 {
 	KvpValue *value;
 	value = kvp_value_new_guid (guid);
@@ -473,7 +455,7 @@ kvp_frame_set_guid (KvpFrame * frame, const char *path, const GUID * guid)
 }
 
 void
-kvp_frame_set_frame (KvpFrame * frame, const char *path, KvpFrame * fr)
+kvp_frame_set_frame (KvpFrame * frame, const gchar *path, KvpFrame * fr)
 {
 	KvpValue *value;
 	value = kvp_value_new_frame (fr);
@@ -483,7 +465,7 @@ kvp_frame_set_frame (KvpFrame * frame, const char *path, KvpFrame * fr)
 }
 
 void
-kvp_frame_set_frame_nc (KvpFrame * frame, const char *path, KvpFrame * fr)
+kvp_frame_set_frame_nc (KvpFrame * frame, const gchar *path, KvpFrame * fr)
 {
 	KvpValue *value;
 	value = kvp_value_new_frame_nc (fr);
@@ -495,7 +477,7 @@ kvp_frame_set_frame_nc (KvpFrame * frame, const char *path, KvpFrame * fr)
 /* ============================================================ */
 
 KvpFrame *
-kvp_frame_set_value_nc (KvpFrame * frame, const char *key_path,
+kvp_frame_set_value_nc (KvpFrame * frame, const gchar *key_path,
 	KvpValue * value)
 {
 	char *last_key;
@@ -508,7 +490,7 @@ kvp_frame_set_value_nc (KvpFrame * frame, const char *key_path,
 }
 
 KvpFrame *
-kvp_frame_set_value (KvpFrame * frame, const char *key_path,
+kvp_frame_set_value (KvpFrame * frame, const gchar *key_path,
 	const KvpValue * value)
 {
 	KvpValue *new_value = NULL;
@@ -525,7 +507,7 @@ kvp_frame_set_value (KvpFrame * frame, const char *key_path,
 }
 
 KvpValue *
-kvp_frame_replace_value_nc (KvpFrame * frame, const char *key_path,
+kvp_frame_replace_value_nc (KvpFrame * frame, const gchar *key_path,
 	KvpValue * new_value)
 {
 	KvpValue *old_value;
@@ -533,14 +515,10 @@ kvp_frame_replace_value_nc (KvpFrame * frame, const char *key_path,
 
 	last_key = NULL;
 	if (new_value)
-	{
 		frame = get_trailer_make (frame, key_path, &last_key);
-	}
 	else
-	{
 		frame =
 			(KvpFrame *) get_trailer_or_null (frame, key_path, &last_key);
-	}
 	if (!frame)
 		return NULL;
 
@@ -551,7 +529,7 @@ kvp_frame_replace_value_nc (KvpFrame * frame, const char *key_path,
 /* ============================================================ */
 
 KvpFrame *
-kvp_frame_add_value_nc (KvpFrame * frame, const char *path,
+kvp_frame_add_value_nc (KvpFrame * frame, const gchar *path,
 	KvpValue * value)
 {
 	char *key = NULL;
@@ -594,7 +572,7 @@ kvp_frame_add_value_nc (KvpFrame * frame, const char *path,
 }
 
 KvpFrame *
-kvp_frame_add_value (KvpFrame * frame, const char *path, KvpValue * value)
+kvp_frame_add_value (KvpFrame * frame, const gchar *path, KvpValue * value)
 {
 	value = kvp_value_copy (value);
 	frame = kvp_frame_add_value_nc (frame, path, value);
@@ -604,7 +582,7 @@ kvp_frame_add_value (KvpFrame * frame, const char *path, KvpValue * value)
 }
 
 void
-kvp_frame_add_gint64 (KvpFrame * frame, const char *path, gint64 ival)
+kvp_frame_add_gint64 (KvpFrame * frame, const gchar *path, gint64 ival)
 {
 	KvpValue *value;
 	value = kvp_value_new_gint64 (ival);
@@ -614,7 +592,7 @@ kvp_frame_add_gint64 (KvpFrame * frame, const char *path, gint64 ival)
 }
 
 void
-kvp_frame_add_double (KvpFrame * frame, const char *path, double dval)
+kvp_frame_add_double (KvpFrame * frame, const gchar *path, double dval)
 {
 	KvpValue *value;
 	value = kvp_value_new_double (dval);
@@ -624,7 +602,7 @@ kvp_frame_add_double (KvpFrame * frame, const char *path, double dval)
 }
 
 void
-kvp_frame_add_numeric (KvpFrame * frame, const char *path,
+kvp_frame_add_numeric (KvpFrame * frame, const gchar *path,
 	QofNumeric nval)
 {
 	KvpValue *value;
@@ -645,6 +623,16 @@ kvp_frame_add_time (KvpFrame * frame, const gchar *path, QofTime *qt)
 }
 
 void
+kvp_frame_add_boolean (KvpFrame * frame, const gchar * path, gboolean val)
+{
+	KvpValue * value;
+	value = kvp_value_new_boolean (val);
+	frame = kvp_frame_add_value_nc (frame, path, value);
+	if (!frame)
+		kvp_value_delete (value);
+}
+
+void
 kvp_frame_add_string (KvpFrame * frame, const gchar *path, const gchar *str)
 {
 	KvpValue *value;
@@ -655,7 +643,7 @@ kvp_frame_add_string (KvpFrame * frame, const gchar *path, const gchar *str)
 }
 
 void
-kvp_frame_add_guid (KvpFrame * frame, const char *path, const GUID * guid)
+kvp_frame_add_guid (KvpFrame * frame, const gchar *path, const GUID * guid)
 {
 	KvpValue *value;
 	value = kvp_value_new_guid (guid);
@@ -665,7 +653,7 @@ kvp_frame_add_guid (KvpFrame * frame, const char *path, const GUID * guid)
 }
 
 void
-kvp_frame_add_frame (KvpFrame * frame, const char *path, KvpFrame * fr)
+kvp_frame_add_frame (KvpFrame * frame, const gchar *path, KvpFrame * fr)
 {
 	KvpValue *value;
 	value = kvp_value_new_frame (fr);
@@ -675,7 +663,7 @@ kvp_frame_add_frame (KvpFrame * frame, const char *path, KvpFrame * fr)
 }
 
 void
-kvp_frame_add_frame_nc (KvpFrame * frame, const char *path, KvpFrame * fr)
+kvp_frame_add_frame_nc (KvpFrame * frame, const gchar *path, KvpFrame * fr)
 {
 	KvpValue *value;
 	value = kvp_value_new_frame_nc (fr);
@@ -687,7 +675,7 @@ kvp_frame_add_frame_nc (KvpFrame * frame, const char *path, KvpFrame * fr)
 /* ============================================================ */
 
 void
-kvp_frame_set_slot (KvpFrame * frame, const char *slot,
+kvp_frame_set_slot (KvpFrame * frame, const gchar *slot,
 	const KvpValue * value)
 {
 	KvpValue *new_value = NULL;
@@ -703,7 +691,7 @@ kvp_frame_set_slot (KvpFrame * frame, const char *slot,
 }
 
 void
-kvp_frame_set_slot_nc (KvpFrame * frame, const char *slot,
+kvp_frame_set_slot_nc (KvpFrame * frame, const gchar *slot,
 	KvpValue * value)
 {
 	if (!frame)
@@ -715,7 +703,7 @@ kvp_frame_set_slot_nc (KvpFrame * frame, const char *slot,
 }
 
 KvpValue *
-kvp_frame_get_slot (const KvpFrame * frame, const char *slot)
+kvp_frame_get_slot (const KvpFrame * frame, const gchar *slot)
 {
 	KvpValue *v;
 	if (!frame)
@@ -730,7 +718,7 @@ kvp_frame_get_slot (const KvpFrame * frame, const char *slot)
 
 void
 kvp_frame_set_slot_path (KvpFrame * frame,
-	const KvpValue * new_value, const char *first_key, ...)
+	const KvpValue * new_value, const gchar *first_key, ...)
 {
 	va_list ap;
 	const char *key;
@@ -831,9 +819,9 @@ kvp_frame_set_slot_path_gslist (KvpFrame * frame,
  */
 
 static void
-decode (char *enc)
+decode (gchar *enc)
 {
-	char *p, *w;
+	gchar *p, *w;
 
 	/* Loop, convert +'s to blanks */
 	p = strchr (enc, '+');
@@ -863,7 +851,7 @@ decode (char *enc)
 		if (16 < cl)
 			cl -= 0x20;			/* lowercase a = 0x61 */
 
-		*w = (char) (ch << 4 | cl);
+		*w = (gchar) (ch << 4 | cl);
 
 		do
 		{
@@ -876,9 +864,7 @@ decode (char *enc)
 				break;
 			}
 			if ('%' == *p)
-			{
 				break;
-			}
 		}
 		while (*p);
 	}
@@ -925,7 +911,7 @@ kvp_frame_add_url_encoding (KvpFrame * frame, const gchar *enc)
 gint64
 kvp_frame_get_gint64 (const KvpFrame * frame, const gchar *path)
 {
-	char *key = NULL;
+	gchar *key = NULL;
 	frame = get_trailer_or_null (frame, path, &key);
 	return kvp_value_get_gint64 (kvp_frame_get_slot (frame, key));
 }
@@ -933,7 +919,7 @@ kvp_frame_get_gint64 (const KvpFrame * frame, const gchar *path)
 double
 kvp_frame_get_double (const KvpFrame * frame, const gchar *path)
 {
-	char *key = NULL;
+	gchar *key = NULL;
 	frame = get_trailer_or_null (frame, path, &key);
 	return kvp_value_get_double (kvp_frame_get_slot (frame, key));
 }
@@ -941,32 +927,32 @@ kvp_frame_get_double (const KvpFrame * frame, const gchar *path)
 QofNumeric
 kvp_frame_get_numeric (const KvpFrame * frame, const gchar *path)
 {
-	char *key = NULL;
+	gchar *key = NULL;
 	frame = get_trailer_or_null (frame, path, &key);
 	return kvp_value_get_numeric (kvp_frame_get_slot (frame, key));
 }
 
-char *
-kvp_frame_get_string (const KvpFrame * frame, const char *path)
+gchar *
+kvp_frame_get_string (const KvpFrame * frame, const gchar *path)
 {
-	char *key = NULL;
+	gchar *key = NULL;
 	frame = get_trailer_or_null (frame, path, &key);
 	return kvp_value_get_string (kvp_frame_get_slot (frame, key));
 }
 
 GUID *
-kvp_frame_get_guid (const KvpFrame * frame, const char *path)
+kvp_frame_get_guid (const KvpFrame * frame, const gchar *path)
 {
-	char *key = NULL;
+	gchar *key = NULL;
 	frame = get_trailer_or_null (frame, path, &key);
 	return kvp_value_get_guid (kvp_frame_get_slot (frame, key));
 }
 
 void *
-kvp_frame_get_binary (const KvpFrame * frame, const char *path,
+kvp_frame_get_binary (const KvpFrame * frame, const gchar *path,
 	guint64 * size_return)
 {
-	char *key = NULL;
+	gchar *key = NULL;
 	frame = get_trailer_or_null (frame, path, &key);
 	return kvp_value_get_binary (kvp_frame_get_slot (frame, key),
 		size_return);
@@ -981,17 +967,17 @@ kvp_frame_get_time (const KvpFrame * frame, const gchar *path)
 }
 
 KvpFrame *
-kvp_frame_get_frame (const KvpFrame * frame, const char *path)
+kvp_frame_get_frame (const KvpFrame * frame, const gchar *path)
 {
-	char *key = NULL;
+	gchar *key = NULL;
 	frame = get_trailer_or_null (frame, path, &key);
 	return kvp_value_get_frame (kvp_frame_get_slot (frame, key));
 }
 
 KvpValue *
-kvp_frame_get_value (const KvpFrame * frame, const char *path)
+kvp_frame_get_value (const KvpFrame * frame, const gchar *path)
 {
-	char *key = NULL;
+	gchar *key = NULL;
 	frame = get_trailer_or_null (frame, path, &key);
 	return kvp_frame_get_slot (frame, key);
 }
@@ -1006,7 +992,7 @@ kvp_frame_get_frame_gslist (KvpFrame * frame, GSList * key_path)
 
 	while (key_path)
 	{
-		const char *key = key_path->data;
+		const gchar *key = key_path->data;
 
 		if (!key)
 			return frame;		/* an unusual but valid exit for this routine. */
@@ -1021,7 +1007,7 @@ kvp_frame_get_frame_gslist (KvpFrame * frame, GSList * key_path)
 }
 
 KvpFrame *
-kvp_frame_get_frame_path (KvpFrame * frame, const char *key, ...)
+kvp_frame_get_frame_path (KvpFrame * frame, const gchar *key, ...)
 {
 	va_list ap;
 	if (!frame || !key)
@@ -1042,9 +1028,9 @@ kvp_frame_get_frame_path (KvpFrame * frame, const char *key, ...)
 }
 
 KvpFrame *
-kvp_frame_get_frame_slash (KvpFrame * frame, const char *key_path)
+kvp_frame_get_frame_slash (KvpFrame * frame, const gchar *key_path)
 {
-	char *root;
+	gchar *root;
 	if (!frame || !key_path)
 		return frame;
 
@@ -1057,11 +1043,11 @@ kvp_frame_get_frame_slash (KvpFrame * frame, const char *key_path)
 /* ============================================================ */
 
 KvpValue *
-kvp_frame_get_slot_path (KvpFrame * frame, const char *first_key, ...)
+kvp_frame_get_slot_path (KvpFrame * frame, const gchar *first_key, ...)
 {
 	va_list ap;
 	KvpValue *value;
-	const char *key;
+	const gchar *key;
 
 	if (!frame || !first_key)
 		return NULL;
@@ -1102,7 +1088,7 @@ kvp_frame_get_slot_path_gslist (KvpFrame * frame, GSList * key_path)
 
 	while (TRUE)
 	{
-		const char *key = key_path->data;
+		const gchar *key = key_path->data;
 		KvpValue *value;
 
 		if (!key)
@@ -1214,11 +1200,20 @@ kvp_value_new_gint64 (gint64 value)
 }
 
 KvpValue *
-kvp_value_new_double (double value)
+kvp_value_new_double (gdouble value)
 {
 	KvpValue *retval = g_new0 (KvpValue, 1);
 	retval->type = KVP_TYPE_DOUBLE;
 	retval->value.dbl = value;
+	return retval;
+}
+
+KvpValue *
+kvp_value_new_boolean (gboolean value)
+{
+	KvpValue * retval = g_new0 (KvpValue, 1);
+	retval->type = KVP_TYPE_BOOLEAN;
+	retval->value.gbool = value;
 	return retval;
 }
 
@@ -1232,7 +1227,7 @@ kvp_value_new_numeric (QofNumeric value)
 }
 
 KvpValue *
-kvp_value_new_string (const char *value)
+kvp_value_new_string (const gchar *value)
 {
 	KvpValue *retval;
 	if (!value)
@@ -1268,7 +1263,7 @@ kvp_value_new_time (QofTime *value)
 }
 
 KvpValue *
-kvp_value_new_binary (const void *value, guint64 datasize)
+kvp_value_new_binary (gconstpointer value, guint64 datasize)
 {
 	KvpValue *retval;
 	if (!value)
@@ -1276,14 +1271,14 @@ kvp_value_new_binary (const void *value, guint64 datasize)
 
 	retval = g_new0 (KvpValue, 1);
 	retval->type = KVP_TYPE_BINARY;
-	retval->value.binary.data = g_new0 (char, datasize);
+	retval->value.binary.data = g_new0 (gpointer, datasize);
 	retval->value.binary.datasize = datasize;
 	memcpy (retval->value.binary.data, value, datasize);
 	return retval;
 }
 
 KvpValue *
-kvp_value_new_binary_nc (void *value, guint64 datasize)
+kvp_value_new_binary_nc (gpointer value, guint64 datasize)
 {
 	KvpValue *retval;
 	if (!value)
@@ -1371,7 +1366,7 @@ kvp_value_delete (KvpValue * value)
 	case KVP_TYPE_FRAME:
 		kvp_frame_delete (value->value.frame);
 		break;
-
+	case KVP_TYPE_BOOLEAN:
 	case KVP_TYPE_GINT64:
 	case KVP_TYPE_DOUBLE:
 	case KVP_TYPE_NUMERIC:
@@ -1385,7 +1380,7 @@ KvpValueType
 kvp_value_get_type (const KvpValue * value)
 {
 	if (!value)
-		return -1;
+		return QOF_FATAL;
 	return value->type;
 }
 
@@ -1393,30 +1388,22 @@ gint64
 kvp_value_get_gint64 (const KvpValue * value)
 {
 	if (!value)
-		return 0;
+		return QOF_SUCCESS;
 	if (value->type == KVP_TYPE_GINT64)
-	{
 		return value->value.int64;
-	}
 	else
-	{
-		return 0;
-	}
+		return QOF_SUCCESS;
 }
 
-double
+gdouble
 kvp_value_get_double (const KvpValue * value)
 {
 	if (!value)
 		return 0.0;
 	if (value->type == KVP_TYPE_DOUBLE)
-	{
 		return value->value.dbl;
-	}
 	else
-	{
 		return 0.0;
-	}
 }
 
 QofNumeric
@@ -1425,28 +1412,31 @@ kvp_value_get_numeric (const KvpValue * value)
 	if (!value)
 		return qof_numeric_zero ();
 	if (value->type == KVP_TYPE_NUMERIC)
-	{
 		return value->value.numeric;
-	}
 	else
-	{
 		return qof_numeric_zero ();
-	}
 }
 
-char *
+gchar *
 kvp_value_get_string (const KvpValue * value)
 {
 	if (!value)
 		return NULL;
 	if (value->type == KVP_TYPE_STRING)
-	{
 		return value->value.str;
-	}
 	else
-	{
 		return NULL;
-	}
+}
+
+gboolean
+kvp_value_get_boolean (const KvpValue * value)
+{
+	if (!value)
+		return FALSE;
+	if (value->type == KVP_TYPE_BOOLEAN)
+		return value->value.gbool;
+	else
+		return FALSE;
 }
 
 GUID *
@@ -1455,13 +1445,9 @@ kvp_value_get_guid (const KvpValue * value)
 	if (!value)
 		return NULL;
 	if (value->type == KVP_TYPE_GUID)
-	{
 		return value->value.guid;
-	}
 	else
-	{
 		return NULL;
-	}
 }
 
 QofTime*
@@ -1470,13 +1456,9 @@ kvp_value_get_time (const KvpValue * value)
 	if (!value)
 		return NULL;
 	if (value->type == KVP_TYPE_TIME)
-	{
 		return value->value.qt;
-	}
 	else
-	{
 		return NULL;
-	}
 }
 
 void *
@@ -1509,13 +1491,9 @@ kvp_value_get_glist (const KvpValue * value)
 	if (!value)
 		return NULL;
 	if (value->type == KVP_TYPE_GLIST)
-	{
 		return value->value.list;
-	}
 	else
-	{
 		return NULL;
-	}
 }
 
 KvpFrame *
@@ -1586,6 +1564,10 @@ kvp_value_copy (const KvpValue * value)
 	case KVP_TYPE_GUID:
 		return kvp_value_new_guid (value->value.guid);
 		break;
+	case KVP_TYPE_BOOLEAN:
+		return NULL;
+		return kvp_value_new_boolean (value->value.gbool);
+		break;
 	case KVP_TYPE_TIME :
 		return kvp_value_new_time (value->value.qt);
 		break;
@@ -1609,9 +1591,7 @@ kvp_value_copy (const KvpValue * value)
 }
 
 void
-kvp_frame_for_each_slot (KvpFrame * f,
-	void (*proc) (const char *key,
-		KvpValue * value, gpointer data), gpointer data)
+kvp_frame_for_each_slot (KvpFrame * f, KvpValueForeachCB proc, gpointer data)
 {
 	if (!f)
 		return;
@@ -1624,7 +1604,7 @@ kvp_frame_for_each_slot (KvpFrame * f,
 }
 
 gint
-double_compare (double d1, double d2)
+double_compare (gdouble d1, gdouble d2)
 {
 	if (isnan (d1) && isnan (d2))
 		return 0;
@@ -1673,6 +1653,14 @@ kvp_value_compare (const KvpValue * kva, const KvpValue * kvb)
 	case KVP_TYPE_GUID:
 		return guid_compare (kva->value.guid, kvb->value.guid);
 		break;
+	case KVP_TYPE_BOOLEAN:
+	{
+		/* true > false */
+		if (kva->value.gbool != kvb->value.gbool)
+			return (kva->value.gbool) ? 1 : -1;
+		return 0;
+		break;
+	}
 	case KVP_TYPE_TIME :
 		return qof_time_cmp (kva->value.qt, kvb->value.qt);
 		break;
@@ -1710,7 +1698,7 @@ typedef struct
 } kvp_frame_cmp_status;
 
 static void
-kvp_frame_compare_helper (const char *key, KvpValue * val, gpointer data)
+kvp_frame_compare_helper (const gchar *key, KvpValue * val, gpointer data)
 {
 	kvp_frame_cmp_status *status = (kvp_frame_cmp_status *) data;
 	if (status->compare == 0)
@@ -1719,13 +1707,9 @@ kvp_frame_compare_helper (const char *key, KvpValue * val, gpointer data)
 		KvpValue *other_val = kvp_frame_get_slot (other_frame, key);
 
 		if (other_val)
-		{
 			status->compare = kvp_value_compare (val, other_val);
-		}
 		else
-		{
 			status->compare = 1;
-		}
 	}
 }
 
@@ -1765,19 +1749,20 @@ kvp_frame_compare (const KvpFrame * fa, const KvpFrame * fb)
 	return (-status.compare);
 }
 
+/* FIXME: genuine binary content cannot be made a string reliably. */
 gchar *
-binary_to_string (const void *data, guint32 size)
+binary_to_string (gconstpointer data, guint32 size)
 {
 	GString *output;
 	guint32 i;
 	guchar *data_str = (guchar *) data;
 
-	output = g_string_sized_new (size * sizeof (char));
+	output = g_string_sized_new (size * sizeof (gchar));
 
 	for (i = 0; i < size; i++)
 	{
 		g_string_append_printf (output, "%02x",
-			(unsigned int) (data_str[i]));
+			(guint32) (data_str[i]));
 	}
 
 	return output->str;
@@ -1830,34 +1815,40 @@ kvp_value_to_bare_string (const KvpValue * val)
 	tmp1 = g_strdup ("");
 	switch (kvp_value_get_type (val))
 	{
-	case KVP_TYPE_GINT64:
-		return g_strdup_printf ("%" G_GINT64_FORMAT,
-			kvp_value_get_gint64 (val));
-		break;
-
-	case KVP_TYPE_DOUBLE:
-		return g_strdup_printf ("(%g)", kvp_value_get_double (val));
-		break;
-
-	case KVP_TYPE_NUMERIC:
-		tmp1 = qof_numeric_to_string (kvp_value_get_numeric (val));
-		tmp2 = g_strdup_printf ("%s", tmp1 ? tmp1 : "");
-		g_free (tmp1);
-		return tmp2;
-		break;
-
-	case KVP_TYPE_STRING:
-		tmp1 = kvp_value_get_string (val);
-		return g_strdup_printf ("%s", tmp1 ? tmp1 : "");
-		break;
-
-	case KVP_TYPE_GUID:
-		ctmp = guid_to_string (kvp_value_get_guid (val));
-		tmp2 = g_strdup_printf ("%s", ctmp ? ctmp : "");
-		return tmp2;
-		break;
+		case KVP_TYPE_GINT64:
+		{
+			return g_strdup_printf ("%" G_GINT64_FORMAT,
+				kvp_value_get_gint64 (val));
+			break;
+		}
+		case KVP_TYPE_DOUBLE:
+		{
+			return g_strdup_printf ("(%g)", kvp_value_get_double (val));
+			break;
+		}
+		case KVP_TYPE_NUMERIC:
+		{
+			tmp1 = qof_numeric_to_string (kvp_value_get_numeric (val));
+			tmp2 = g_strdup_printf ("%s", tmp1 ? tmp1 : "");
+			g_free (tmp1);
+			return tmp2;
+			break;
+		}
+		case KVP_TYPE_STRING:
+		{
+			tmp1 = kvp_value_get_string (val);
+			return g_strdup_printf ("%s", tmp1 ? tmp1 : "");
+			break;
+		}
+		case KVP_TYPE_GUID:
+		{
+			ctmp = guid_to_string (kvp_value_get_guid (val));
+			tmp2 = g_strdup_printf ("%s", ctmp ? ctmp : "");
+			return tmp2;
+			break;
+		}
 #ifndef QOF_DISABLE_DEPRECATED
-	case KVP_TYPE_TIMESPEC:
+		case KVP_TYPE_TIMESPEC:
 		{
 			time_t t;
 			t = timespecToTime_t (kvp_value_get_timespec (val));
@@ -1866,17 +1857,18 @@ kvp_value_to_bare_string (const KvpValue * val)
 			break;
 		}
 #endif
-	case KVP_TYPE_BINARY:
+		case KVP_TYPE_BOOLEAN :
+			return (kvp_value_get_boolean (val)) ? "TRUE" : "FALSE";
+		case KVP_TYPE_BINARY:
 		{
 			guint64 len;
-			void *data;
+			gpointer data;
 			data = kvp_value_get_binary (val, &len);
 			tmp1 = binary_to_string (data, len);
 			return g_strdup_printf ("%s", tmp1 ? tmp1 : "");
+			break;
 		}
-		break;
-
-	case KVP_TYPE_GLIST:
+		case KVP_TYPE_GLIST:
 		/* borked. kvp_value_glist_to_string is a debug fcn */
 		{
 			tmp1 = kvp_value_glist_to_string (kvp_value_get_glist (val));
@@ -1885,7 +1877,7 @@ kvp_value_to_bare_string (const KvpValue * val)
 			return tmp2;
 			break;
 		}
-	case KVP_TYPE_FRAME:
+		case KVP_TYPE_FRAME:
 		{
 			KvpFrame *frame;
 
@@ -1899,9 +1891,9 @@ kvp_value_to_bare_string (const KvpValue * val)
 			return tmp1;
 			break;
 		}
-	default:
-		return g_strdup_printf (" ");
-		break;
+		default:
+			return g_strdup_printf (" ");
+			break;
 	}
 }
 
@@ -1916,71 +1908,80 @@ kvp_value_to_string (const KvpValue * val)
 
 	switch (kvp_value_get_type (val))
 	{
-	case KVP_TYPE_GINT64:
-		return g_strdup_printf ("KVP_VALUE_GINT64(%" G_GINT64_FORMAT ")",
-			kvp_value_get_gint64 (val));
-		break;
-
-	case KVP_TYPE_DOUBLE:
-		return g_strdup_printf ("KVP_VALUE_DOUBLE(%g)",
-			kvp_value_get_double (val));
-		break;
-
-	case KVP_TYPE_NUMERIC:
-		tmp1 = qof_numeric_to_string (kvp_value_get_numeric (val));
-		tmp2 = g_strdup_printf ("KVP_VALUE_NUMERIC(%s)", tmp1 ? tmp1 : "");
-		g_free (tmp1);
-		return tmp2;
-		break;
-
-	case KVP_TYPE_STRING:
-		tmp1 = kvp_value_get_string (val);
-		return g_strdup_printf ("KVP_VALUE_STRING(%s)", tmp1 ? tmp1 : "");
-		break;
-
-	case KVP_TYPE_GUID:
-		/* THREAD-UNSAFE */
-		ctmp = guid_to_string (kvp_value_get_guid (val));
-		tmp2 = g_strdup_printf ("KVP_VALUE_GUID(%s)", ctmp ? ctmp : "");
-		return tmp2;
-		break;
+		case KVP_TYPE_GINT64:
+		{
+			return g_strdup_printf ("KVP_VALUE_GINT64(%" G_GINT64_FORMAT ")",
+				kvp_value_get_gint64 (val));
+			break;
+		}
+		case KVP_TYPE_DOUBLE:
+		{
+			return g_strdup_printf ("KVP_VALUE_DOUBLE(%g)",
+				kvp_value_get_double (val));
+			break;
+		}
+		case KVP_TYPE_NUMERIC:
+		{
+			tmp1 = qof_numeric_to_string (kvp_value_get_numeric (val));
+			tmp2 = g_strdup_printf ("KVP_VALUE_NUMERIC(%s)", tmp1 ? tmp1 : "");
+			g_free (tmp1);
+			return tmp2;
+			break;
+		}
+		case KVP_TYPE_STRING:
+		{
+			tmp1 = kvp_value_get_string (val);
+			return g_strdup_printf ("KVP_VALUE_STRING(%s)", tmp1 ? tmp1 : "");
+			break;
+		}
+		case KVP_TYPE_GUID:
+		{
+			/* THREAD-UNSAFE */
+			ctmp = guid_to_string (kvp_value_get_guid (val));
+			tmp2 = g_strdup_printf ("KVP_VALUE_GUID(%s)", ctmp ? ctmp : "");
+			return tmp2;
+			break;
+		}
 #ifndef QOF_DISABLE_DEPRECATED
-	case KVP_TYPE_TIMESPEC:
-		tmp1 = g_new0 (char, 40);
-        gnc_timespec_to_iso8601_buff (kvp_value_get_timespec (val), tmp1);
-		tmp2 = g_strdup_printf ("KVP_VALUE_TIMESPEC(%s)", tmp1);
-		g_free (tmp1);
-		return tmp2;
-		break;
+		case KVP_TYPE_TIMESPEC:
+		{
+			tmp1 = g_new0 (gchar, 40);
+	        gnc_timespec_to_iso8601_buff (kvp_value_get_timespec (val), tmp1);
+			tmp2 = g_strdup_printf ("KVP_VALUE_TIMESPEC(%s)", tmp1);
+			g_free (tmp1);
+			return tmp2;
+			break;
+		}
 #endif
-	case KVP_TYPE_BINARY:
+		case KVP_TYPE_BINARY:
 		{
 			guint64 len;
-			void *data;
+			gpointer data;
 			data = kvp_value_get_binary (val, &len);
 			tmp1 = binary_to_string (data, len);
 			return g_strdup_printf ("KVP_VALUE_BINARY(%s)",
 				tmp1 ? tmp1 : "");
+			break;
 		}
-		break;
-
-	case KVP_TYPE_GLIST:
-		tmp1 = kvp_value_glist_to_string (kvp_value_get_glist (val));
-		tmp2 = g_strdup_printf ("KVP_VALUE_GLIST(%s)", tmp1 ? tmp1 : "");
-		g_free (tmp1);
-		return tmp2;
-		break;
-
-	case KVP_TYPE_FRAME:
-		tmp1 = kvp_frame_to_string (kvp_value_get_frame (val));
-		tmp2 = g_strdup_printf ("KVP_VALUE_FRAME(%s)", tmp1 ? tmp1 : "");
-		g_free (tmp1);
-		return tmp2;
-		break;
-
-	default:
-		return g_strdup_printf (" ");
-		break;
+		case KVP_TYPE_GLIST:
+		{
+			tmp1 = kvp_value_glist_to_string (kvp_value_get_glist (val));
+			tmp2 = g_strdup_printf ("KVP_VALUE_GLIST(%s)", tmp1 ? tmp1 : "");
+			g_free (tmp1);
+			return tmp2;
+			break;
+		}
+		case KVP_TYPE_FRAME:
+		{
+			tmp1 = kvp_frame_to_string (kvp_value_get_frame (val));
+			tmp2 = g_strdup_printf ("KVP_VALUE_FRAME(%s)", tmp1 ? tmp1 : "");
+			g_free (tmp1);
+			return tmp2;
+			break;
+		}
+		default:
+			return g_strdup_printf (" ");
+			break;
 	}
 }
 
@@ -1994,7 +1995,7 @@ kvp_frame_to_string_helper (gpointer key, gpointer value, gpointer data)
 	tmp_val = kvp_value_to_string ((KvpValue *) value);
 
 	*str = g_strdup_printf ("%s    %s => %s,\n",
-		*str ? *str : "", key ? (char *) key : "", tmp_val ? tmp_val : "");
+		*str ? *str : "", key ? (gchar *) key : "", tmp_val ? tmp_val : "");
 
 	g_free (old_data);
 	g_free (tmp_val);
@@ -2012,7 +2013,6 @@ kvp_frame_to_string (const KvpFrame * frame)
 	if (frame->hash)
 		g_hash_table_foreach (frame->hash, kvp_frame_to_string_helper,
 			&tmp1);
-
 	{
 		gchar *tmp2;
 		tmp2 = g_strdup_printf ("%s}\n", tmp1);

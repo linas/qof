@@ -847,6 +847,23 @@ must \b NOT be freed by the caller.
 */
 gchar *
 qof_backend_get_message (QofBackend * be);
+/** \deprecated Deprecated backwards compat token */
+#define kvp_frame KvpFrame
+/** \deprecated Deprecated backwards compat token */
+#define kvp_value KvpValue
+/** \deprecated Deprecated backwards compat token */
+#define kvp_value_t KvpValueType
+/** \deprecated Use kvp_frame_set_numeric instead. */
+#define kvp_frame_set_gnc_numeric kvp_frame_set_numeric
+/** \deprecated Use kvp_frame_set_string instead. */
+#define kvp_frame_set_str kvp_frame_set_string
+/** \deprecated Use kvp_frame_add_numeric instead */
+#define kvp_frame_add_gnc_numeric kvp_frame_add_numeric
+/** \deprecated Use kvp_frame_add_string instead */
+#define kvp_frame_add_str kvp_frame_add_string
+/** \deprecated Use kvp_value_new_numeric instead */
+#define kvp_value_new_gnc_numeric kvp_value_new_numeric
+
 
 #endif /* _DEPRECATED_H */
 #endif /* QOF_DISABLE_DEPRECATED */

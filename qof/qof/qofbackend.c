@@ -121,51 +121,55 @@ qof_backend_prepare_option (QofBackend * be,
 	value = NULL;
 	switch (option->type)
 	{
-	case KVP_TYPE_GINT64:
+		case KVP_TYPE_GINT64:
 		{
 			value = kvp_value_new_gint64 (*(gint64 *) option->value);
 			break;
 		}
-	case KVP_TYPE_DOUBLE:
+		case KVP_TYPE_DOUBLE:
 		{
 			value = kvp_value_new_double (*(gdouble *) option->value);
 			break;
 		}
-	case KVP_TYPE_NUMERIC:
+		case KVP_TYPE_NUMERIC:
 		{
 			value = kvp_value_new_numeric (*(QofNumeric *) option->value);
 			break;
 		}
-	case KVP_TYPE_STRING:
+		case KVP_TYPE_STRING:
 		{
 			value = kvp_value_new_string ((const gchar *) option->value);
 			break;
 		}
-	case KVP_TYPE_GUID:
+		case KVP_TYPE_BOOLEAN:
+		{
+		break;
+		}
+		case KVP_TYPE_GUID:
 		{
 			break;
 		}						/* unsupported */
-	case KVP_TYPE_TIME :
+		case KVP_TYPE_TIME :
 		{
 			value = kvp_value_new_time ((QofTime*) option->value);
 			break;
 		}
 #ifndef QOF_DISABLE_DEPRECATED
-	case KVP_TYPE_TIMESPEC:
+		case KVP_TYPE_TIMESPEC:
 		{
 			value = kvp_value_new_timespec (*(Timespec *) option->value);
 			break;
 		}
 #endif
-	case KVP_TYPE_BINARY:
+		case KVP_TYPE_BINARY:
 		{
 			break;
 		}						/* unsupported */
-	case KVP_TYPE_GLIST:
+		case KVP_TYPE_GLIST:
 		{
 			break;
 		}						/* unsupported */
-	case KVP_TYPE_FRAME:
+		case KVP_TYPE_FRAME:
 		{
 			break;
 		}						/* unsupported */
@@ -245,35 +249,35 @@ config_foreach_cb (const gchar * key, KvpValue * value, gpointer data)
 		return;
 	switch (option.type)
 	{							/* set the KvpFrame value into the option */
-	case KVP_TYPE_GINT64:
+		case KVP_TYPE_GINT64:
 		{
 			int64 = kvp_value_get_gint64 (value);
 			option.value = (gpointer) & int64;
 			break;
 		}
-	case KVP_TYPE_DOUBLE:
+		case KVP_TYPE_DOUBLE:
 		{
 			db = kvp_value_get_double (value);
 			option.value = (gpointer) & db;
 			break;
 		}
-	case KVP_TYPE_NUMERIC:
+		case KVP_TYPE_NUMERIC:
 		{
 			num = kvp_value_get_numeric (value);
 			option.value = (gpointer) & num;
 			break;
 		}
-	case KVP_TYPE_STRING:
+		case KVP_TYPE_STRING:
 		{
 			option.value = (gpointer) kvp_value_get_string (value);
 			break;
 		}
-	case KVP_TYPE_TIME :
-	{
-		option.value = (gpointer) kvp_value_get_time (value);
-	}
+		case KVP_TYPE_TIME :
+		{
+			option.value = (gpointer) kvp_value_get_time (value);
+		}
 #ifndef QOF_DISABLE_DEPRECATED
-	case KVP_TYPE_TIMESPEC:
+		case KVP_TYPE_TIMESPEC:
 		{
 			Timespec ts;
 			ts = kvp_value_get_timespec (value);
@@ -281,19 +285,23 @@ config_foreach_cb (const gchar * key, KvpValue * value, gpointer data)
 			break;
 		}
 #endif
-	case KVP_TYPE_GUID:
+		case KVP_TYPE_BOOLEAN :
+		{
+			break;
+		}
+		case KVP_TYPE_GUID:
 		{
 			break;
 		}						/* unsupported */
-	case KVP_TYPE_BINARY:
+		case KVP_TYPE_BINARY:
 		{
 			break;
 		}						/* unsupported */
-	case KVP_TYPE_GLIST:
+		case KVP_TYPE_GLIST:
 		{
 			break;
 		}						/* unsupported */
-	case KVP_TYPE_FRAME:
+		case KVP_TYPE_FRAME:
 		{
 			break;
 		}						/* unsupported */
@@ -309,7 +317,7 @@ config_foreach_cb (const gchar * key, KvpValue * value, gpointer data)
 	helper->fcn (&option, helper->data);
 	switch (option.type)
 	{							/* set the option value into the KvpFrame */
-	case KVP_TYPE_GINT64:
+		case KVP_TYPE_GINT64:
 		{
 			kvp_frame_set_gint64 (helper->recursive, key,
 				(*(gint64 *) option.value));
@@ -321,45 +329,49 @@ config_foreach_cb (const gchar * key, KvpValue * value, gpointer data)
 				(*(gdouble *) option.value));
 			break;
 		}
-	case KVP_TYPE_NUMERIC:
+		case KVP_TYPE_NUMERIC:
 		{
 			kvp_frame_set_numeric (helper->recursive, key,
 				(*(QofNumeric *) option.value));
 			break;
 		}
-	case KVP_TYPE_STRING:
+		case KVP_TYPE_STRING:
 		{
 			kvp_frame_set_string (helper->recursive, key,
 				(gchar *) option.value);
 			break;
 		}
-	case KVP_TYPE_TIME :
-	{
-		kvp_frame_set_time (helper->recursive, key,
-			(QofTime*) option.value);
-		break;
-	}
+		case KVP_TYPE_TIME :
+		{
+			kvp_frame_set_time (helper->recursive, key,
+				(QofTime*) option.value);
+			break;
+		}
 #ifndef QOF_DISABLE_DEPRECATED
-	case KVP_TYPE_TIMESPEC:
+		case KVP_TYPE_TIMESPEC:
 		{
 			kvp_frame_set_timespec (helper->recursive, key,
 				(*(Timespec *) option.value));
 			break;
 		}
 #endif
-	case KVP_TYPE_GUID:
+		case KVP_TYPE_BOOLEAN :
+		{
+			break;
+		}
+		case KVP_TYPE_GUID:
 		{
 			break;
 		}						/* unsupported */
-	case KVP_TYPE_BINARY:
+		case KVP_TYPE_BINARY:
 		{
 			break;
 		}						/* unsupported */
-	case KVP_TYPE_GLIST:
+		case KVP_TYPE_GLIST:
 		{
 			break;
 		}						/* unsupported */
-	case KVP_TYPE_FRAME:
+		case KVP_TYPE_FRAME:
 		{
 			break;
 		}						/* unsupported */

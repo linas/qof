@@ -1237,7 +1237,7 @@ string_to_kvp_value (const gchar * content, KvpValueType type)
 
 	switch (type)
 	{
-	case KVP_TYPE_GINT64:
+		case KVP_TYPE_GINT64:
 		{
 			errno = 0;
 			cm_i64 = strtoll (content, &tail, 0);
@@ -1247,56 +1247,52 @@ string_to_kvp_value (const gchar * content, KvpValueType type)
 			}
 			break;
 		}
-	case KVP_TYPE_DOUBLE:
+		case KVP_TYPE_DOUBLE:
 		{
 			errno = 0;
 			cm_double = strtod (content, &tail);
 			if (errno == 0)
-			{
 				return kvp_value_new_double (cm_double);
-			}
 			break;
 		}
-	case KVP_TYPE_NUMERIC:
+		case KVP_TYPE_NUMERIC:
 		{
 			qof_numeric_from_string (content, &cm_numeric);
 			return kvp_value_new_gnc_numeric (cm_numeric);
 			break;
 		}
-	case KVP_TYPE_STRING:
+		case KVP_TYPE_STRING:
 		{
 			return kvp_value_new_string (content);
 			break;
 		}
-	case KVP_TYPE_GUID:
+		case KVP_TYPE_GUID:
 		{
 			cm_guid = g_new0 (GUID, 1);
 			if (TRUE == string_to_guid (content, cm_guid))
-			{
 				return kvp_value_new_guid (cm_guid);
-			}
 			break;
 		}
-	case KVP_TYPE_TIME :
-	{
-		QofDate *qd;
-		QofTime *qt;
-		KvpValue *retval;
-
-		qd = qof_date_parse (content, QOF_DATE_FORMAT_UTC);
-		if(qd)
+		case KVP_TYPE_TIME :
 		{
-			qt = qof_date_to_qtime (qd);
-			retval = kvp_value_new_time (qt);
-			qof_date_free (qd);
-			qof_time_free (qt);
-			return retval;
+			QofDate *qd;
+			QofTime *qt;
+			KvpValue *retval;
+
+			qd = qof_date_parse (content, QOF_DATE_FORMAT_UTC);
+			if(qd)
+			{
+				qt = qof_date_to_qtime (qd);
+				retval = kvp_value_new_time (qt);
+				qof_date_free (qd);
+				qof_time_free (qt);
+				return retval;
+			}
+			else
+				PERR (" failed to parse date");
 		}
-		else
-			PERR (" failed to parse date");
-	}
 #ifndef QOF_DISABLE_DEPRECATED
-	case KVP_TYPE_TIMESPEC:
+		case KVP_TYPE_TIMESPEC:
 		{
 			strptime (content, QSF_XSD_TIME, &kvp_time);
 			kvp_time_t = mktime (&kvp_time);
@@ -1305,16 +1301,17 @@ string_to_kvp_value (const gchar * content, KvpValueType type)
 			break;
 		}
 #endif
-	case KVP_TYPE_BINARY:
-//      return kvp_value_new_binary(value->value.binary.data,
+		case KVP_TYPE_BOOLEAN :
+		case KVP_TYPE_BINARY:
+//	      return kvp_value_new_binary(value->value.binary.data,
 //                                  value->value.binary.datasize);
-		break;
-	case KVP_TYPE_GLIST:
-//      return kvp_value_new_glist(value->value.list);
-		break;
-	case KVP_TYPE_FRAME:
-//      return kvp_value_new_frame(value->value.frame);
-		break;
+			break;
+		case KVP_TYPE_GLIST:
+//  	    return kvp_value_new_glist(value->value.list);
+			break;
+		case KVP_TYPE_FRAME:
+//	      return kvp_value_new_frame(value->value.frame);
+			break;
 	}
 	return NULL;
 }

@@ -20,8 +20,8 @@
  *                                                                  *
 \********************************************************************/
 
-#ifndef XACC_KVP_UTIL_P_H
-#define XACC_KVP_UTIL_P_H
+#ifndef KVPUTIL_P_H
+#define KVPUTIL_P_H
 
 #include "guid.h"
 #include "kvpframe.h"
@@ -31,7 +31,7 @@
 */
 /** @file kvputil-p.h
  * @brief misc odd-job kvp utils engine-private routines
- * @author Copyright (C) 2001, 2003 Linas Vepstas <linas@linas.org>               *
+ * @author Copyright (C) 2001, 2003 Linas Vepstas <linas@linas.org>
 */
 /** @name KvpBag Bags of GUID Pointers 
  @{ 
@@ -111,4 +111,4 @@ qof_kvp_bag_remove_frame (KvpFrame * root, const gchar *path,
 
 /** @} */
 /** @} */
-#endif /* XACC_KVP_UTIL_P_H */
+#endif /* KVPUTIL_P_H */

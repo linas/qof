@@ -1,6 +1,7 @@
 /********************************************************************\
  * kvp_util.c -- misc odd-job kvp utils                             *
  * Copyright (C) 2001 Linas Vepstas <linas@linas.org>               *
+ * Copyright (C) 2006 Neil Williams <linux@codehelp.co.uk>          *
  *                                                                  *
  * This program is free software; you can redistribute it and/or    *
  * modify it under the terms of the GNU General Public License as   *
@@ -100,7 +101,7 @@ qof_kvp_bag_find_by_guid (KvpFrame * root, const gchar *path,
 		return NULL;
 	}
 
-	/* Its gotta be a single isolated frame, or a list of them. */
+	/* Its got to be a single isolated frame, or a list of them. */
 	if (KVP_TYPE_GLIST != valtype)
 		return NULL;
 
@@ -115,8 +116,7 @@ qof_kvp_bag_find_by_guid (KvpFrame * root, const gchar *path,
 /* ================================================================ */
 
 void
-qof_kvp_bag_remove_frame (KvpFrame * root, const char *path,
-						  KvpFrame * fr)
+qof_kvp_bag_remove_frame (KvpFrame * root, const gchar *path, KvpFrame * fr)
 {
 	KvpValue *arr;
 	KvpValueType valtype;
@@ -136,7 +136,7 @@ qof_kvp_bag_remove_frame (KvpFrame * root, const char *path,
 		return;
 	}
 
-	/* Its gotta be a single isolated frame, or a list of them. */
+	/* Its got to be a single isolated frame, or a list of them. */
 	if (KVP_TYPE_GLIST != valtype)
 		return;
 
@@ -159,7 +159,7 @@ qof_kvp_bag_remove_frame (KvpFrame * root, const char *path,
 /* ================================================================ */
 
 static KvpFrame *
-gnc_kvp_bag_get_first (KvpFrame * root, const char *path)
+qof_kvp_bag_get_first (KvpFrame * root, const gchar *path)
 {
 	KvpValue *arr, *va;
 	KvpValueType valtype;
@@ -168,9 +168,7 @@ gnc_kvp_bag_get_first (KvpFrame * root, const char *path)
 	arr = kvp_frame_get_value (root, path);
 	valtype = kvp_value_get_type (arr);
 	if (KVP_TYPE_FRAME == valtype)
-	{
 		return kvp_value_get_frame (arr);
-	}
 
 	/* Its gotta be a single isolated frame, or a list of them. */
 	if (KVP_TYPE_GLIST != valtype)
@@ -190,12 +188,12 @@ qof_kvp_bag_merge (KvpFrame * kvp_into, const gchar *intopath,
 {
 	KvpFrame *fr;
 
-	fr = gnc_kvp_bag_get_first (kvp_from, frompath);
+	fr = qof_kvp_bag_get_first (kvp_from, frompath);
 	while (fr)
 	{
 		qof_kvp_bag_remove_frame (kvp_from, frompath, fr);
 		kvp_frame_add_frame_nc (kvp_into, intopath, fr);
-		fr = gnc_kvp_bag_get_first (kvp_from, frompath);
+		fr = qof_kvp_bag_get_first (kvp_from, frompath);
 	}
 }
 
