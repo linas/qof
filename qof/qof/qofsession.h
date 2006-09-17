@@ -415,5 +415,7 @@ void qof_session_add_close_hook (GFunc fn, gpointer data);
  *  @param session A pointer to the session being closed. */
 void qof_session_call_close_hooks (QofSession * session);
 
-#endif /* QOF_SESSION_H */
 /** @} */
+/** @} */
+
+#endif /* QOF_SESSION_H */

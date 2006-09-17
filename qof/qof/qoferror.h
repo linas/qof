@@ -104,7 +104,7 @@ QofError strings.
 QofError strings remain the property of QofError and should not
 be freed.
 
-@since 0.8.0
+@since 0.7.2
 
 @{
 */
@@ -205,7 +205,7 @@ qof_error_check (QofSession * session);
 All QofError values are timestamped at the moment
 that the error is set.
 
-@param session The session where the error was set.
+@param be The Backend where the error was set.
 
 @return NULL if no error exists, otherwise the QofTime
 	that the error was set.
@@ -217,12 +217,12 @@ qof_error_get_time_be (QofBackend * be);
 QofTime *
 qof_error_get_time (QofSession * session);
 
-/** @brief Pop the most recent error from the session stack
+/** @brief Pop the most recent error from the backend stack
 
 Returns and clears the most recently set error for this
-session, if any.
+backend, if any.
 
-@param session The session that recorded the error.
+@param be The Backend that recorded the error.
 
 @return QOF_SUCCESS if no errors have been set, otherwise
 	the QofErrorId of the most recently set error.
@@ -236,10 +236,10 @@ qof_error_get_id (QofSession * session);
 
 /** @brief Pop the most recent error and get the message.
 
-Clears the most recently set error for this session and
+Clears the most recently set error for this backend and
 returns the error message, if any.
 
-@param session The session that recorded the error.
+@param be The Backend that recorded the error.
 
 @return NULL if no errors have been set, otherwise
 	the translated message for the most recently set error.
