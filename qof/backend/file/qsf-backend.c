@@ -256,19 +256,6 @@ qsf_param_init (QsfParam * params)
 	 "overflow has been detected. The QSF object file "
 	 "'%s' contains invalid data in a field that is "
 	 "meant to hold a number."), TRUE);
-/* errors specific to this backend
-	ERR_QSF_INVALID_OBJ
-	ERR_QSF_INVALID_MAP
-	ERR_QSF_BAD_OBJ_GUID
-	ERR_QSF_BAD_QOF_VERSION
-	ERR_QSF_BAD_MAP
-	ERR_QSF_NO_MAP
-	ERR_QSF_WRONG_MAP
-	ERR_QSF_MAP_NOT_OBJ
-	ERR_QSF_OVERFLOW
-	ERR_QSF_OPEN_NOT_MERGE
-*/
-
 }
 
 static gboolean
@@ -293,9 +280,6 @@ qsf_determine_file_type (const gchar * path)
 	return FALSE;
 }
 
-/* GnuCash does LOTS of filesystem work, QSF is going to leave most of it to libxml2. :-)
-Just strip the file: from the start of the book_path URL. Locks are not implemented.
-*/
 static void
 qsf_session_begin (QofBackend * be, QofSession * session,
 	const gchar * book_path, gboolean ignore_lock,
@@ -314,9 +298,8 @@ qsf_session_begin (QofBackend * be, QofSession * session,
 	qsf_be->fullpath = NULL;
 	if (book_path == NULL)
 	{
-		/* use stdout */
+		/* allow use of stdout */
 		qof_error_set_be (be, QOF_SUCCESS);
-//		qof_backend_set_error (be, ERR_BACKEND_NO_ERR);
 		return;
 	}
 	p = strchr (book_path, ':');
@@ -351,7 +334,6 @@ qsf_session_begin (QofBackend * be, QofSession * session,
 		}
 	}
 	qof_error_set_be (be, QOF_SUCCESS);
-//	qof_backend_set_error (be, ERR_BACKEND_NO_ERR);
 }
 
 static void
@@ -713,59 +695,64 @@ kvp_value_to_qof_type_helper (KvpValueType n)
 {
 	switch (n)
 	{
-	case KVP_TYPE_GINT64:
+		case KVP_TYPE_GINT64:
 		{
 			return QOF_TYPE_INT64;
 			break;
 		}
-	case KVP_TYPE_DOUBLE:
+		case KVP_TYPE_DOUBLE:
 		{
 			return QOF_TYPE_DOUBLE;
 			break;
 		}
-	case KVP_TYPE_NUMERIC:
+		case KVP_TYPE_NUMERIC:
 		{
 			return QOF_TYPE_NUMERIC;
 			break;
 		}
-	case KVP_TYPE_STRING:
+		case KVP_TYPE_STRING:
 		{
 			return QOF_TYPE_STRING;
 			break;
 		}
-	case KVP_TYPE_GUID:
+		case KVP_TYPE_GUID:
 		{
 			return QOF_TYPE_GUID;
 			break;
 		}
 #ifndef QOF_DISABLE_DEPRECATED
-	case KVP_TYPE_TIMESPEC:
+		case KVP_TYPE_TIMESPEC:
 		{
 			return QOF_TYPE_DATE;
 			break;
 		}
 #endif
-	case KVP_TYPE_TIME :
+		case KVP_TYPE_BOOLEAN :
+		{
+			return QOF_TYPE_BOOLEAN;
+			break;
+		}
+		case KVP_TYPE_TIME :
 		{
 			return QOF_TYPE_TIME;
 			break;
 		}
-	case KVP_TYPE_BINARY:
+		case KVP_TYPE_BINARY:
 		{
 			return QSF_TYPE_BINARY;
 			break;
 		}
-	case KVP_TYPE_GLIST:
+		case KVP_TYPE_GLIST:
 		{
 			return QSF_TYPE_GLIST;
 			break;
 		}
-	case KVP_TYPE_FRAME:
+		case KVP_TYPE_FRAME:
 		{
 			return QSF_TYPE_FRAME;
 			break;
 		}
-	default:
+		default:
 		{
 			return NULL;
 		}
@@ -790,17 +777,18 @@ qsf_from_kvp_helper (const gchar * path, KvpValue * content,
 	n = kvp_value_get_type (content);
 	switch (n)
 	{
-	case KVP_TYPE_GINT64:
-	case KVP_TYPE_DOUBLE:
-	case KVP_TYPE_NUMERIC:
-	case KVP_TYPE_STRING:
-	case KVP_TYPE_GUID:
-	case KVP_TYPE_TIME :
+		case KVP_TYPE_GINT64:
+		case KVP_TYPE_DOUBLE:
+		case KVP_TYPE_NUMERIC:
+		case KVP_TYPE_STRING:
+		case KVP_TYPE_GUID:
+		case KVP_TYPE_TIME :
+		case KVP_TYPE_BOOLEAN :
 #ifndef QOF_DISABLE_DEPRECATED
-	case KVP_TYPE_TIMESPEC:
+		case KVP_TYPE_TIMESPEC:
 #endif
-	case KVP_TYPE_BINARY:
-	case KVP_TYPE_GLIST:
+		case KVP_TYPE_BINARY:
+		case KVP_TYPE_GLIST:
 		{
 			node =
 				xmlAddChild (params->output_node,
@@ -817,7 +805,7 @@ qsf_from_kvp_helper (const gchar * path, KvpValue * content,
 				BAD_CAST kvp_value_to_qof_type_helper (n));
 			break;
 		}
-	case KVP_TYPE_FRAME:
+		case KVP_TYPE_FRAME:
 		{
 			if (!params->full_kvp_path)
 				params->full_kvp_path = g_strdup (path);
@@ -830,7 +818,7 @@ qsf_from_kvp_helper (const gchar * path, KvpValue * content,
 			params->full_kvp_path = NULL;
 			break;
 		}
-	default:
+		default:
 		{
 			PERR (" unsupported value = %d", kvp_value_get_type (content));
 			break;
@@ -1302,6 +1290,11 @@ string_to_kvp_value (const gchar * content, KvpValueType type)
 		}
 #endif
 		case KVP_TYPE_BOOLEAN :
+		{
+			gboolean val;
+			val = qof_util_bool_to_int (content);
+			return kvp_value_new_boolean (val);
+		}
 		case KVP_TYPE_BINARY:
 //	      return kvp_value_new_binary(value->value.binary.data,
 //                                  value->value.binary.datasize);
