@@ -3,7 +3,7 @@ Section: libs
 Priority: optional
 Maintainer: Debian QOF packaging team <pkg-qof-maintainers@lists.alioth.debian.org>
 Uploaders: Goedson Teixeira Paixao <goedson@debian.org>, Neil Williams <linux@codehelp.co.uk>
-Build-Depends: debhelper (>= 5), cdbs, autotools-dev, libglib2.0-dev, libxml-parser-perl, doxygen, libsqlite0-dev
+Build-Depends: debhelper (>= 5), cdbs, autotools-dev, libglib2.0-dev (>= 2.6.0), libxml-parser-perl, doxygen, libsqlite0-dev
 Standards-Version: 3.7.2
 
 Package: libqof-dev
@@ -25,13 +25,13 @@ Priority: optional
 Section: libs
 Architecture: any
 Depends: ${shlibs:Depends}
+Conflicts: pilot-qof, gnotime
 Description: Query Object Framework
  A framework to allow the execution of SQL-type queries
  using collections of in-memory objects as 'tables'.
  .
  This package provides the shared libraries needed 
- to run programs developed using QOF, the XML schemas
- to validate files and the QSF XML backend module.
+ to run programs developed using QOF.
  .
   Homepage: http://qof.sourceforge.net/
 
@@ -45,8 +45,7 @@ Description: Query Object Framework - SQLite backend module
  queries using collections of in-memory objects as 'tables'.
  .
  This module provides a SQLite backend intended for
- embedded systems where the size of the QSF XML backend
- is a problem. The package can also be installed alongside 
- the default QSF XML backend.
+ embedded systems. The package can also be installed 
+ alongside the default QSF XML backend.
  .
   Homepage: http://qof.sourceforge.net/
