@@ -81,9 +81,6 @@ void kvp_frame_add_url_encoding (KvpFrame * frame, const gchar * enc);
  */
 gint kvp_frame_compare (const KvpFrame * fa, const KvpFrame * fb);
 
-/** \todo move to qofutil.c */
-gint double_compare (double v1, double v2);
-
 gchar *kvp_frame_to_string (const KvpFrame * frame);
 gchar *binary_to_string (const void *data, guint32 size);
 gchar *kvp_value_glist_to_string (const GList * list);

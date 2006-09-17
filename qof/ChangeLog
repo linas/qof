@@ -11,6 +11,12 @@
 	qof/qofsql.c : Beginning the update of KVP
 	and addition of KVP_TYPE_BOOLEAN.
 
+	* qof/qofutil.c,
+	qof/qofutil.h,
+	qof/deprecated.c,
+	qof/deprecated.h : move qof_util_double_compare 
+	from kvp (deprecate old name double_compare).
+
 2006-09-14  Neil Williams <linux@codehelp.co.uk>
 
 	* qof/qofinstance.h,

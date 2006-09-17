@@ -33,6 +33,7 @@
  * @brief misc odd-job kvp utils engine-private routines
  * @author Copyright (C) 2001, 2003 Linas Vepstas <linas@linas.org>
 */
+
 /** @name KvpBag Bags of GUID Pointers 
  @{ 
 */
@@ -73,24 +74,22 @@ KvpFrame *
 qof_kvp_bag_add (KvpFrame * kvp_root, const gchar *path, 
 				QofTime *qt, const gchar *first_name, ...);
 
-/** The gnc_kvp_bag_merge() routine will move the bag contents from
+/** The qof_kvp_bag_merge() routine will move the bag contents from
  *    the 'kvp_from', to the 'into' bag.  It will then delete the 
  *    'from' bag from the kvp tree.
  
- @todo Rename qof_kvp_bag_merge
  */
 void 
 qof_kvp_bag_merge (KvpFrame * kvp_into, const gchar *intopath,
 				   KvpFrame * kvp_from, const gchar *frompath);
 
-/** The gnc_kvp_bag_find_by_guid() routine examines the bag pointed
+/** The qof_kvp_bag_find_by_guid() routine examines the bag pointed
  *    located at root.  It looks for a frame in that bag that has the
  *    guid value of "desired_guid" filed under the key name "guid_name".
  *    If it finds that matching guid, then it returns a pointer to 
  *    the KVP frame that contains it.  If it is not found, or if there
  *    is any other error, NULL is returned.
  
- @todo rename qof_kvp_bag_find_by_guid
  */
 
 KvpFrame *
@@ -110,5 +109,6 @@ qof_kvp_bag_remove_frame (KvpFrame * root, const gchar *path,
 						  KvpFrame * fr);
 
 /** @} */
+
 /** @} */
 #endif /* KVPUTIL_P_H */

@@ -53,7 +53,7 @@
  
 @{
 */
-/** @file kvp_frame.h
+/** @file kvpframe.h
     @brief A key-value frame system
     @author Copyright (C) 2000 Bill Gribble
     @author Copyright (C) 2003 Linas Vepstas <linas@linas.org>
@@ -66,6 +66,7 @@
 #include "qofnumeric.h"
 #include "guid.h"
 #include "qoftime.h"
+#include "qofutil.h"
 
 #define QOF_MOD_KVP "qof-kvp"
 
@@ -77,40 +78,65 @@ typedef struct _KvpFrame KvpFrame;
 typedef struct _KvpValue KvpValue;
 
 /** \brief possible types in the union KvpValue 
- * \todo : People have asked for boolean values, 
- *
- * \todo In the long run, this should be synchronized with the 
- * core QOF types, which in turn should be synced to the g_types
- * in GLib.  Unfortunately, this requires writing a pile of code
- * to handle all of the different cases.
- * An alternative might be to make kvp values inherit from the 
- * core g_types (i.e. add new core g_types) ??
- */
+ 
+ \todo In the long run, this could be synchronised with the 
+ core QOF types, which in turn may or may not be synced to the
+ GValue types in GLib. The QOF types currently unsupported
+ are KVP_TYPE_GLIST and KVP_TYPE_BINARY.
+*/
 typedef enum
 {
-	/** QOF_TYPE_INT64   gint64 */
+	/** \brief 64bit integer
+- QofType   :  QOF_TYPE_INT64
+- GType     :  G_TYPE_INT64
+- GLib type :  gint64
+*/
 	KVP_TYPE_GINT64 = 1,
-	/** QOF_TYPE_DOUBLE  gdouble */
+	/** \brief standard C double type
+- QofType   : QOF_TYPE_DOUBLE
+- GType     : G_TYPE_DOUBLE
+- GLib type : gdouble
+*/
 	KVP_TYPE_DOUBLE,
-	/** QOF_TYPE_NUMERIC numeric*/
+	/** \brief 128bit denominator/numerator maths.
+- QofType   : QOF_TYPE_NUMERIC
+- GType     : no direct equivalent, consider QOF_TYPE_DOUBLE
+- GLib type : no direct equivalent, consider QOF_TYPE_DOUBLE
+*/
 	KVP_TYPE_NUMERIC,
-	/** QOF_TYPE_STRING  gchar* */
+	/** \brief standard C string
+- QofType   : QOF_TYPE_STRING
+- GType     : G_TYPE_STRING
+- GLib type : gchar*
+*/
 	KVP_TYPE_STRING,
-	/** QOF_TYPE_GUID    guid */
+	/** \brief Unique identifier.
+- QofType   : QOF_TYPE_GUID
+- GType     : no direct equivalent, can be stored as QOF_TYPE_STRING
+- GLib      : no direct equivalent, can be stored as QOF_TYPE_STRING
+*/
 	KVP_TYPE_GUID,
 #ifndef QOF_DISABLE_DEPRECATED
 	/** \deprecated QOF_TYPE_DATE */
 	KVP_TYPE_TIMESPEC,
 #endif
-	/** QOF_TYPE_TIME    time */
+	/** \brief 64bit time/date handling.
+- QofType   : QOF_TYPE_TIME
+- GType     : No equivalent.
+- GLib type : GDate (not fully equivalent, see ::QofTime)
+*/
 	KVP_TYPE_TIME,
-	/** no QOF equivalent. */
+	/** no QofType/GType/GLib equivalent. */
 	KVP_TYPE_BINARY,
-	/** no QOF equivalent. */
+	/** no QofType/GType equivalent. */
 	KVP_TYPE_GLIST,
-	/** no QOF equivalent. */
+	/** no QofType/GType/GLib equivalent. */
 	KVP_TYPE_FRAME,
-	/** QOF_TYPE_BOOLEAN  gboolean */
+	/** \brief Simple boolean type.
+- QofType   : QOF_TYPE_BOOLEAN
+- GType     : G_TYPE_BOOLEAN
+- GLib type : gboolean
+*/
 	KVP_TYPE_BOOLEAN
 } KvpValueType;
 
@@ -144,7 +170,7 @@ kvp_frame_is_empty (KvpFrame * frame);
 /** \brief store the value of the gint64 at the indicated path.
 
  If not all frame components of the path exist, they are created.
- */
+*/
 void 
 kvp_frame_set_gint64 (KvpFrame * frame, const gchar * path, gint64 ival);
 
@@ -153,7 +179,7 @@ kvp_frame_set_gint64 (KvpFrame * frame, const gchar * path, gint64 ival);
 If not all frame components of the path exist, they are created.
 */
 void 
-kvp_frame_set_double (KvpFrame * frame, const gchar * path, double dval);
+kvp_frame_set_double (KvpFrame * frame, const gchar * path, gdouble dval);
 
 /** \brief store the value of the QofNumeric at the indicated path.
 
@@ -192,6 +218,10 @@ kvp_frame_set_guid (KvpFrame * frame, const gchar * path,
 void
 kvp_frame_set_time (KvpFrame * frame, const gchar *path, QofTime *qt);
 
+/** \brief Store the value of the boolean at the indicated path.
+
+ If not all frame components of the path exist, they are created. 
+*/
 void
 kvp_frame_set_boolean (KvpFrame * frame, const gchar * path, gboolean val);
 
@@ -214,24 +244,32 @@ kvp_frame_set_frame (KvpFrame * frame, const gchar * path,
 void kvp_frame_set_frame_nc (KvpFrame * frame, const gchar * path,
 							 KvpFrame * chld);
 
-/** The kvp_frame_set_value() routine copies the value into the frame,
- *    at the location 'path'.   If the path contains slashes '/', these 
- *    are assumed to represent a sequence of keys.  The returned value 
- *    is a pointer to the actual frame into which the value was inserted;
- *    it is NULL if the frame couldn't be found (and thus the value wasn't 
- *    inserted).  The old value at this location, if any, is destroyed.
- *
- *    Pointers passed as arguments into this routine are the responsibility 
- *    of the caller; the pointers are *not* taken over or managed.
- */
-KvpFrame *
-kvp_frame_set_value (KvpFrame * frame, const gchar * path, const KvpValue * value);
+/** \brief Copy the KvpValue into the frame
 
-/**
- * The kvp_frame_set_value_nc() routine puts the value (without copying
- *    it) into the frame, putting it at the location 'path'.  If the path 
- *    contains slashes '/', these are assumed to represent a sequence of keys.
- *    The returned value is a pointer to the actual frame into which the value 
+If the path contains slashes '/', these are assumed to represent
+a sequence of keys. The old value at this location, if any,
+is destroyed.
+
+Pointers passed as arguments into this routine remain 
+the responsibility of the caller.
+
+\param frame The frame to hold the copied value.
+\param path  The location of the value in the frame.
+\param value The value to be copied.
+
+\return a pointer to the actual frame into which the value 
+was inserted or NULL if the frame could not be found.
+*/
+KvpFrame *
+kvp_frame_set_value (KvpFrame * frame, const gchar * path, 
+					const KvpValue * value);
+
+/** \brief Store the KvpValue in the frame without copying
+
+If the path contains slashes '/', these are assumed to 
+represent a sequence of keys.
+
+*    The returned value is a pointer to the actual frame into which the value 
  *    was inserted; it is NULL if the frame couldn't be found (and thus the 
  *    value wasn't inserted).  The old value at this location, if any,
  *    is destroyed.
@@ -278,7 +316,7 @@ kvp_frame_add_gint64 (KvpFrame * frame, const gchar * path, gint64 ival);
  value placed in the bag, and the new value added to the bag.
 */
 void 
-kvp_frame_add_double (KvpFrame * frame, const gchar * path, double dval);
+kvp_frame_add_double (KvpFrame * frame, const gchar * path, gdouble dval);
 
 /** \brief Add the value of the QofNumeric to the glist bag.
 
@@ -402,36 +440,32 @@ kvp_frame_add_value_nc (KvpFrame * frame, const gchar * path,
 @{
 */
 
-gint64 kvp_frame_get_gint64 (const KvpFrame * frame, const gchar * path);
-gdouble kvp_frame_get_double (const KvpFrame * frame, const gchar * path);
-QofNumeric kvp_frame_get_numeric (const KvpFrame * frame,
-								   const gchar * path);
-gchar *kvp_frame_get_string (const KvpFrame * frame, const gchar * path);
-GUID *kvp_frame_get_guid (const KvpFrame * frame, const gchar * path);
-void *kvp_frame_get_binary (const KvpFrame * frame, const gchar * path,
-							guint64 * size_return);
-/** \todo handle errors */
+gint64 
+kvp_frame_get_gint64 (const KvpFrame * frame, const gchar * path);
+gdouble 
+kvp_frame_get_double (const KvpFrame * frame, const gchar * path);
+QofNumeric 
+kvp_frame_get_numeric (const KvpFrame * frame, const gchar * path);
+gchar *
+kvp_frame_get_string (const KvpFrame * frame, const gchar * path);
+GUID *
+kvp_frame_get_guid (const KvpFrame * frame, const gchar * path);
+gpointer 
+kvp_frame_get_binary (const KvpFrame * frame, const gchar * path,
+					guint64 * size_return);
+
 gboolean
-kvp_value_get_boolean (const KvpValue * value);
+kvp_frame_get_boolean (const KvpFrame * frame, const gchar * path);
 
 QofTime *
 kvp_frame_get_time (const KvpFrame * frame, const gchar *path);
+
 KvpValue *kvp_frame_get_value (const KvpFrame * frame, const gchar * path);
 
 /** Value accessor.  Takes a unix-style slash-separated path as an
  *  argument, and return the KvpFrame stored at that location.  If the
  *  KvpFrame does not exist, then a NULL is returned.
  *
- *  @note The semantics here have changed: In gnucash-1.8, if the
- *  KvpFrame did not exist, this function automatically created one
- *  and returned it. However, now this function will return NULL in
- *  this case and the caller has to create a KvpFrame on his own. The
- *  old functionality is now implemented by
- *  kvp_frame_get_frame_path(). This happened on 2003-09-14, revision
- *  1.31. FIXME: Is it really a good idea to change the semantics of
- *  an existing function and move the old semantics to a new
- *  function??! It would save us a lot of trouble if the new semantics
- *  would have been available in a new function!
  *
  *  @return The KvpFrame at the specified path, or NULL if it doesn't
  *  exist.
@@ -647,7 +681,6 @@ GList *kvp_value_replace_glist_nc (KvpValue * value, GList * newlist);
 
 KvpValueType kvp_value_get_type (const KvpValue * value);
 
-
 /** Value accessors. Those for GUID, binary, GList, KvpFrame and
  *   string are non-copying -- the caller can modify the value 
  *   directly. Just don't free it, or you screw up everything.
@@ -656,32 +689,46 @@ KvpValueType kvp_value_get_type (const KvpValue * value);
  *   uncermoniously deleted, and you will be left pointing to 
  *   garbage.  So don't store values at the same time you are
  *   examining their contents.
+ 
+ \todo kvp_value_get_ functions need to set QofError so that
+ users can check that a NULL or zero value is actually a 
+ real value and not an error result.
+ 
  */
 
 gint64 kvp_value_get_gint64 (const KvpValue * value);
-double kvp_value_get_double (const KvpValue * value);
+gdouble kvp_value_get_double (const KvpValue * value);
 QofNumeric kvp_value_get_numeric (const KvpValue * value);
 
 /** Value accessor. This one is non-copying -- the caller can modify
  * the value directly. */
-char *kvp_value_get_string (const KvpValue * value);
+gchar *
+kvp_value_get_string (const KvpValue * value);
 
 /** Value accessor. This one is non-copying -- the caller can modify
  * the value directly. */
-GUID *kvp_value_get_guid (const KvpValue * value);
+GUID *
+kvp_value_get_guid (const KvpValue * value);
 
 /** Value accessor. This one is non-copying -- the caller can modify
  * the value directly. */
-void *kvp_value_get_binary (const KvpValue * value, guint64 * size_return);
+gpointer
+kvp_value_get_binary (const KvpValue * value, guint64 * size_return);
 
 /** Returns the GList of kvp_frame's (not to be confused with GList's
  * of something else!) from the given kvp_frame.  This one is
  * non-copying -- the caller can modify the value directly. */
-GList *kvp_value_get_glist (const KvpValue * value);
+GList *
+kvp_value_get_glist (const KvpValue * value);
 
 /** Value accessor. This one is non-copying -- the caller can modify
  * the value directly. */
-KvpFrame *kvp_value_get_frame (const KvpValue * value);
+KvpFrame *
+kvp_value_get_frame (const KvpValue * value);
+
+
+gboolean
+kvp_value_get_boolean (const KvpValue * value);
 
 QofTime*
 kvp_value_get_time (const KvpValue * value);
@@ -689,7 +736,8 @@ kvp_value_get_time (const KvpValue * value);
 /**
  * Similar returns as strcmp.
  **/
-gint kvp_value_compare (const KvpValue * va, const KvpValue * vb);
+gint 
+kvp_value_compare (const KvpValue * va, const KvpValue * vb);
 
 /** @} */
 
@@ -697,26 +745,29 @@ gint kvp_value_compare (const KvpValue * va, const KvpValue * vb);
 
 Only the bare string is returned, there is no debugging information.
 */
-gchar *kvp_value_to_bare_string (const KvpValue * val);
+gchar *
+kvp_value_to_bare_string (const KvpValue * val);
 
 /** \brief Debug version
 
 This version is used only by ::qof_query_printValueForParam,
 itself a debugging and development utility function.
 */
-gchar *kvp_value_to_string (const KvpValue * val);
+gchar *
+kvp_value_to_string (const KvpValue * val);
 
 /** Manipulator: 
  *
  * copying - but more efficient than creating a new KvpValue manually. */
-gboolean kvp_value_binary_append (KvpValue * v, void *data, guint64 size);
+gboolean 
+kvp_value_binary_append (KvpValue * v, gpointer data, guint64 size);
 
 /** @name  Iterators
 @{
 */
 
 /** \since 0.7.2 */
-typedef void (*KvpValueForeachCB) (const char *key, KvpValue * value, gpointer data);
+typedef void (*KvpValueForeachCB) (const gchar *key, KvpValue * value, gpointer data);
 
 /** Traverse all of the slots in the given kvp_frame.  This function
    does not descend recursively to traverse any kvp_frames stored as
@@ -724,10 +775,8 @@ typedef void (*KvpValueForeachCB) (const char *key, KvpValue * value, gpointer d
    recursive call if desired. */
 void 
 kvp_frame_for_each_slot (KvpFrame * f, KvpValueForeachCB, gpointer data);
-//  void (*proc) (const char *key, KvpValue * value, gpointer data), gpointer data);
 
 /** @} */
-
 
 /** @} */
 #endif
