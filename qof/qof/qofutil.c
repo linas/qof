@@ -32,6 +32,7 @@
 #include <glib.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 #include "qof.h"
 #include "qofundo-p.h"
 #include "qofbook-p.h"
@@ -107,7 +108,7 @@ safe_strcasecmp (const gchar * da, const gchar * db)
 	return 0;
 }
 
-gint
+inline gint
 null_strcmp (const gchar * da, const gchar * db)
 {
 	if (da && db)
@@ -172,6 +173,18 @@ ultostr (gulong val, gint base)
 	buf[places] = 0x0;
 
 	return g_strdup (buf);
+}
+
+inline gint
+qof_util_double_compare (gdouble d1, gdouble d2)
+{
+	if (isnan (d1) && isnan (d2))
+		return 0;
+	if (d1 < d2)
+		return -1;
+	if (d1 > d2)
+		return 1;
+	return 0;
 }
 
 /* =================================================================== */

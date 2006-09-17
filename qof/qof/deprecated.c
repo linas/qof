@@ -2084,6 +2084,10 @@ set_deprecated_errors (void)
 	}
 }
 
+gint double_compare (gdouble d1, gdouble d2)
+{
+	return qof_util_double_compare (d1, d2);
+}
 
 /* ==================================================================== */
 #endif /* QOF_DISABLE_DEPRECATED */

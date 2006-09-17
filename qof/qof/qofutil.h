@@ -209,6 +209,10 @@ gchar *ultostr (gulong val, gint base);
  * whitespace. */
 gboolean qof_util_string_isnum (const guchar * s);
 
+/** \brief Compare two gdouble values. */
+gint 
+qof_util_double_compare (gdouble v1, gdouble v2);
+
 #ifndef HAVE_STPCPY
 /** \brief omitted if stpcpy exists. */
 #define stpcpy g_stpcpy

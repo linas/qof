@@ -863,7 +863,8 @@ qof_backend_get_message (QofBackend * be);
 #define kvp_frame_add_str kvp_frame_add_string
 /** \deprecated Use kvp_value_new_numeric instead */
 #define kvp_value_new_gnc_numeric kvp_value_new_numeric
-
+/** \deprecated use qof_util_double_compare instead. */
+gint double_compare (gdouble d1, gdouble d2);
 
 #endif /* _DEPRECATED_H */
 #endif /* QOF_DISABLE_DEPRECATED */
