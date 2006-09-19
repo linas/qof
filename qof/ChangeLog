@@ -1,3 +1,9 @@
+2006-09-19  Neil Williams <linux@codehelp.co.uk>
+
+	* backend/sqlite/qof-sqlite.c : Fix update
+	mode, avoid "database is locked" from sqlite
+	by separating SELECT from UPDATE/INSERT.
+
 2006-09-17  Neil Williams <linux@codehelp.co.uk>
 
 	* backend/file/qsf-backend.c,
