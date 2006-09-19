@@ -11,10 +11,7 @@ project will replace each one. Also, letting the gobject
 examples build automatically introduced a spurious build
 dependency on Gtk+ when QOF has no inherent GUI requirements.
 
-The GObject example will be retained as an optional component. 
-If you have the Gtk+-2.0 development libraries installed, the 
-GObject example will be built. If not, the build continues without
-the GObject examples.
+The examples will be retained in CVS only.
 
 QOF-generator builds real examples based on your own parameters,
 structures and requirements. Please use QOF-generator for future

@@ -3,6 +3,8 @@
 
 Packagers and maintainers: Please see the HACKING file
 for specific advice on building against and packaging QOF.
+(HACKING is a text version of the 'hacking.html' page
+from the QOF website or QOF documentation.)
 
 Please see the NEWS file and the ChangeLog for detailed
 information on changes since 0.6.0.
