@@ -3,15 +3,15 @@ Section: libs
 Priority: optional
 Maintainer: Debian QOF packaging team <pkg-qof-maintainers@lists.alioth.debian.org>
 Uploaders: Goedson Teixeira Paixao <goedson@debian.org>, Neil Williams <linux@codehelp.co.uk>
-Build-Depends: debhelper (>= 5), cdbs, autotools-dev, libglib2.0-dev (>= 2.6.0), libxml2-dev (>= 2.5.10), libgda2-dev, libxml-parser-perl, doxygen, libsqlite0-dev
+Build-Depends: debhelper (>= 5), cdbs, autotools-dev, libglib2.0-dev (>= 2.6.0), libxml2-dev (>= 2.5.10), libgda2-dev, libxml-parser-perl, doxygen, libsqlite0-dev, dpkg-dev (>= 1.13.19)
 Standards-Version: 3.7.2
 
 Package: libqof-dev
 Priority: optional
 Section: libdevel
 Architecture: any
-Suggests: libqof-doc
-Depends: libqof1 (= ${Source-Version}), libgda2-dev
+Recommends: libqof-doc
+Depends: libqof1 (= ${binary:Version}), libgda2-dev
 Description: Query Object Framework - Development Headers
  A framework to allow the execution of SQL-type queries
  using collections of in-memory objects as 'tables'.
@@ -41,7 +41,7 @@ Package: libqof-backend-qsf0
 Priority: optional
 Section: libs
 Architecture: any
-Depends: libqof1 (= ${Source-Version}), libxml2 (>= 2.5.10)
+Depends: libqof1 (= ${binary:Version}), libxml2 (>= 2.5.10)
 Recommends: xsltproc, xml-core
 Replaces: libqof1 (<= 0.7.0-2), libqof-backend-sqlite0
 Description: Query Object Framework - XML backend module
@@ -61,7 +61,7 @@ Package: libqof-backend-sqlite0
 Priority: optional
 Section: libs
 Architecture: any
-Depends: libqof1 (= ${Source-Version}), libsqlite0
+Depends: libqof1 (= ${binary:Version}), libsqlite0
 Description: Query Object Framework - SQLite backend module
  QOF is a framework to allow the execution of SQL-type 
  queries using collections of in-memory objects as 'tables'.
@@ -78,7 +78,7 @@ Priority: extra
 Section: libs
 Architecture: any
 Recommends: libqof-doc
-Depends: libqof1 (= ${Source-Version})
+Depends: libqof1 (= ${binary:Version})
 Description: Query Object Framework - Debug Symbols
  A framework to allow the execution of SQL-type queries
  using collections of in-memory objects as 'tables'.

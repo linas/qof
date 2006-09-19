@@ -1,6 +1,7 @@
 qof (0.7.2-1) unstable; urgency=low
 
   * New upstream release.
+  - upgrade binNMU support to avoid deprecated Source-Version
 
  -- Neil Williams <linux@codehelp.co.uk>  Mon, 18 Sep 2006 21:00:14 +0100
 
