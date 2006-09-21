@@ -421,7 +421,7 @@ kvp_frame_set_numeric (KvpFrame * frame, const gchar *path,
 	QofNumeric nval)
 {
 	KvpValue *value;
-	value = kvp_value_new_gnc_numeric (nval);
+	value = kvp_value_new_numeric (nval);
 	frame = kvp_frame_set_value_nc (frame, path, value);
 	if (!frame)
 		kvp_value_delete (value);
@@ -612,7 +612,7 @@ kvp_frame_add_numeric (KvpFrame * frame, const gchar *path,
 	QofNumeric nval)
 {
 	KvpValue *value;
-	value = kvp_value_new_gnc_numeric (nval);
+	value = kvp_value_new_numeric (nval);
 	frame = kvp_frame_add_value_nc (frame, path, value);
 	if (!frame)
 		kvp_value_delete (value);
@@ -1612,7 +1612,7 @@ kvp_value_copy (const KvpValue * value)
 		return kvp_value_new_double (value->value.dbl);
 		break;
 	case KVP_TYPE_NUMERIC:
-		return kvp_value_new_gnc_numeric (value->value.numeric);
+		return kvp_value_new_numeric (value->value.numeric);
 		break;
 	case KVP_TYPE_STRING:
 		return kvp_value_new_string (value->value.str);

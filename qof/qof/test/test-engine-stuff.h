@@ -38,7 +38,7 @@ void random_timespec_zero_nsec (gboolean zero_nsec);
 void random_timespec_usec_resolution (gboolean usec_resolution);
 #endif
 
-kvp_value *get_random_kvp_value (gint type);
+KvpValue *get_random_kvp_value (gint type);
 
 typedef struct
 {
@@ -48,7 +48,7 @@ typedef struct
 
 bin_data *get_random_binary_data (void);
 
-kvp_frame *get_random_kvp_frame (void);
+KvpFrame *get_random_kvp_frame (void);
 QofNumeric get_random_qof_numeric (void);
 GUID *get_random_guid (void);
 GList *get_random_glist (void);

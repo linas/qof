@@ -1246,7 +1246,7 @@ string_to_kvp_value (const gchar * content, KvpValueType type)
 		case KVP_TYPE_NUMERIC:
 		{
 			qof_numeric_from_string (content, &cm_numeric);
-			return kvp_value_new_gnc_numeric (cm_numeric);
+			return kvp_value_new_numeric (cm_numeric);
 			break;
 		}
 		case KVP_TYPE_STRING:
