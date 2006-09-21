@@ -1,6 +1,10 @@
 For a full list of TODO items, see the Doxygen output in
 the documentation package: doxy/todo.html
 
+** PROBLEM ** input_session XML, 
+export_session SQLITE fails (and vice-versa)
+in gpe-expenses and pilot-qof.
+
 Typically installed into 
 /usr/share/doc/libqof-doc/html/doxy/todo.html
 or similar, depending on your distribution.
