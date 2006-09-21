@@ -1,9 +1,9 @@
 For a full list of TODO items, see the Doxygen output in
 the documentation package: doxy/todo.html
 
-** PROBLEM ** input_session XML, 
-export_session SQLITE fails (and vice-versa)
-in gpe-expenses and pilot-qof.
+** PROBLEM ** Conversion now fixed but very slow
+because begin and commit are being called during
+session copy operations. Need to bypass.
 
 Typically installed into 
 /usr/share/doc/libqof-doc/html/doxy/todo.html
@@ -21,4 +21,3 @@ with deprecated code enabled (the default). Applications
 should convert existing files from <date> to <time>.
 Each file would then only need to be read once with this
 option set.
-

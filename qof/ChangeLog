@@ -1,3 +1,10 @@
+2006-09-21  Neil Williams <linux@codehelp.co.uk>
+
+	* backend/sqlite/qof-sqlite.c : Fix input_session XML
+	to export_session SQLITE failure by ensuring 
+	entities are created in the backend at the same
+	time as the book.
+
 2006-09-19  Neil Williams <linux@codehelp.co.uk>
 
 	* backend/sqlite/qof-sqlite.c : Fix update

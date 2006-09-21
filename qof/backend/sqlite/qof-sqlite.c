@@ -120,6 +120,7 @@ struct QsqlBuilder
 	QofEntity *ent;
 	gchar *sql_str;
 	GList *dirty_list;
+	gboolean exists;
 };
 
 static void
@@ -302,7 +303,6 @@ qsql_record_foreach(gpointer data, gint col_num, gchar **strings,
 	qof_event_suspend ();
 	inst = (QofInstance*)qof_object_new_instance (qsql_be->e_type,
 		qsql_be->book);
-	ENTER (" loading %s", qsql_be->e_type);
 	for(i = 0;i < col_num; i++)
 	{
 		/* get param and set as string */
@@ -325,7 +325,6 @@ qsql_record_foreach(gpointer data, gint col_num, gchar **strings,
 			qof_util_param_set_string (&inst->entity, param, strings[i]);
 	}
 	qof_event_resume ();
-	LEAVE (" ");
 	return SQLITE_OK;
 }
 
@@ -367,7 +366,6 @@ update_param_foreach(QofParam *param, gpointer user_data)
 static void
 update_dirty (gpointer value, gpointer user_data)
 {
-//	const QofParam * param;
 	QofInstance * inst;
 	QofEntity * ent;
 	struct QsqlBuilder * qb;
@@ -375,7 +373,6 @@ update_dirty (gpointer value, gpointer user_data)
 	QofBackend * be;
 	gchar gstr[GUID_ENCODING_LENGTH+1];
 	gchar * param_str;
-//	gint i;
 
 	qb = (struct QsqlBuilder*) user_data;
 	qsql_be = qb->qsql_be;
@@ -415,14 +412,77 @@ create_dirty_list (gpointer data, gint col_num, gchar **strings,
 	struct QsqlBuilder * qb;
 	QofInstance * inst;
 
-	ENTER (" ");
 	qb = (struct QsqlBuilder*) data;
 	inst = (QofInstance*) qb->ent;
+	qb->exists = TRUE;
 	if (!inst->dirty)
 		return SQLITE_OK;
 	qb->dirty_list = g_list_prepend (qb->dirty_list, qb->ent);
-	LEAVE (" dirty_list=%d", g_list_length (qb->dirty_list));
+	DEBUG (" dirty_list=%d", g_list_length (qb->dirty_list));
 	return SQLITE_OK;
+}
+
+static gint
+mark_entity (gpointer data, gint col_num, gchar **strings,
+                   gchar **columnNames)
+{
+	struct QsqlBuilder * qb;
+
+	qb = (struct QsqlBuilder*) data;
+	qb->exists = TRUE;
+	DEBUG (" already exists");
+	return SQLITE_OK;
+}
+
+static void
+qsql_create (QofBackend *be, QofInstance *inst)
+{
+	gchar gstr[GUID_ENCODING_LENGTH+1];
+	QSQLiteBackend *qsql_be;
+	struct QsqlBuilder qb;
+	QofEntity * ent;
+
+	qsql_be = (QSQLiteBackend*)be;
+	if (!inst)
+		return;
+	ent = (QofEntity*) inst;	
+	guid_to_string_buff (qof_entity_get_guid (ent), gstr);
+	qb.sql_str = g_strdup_printf(
+		"SELECT * FROM %s where guid = \"%s\";", ent->e_type, gstr);
+	PINFO (" write: %s", qb.sql_str);
+	qb.ent = ent;
+	qb.dirty_list = NULL;
+	qb.exists = FALSE;
+	if(sqlite_exec (qsql_be->sqliteh, qb.sql_str, 
+		mark_entity, &qb, &qsql_be->err) !=
+		SQLITE_OK)
+	{
+		qof_error_set_be (be, qsql_be->err_update);
+		qsql_be->error = TRUE;
+		PERR (" %s", qsql_be->err);
+	}
+	if (!qb.exists)
+	{
+		/* create new entity */
+		PINFO (" insert");
+		qb.sql_str = g_strdup_printf ("INSERT into %s (", 
+			ent->e_type);
+		qof_class_param_foreach (ent->e_type, 
+			create_param_list, &qb);
+		qb.sql_str = g_strconcat (qb.sql_str, ") VALUES (", NULL);
+		qof_class_param_foreach (ent->e_type, 
+			create_each_param, &qb);
+		qb.sql_str = g_strconcat (qb.sql_str, ");", NULL);
+		DEBUG (" sql_str= %s", qb.sql_str);
+		if(sqlite_exec (qsql_be->sqliteh, qb.sql_str, 
+			NULL, qsql_be, &qsql_be->err) != SQLITE_OK)
+		{
+			qof_error_set_be (be, qsql_be->err_insert);
+			qsql_be->error = TRUE;
+			PERR (" %s", qsql_be->err);
+		}
+	}
+	g_free (qb.sql_str);
 }
 
 static void
@@ -432,28 +492,40 @@ check_state (QofEntity * ent, gpointer user_data)
 	QSQLiteBackend *qsql_be;
 	struct QsqlBuilder qb;
 	QofBackend *be;
+	QofInstance * inst;
 
 	qsql_be = (QSQLiteBackend*) user_data;
 	be = (QofBackend*)qsql_be;
+	inst = (QofInstance*)ent;
+	if (!inst->dirty)
+		return;
 	/* check if this entity already exists */
 	guid_to_string_buff (qof_entity_get_guid (ent), gstr);
-	qsql_be->sql_str = g_strdup_printf(
+	qb.sql_str = g_strdup_printf(
 		"SELECT * FROM %s where guid = \"%s\";", ent->e_type, gstr);
-	PINFO (" write: %s", qsql_be->sql_str);
+	PINFO (" write: %s", qb.sql_str);
 	qb.ent = ent;
 	qb.dirty_list = NULL;
-	/** \todo check from gpe-expenses */
+	/* assume entity does not yet exist in backend,
+	e.g. being copied from another session. */
+	qb.exists = FALSE;
 	qb.qsql_be = qsql_be;
 	/* update each dirty instance */
 	/* Make a GList of dirty instances
  	Don't update during a SELECT, 
  	UPDATE will fail with DB_LOCKED */
-	if(sqlite_exec (qsql_be->sqliteh, qsql_be->sql_str, 
+	if(sqlite_exec (qsql_be->sqliteh, qb.sql_str, 
 		create_dirty_list, &qb, &qsql_be->err) !=
 		SQLITE_OK)
 	{
+		qof_error_set_be (be, qsql_be->err_update);
+		qsql_be->error = TRUE;
+		PERR (" %s", qsql_be->err);
+	}
+	if (!qb.exists)
+	{
 		/* create new entity */
-		g_free (qsql_be->sql_str);
+		PINFO (" insert");
 		qb.sql_str = g_strdup_printf ("INSERT into %s (", 
 			ent->e_type);
 		qof_class_param_foreach (ent->e_type, 
@@ -473,6 +545,7 @@ check_state (QofEntity * ent, gpointer user_data)
 	}
 	/* update instead */
 	g_list_foreach (qb.dirty_list, update_dirty, &qb);
+	g_free (qb.sql_str);
 }
 
 static void
@@ -530,8 +603,6 @@ qsql_class_foreach(QofObject *obj, gpointer data)
 		{
 			if (!qof_book_not_saved (qsql_be->book))
 				break;
-			/* not all objects generate a create event
-			when the entity is created. */
 			qof_object_foreach (obj->e_type, qsql_be->book,
 				check_state, qsql_be);
 			break;
@@ -726,7 +797,9 @@ qsql_backend_new(void)
 	be->destroy_backend = qsqlite_destroy_backend;
 	be->load = qsqlite_db_load;
 	be->save_may_clobber_data = NULL;
-	be->begin = NULL;
+	/* begin: create an empty entity is none exists,
+	even if events are suspended. */
+	be->begin = qsql_create;
 	/* commit: write to sqlite, commit undo record. */
 	be->commit = qsql_modify;
 	be->rollback = NULL;

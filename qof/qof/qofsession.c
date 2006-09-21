@@ -690,9 +690,7 @@ qof_entity_copy_list (QofSession * new_session, GList * entity_list)
 	QofEntityCopyData *qecd;
 
 	if (!new_session || !entity_list)
-	{
 		return FALSE;
-	}
 	ENTER (" list=%d", g_list_length (entity_list));
 	qecd = g_new0 (QofEntityCopyData, 1);
 	qof_event_suspend ();
@@ -702,9 +700,7 @@ qof_entity_copy_list (QofSession * new_session, GList * entity_list)
 	g_list_foreach (entity_list, qof_entity_list_foreach, qecd);
 	qof_event_resume ();
 	if (qecd->error)
-	{
 		PWARN (" some/all entities in the list could not be copied.");
-	}
 	g_free (qecd);
 	LEAVE (" ");
 	return TRUE;
@@ -957,7 +953,7 @@ and use JUST the module name without .so - .so is not portable! */
 struct backend_providers backend_list[] = {
 	{QOF_LIB_DIR, QSF_BACKEND_LIB, QSF_MODULE_INIT},
 	{QOF_LIB_DIR, "libqof-backend-sqlite", "qof_sqlite_provider_init"},
-	{QOF_LIB_DIR, "libqof-backend-gda", "qof_gda_provider_init"},
+/*	{QOF_LIB_DIR, "libqof-backend-gda", "qof_gda_provider_init"},*/
 #ifdef HAVE_DWI
 	{QOF_LIB_DIR, "libqof_backend_dwi", "dwiend_provider_init"},
 #endif
