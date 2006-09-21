@@ -12,7 +12,7 @@ Abstract: Query Object Framework Developer Reference
   .
   This manual describes the full QOF API to develop applications
   using libqof1.
-Section: Programming
+Section: Apps/Programming
 
 Format: HTML
 Index: /usr/share/doc/libqof-doc/html/doxy/index.html

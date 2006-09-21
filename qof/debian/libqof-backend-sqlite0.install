@@ -1,3 +1,3 @@
 debian/tmp/usr/lib/libqof-backend-sqlite.so.*
 debian/tmp/usr/lib/libqof-backend-sqlite.la
-debian/linda/overrides/libqof-backend-qsf0 usr/share/linda/overrides
+debian/linda/overrides/libqof-backend-sqlite0 usr/share/linda/overrides
