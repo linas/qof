@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: qof 0.7.0\n"
 "Report-Msgid-Bugs-To: qof-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2006-09-13 23:39+0100\n"
+"POT-Creation-Date: 2006-09-21 00:13+0100\n"
 "PO-Revision-Date: 2006-07-26 16:10+0930\n"
 "Last-Translator: Clytie Siddall <clytie@riverland.net.au>\n"
 "Language-Team: Vietnamese <vi-VN@googlegroups.com>\n"
@@ -15,6 +15,56 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0\n"
 "X-Generator: LocFactoryEditor 1.6fc1\n"
+
+#: ../backend/file/qsf-xml-map.c:253 ../backend/file/qsf-xml-map.c:334
+#: ../backend/file/qsf-xml.c:252 ../backend/file/qsf-xml.c:308
+#, c-format
+msgid "The QSF XML file '%s' could not be found."
+msgstr ""
+
+#: ../backend/file/qsf-xml-map.c:260 ../backend/file/qsf-xml-map.c:282
+#: ../backend/file/qsf-xml-map.c:341 ../backend/file/qsf-xml.c:263
+#: ../backend/file/qsf-xml.c:322 ../backend/file/qsf-backend.c:522
+#: ../backend/file/qsf-backend.c:565
+#, c-format
+msgid "There was an error parsing the file '%s'."
+msgstr ""
+
+#: ../backend/file/qsf-xml-map.c:266 ../backend/file/qsf-xml.c:269
+#: ../backend/file/qsf-xml.c:328
+#, c-format
+msgid ""
+"Invalid QSF Object file! The QSF object file '%s'  failed to validate  "
+"against the QSF object schema. The XML structure of the file is either not "
+"well-formed or the file contains illegal data."
+msgstr ""
+
+#: ../backend/file/qsf-xml-map.c:275
+#, c-format
+msgid "The QSF map file '%s' could not be found."
+msgstr ""
+
+#: ../backend/file/qsf-xml-map.c:348
+msgid ""
+"Invalid QSF Map file! The QSF map file failed to validate against the QSF "
+"map schema. The XML structure of the file is either not well-formed or the "
+"file contains illegal data."
+msgstr ""
+
+#: ../backend/file/qsf-xml-map.c:420
+#, c-format
+msgid ""
+"The selected QSF map '%s' contains unusable or missing data. This is usually "
+"because not all the required parameters for the defined objects have "
+"calculations described in the map."
+msgstr ""
+
+#: ../backend/file/qsf-xml-map.c:514
+#, c-format
+msgid ""
+"The QSF Map file '%s' was written for a different version of QOF. It may "
+"need to be modified to work with your current QOF installation."
+msgstr ""
 
 #: ../backend/file/qsf-backend.c:118
 msgid "Level of compression to use: 0 for none, 9 for highest."
@@ -81,52 +131,44 @@ msgid ""
 "a number."
 msgstr ""
 
-#: ../backend/file/qsf-backend.c:346
+#: ../backend/file/qsf-backend.c:329
 #, c-format
 msgid ""
 "could not write to '%s'. That database may be on a read-only file system, or "
 "you may not have write permission for the directory.\n"
 msgstr ""
 
-#: ../backend/file/qsf-backend.c:505
+#: ../backend/file/qsf-backend.c:487
 #, c-format
 msgid "There was an error parsing the file '%s'.\n"
 msgstr ""
 
-#: ../backend/file/qsf-backend.c:540 ../backend/file/qsf-backend.c:583
-#: ../backend/file/qsf-xml-map.c:260 ../backend/file/qsf-xml-map.c:282
-#: ../backend/file/qsf-xml-map.c:341 ../backend/file/qsf-xml.c:263
-#: ../backend/file/qsf-xml.c:322
-#, c-format
-msgid "There was an error parsing the file '%s'."
-msgstr ""
-
-#: ../backend/file/qsf-backend.c:591
+#: ../backend/file/qsf-backend.c:573
 #, c-format
 msgid "There was an error reading the file '%s'."
 msgstr ""
 
-#: ../backend/file/qsf-backend.c:624
+#: ../backend/file/qsf-backend.c:606
 #, c-format
 msgid ""
 "The selected file '%s' is a QSF map and cannot be opened as a QSF object."
 msgstr ""
 
-#: ../backend/file/qsf-backend.c:1181
+#: ../backend/file/qsf-backend.c:1169
 #, c-format
 msgid ""
 "Could not write to '%s'. Check that you have permission to write to this "
 "file and that there is sufficient space to create it."
 msgstr ""
 
-#: ../backend/file/qsf-backend.c:1471
+#: ../backend/file/qsf-backend.c:1461
 #, c-format
 msgid ""
 "The selected QSF object file '%s' contains one or more invalid GUIDs. The "
 "file cannot be processed - please check the source of the file and try again."
 msgstr ""
 
-#: ../backend/file/qsf-backend.c:1593
+#: ../backend/file/qsf-backend.c:1583
 #, c-format
 msgid ""
 "The selected QSF object file '%s' contains one or more invalid 'collect' "
@@ -134,70 +176,28 @@ msgid ""
 "and try again."
 msgstr ""
 
-#: ../backend/file/qsf-xml-map.c:253 ../backend/file/qsf-xml-map.c:334
-#: ../backend/file/qsf-xml.c:252 ../backend/file/qsf-xml.c:308
-#, c-format
-msgid "The QSF XML file '%s' could not be found."
-msgstr ""
-
-#: ../backend/file/qsf-xml-map.c:266 ../backend/file/qsf-xml.c:269
-#: ../backend/file/qsf-xml.c:328
-#, c-format
-msgid ""
-"Invalid QSF Object file! The QSF object file '%s'  failed to validate  "
-"against the QSF object schema. The XML structure of the file is either not "
-"well-formed or the file contains illegal data."
-msgstr ""
-
-#: ../backend/file/qsf-xml-map.c:275
-#, c-format
-msgid "The QSF map file '%s' could not be found."
-msgstr ""
-
-#: ../backend/file/qsf-xml-map.c:348
-msgid ""
-"Invalid QSF Map file! The QSF map file failed to validate against the QSF "
-"map schema. The XML structure of the file is either not well-formed or the "
-"file contains illegal data."
-msgstr ""
-
-#: ../backend/file/qsf-xml-map.c:420
-#, c-format
-msgid ""
-"The selected QSF map '%s' contains unusable or missing data. This is usually "
-"because not all the required parameters for the defined objects have "
-"calculations described in the map."
-msgstr ""
-
-#: ../backend/file/qsf-xml-map.c:514
-#, c-format
-msgid ""
-"The QSF Map file '%s' was written for a different version of QOF. It may "
-"need to be modified to work with your current QOF installation."
-msgstr ""
-
-#: ../backend/sqlite/qof-sqlite.c:544
+#: ../backend/sqlite/qof-sqlite.c:581
 #, c-format
 msgid "Unable to open the sqlite database '%s'."
 msgstr ""
 
-#: ../backend/sqlite/qof-sqlite.c:569
+#: ../backend/sqlite/qof-sqlite.c:606
 msgid "Please provide a filename for sqlite."
 msgstr ""
 
-#: ../backend/sqlite/qof-sqlite.c:678
+#: ../backend/sqlite/qof-sqlite.c:715
 msgid "Unable to delete record."
 msgstr ""
 
-#: ../backend/sqlite/qof-sqlite.c:680
+#: ../backend/sqlite/qof-sqlite.c:717
 msgid "Unable to create record."
 msgstr ""
 
-#: ../backend/sqlite/qof-sqlite.c:682
+#: ../backend/sqlite/qof-sqlite.c:719
 msgid "Unable to insert a new record."
 msgstr ""
 
-#: ../backend/sqlite/qof-sqlite.c:684
+#: ../backend/sqlite/qof-sqlite.c:721
 msgid "Unable to update existing record."
 msgstr ""
 
@@ -216,7 +216,7 @@ msgstr ""
 msgid "Failed to load backend, no suitable handler."
 msgstr ""
 
-#: ../qof/qofsql.c:757 ../qof/qofsql.c:784
+#: ../qof/qofsql.c:758 ../qof/qofsql.c:785
 #, c-format
 msgid ""
 "When converting SQLite strings into numbers, an overflow has been detected. "
