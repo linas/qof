@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: qof 0.7.0\n"
 "Report-Msgid-Bugs-To: qof-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2006-09-21 00:13+0100\n"
+"POT-Creation-Date: 2006-09-22 21:35+0100\n"
 "PO-Revision-Date: 2006-07-26 16:10+0930\n"
 "Last-Translator: Clytie Siddall <clytie@riverland.net.au>\n"
 "Language-Team: Vietnamese <vi-VN@googlegroups.com>\n"
@@ -176,43 +176,50 @@ msgid ""
 "and try again."
 msgstr ""
 
-#: ../backend/sqlite/qof-sqlite.c:581
+#: ../backend/sqlite/qof-sqlite.c:632
+#, c-format
+msgid ""
+"Unable to open the output file '%s' - do you have permission to create this "
+"file?"
+msgstr ""
+
+#: ../backend/sqlite/qof-sqlite.c:665
 #, c-format
 msgid "Unable to open the sqlite database '%s'."
 msgstr ""
 
-#: ../backend/sqlite/qof-sqlite.c:606
+#: ../backend/sqlite/qof-sqlite.c:690
 msgid "Please provide a filename for sqlite."
 msgstr ""
 
-#: ../backend/sqlite/qof-sqlite.c:715
+#: ../backend/sqlite/qof-sqlite.c:800
 msgid "Unable to delete record."
 msgstr ""
 
-#: ../backend/sqlite/qof-sqlite.c:717
+#: ../backend/sqlite/qof-sqlite.c:802
 msgid "Unable to create record."
 msgstr ""
 
-#: ../backend/sqlite/qof-sqlite.c:719
+#: ../backend/sqlite/qof-sqlite.c:804
 msgid "Unable to insert a new record."
 msgstr ""
 
-#: ../backend/sqlite/qof-sqlite.c:721
+#: ../backend/sqlite/qof-sqlite.c:806
 msgid "Unable to update existing record."
 msgstr ""
 
-#: ../qof/qofsession.c:1078
+#: ../qof/qofsession.c:1073
 msgid "This book appears to be open already."
 msgstr ""
 
-#: ../qof/qofsession.c:1119
+#: ../qof/qofsession.c:1114
 #, c-format
 msgid ""
-"Unable to locate a suitable backend for '%s' - please check your "
-"installation."
+"Unable to locate a suitable backend for '%s' - please check you have "
+"specified an access method like file: or sqlite:"
 msgstr ""
 
-#: ../qof/qofsession.c:1354 ../qof/qofsession.c:1391
+#: ../qof/qofsession.c:1351 ../qof/qofsession.c:1388
 msgid "Failed to load backend, no suitable handler."
 msgstr ""
 

@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: QOF 0.8.0\n"
 "Report-Msgid-Bugs-To: qof-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2006-09-21 00:13+0100\n"
-"PO-Revision-Date: 2006-09-13 23:39+0100\n"
+"POT-Creation-Date: 2006-09-22 21:35+0100\n"
+"PO-Revision-Date: 2006-09-22 21:34+0100\n"
 "Last-Translator: Neil Williams <linux@codehelp.co.uk>\n"
 "Language-Team: English (British) <en_gb@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -200,45 +200,54 @@ msgstr ""
 "values. The file cannot be processed - please check the source of the file "
 "and try again."
 
-#: ../backend/sqlite/qof-sqlite.c:581
+#: ../backend/sqlite/qof-sqlite.c:632
+#, c-format
+msgid ""
+"Unable to open the output file '%s' - do you have permission to create this "
+"file?"
+msgstr ""
+"Unable to open the output file '%s' - do you have permission to create this "
+"file?"
+
+#: ../backend/sqlite/qof-sqlite.c:665
 #, c-format
 msgid "Unable to open the sqlite database '%s'."
 msgstr "Unable to open the sqlite database '%s'."
 
-#: ../backend/sqlite/qof-sqlite.c:606
+#: ../backend/sqlite/qof-sqlite.c:690
 msgid "Please provide a filename for sqlite."
 msgstr "Please provide a filename for sqlite."
 
-#: ../backend/sqlite/qof-sqlite.c:715
+#: ../backend/sqlite/qof-sqlite.c:800
 msgid "Unable to delete record."
 msgstr "Unable to delete record."
 
-#: ../backend/sqlite/qof-sqlite.c:717
+#: ../backend/sqlite/qof-sqlite.c:802
 msgid "Unable to create record."
 msgstr "Unable to create record."
 
-#: ../backend/sqlite/qof-sqlite.c:719
+#: ../backend/sqlite/qof-sqlite.c:804
 msgid "Unable to insert a new record."
 msgstr "Unable to insert a new record."
 
-#: ../backend/sqlite/qof-sqlite.c:721
+#: ../backend/sqlite/qof-sqlite.c:806
 msgid "Unable to update existing record."
 msgstr "Unable to update existing record."
 
-#: ../qof/qofsession.c:1078
+#: ../qof/qofsession.c:1073
 msgid "This book appears to be open already."
 msgstr "This book appears to be open already."
 
-#: ../qof/qofsession.c:1119
+#: ../qof/qofsession.c:1114
 #, c-format
 msgid ""
-"Unable to locate a suitable backend for '%s' - please check your "
-"installation."
+"Unable to locate a suitable backend for '%s' - please check you have "
+"specified an access method like file: or sqlite:"
 msgstr ""
-"Unable to locate a suitable backend for '%s' - please check your "
-"installation."
+"Unable to locate a suitable backend for '%s' - please check you have "
+"specified an access method like file: or sqlite:"
 
-#: ../qof/qofsession.c:1354 ../qof/qofsession.c:1391
+#: ../qof/qofsession.c:1351 ../qof/qofsession.c:1388
 msgid "Failed to load backend, no suitable handler."
 msgstr "Failed to load backend, no suitable handler."
 
