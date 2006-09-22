@@ -582,6 +582,7 @@ qsql_class_foreach(QofObject *obj, gpointer data)
 				qsql_be->error = TRUE;
 				PERR (" %s", qsql_be->err);
 			}
+			PINFO(" %s", qsql_be->sql_str);
 			g_free(qsql_be->sql_str);
 			break;
 		}
@@ -614,6 +615,7 @@ qsql_class_foreach(QofObject *obj, gpointer data)
 static void
 qsql_backend_createdb(QofBackend *be, QofSession *session)
 {
+	FILE * f;
 	QSQLiteBackend *qsql_be;
 
 	g_return_if_fail(be || session);
@@ -621,18 +623,29 @@ qsql_backend_createdb(QofBackend *be, QofSession *session)
 	qsql_be = (QSQLiteBackend*)be;
 	qsql_be->stm_type = SQL_CREATE;
 	qsql_be->book = qof_session_get_book (session);
+	f = fopen (qsql_be->fullpath, "a+");
+	if (f)
+		fclose (f);
+        else
+	{
+		qof_error_set (session, qof_error_register 
+			(_("Unable to open the output file '%s' - do you have "
+			"permission to create this file?"), TRUE));
+		qsql_be->error = TRUE;
+		LEAVE (" unable to create new file '%s'", 
+			qsql_be->fullpath);
+		return;
+	}
 	qsql_be->sqliteh = sqlite_open (qsql_be->fullpath, 0666, 
 		&qsql_be->err);
 	if(!qsql_be->sqliteh)
 	{
 		qof_error_set_be (be, qsql_be->err_create);
 		qsql_be->error = TRUE;
-		PERR (" %s", qsql_be->err);
-		LEAVE (" ");
+		LEAVE (" %s", qsql_be->err);
 		return;
 	}
 	qof_object_foreach_type(qsql_class_foreach, qsql_be);
-	PINFO(" %s", qsql_be->sql_str);
 	LEAVE (" ");
 }
 
@@ -689,7 +702,8 @@ qsqlite_session_begin(QofBackend *be, QofSession *session, const
 	stat_val = g_stat (qsql_be->fullpath, &statinfo);
 	if (!S_ISREG (statinfo.st_mode) || statinfo.st_size == 0)
 		qsql_backend_createdb (be, session);
-	qsql_backend_opendb (be, session);
+	if (!qsql_be->error)
+		qsql_backend_opendb (be, session);
 	if(qof_error_check_be (be) || qsql_be->error) 
 	{
 		LEAVE(" open failed"); 
