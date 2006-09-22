@@ -136,18 +136,24 @@ qof_error_set (QofSession * session, QofErrorId error)
 
 	g_return_if_fail (session);
 	if (error == QOF_SUCCESS)
+	{
+		DEBUG (" passed success, not error.");
 		return;
+	}
 	qerr = g_hash_table_lookup (error_table, GINT_TO_POINTER(error));
 	if (!qerr)
+	{
+		DEBUG (" failed hash table lookup");
 		return;
-#ifndef QOF_DISABLE_DEPRECATED
+	}
 	session->last_err = error;
+	if (session->error_message)
+		g_free (session->error_message);
 	if (qerr->use_file)
 		session->error_message = g_strdup_printf (qerr->message,
 			qof_session_get_url (session));
 	else
 		session->error_message = g_strdup (qerr->message);
-#endif
 	if (!session->backend)
 		return;
 	/* create a new error for the list */
@@ -162,9 +168,6 @@ qof_error_set (QofSession * session, QofErrorId error)
 	session->backend->error_stack = 
 		g_list_prepend (session->backend->error_stack, set);
 #ifndef QOF_DISABLE_DEPRECATED
-	if (session->error_message)
-		g_free (session->error_message);
-	session->error_message = g_strdup (set->message);
 	session->backend->last_err = error;
 #endif
 }
@@ -208,11 +211,11 @@ qof_error_clear (QofSession * session)
 	g_list_foreach (session->backend->error_stack, clear_list, NULL);
 	g_list_free (session->backend->error_stack);
 	session->backend->error_stack = NULL;
-#ifndef QOF_DISABLE_DEPRECATED
 	if (session->error_message)
 		g_free (session->error_message);
 	session->error_message = NULL;
 	session->last_err = QOF_SUCCESS;
+#ifndef QOF_DISABLE_DEPRECATED
 	session->backend->last_err = QOF_SUCCESS;
 #endif
 }
@@ -285,7 +288,6 @@ qof_error_get_id (QofSession * session)
 
 	g_return_val_if_fail (session, QOF_FATAL);
 	id = qof_error_get_id_be (session->backend);
-#ifndef QOF_DISABLE_DEPRECATED
 	{
 		QofError * qerr;
 
@@ -296,7 +298,6 @@ qof_error_get_id (QofSession * session)
 		session->error_message = qerr->message;
 		session->last_err = id;
 	}
-#endif
 	return id;
 }
 
@@ -329,14 +330,9 @@ qof_error_get_message (QofSession * session)
 
 	g_return_val_if_fail (session, NULL);
 	if (!session->backend)
-	{
-#ifndef QOF_DISABLE_DEPRECATED
 		return session->error_message;
-#else
-		return NULL;
-#endif
-	}
 	msg = qof_error_get_message_be (session->backend);
+	DEBUG (" msg_1=%s", msg);
 #ifndef QOF_DISABLE_DEPRECATED
 	{
 		QofError * qerr;
@@ -362,11 +358,18 @@ qof_error_get_message_be (QofBackend * be)
 
 	g_return_val_if_fail (be, NULL);
 	if (g_list_length (be->error_stack) == 0)
+	{
+		DEBUG (" empty error stack");
 		return NULL;
+	}
 	first = g_list_first (be->error_stack);
 	qerr = (QofError*)first->data;
 	if (!qerr)
+	{
+		DEBUG (" empty QofError value");
 		return NULL;
+	}
+	DEBUG (" qerr->message=%s", qerr->message);
 	be->error_stack = 
 		g_list_remove (be->error_stack, qerr);
 #ifndef QOF_DISABLE_DEPRECATED

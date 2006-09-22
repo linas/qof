@@ -1025,7 +1025,6 @@ qof_session_load_backend (QofSession * session, gchar *access_method)
 		}
 		p = p->next;
 	}
-	qof_error_clear (session);
 	LEAVE (" ");
 }
 
@@ -1114,9 +1113,11 @@ qof_session_begin (QofSession * session, const gchar *book_id,
 
 		msg = g_strdup_printf (_("Unable to locate a "
 		"suitable backend for '%s' - please check "
-		"your installation."), book_id);
+		"you have specified an access method "
+		"like file: or sqlite:"), book_id);
 		qof_error_set (session, qof_error_register
 			(msg, FALSE));
+		DEBUG (" msg=%s", msg);
 		LEAVE (" BAD: no backend: sess=%p book-id=%s",
 			session, book_id ? book_id : "(null)");
 		g_free (msg);
