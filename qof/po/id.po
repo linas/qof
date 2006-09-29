@@ -1,0 +1,49 @@
+# translation of qof-0.7.0.po to Indonesian
+# Copyright (C) 2006 Free Software Foundation, Inc.
+# This file is distributed under the same license as the PACKAGE package.
+#
+# Tedi Heriyanto <tedi_heriyanto@yahoo.com>, 2006.
+msgid ""
+msgstr ""
+"Project-Id-Version: qof-0.7.0\n"
+"Report-Msgid-Bugs-To: qof-devel@lists.sourceforge.net\n"
+"POT-Creation-Date: 2006-07-14 22:59+0100\n"
+"PO-Revision-Date: 2006-09-27 20:17+0700\n"
+"Last-Translator: Tedi Heriyanto <tedi_heriyanto@yahoo.com>\n"
+"Language-Team: Indonesian <translation-team-id@lists.sourceforge.net>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: KBabel 1.11.2\n"
+
+#: ../backend/file/qsf-backend.c:117
+msgid "Level of compression to use: 0 for none, 9 for highest."
+msgstr "Tingkatan kompresi yang digunakan: 0 untuk tidak ada, 9 untuk tertinggi"
+
+#: ../backend/file/qsf-backend.c:119
+msgid "QOF can compress QSF XML files using gzip. Note that compression is not used when outputting to STDOUT."
+msgstr "QOF dapat mengkompresi file XML QSF menggunakan gzip. Kompresi tidak digunakan ketika hasil dikirim ke STDOUT"
+
+#: ../backend/file/qsf-backend.c:129
+msgid "List of QSF map files to use for this session."
+msgstr "Daftar file QSF yang digunakan pada sesi ini."
+
+#: ../backend/file/qsf-backend.c:131
+msgid "QOF can convert objects within QSF XML files using a map of the changes required."
+msgstr "QOF dapat mengkonversi obyek dalam file XML QSF menggunakan peta perubahan yang dibutuhkan."
+
+#: ../backend/file/qsf-backend.c:140
+msgid "Encoding string to use when writing the XML file."
+msgstr "Mengkodekan string yang digunakan ketika menulis file XML."
+
+#: ../backend/file/qsf-backend.c:142
+msgid "QSF defaults to UTF-8. Other encodings are supported by passing the encoding string in this option."
+msgstr "Kode baku adalah UTF-8. Kode lain didukung dengan memberikan string kode di opsi."
+
+#: ../backend/file/qsf-backend.c:151
+msgid "Convert deprecated date values to time values."
+msgstr "Konversi nilai tanggal yang lawas ke nilai waktu."
+
+#: ../backend/file/qsf-backend.c:153
+msgid "Applications that support the new QOF time format need to enable this option to convert older date values into time. Applications that still use date should not set this option until time values are supported."
+msgstr "Aplikasi yang mendukung format waktu QOF baru perlu mengadakan opsi ini untuk mengkonversi nilai tanggal lawas ke waktu. Aplikasi yang masih menggunakan tanggal tidak boleh menset opsi ini hingga nilai waktu telah didukung."
