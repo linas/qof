@@ -60,8 +60,42 @@ symbol of the same name"></div>
 <h2>BUILDING AGAINST QOF</h2>
 
 <h3 id="automake">AUTOMAKE</h3>
-<div>Using automake, consider this example as the basis for
-your commands for in configure.ac:</div>
+<div>
+<p>The simplest way to use QOF is with PKG_CHECK_MODULES
+in configure.ac:</p>
+<pre>
+dnl *************************************
+dnl QOF
+dnl *************************************
+
+QOF_REQUIRED=0.7.1
+PKG_CHECK_MODULES([QOF], [qof-1 >= ${QOF_REQUIRED}])
+AC_SUBST(QOF_CFLAGS)
+AC_SUBST(QOF_LIBS)
+
+</pre>
+<p>You can add further commands to retrieve other information:</p>
+<ul>
+<li>QOF Version string:
+<pre>
+QOF_VERSION=`$PKG_CONFIG --silence-errors --modversion qof-1`
+</pre></li>
+<li>QOF prefix
+<pre>
+QOF_PREFIX=`$PKG_CONFIG --silence-errors --variable=prefix qof-1`
+</pre></li>
+<li>Location of QOF backend modules
+<pre>
+QOF_LIB_DIR=`$PKG_CONFIG --silence-errors --variable=libdir qof-1`
+</pre>
+<li>Location of the QSF XML schemas
+<pre>
+QOF_XML_DIR=`$PKG_CONFIG --silence-errors --variable=xmldir qof-1`
+</pre></li>
+</ul>
+</div>
+<div>
+<p>Or consider this more verbose example:</div>
 <pre>
 dnl *************************************
 dnl QOF
