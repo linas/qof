@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: qof 0.7.0\n"
 "Report-Msgid-Bugs-To: qof-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2006-09-22 21:35+0100\n"
+"POT-Creation-Date: 2006-09-30 19:07+0100\n"
 "PO-Revision-Date: 2006-07-25 12:00-0500\n"
 "Last-Translator: Laurentiu Buzdugan <lbuz@rolix.org>\n"
 "Language-Team: Romanian <translation-team-ro@lists.sourceforge.net>\n"
@@ -16,56 +16,6 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : (n==0 || ((n%100) > 0 && (n%"
 "100) < 20)) ? 1 : 2);\n"
-
-#: ../backend/file/qsf-xml-map.c:253 ../backend/file/qsf-xml-map.c:334
-#: ../backend/file/qsf-xml.c:252 ../backend/file/qsf-xml.c:308
-#, c-format
-msgid "The QSF XML file '%s' could not be found."
-msgstr ""
-
-#: ../backend/file/qsf-xml-map.c:260 ../backend/file/qsf-xml-map.c:282
-#: ../backend/file/qsf-xml-map.c:341 ../backend/file/qsf-xml.c:263
-#: ../backend/file/qsf-xml.c:322 ../backend/file/qsf-backend.c:522
-#: ../backend/file/qsf-backend.c:565
-#, c-format
-msgid "There was an error parsing the file '%s'."
-msgstr ""
-
-#: ../backend/file/qsf-xml-map.c:266 ../backend/file/qsf-xml.c:269
-#: ../backend/file/qsf-xml.c:328
-#, c-format
-msgid ""
-"Invalid QSF Object file! The QSF object file '%s'  failed to validate  "
-"against the QSF object schema. The XML structure of the file is either not "
-"well-formed or the file contains illegal data."
-msgstr ""
-
-#: ../backend/file/qsf-xml-map.c:275
-#, c-format
-msgid "The QSF map file '%s' could not be found."
-msgstr ""
-
-#: ../backend/file/qsf-xml-map.c:348
-msgid ""
-"Invalid QSF Map file! The QSF map file failed to validate against the QSF "
-"map schema. The XML structure of the file is either not well-formed or the "
-"file contains illegal data."
-msgstr ""
-
-#: ../backend/file/qsf-xml-map.c:420
-#, c-format
-msgid ""
-"The selected QSF map '%s' contains unusable or missing data. This is usually "
-"because not all the required parameters for the defined objects have "
-"calculations described in the map."
-msgstr ""
-
-#: ../backend/file/qsf-xml-map.c:514
-#, c-format
-msgid ""
-"The QSF Map file '%s' was written for a different version of QOF. It may "
-"need to be modified to work with your current QOF installation."
-msgstr ""
 
 #: ../backend/file/qsf-backend.c:118
 msgid "Level of compression to use: 0 for none, 9 for highest."
@@ -144,6 +94,14 @@ msgstr ""
 msgid "There was an error parsing the file '%s'.\n"
 msgstr ""
 
+#: ../backend/file/qsf-backend.c:522 ../backend/file/qsf-backend.c:565
+#: ../backend/file/qsf-xml-map.c:260 ../backend/file/qsf-xml-map.c:282
+#: ../backend/file/qsf-xml-map.c:341 ../backend/file/qsf-xml.c:263
+#: ../backend/file/qsf-xml.c:322
+#, c-format
+msgid "There was an error parsing the file '%s'."
+msgstr ""
+
 #: ../backend/file/qsf-backend.c:573
 #, c-format
 msgid "There was an error reading the file '%s'."
@@ -175,6 +133,48 @@ msgid ""
 "The selected QSF object file '%s' contains one or more invalid 'collect' "
 "values. The file cannot be processed - please check the source of the file "
 "and try again."
+msgstr ""
+
+#: ../backend/file/qsf-xml-map.c:253 ../backend/file/qsf-xml-map.c:334
+#: ../backend/file/qsf-xml.c:252 ../backend/file/qsf-xml.c:308
+#, c-format
+msgid "The QSF XML file '%s' could not be found."
+msgstr ""
+
+#: ../backend/file/qsf-xml-map.c:266 ../backend/file/qsf-xml.c:269
+#: ../backend/file/qsf-xml.c:328
+#, c-format
+msgid ""
+"Invalid QSF Object file! The QSF object file '%s'  failed to validate  "
+"against the QSF object schema. The XML structure of the file is either not "
+"well-formed or the file contains illegal data."
+msgstr ""
+
+#: ../backend/file/qsf-xml-map.c:275
+#, c-format
+msgid "The QSF map file '%s' could not be found."
+msgstr ""
+
+#: ../backend/file/qsf-xml-map.c:348
+msgid ""
+"Invalid QSF Map file! The QSF map file failed to validate against the QSF "
+"map schema. The XML structure of the file is either not well-formed or the "
+"file contains illegal data."
+msgstr ""
+
+#: ../backend/file/qsf-xml-map.c:420
+#, c-format
+msgid ""
+"The selected QSF map '%s' contains unusable or missing data. This is usually "
+"because not all the required parameters for the defined objects have "
+"calculations described in the map."
+msgstr ""
+
+#: ../backend/file/qsf-xml-map.c:514
+#, c-format
+msgid ""
+"The QSF Map file '%s' was written for a different version of QOF. It may "
+"need to be modified to work with your current QOF installation."
 msgstr ""
 
 #: ../backend/sqlite/qof-sqlite.c:632
