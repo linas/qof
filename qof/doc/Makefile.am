@@ -1,4 +1,10 @@
+if ENABLE_DOXYGEN
 SUBDIRS = html
+all-local: doc
+else
+SUBDIRS =
+all-local:
+endif
 
 EXTRA_DIST = \
   README \
@@ -12,19 +18,21 @@ EXTRA_DIST = \
 
 docdir = ${datadir}/doc
 
-all: doc 
-
 # 
 # The doxy symlink is provided for CVS users and the SF site.
 # Ignore the symlink when packaging website HTML alongside
 # the Doxygen output.
-#
+
+if ENABLE_DOXYGEN
 doc: doxygen.cfg Makefile
 	${RM} html/*.html
 	${DOXYGEN} doxygen.cfg
 	if test ! -d ../website; then mkdir ../website; fi
 	if test -h ../website/doxy; then rm ../website/doxy; fi	
 	ln -s ../doc/html/ ../website/doxy
+else
+doc:
+endif
 
 clean-local:
 	${RM} doxygen.log

@@ -308,7 +308,7 @@ if test x$DOT = x; then
 else
         enable_dot=yes
 fi
-AM_CONDITIONAL(ENABLE_DOXYGEN, test x$enable_doc = xtrue)
+AM_CONDITIONAL(ENABLE_DOXYGEN, test "$enable_doc" = "yes")
 AC_SUBST(enable_dot)
 AC_SUBST(enable_html_docs)
 AC_SUBST(enable_latex_docs)
