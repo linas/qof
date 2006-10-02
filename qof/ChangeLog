@@ -1,3 +1,12 @@
+2006-10-02  Neil Williams <linux@codehelp.co.uk>
+
+	* configure.in,
+	doc/Makefile.am : Ensure Doxygen build
+	can be disabled correctly.
+	* lib/libsql/Makefile.am : Remove useless
+	INCLUDES instruction that complicates
+	the embedded build.
+
 2006-09-30  Neil Williams <linux@codehelp.co.uk>
 
 	* configure.in : Support new Brazilian

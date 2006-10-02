@@ -30,8 +30,8 @@ AM_CFLAGS = -g     \
 	${CFLAGS}        \
 	${GLIB_CFLAGS}
 
-INCLUDES = \
-	-I$(includedir) 
+#INCLUDES = \
+#	-I$(includedir) 
 
 parser.c: parser.y
 	$(YACC) -v -d -o parser.c -p sql parser.y
