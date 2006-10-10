@@ -1,3 +1,19 @@
+2006-10-10  Neil Williams <linux@codehelp.co.uk>
+
+	* autogen.sh : Remove maintainer mode.
+	* configure.in : Remove maintainer mode,
+	fix gettext problem in familiar build.
+
+2006-10-09  Neil Williams <linux@codehelp.co.uk>
+
+	* qof/qoftime.h : Add <time.h> to solve
+	problem on familiar build.
+	* qof/qoftime.c : Replace g_date_set_timeval
+	which is not available in glib2-0 2.6.
+	* qof/deprecated.c : Regress deprecated
+	qof_is_same_day back to original version to
+	allow builds against glib-2.0 2.6.
+
 2006-10-02  Neil Williams <linux@codehelp.co.uk>
 
 	* configure.in,
