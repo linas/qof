@@ -4,6 +4,9 @@
 	* configure.in : Remove maintainer mode,
 	fix gettext problem in familiar build.
 
+	* backend/file/qsf-xml.c : Prevent seg.
+	fault if object count is missing.
+
 2006-10-09  Neil Williams <linux@codehelp.co.uk>
 
 	* qof/qoftime.h : Add <time.h> to solve

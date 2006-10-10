@@ -118,6 +118,9 @@ qsf_node_foreach (xmlNodePtr parent, QsfNodeCB cb,
 {
 	xmlNodePtr cur_node;
 
+	if (!parent)
+		return;
+	g_return_if_fail (params);
 	g_return_if_fail (qsfiter->ns);
 	qsfiter->fcn = &cb;
 	for (cur_node = parent->children; cur_node != NULL;
@@ -403,9 +406,12 @@ qsf_object_node_handler (xmlNodePtr child, xmlNsPtr qsf_ns,
 				BAD_CAST QSF_OBJECT_TYPE));
 		object_count_s = ((gchar *) xmlGetProp (child,
 				BAD_CAST QSF_OBJECT_COUNT));
-		c = (gint64) strtol (object_count_s, &tail, 0);
-		object_set->object_count = (gint) c;
-		g_free (object_count_s);
+		if (object_count_s)
+		{
+			c = (gint64) strtol (object_count_s, &tail, 0);
+			object_set->object_count = (gint) c;
+			g_free (object_count_s);
+		}
 		params->qsf_object_list =
 			g_list_prepend (params->qsf_object_list, object_set);
 		qsfiter.ns = qsf_ns;
