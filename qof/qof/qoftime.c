@@ -402,14 +402,10 @@ QofTime *
 qof_time_get_today_start (void)
 {
 	QofTime *qt;
-	GDate *d;
-	GTimeVal val;
 
-	qt = qof_time_new ();
-	g_get_current_time (&val);
-	d = g_date_new ();
-	g_date_set_time_val (d, &val);
-	qt = qof_time_from_gdate (d);
+	qt = qof_time_get_current ();
+	if (!qof_time_set_day_start (qt))
+		return NULL;
 	return qt;
 }
 
