@@ -23,7 +23,5 @@ ${AUTOHEADER}
 ${AUTOMAKE} --add-missing
 ${AUTOCONF}
 
-echo "Now you can run ./configure " \
- "--enable-maintainer-mode --enable-error-on-warning" \
- " --enable-compile-warnings"
+echo "Now you can run ./configure --enable-error-on-warning --enable-compile-warnings"
 
