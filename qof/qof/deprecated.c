@@ -525,17 +525,14 @@ qof_print_time_buff (gchar * buff, size_t len, time_t secs)
 gboolean
 qof_is_same_day (time_t ta, time_t tb)
 {
-	gboolean retval;
-	GDate *da, *db;
-
-	da = g_date_new ();
-	db = g_date_new ();
-	g_date_set_time_t (da, ta);
-	g_date_set_time_t (db, tb);
-	retval = g_date_compare (da, db);
-	g_date_free (da);
-	g_date_free (db);
-	return retval;
+	struct tm lta, ltb;
+	lta = *localtime (&ta);
+	ltb = *localtime (&tb);
+	if (lta.tm_year == ltb.tm_year)
+	{
+	return (ltb.tm_yday - lta.tm_yday);
+	}
+	return (ltb.tm_year - lta.tm_year)*365;  /* very approximate */
 }
 
 void
