@@ -1,3 +1,9 @@
+2006-10-15  Neil Williams <linux@codehelp.co.uk>
+
+	* qof/qofutil.c : Set the current parameter 
+	before asking the backend to commit that 
+	parameter value.
+
 2006-10-10  Neil Williams <linux@codehelp.co.uk>
 
 	* autogen.sh : Remove maintainer mode.

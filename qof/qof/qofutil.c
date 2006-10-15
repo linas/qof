@@ -314,12 +314,12 @@ qof_util_param_commit (QofInstance * inst, const QofParam * param)
 	if (0 < inst->editlevel)
 		return FALSE;
 	be = qof_book_get_backend (inst->book);
+	inst->param = param;
 	if (be && qof_backend_commit_exists (be))
 		qof_backend_run_commit (be, inst);
 	if (param != NULL)
 	{
 		undo_data = inst->book->undo_data;
-		inst->param = param;
 		if (undo_data->undo_operation_open)
 			qof_undo_commit (inst, param);
 	}
