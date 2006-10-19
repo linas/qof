@@ -3,7 +3,7 @@ Sat, 10 Apr 2004 09:51:06 -0300.
 
 It was downloaded from http://sourceforge.net/projects/qof/
 
-Upstream Authors: 	   Derek Atkins    <warlord@mit.edu>
+Upstream Authors:      Derek Atkins    <warlord@mit.edu>
                        Robin D. Clark  <rclark@cs.hmc.edu>
                        Linas Vepstas   <linas@linas.org>
                        Bill Gribble    <grib@billgribble.com>
@@ -437,3 +437,9 @@ If your document contains nontrivial examples of program code, we
 recommend releasing these examples in parallel under your choice of
 free software license, such as the GNU General Public License,
 to permit their use in free software.
+
+
+The Debian packaging for QOF is (C) 2004-2006, Goedson Teixeira Paixao 
+<goedson@debian.org>, Neil Williams <codehelp@debian.org> and
+is licensed under the GPL, see above.
+
