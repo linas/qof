@@ -1,10 +1,10 @@
 if ENABLE_DOXYGEN
-SUBDIRS = html
 all-local: doc
 else
-SUBDIRS =
 all-local:
 endif
+
+SUBDIRS = html
 
 EXTRA_DIST = \
   README \
@@ -16,9 +16,6 @@ EXTRA_DIST = \
   qofdatelocale.txt \
   map-plan.txt
 
-docdir = ${datadir}/doc
-
-# 
 # The doxy symlink is provided for CVS users and the SF site.
 # Ignore the symlink when packaging website HTML alongside
 # the Doxygen output.
@@ -30,19 +27,10 @@ doc: doxygen.cfg Makefile
 	if test ! -d ../website; then mkdir ../website; fi
 	if test -h ../website/doxy; then rm ../website/doxy; fi	
 	ln -s ../doc/html/ ../website/doxy
-else
-doc:
-endif
 
-clean-local:
-	${RM} doxygen.log
-	if test -h ../website/doxy; then rm ../website/doxy; fi
-
-qofdocdir = ${docdir}/qof/html/doxy
-
-qofdoc_DATA = \
-	html/*
-
+qofdocdir = ${datadir}/doc/qof/html/doxy
+qofdoc_DATA = html/*
+qofdoc: doc
 install-data-hook:
 	if test -f ${DESTDIR}${qofdocdir}/Makefile; then \
 		rm ${DESTDIR}${qofdocdir}/Makefile; fi
@@ -50,5 +38,15 @@ install-data-hook:
 		rm ${DESTDIR}${qofdocdir}/Makefile.am; fi
 	if test -f ${DESTDIR}${qofdocdir}/Makefile.in; then \
 		rm ${DESTDIR}${qofdocdir}/Makefile.in; fi
+else
+doc:
+qofdocdir = .
+qofdoc_DATA =
+qofdoc:
+install-data-hook:
+endif
 
-qofdoc: doc
+clean-local:
+	${RM} doxygen.log
+	if test -h ../website/doxy; then rm ../website/doxy; fi
+

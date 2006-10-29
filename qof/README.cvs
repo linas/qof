@@ -11,7 +11,6 @@ Building QOF from CVS.
    and certain error conditions will not be checked.
 
    Typical arguments for ./configure are:
-   --enable-maintainer-mode \
    --enable-compile-warnings \
    --enable-error-on-warning \
    --prefix=/opt/build/qof

@@ -1,3 +1,9 @@
+2006-10-29  Neil Williams <linux@codehelp.co.uk>
+
+	* configure.in,
+	doc/Makefile.am : Allow doxygen to be
+	disabled correctly.
+
 2006-10-15  Neil Williams <linux@codehelp.co.uk>
 
 	* qof/qofutil.c : Set the current parameter 
