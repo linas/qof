@@ -1,5 +1,0 @@
-#format
-version=3
-# watch control file for uscan
-opts="uversionmangle=s/0.6.0-pre1/0.5.99+0.6.0pre1/" \
-http://sf.net/qof/qof-(.*)\.tar\.gz

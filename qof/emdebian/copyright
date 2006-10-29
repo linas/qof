@@ -1,16 +1,24 @@
 This package was debianized by Goedson Teixeira Paixao <goedson@debian.org> on
 Sat, 10 Apr 2004 09:51:06 -0300.
 
-It was downloaded from http://www.sourceforge.net/projects/qof/
+It was downloaded from http://sourceforge.net/projects/qof/
 
-Upstream Authors: Derek Atkins <warlord@mit.edu>
-          Rob Browning
-          Bill Gribble
-          Dave Peticolas
-          Linas Vepstas <linas@linas.org>
-          Neil Williams <linux@codehelp.co.uk>
+Upstream Authors:      Derek Atkins    <warlord@mit.edu>
+                       Robin D. Clark  <rclark@cs.hmc.edu>
+                       Linas Vepstas   <linas@linas.org>
+                       Bill Gribble    <grib@billgribble.com>
+                       Dave Peticolas  <dave@krondo.com>
+                       Rob Browning    <rlb@cs.utexas.edu>
+                       Neil Williams   <linux@codehelp.co.uk>
 
-Copyright:
+Copyright: 1997-2004   Linas Vepstas
+           1997        Robin D. Clark
+           1991-2006   Free Software Foundation, Inc.
+           2000        Bill Gribble
+           2000        Dave Peticolas
+           2001        Rob Browning
+           2002        Derek Atkins
+           2005-2006   Neil Williams
 
    This package is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -29,3 +37,6 @@ Copyright:
 On Debian systems, the complete text of the GNU General
 Public License can be found in `/usr/share/common-licenses/GPL'.
 
+The Debian packaging for QOF is (C) 2004-2006, Goedson Teixeira Paixao 
+<goedson@debian.org>, Neil Williams <codehelp@debian.org> and
+is licensed under the GPL, see above.
