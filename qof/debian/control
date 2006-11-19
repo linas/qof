@@ -8,21 +8,6 @@ Build-Depends: debhelper (>= 5), cdbs, autotools-dev, libglib2.0-dev (>= 2.6.0),
  libxml-parser-perl, libsqlite0-dev, dpkg-dev (>= 1.13.19)
 Standards-Version: 3.7.2
 
-Package: libqof-dev
-Priority: optional
-Section: libdevel
-Architecture: any
-Recommends: libqof-doc
-Depends: libqof1 (= ${binary:Version}), libgda2-dev
-Description: Query Object Framework - Development Headers
- A framework to allow the execution of SQL-type queries
- using collections of in-memory objects as 'tables'.
- .
- This package provides the files needed to develop 
- applications using QOF.
- .
- Homepage: http://qof.sourceforge.net/
-
 Package: libqof1
 Priority: optional
 Section: libs
@@ -36,6 +21,21 @@ Description: Query Object Framework
  .
  This package provides the shared libraries needed 
  to run programs developed using QOF.
+ .
+ Homepage: http://qof.sourceforge.net/
+
+Package: libqof-dev
+Priority: optional
+Section: libdevel
+Architecture: any
+Recommends: libqof-doc
+Depends: libqof1 (= ${binary:Version}), libgda2-dev
+Description: Query Object Framework - Development Headers
+ A framework to allow the execution of SQL-type queries
+ using collections of in-memory objects as 'tables'.
+ .
+ This package provides the files needed to develop 
+ applications using QOF.
  .
  Homepage: http://qof.sourceforge.net/
 
