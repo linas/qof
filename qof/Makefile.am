@@ -24,6 +24,7 @@ EXTRA_DIST = \
   make-potfiles.in \
   po/POTFILES.in \
   po/POTFILES.skip \
+  po/qof.pot \
   intltool-extract.in \
   intltool-merge.in \
   intltool-update.in \
