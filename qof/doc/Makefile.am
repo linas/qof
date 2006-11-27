@@ -1,7 +1,7 @@
 if ENABLE_DOXYGEN
-all-local: doc
+install-data-local: doc
 else
-all-local:
+install-data-local:
 endif
 
 SUBDIRS = html
