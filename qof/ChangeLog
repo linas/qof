@@ -1,3 +1,15 @@
+2006-11-27  Neil Williams <linux@codehelp.co.uk>
+
+	* Makefile.am : package the .pot file directly. 
+	TP is simply too slow.
+	* emdebian/ : "emdebian method changed - 
+	remove control files.
+	* qof/deprecated.h,
+	qof/deprecated.c : Fix compatibility issue.
+	Replace QofErrorId with original QofBackendError
+	in the deprecated support code.
+
+
 2006-10-29  Neil Williams <linux@codehelp.co.uk>
 
 	* configure.in,
