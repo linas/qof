@@ -1728,7 +1728,7 @@ kvp_value_compare (const KvpValue * kva, const KvpValue * kvb)
 		return kvp_frame_compare (kva->value.frame, kvb->value.frame);
 		break;
 	}
-	return FALSE;
+	return 0;
 }
 
 typedef struct
