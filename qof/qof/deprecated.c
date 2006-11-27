@@ -185,7 +185,7 @@ qof_book_mergeRuleForeach (QofBookMergeData * mergeData,
 gpointer
 gnc_string_cache_insert (gconstpointer key)
 {
-	return (gpointer) qof_util_string_cache_insert (key);
+	return qof_util_string_cache_insert (key);
 }
 
 gchar *
@@ -1731,7 +1731,7 @@ qof_commit_edit (QofInstance * inst)
 
 gboolean
 qof_commit_edit_part2 (QofInstance * inst,
-	void (*on_error) (QofInstance *, QofErrorId),
+	void (*on_error) (QofInstance *, QofBackendError),
 	void (*on_done) (QofInstance *), void (*on_free) (QofInstance *))
 {
 	QofBackend *be;

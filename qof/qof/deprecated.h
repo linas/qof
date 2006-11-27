@@ -524,13 +524,6 @@ gboolean qof_commit_edit (QofInstance * inst);
   }                                                              \
 }
 
-/** \deprecated use ::qof_util_param_commit instead. */
-gboolean
-qof_commit_edit_part2 (QofInstance * inst,
-	void (*on_error) (QofInstance *, QofErrorId),
-	void (*on_done) (QofInstance *),
-	void (*on_free) (QofInstance *));
-
 /** \deprecated use ::qof_util_param_to_string instead. */
 gchar *
 qof_util_param_as_string (QofEntity * ent, QofParam * param);
@@ -814,6 +807,13 @@ QofBackend itself registers some errors.
 DEFINE_ENUM(QofBackendError, ENUM_LIST_DEP)
 
 AS_STRING_DEC(QofBackendError, ENUM_LIST_DEP)
+
+/** \deprecated use ::qof_util_param_commit instead. */
+gboolean
+qof_commit_edit_part2 (QofInstance * inst,
+	void (*on_error) (QofInstance *, QofBackendError),
+	void (*on_done) (QofInstance *),
+	void (*on_free) (QofInstance *));
 
 /** \deprecated use qof_error_set instead. */
 void 
