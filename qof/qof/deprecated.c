@@ -1250,11 +1250,7 @@ gnc_timezone (struct tm *tm)
 {
 	g_return_val_if_fail (tm != NULL, 0);
 
-#ifdef HAVE_STRUCT_TM_GMTOFF
 	return -(tm->tm_gmtoff);
-#else
-	return (glong) (timezone - (tm->tm_isdst > 0 ? 3600 : 0));
-#endif
 }
 
 Timespec

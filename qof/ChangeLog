@@ -1,3 +1,11 @@
+2006-11-30  Neil Williams <linux@codehelp.co.uk>
+
+	* qof/deprecated.c : Remove struct tm.tm_gmtoff 
+	define and wrapper - tm_gmtoff is required for
+	QofTime.
+	* configure.in : Remove struct tm.tm_gmtoff detection
+	macro which complicates cross-compilation.
+
 2006-11-27  Neil Williams <linux@codehelp.co.uk>
 
 	* Makefile.am : package the .pot file directly. 
