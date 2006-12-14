@@ -12,7 +12,7 @@ Package: libqof1
 Priority: optional
 Section: libs
 Architecture: any
-Depends: ${shlibs:Depends}
+Depends: ${shlibs:Depends}, ${misc:Depends}
 Recommends: libqof-backend-qsf0 | libqof-backend-sqlite0
 Conflicts: pilot-qof (<< 0.1.1-2)
 Description: Query Object Framework
