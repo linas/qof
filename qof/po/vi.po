@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: qof 0.7.2\n"
 "Report-Msgid-Bugs-To: qof-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2006-09-30 19:07+0100\n"
+"POT-Creation-Date: 2006-12-26 14:57+0000\n"
 "PO-Revision-Date: 2006-09-30 22:14+0930\n"
 "Last-Translator: Clytie Siddall <clytie@riverland.net.au>\n"
 "Language-Team: Vietnamese <vi-VN@googlegroups.com>\n"
@@ -101,8 +101,8 @@ msgstr "Gặp lỗi khi phân tách tập tin « %s ».\n"
 
 #: ../backend/file/qsf-backend.c:522 ../backend/file/qsf-backend.c:565
 #: ../backend/file/qsf-xml-map.c:260 ../backend/file/qsf-xml-map.c:282
-#: ../backend/file/qsf-xml-map.c:341 ../backend/file/qsf-xml.c:263
-#: ../backend/file/qsf-xml.c:322
+#: ../backend/file/qsf-xml-map.c:341 ../backend/file/qsf-xml.c:266
+#: ../backend/file/qsf-xml.c:325
 #, c-format
 msgid "There was an error parsing the file '%s'."
 msgstr "Gặp lỗi khi phân tách tập tin « %s »."
@@ -150,13 +150,13 @@ msgstr ""
 "tra nguồn tập tin rồi thử lại."
 
 #: ../backend/file/qsf-xml-map.c:253 ../backend/file/qsf-xml-map.c:334
-#: ../backend/file/qsf-xml.c:252 ../backend/file/qsf-xml.c:308
+#: ../backend/file/qsf-xml.c:255 ../backend/file/qsf-xml.c:311
 #, c-format
 msgid "The QSF XML file '%s' could not be found."
 msgstr "Không tìm thấy tập tin XML QSF « %s »."
 
-#: ../backend/file/qsf-xml-map.c:266 ../backend/file/qsf-xml.c:269
-#: ../backend/file/qsf-xml.c:328
+#: ../backend/file/qsf-xml-map.c:266 ../backend/file/qsf-xml.c:272
+#: ../backend/file/qsf-xml.c:331
 #, c-format
 msgid ""
 "Invalid QSF Object file! The QSF object file '%s'  failed to validate  "
@@ -202,35 +202,35 @@ msgstr ""
 "Tập tin sơ đồ QSF « %s » đã được ghi cho phiên bản QSF khác. Có thể cần phải "
 "sửa đổi nó để hoạt động được với bản cài đặt QSF hiện thời."
 
-#: ../backend/sqlite/qof-sqlite.c:632
+#: ../backend/sqlite/qof-sqlite.c:656
 #, c-format
 msgid ""
 "Unable to open the output file '%s' - do you have permission to create this "
 "file?"
 msgstr "Không thể mở tập tin xuất « %s » — bạn có quyền tạo tập tin này không?"
 
-#: ../backend/sqlite/qof-sqlite.c:665
+#: ../backend/sqlite/qof-sqlite.c:689
 #, c-format
 msgid "Unable to open the sqlite database '%s'."
 msgstr "Không thể mở co sở dữ liệu SQLite « %s »."
 
-#: ../backend/sqlite/qof-sqlite.c:690
+#: ../backend/sqlite/qof-sqlite.c:713
 msgid "Please provide a filename for sqlite."
 msgstr "Hãy cung cấp tên tập tin cho SQLite."
 
-#: ../backend/sqlite/qof-sqlite.c:800
+#: ../backend/sqlite/qof-sqlite.c:827
 msgid "Unable to delete record."
 msgstr "Không thể xoá bỏ mục ghi."
 
-#: ../backend/sqlite/qof-sqlite.c:802
+#: ../backend/sqlite/qof-sqlite.c:829
 msgid "Unable to create record."
 msgstr "Không thể tạo mục ghi."
 
-#: ../backend/sqlite/qof-sqlite.c:804
+#: ../backend/sqlite/qof-sqlite.c:831
 msgid "Unable to insert a new record."
 msgstr "Không thể chèn mục ghi mới."
 
-#: ../backend/sqlite/qof-sqlite.c:806
+#: ../backend/sqlite/qof-sqlite.c:833
 msgid "Unable to update existing record."
 msgstr "Không thể cập nhật mục ghi đã có."
 

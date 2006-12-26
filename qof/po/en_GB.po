@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: QOF 0.8.0\n"
 "Report-Msgid-Bugs-To: qof-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2006-09-30 19:07+0100\n"
+"POT-Creation-Date: 2006-12-26 14:57+0000\n"
 "PO-Revision-Date: 2006-09-22 21:34+0100\n"
 "Last-Translator: Neil Williams <linux@codehelp.co.uk>\n"
 "Language-Team: English (British) <en_gb@li.org>\n"
@@ -100,8 +100,8 @@ msgstr "There was an error parsing the file '%s'.\n"
 
 #: ../backend/file/qsf-backend.c:522 ../backend/file/qsf-backend.c:565
 #: ../backend/file/qsf-xml-map.c:260 ../backend/file/qsf-xml-map.c:282
-#: ../backend/file/qsf-xml-map.c:341 ../backend/file/qsf-xml.c:263
-#: ../backend/file/qsf-xml.c:322
+#: ../backend/file/qsf-xml-map.c:341 ../backend/file/qsf-xml.c:266
+#: ../backend/file/qsf-xml.c:325
 #, c-format
 msgid "There was an error parsing the file '%s'."
 msgstr "There was an error parsing the file '%s'."
@@ -148,13 +148,13 @@ msgstr ""
 "and try again."
 
 #: ../backend/file/qsf-xml-map.c:253 ../backend/file/qsf-xml-map.c:334
-#: ../backend/file/qsf-xml.c:252 ../backend/file/qsf-xml.c:308
+#: ../backend/file/qsf-xml.c:255 ../backend/file/qsf-xml.c:311
 #, c-format
 msgid "The QSF XML file '%s' could not be found."
 msgstr "The QSF XML file '%s' could not be found."
 
-#: ../backend/file/qsf-xml-map.c:266 ../backend/file/qsf-xml.c:269
-#: ../backend/file/qsf-xml.c:328
+#: ../backend/file/qsf-xml-map.c:266 ../backend/file/qsf-xml.c:272
+#: ../backend/file/qsf-xml.c:331
 #, c-format
 msgid ""
 "Invalid QSF Object file! The QSF object file '%s'  failed to validate  "
@@ -200,7 +200,7 @@ msgstr ""
 "The QSF Map file '%s' was written for a different version of QOF. It may "
 "need to be modified to work with your current QOF installation."
 
-#: ../backend/sqlite/qof-sqlite.c:632
+#: ../backend/sqlite/qof-sqlite.c:656
 #, c-format
 msgid ""
 "Unable to open the output file '%s' - do you have permission to create this "
@@ -209,28 +209,28 @@ msgstr ""
 "Unable to open the output file '%s' - do you have permission to create this "
 "file?"
 
-#: ../backend/sqlite/qof-sqlite.c:665
+#: ../backend/sqlite/qof-sqlite.c:689
 #, c-format
 msgid "Unable to open the sqlite database '%s'."
 msgstr "Unable to open the sqlite database '%s'."
 
-#: ../backend/sqlite/qof-sqlite.c:690
+#: ../backend/sqlite/qof-sqlite.c:713
 msgid "Please provide a filename for sqlite."
 msgstr "Please provide a filename for sqlite."
 
-#: ../backend/sqlite/qof-sqlite.c:800
+#: ../backend/sqlite/qof-sqlite.c:827
 msgid "Unable to delete record."
 msgstr "Unable to delete record."
 
-#: ../backend/sqlite/qof-sqlite.c:802
+#: ../backend/sqlite/qof-sqlite.c:829
 msgid "Unable to create record."
 msgstr "Unable to create record."
 
-#: ../backend/sqlite/qof-sqlite.c:804
+#: ../backend/sqlite/qof-sqlite.c:831
 msgid "Unable to insert a new record."
 msgstr "Unable to insert a new record."
 
-#: ../backend/sqlite/qof-sqlite.c:806
+#: ../backend/sqlite/qof-sqlite.c:833
 msgid "Unable to update existing record."
 msgstr "Unable to update existing record."
 
