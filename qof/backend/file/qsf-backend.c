@@ -268,7 +268,17 @@ qsf_determine_file_type (const gchar * path)
 	if (0 == safe_strcmp (path, QOF_STDOUT))
 		return TRUE;
 	if (stat (path, &sbuf) < 0)
+	{
+	/* in case the error is that the file does not exist */
+		FILE * f;
+		f = fopen (path, "a+");
+		if (f)
+		{
+			fclose (f);
+			return TRUE;
+		}
 		return FALSE;
+	}
 	if (sbuf.st_size == 0)
 		return TRUE;
 	if (is_our_qsf_object (path))

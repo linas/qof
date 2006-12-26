@@ -3,6 +3,10 @@
 	* backend/sqlite/qof-sqlite.c : Don't try to
 	update backend data unless it has actually 
 	changed.
+	* backend/file/qsf-backend.c : In case of a stat
+	error, see if we can't create a file at that path.
+	QSF is meant to accept beginning or ending a QofSession
+	with an empty file.
 
 2006-11-30  Neil Williams <linux@codehelp.co.uk>
 
