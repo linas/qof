@@ -1,3 +1,9 @@
+2006-12-26  Neil Williams <linux@codehelp.co.uk>
+
+	* backend/sqlite/qof-sqlite.c : Don't try to
+	update backend data unless it has actually 
+	changed.
+
 2006-11-30  Neil Williams <linux@codehelp.co.uk>
 
 	* qof/deprecated.c : Remove struct tm.tm_gmtoff 

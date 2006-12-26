@@ -114,13 +114,25 @@ qsql_param_to_sql(QofParam *param)
 	return g_strdup_printf(" %s char(32)", param->param_name);
 }
 
+/** \brief QOF SQLite context
+
+Used to correlate the sqlite data with the
+live data.
+*/
 struct QsqlBuilder
 {
+	/** the current sqlite backend */
 	QSQLiteBackend *qsql_be;
+	/** the current entity */
 	QofEntity *ent;
+	/** the SQL string in use */
 	gchar *sql_str;
+	/** list of other dirty entities */
 	GList *dirty_list;
+	/** whether to use UPDATE or INSERT */
 	gboolean exists;
+	/** which parameter needs updating in sqlite. */
+	const QofParam * dirty;
 };
 
 static void
@@ -349,6 +361,8 @@ update_param_foreach(QofParam *param, gpointer user_data)
 	gchar * value;
 
 	qb = (struct QsqlBuilder*) user_data;
+	if (param != qb->dirty)
+		return;
 	/* update table set name=val,name=val where guid=gstr; */
 	value = qof_util_param_to_string (qb->ent, param);
 	if (value)
@@ -411,12 +425,21 @@ create_dirty_list (gpointer data, gint col_num, gchar **strings,
 {
 	struct QsqlBuilder * qb;
 	QofInstance * inst;
+	const QofParam * param;
+	gchar * value, *columnName, *tmp;
 
 	qb = (struct QsqlBuilder*) data;
+	/* qb->ent is the live data, strings is the sqlite data */
 	inst = (QofInstance*) qb->ent;
 	qb->exists = TRUE;
 	if (!inst->dirty)
 		return SQLITE_OK;
+	columnName = columnNames[col_num];
+	tmp = strings[col_num];
+	param = qof_class_get_parameter (qb->ent->e_type, columnName);
+	value = qof_util_param_to_string (qb->ent, param);
+	PINFO (" tmp=%s value=%s columnName=%s", tmp, value, columnName);
+	qb->dirty = param;
 	qb->dirty_list = g_list_prepend (qb->dirty_list, qb->ent);
 	DEBUG (" dirty_list=%d", g_list_length (qb->dirty_list));
 	return SQLITE_OK;
@@ -623,6 +646,7 @@ qsql_backend_createdb(QofBackend *be, QofSession *session)
 	qsql_be = (QSQLiteBackend*)be;
 	qsql_be->stm_type = SQL_CREATE;
 	qsql_be->book = qof_session_get_book (session);
+	DEBUG (" create_file %s", qsql_be->fullpath);
 	f = fopen (qsql_be->fullpath, "a+");
 	if (f)
 		fclose (f);
@@ -636,7 +660,7 @@ qsql_backend_createdb(QofBackend *be, QofSession *session)
 			qsql_be->fullpath);
 		return;
 	}
-	qsql_be->sqliteh = sqlite_open (qsql_be->fullpath, 0666, 
+	qsql_be->sqliteh = sqlite_open (qsql_be->fullpath, 0644, 
 		&qsql_be->err);
 	if(!qsql_be->sqliteh)
 	{
@@ -666,7 +690,7 @@ qsql_backend_opendb (QofBackend *be, QofSession *session)
 		qsql_be->error = TRUE;
 		PERR (" %s", qsql_be->err);
 	}
-	LEAVE (" ");
+	LEAVE (" %s", qsql_be->fullpath);
 }
 
 static void
@@ -683,7 +707,6 @@ qsqlite_session_begin(QofBackend *be, QofSession *session, const
 	ENTER (" book_path=%s", book_path);
 	qsql_be = (QSQLiteBackend*)be;
 	qsql_be->fullpath = NULL;
-	be->fullpath = g_strdup (book_path);
 	if(book_path == NULL)
 	{
 		qof_error_set_be (be, qof_error_register
@@ -699,6 +722,10 @@ qsqlite_session_begin(QofBackend *be, QofSession *session, const
 		qsql_be->fullpath = g_strdup(pp[1]);
 		g_strfreev (pp);
 	}
+	else
+		qsql_be->fullpath = g_strdup (book_path);
+	be->fullpath = g_strdup (qsql_be->fullpath);
+	PINFO (" final path = %s", qsql_be->fullpath);
 	stat_val = g_stat (qsql_be->fullpath, &statinfo);
 	if (!S_ISREG (statinfo.st_mode) || statinfo.st_size == 0)
 		qsql_backend_createdb (be, session);
