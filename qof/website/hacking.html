@@ -33,7 +33,7 @@ title="Query Object Framework">QOF</acronym></h1>
 symbol of the same name"></div>
 
 <h2>Advice for packagers / maintainers</h2>
-<h3>Updated August 2006 for QOF 0.7.1</h3>
+<h3>Updated December 2006 for QOF 0.7.2</h3>
 
 <ul>
 <li>Building against QOF
@@ -41,8 +41,8 @@ symbol of the same name"></div>
 <li><a href="#automake">AUTOMAKE example</a></li>
 <li><a href="#libqof1">libqof1 API/ABI compatibility</a>.</li>
 <li><a href="#required">MAX_REQUIRED specifiers</a></li>
-<li><a href="#dwi">DWI likely to be unsupported soon.</a></li>
-<li><a href="#osx">Mac OSX</a></li>
+<li><a href="#dwi">DWI now unsupported.</a></li>
+<li><a href="#gda">libgda versions.</a></li>
 </ul>
 </li>
 <li>Packaging QOF.
@@ -68,7 +68,7 @@ dnl *************************************
 dnl QOF
 dnl *************************************
 
-QOF_REQUIRED=0.7.1
+QOF_REQUIRED=0.7.2
 PKG_CHECK_MODULES([QOF], [qof-1 >= ${QOF_REQUIRED}])
 AC_SUBST(QOF_CFLAGS)
 AC_SUBST(QOF_LIBS)
@@ -101,7 +101,7 @@ dnl *************************************
 dnl QOF
 dnl *************************************
 
-QOF_REQUIRED=0.7.1
+QOF_REQUIRED=0.7.2
 AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
 if test pkg-config = no; then
 	AC_MSG_ERROR([Please install pkgconfig])
@@ -180,14 +180,14 @@ version of QOF.</p>
 </div>
 <hr>
 <h3 id="dwi">DWI has stalled</h3>
-<h4>Updated for QOF 0.7.1</h4>
+<h4>Updated for QOF 0.7.2</h4>
 <div>
 <p>DWI - Data With Interaction - was in development 
 but it's SourceForge project has seen little recent
 activity and is now out of date with the main QOF library.</p>
 
 <p>DWI development has stalled and it has not been tested 
-against libqof1. QOF configuration checks for DWI will be
+against libqof1. QOF configuration checks for DWI have been
 removed in QOF 0.7.2 and there is unlikely to be any DWI 
 support in libqof2.</p>
 
@@ -199,6 +199,22 @@ http://lists.sourceforge.net/lists/listinfo/qof-devel</a></p>
 </div>
 <hr>
 
+<h3 id="libgda">libgda versions</h3>
+<div><p>(See the notes on <a href="index.html#libgda">libgda module delays</a>.)</p>
+<p>libda-2.0 is nearing release but is not yet ready - despite some
+distributions packaging the unreleased code. QOF only uses the SQL handling
+code from libgda at this time - until the GDA backend is reviewed. This SQL
+handling code was copied out of libgda at an earlier release and is built by
+QOF internally if libgda is not found.</p>
+<p>This arrangement will continue until libgda-2.0 is on full release. QOF 0.7.2
+does not support libgda-2.0 and will ignore libgda-2.0 on systems where it is 
+installed. This is <b>not</b> a problem or a bug but a deliberate decision. Patches
+to support libgda-2.0 will <b>not</b> be accepted. It is preferable to let QOF
+build the SQL handling code internally. Once the gda backend is reviewed, support 
+for libgda can be updated. See also <a href="#libsql">libsql in QOF</a>.</p>
+</div>
+
+<hr>
 <h3 id="osx">Mac OSX</h3>
 <div>
 <p>Specify your Mac OSX compiler settings as environment variables.
@@ -271,7 +287,8 @@ to ensure that existing applications can locate and load the necessary
 backend. Applications that cannot load the necessary backend will
 typically fail to start or be unable to load or save data.</p>
 <p>At present, only <a href="http://pilot-qof.sourceforge.net/">pilot-qof</a> 
-supports all available QOF backends. In most cases, it is wise to ensure that
+and <a href="http://gpe-expenses.sourceforge.net/">gpe-expenses</a>
+support all available QOF backends. In most cases, it is wise to ensure that
 at least <b>libqof-backend-qsf0</b> is available for all existing QOF
 applications. New applications and new versions of existing applications
 can be configured to load new and additional backends.</p>
@@ -283,7 +300,7 @@ can be configured to load new and additional backends.</p>
 <p>libxml2 is getting quite large; too large for some embedded devices,
 especially as it is only a backend. The SQLite backend was written especially
 for embedded devices or other situations where QOF is to be used on systems
-with limited resources. QOF 0.7.1 provides two backend modules that can be
+with limited resources. QOF &gt;= 0.7.1 provides two backend modules that can be
 packaged separately:</p>
 <ul>
 <li><b>libqof-backend-qsf0</b> : Depends on libxml2.</li>
@@ -299,7 +316,10 @@ does not actually remove libxml2 from the dependency list of the library.
 Why?</dt>
 <dd>libgda includes a dependency on libxml2 that replaces the
 dependency removed by packaging QSF XML separately. If you've built QOF with
-libgda installed, the libxml2 dependency will be retained.</dd>
+libgda installed, the libxml2 dependency will be retained. I believe this
+is fixed in libgda-2.0 (see <a href="#libgda">QOF and GDA</a>) but QOF
+0.7.2 does not yet support libgda-2.0. See also <a href="#libsql">libsql in QOF</a>.
+</dd>
 <dt>What's the solution?</dt>
 <dd>To remove libxml2 from the dependency list, also remove libgda so that
 QOF uses the internal SQL handling. This leaves only a dependency on glib
@@ -308,7 +328,7 @@ only adds a dependency on libsqlite0.</dd>
 </dl>
 <pre>
  Package: libqof1
- Version: 0.7.1-1
+ Version: 0.7.2-1
  Section: libs
  Priority: optional
  Architecture: amd64
@@ -360,28 +380,17 @@ SQL directly in the future.</p>
 <div>
 <p>Outline plan of the next few releases. All items are subject to 
 change, but this is how it looks so far.</p>
-
-<h4>QOF 0.7.2</h4>
+<p>Note that the schedule for libqof2 has been postponed - the use of
+QOF in embedded systems is expected to prove useful in reorganising libqof1
+in preparation for libqof2.</p>
 <ol>
-
-<li><h4>QofError</h4>
-<p>In current CVS. QofError gets rid of the restrictive enum and allows
-backends, QOF and applications to define and use error codes and messages
-anywhere in the codebase, including generating the messages on-the-fly.
-This greatly increases the detail and specificity of messages presented
-to the user.</p></li>
-
-<li><h4>Kvp</h4><p>
-Various Kvp functions need to be reviewed, a KVP_TYPE_BOOLEAN is long
-overdue and the split between public and private Kvp functions needs to
-be completely redone. <b>Expected: September 2006.</b></p></li>
 
 <li><h4>libqof2</h4><p>
 Once these steps are complete, the rest of QOF will be reviewed -
 including moving certain sections of code around within the codebase to
 make the overview clearer and the library easier to follow. A series of
-pre-releases for libqof2 can then begin. <b>Expect pre-releases Spring 2007
-and libqof2, QOF 1.0.0, Summer 2007.</b> Note that libqof2 will start with
+pre-releases for libqof2 can then begin. <b>Expect pre-releases Summer 2007
+and libqof2, QOF 1.0.0, Autumn 2007.</b> Note that libqof2 will start with
 the last release of libqof1 but with all deprecated code removed. Users
 who migrate with libqof1 will be able to transfer to libqof2 without
 problems. The libqof2 API will then remain stable, just as with libqof1,
@@ -426,7 +435,7 @@ and the website content:
 
 <hr>
 <div><p>Written by Neil Williams &lt;linux@codehelp.co.uk&gt; December 2005.
-</p><p>Last updated by Neil Williams &lt;linux@codehelp.co.uk&gt; September 2006.
+</p><p>Last updated by Neil Williams &lt;linux@codehelp.co.uk&gt; December 2006.
 </p></div>
 <hr>
 <div><a href="http://sourceforge.net/projects/qof/">

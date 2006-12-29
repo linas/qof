@@ -1,3 +1,16 @@
+December  2006: Bug fixes
+	Removed some build macros that complicated
+	cross-building. Improved speed of sqlite
+	backend by reducing the number of operations that
+	are passed back to sqlite. Fix sqlite error that
+	resulted in spurious temporary files. Package the
+	.pot file directly because the TP project is simply
+	too slow to cope anymore. Fix doxygen support so that
+	it can be disabled cleanly.
+	Removed AM_MAINTAINER_MODE - unnecessary macro that
+	complicates the build.
+	New Brazilian Portuguese and Indonesian translations.
+
 September 2006: KVP_TYPE_BOOLEAN support.
 
 September 2006: Delays in libgda support.
