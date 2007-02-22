@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: qof 0.7.2\n"
-"Report-Msgid-Bugs-To: qof-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2006-12-26 14:57+0000\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2007-02-18 01:04+0000\n"
 "PO-Revision-Date: 2006-09-29 23:15-0300\n"
 "Last-Translator: J. Victor D. Martins <jvdm@sdf.lonestar.org>\n"
 "Language-Team: Brazilian Portuguese <ldp-br@bazar.conectiva.com.br>\n"
@@ -16,11 +16,11 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: ../backend/file/qsf-backend.c:118
+#: backend/file/qsf-backend.c:118
 msgid "Level of compression to use: 0 for none, 9 for highest."
 msgstr "Nível de compressão há ser usado: 0 para nenhum, 9 para o mais alto."
 
-#: ../backend/file/qsf-backend.c:120
+#: backend/file/qsf-backend.c:120
 msgid ""
 "QOF can compress QSF XML files using gzip. Note that compression is not used "
 "when outputting to STDOUT."
@@ -28,11 +28,11 @@ msgstr ""
 "QOF pode comprimir arquivos QSF XML utilizando o gzip. Note que a compressão "
 "não é utilizada quando a saida for para STDOUT."
 
-#: ../backend/file/qsf-backend.c:130
+#: backend/file/qsf-backend.c:130
 msgid "List of QSF map files to use for this session."
 msgstr "A lista dos arquivos mapas QSF para serem usados nessa sessão."
 
-#: ../backend/file/qsf-backend.c:132
+#: backend/file/qsf-backend.c:132
 msgid ""
 "QOF can convert objects within QSF XML files using a map of the changes "
 "required."
@@ -40,12 +40,12 @@ msgstr ""
 "QOF pode converter objetos dentro de um arquivo XML SQF utilizando um mapa "
 "de mudanças."
 
-#: ../backend/file/qsf-backend.c:141
+#: backend/file/qsf-backend.c:141
 msgid "Encoding string to use when writing the XML file."
 msgstr ""
 "Cadeia de caracteres da codificação para ser usada na criação de arquivo XML."
 
-#: ../backend/file/qsf-backend.c:143
+#: backend/file/qsf-backend.c:143
 msgid ""
 "QSF defaults to UTF-8. Other encodings are supported by passing the encoding "
 "string in this option."
@@ -53,11 +53,11 @@ msgstr ""
 "O padrão QSF é UTF-8. Outras codificações são aceitas ao passar a cadeia e "
 "caracteres da codificação nessa opção."
 
-#: ../backend/file/qsf-backend.c:152
+#: backend/file/qsf-backend.c:152
 msgid "Convert deprecated date values to time values."
 msgstr "Converte valores desaprovados de datas para valores de tempo."
 
-#: ../backend/file/qsf-backend.c:154
+#: backend/file/qsf-backend.c:154
 msgid ""
 "Applications that support the new QOF time format need to enable this option "
 "to convert older date values into time. Applications that still use date "
@@ -67,13 +67,13 @@ msgstr ""
 "opção para converter valores antigos. Aplicativos que ainda usam data não "
 "devem definir esta opção até que valores de horas sejam suportados."
 
-#: ../backend/file/qsf-backend.c:252
+#: backend/file/qsf-backend.c:252
 #, c-format
 msgid ""
 "The selected QSF Object file '%s' requires a map but it was not provided."
 msgstr "O arquivo Objeto QSF '%s' precisa de um mapa mas este não foi dado."
 
-#: ../backend/file/qsf-backend.c:255
+#: backend/file/qsf-backend.c:255
 #, c-format
 msgid ""
 "When converting XML strings into numbers, an overflow has been detected. The "
@@ -84,7 +84,7 @@ msgstr ""
 "números. O arquivo objeto QSF '%s' contém dados inválidos em um campo onde "
 "deveria haver números."
 
-#: ../backend/file/qsf-backend.c:329
+#: backend/file/qsf-backend.c:339
 #, c-format
 msgid ""
 "could not write to '%s'. That database may be on a read-only file system, or "
@@ -94,25 +94,25 @@ msgstr ""
 "de arquivos de somente leitura ou você talvez não tenha permissão para "
 "escrever neste diretório.\n"
 
-#: ../backend/file/qsf-backend.c:487
+#: backend/file/qsf-backend.c:497
 #, c-format
 msgid "There was an error parsing the file '%s'.\n"
 msgstr "Ocorreu um erro ao analisar gramaticalmente o arquivo '%s'.\n"
 
-#: ../backend/file/qsf-backend.c:522 ../backend/file/qsf-backend.c:565
-#: ../backend/file/qsf-xml-map.c:260 ../backend/file/qsf-xml-map.c:282
-#: ../backend/file/qsf-xml-map.c:341 ../backend/file/qsf-xml.c:266
-#: ../backend/file/qsf-xml.c:325
+#: backend/file/qsf-backend.c:532 backend/file/qsf-backend.c:575
+#: backend/file/qsf-xml-map.c:260 backend/file/qsf-xml-map.c:282
+#: backend/file/qsf-xml-map.c:341 backend/file/qsf-xml.c:266
+#: backend/file/qsf-xml.c:325
 #, c-format
 msgid "There was an error parsing the file '%s'."
 msgstr "Ocorreu um erro ao analisar gramaticalmente o arquivo '%s'."
 
-#: ../backend/file/qsf-backend.c:573
+#: backend/file/qsf-backend.c:583
 #, c-format
 msgid "There was an error reading the file '%s'."
 msgstr "Ocorreu um erro ao ler o arquivo '%s'."
 
-#: ../backend/file/qsf-backend.c:606
+#: backend/file/qsf-backend.c:616
 #, c-format
 msgid ""
 "The selected file '%s' is a QSF map and cannot be opened as a QSF object."
@@ -120,7 +120,7 @@ msgstr ""
 "O arquivo '%s' selecionado é um mapa QSF e não pode ser aberto como um "
 "objeto QSF."
 
-#: ../backend/file/qsf-backend.c:1169
+#: backend/file/qsf-backend.c:1179
 #, c-format
 msgid ""
 "Could not write to '%s'. Check that you have permission to write to this "
@@ -129,7 +129,7 @@ msgstr ""
 "Não é escrever em '%s'. Verifique se você possuir permissões para escrever "
 "neste arquivo e se há espaço suficiente para criá-lo."
 
-#: ../backend/file/qsf-backend.c:1461
+#: backend/file/qsf-backend.c:1471
 #, c-format
 msgid ""
 "The selected QSF object file '%s' contains one or more invalid GUIDs. The "
@@ -139,7 +139,7 @@ msgstr ""
 "arquivo não pode ser processado - por favor verifique a origem do arquivo e "
 "tente novamente."
 
-#: ../backend/file/qsf-backend.c:1583
+#: backend/file/qsf-backend.c:1593
 #, c-format
 msgid ""
 "The selected QSF object file '%s' contains one or more invalid 'collect' "
@@ -150,14 +150,14 @@ msgstr ""
 "inválidos. O arquivo não pode ser processado - por favor verifique a origem "
 "do arquivo e tente novamente."
 
-#: ../backend/file/qsf-xml-map.c:253 ../backend/file/qsf-xml-map.c:334
-#: ../backend/file/qsf-xml.c:255 ../backend/file/qsf-xml.c:311
+#: backend/file/qsf-xml-map.c:253 backend/file/qsf-xml-map.c:334
+#: backend/file/qsf-xml.c:255 backend/file/qsf-xml.c:311
 #, c-format
 msgid "The QSF XML file '%s' could not be found."
 msgstr "Não foi possível encontrar o arquivo XML QSF '%s'."
 
-#: ../backend/file/qsf-xml-map.c:266 ../backend/file/qsf-xml.c:272
-#: ../backend/file/qsf-xml.c:331
+#: backend/file/qsf-xml-map.c:266 backend/file/qsf-xml.c:272
+#: backend/file/qsf-xml.c:331
 #, c-format
 msgid ""
 "Invalid QSF Object file! The QSF object file '%s'  failed to validate  "
@@ -168,12 +168,12 @@ msgstr ""
 "com o esquema do objeto QSF. A estrutura XML do arquivo pode estar mal "
 "formada ou contém dados ilegais."
 
-#: ../backend/file/qsf-xml-map.c:275
+#: backend/file/qsf-xml-map.c:275
 #, c-format
 msgid "The QSF map file '%s' could not be found."
 msgstr "Não foi possível encontrar o arquivo mapa QSF '%s'."
 
-#: ../backend/file/qsf-xml-map.c:348
+#: backend/file/qsf-xml-map.c:348
 msgid ""
 "Invalid QSF Map file! The QSF map file failed to validate against the QSF "
 "map schema. The XML structure of the file is either not well-formed or the "
@@ -183,7 +183,7 @@ msgstr ""
 "esquema do mapa. A estrutura XML do arquivo pode estar mal formada ou contém "
 "dados ilegais."
 
-#: ../backend/file/qsf-xml-map.c:420
+#: backend/file/qsf-xml-map.c:420
 #, c-format
 msgid ""
 "The selected QSF map '%s' contains unusable or missing data. This is usually "
@@ -194,7 +194,7 @@ msgstr ""
 "geralmente ocorre porque nem todos os parâmetros necessários para o objeto "
 "definido possuem cálculos definidos no map."
 
-#: ../backend/file/qsf-xml-map.c:514
+#: backend/file/qsf-xml-map.c:514
 #, c-format
 msgid ""
 "The QSF Map file '%s' was written for a different version of QOF. It may "
@@ -204,7 +204,7 @@ msgstr ""
 "seja necessário uma modificação para que seja possível trabalhar com a sua "
 "instalação QOF atual."
 
-#: ../backend/sqlite/qof-sqlite.c:656
+#: backend/sqlite/qof-sqlite.c:656
 #, c-format
 msgid ""
 "Unable to open the output file '%s' - do you have permission to create this "
@@ -213,37 +213,37 @@ msgstr ""
 "Impossível abrir o arquivo de saída '%s' - você tem permissão para criar "
 "este arquivo?"
 
-#: ../backend/sqlite/qof-sqlite.c:689
+#: backend/sqlite/qof-sqlite.c:689
 #, c-format
 msgid "Unable to open the sqlite database '%s'."
 msgstr "Impossível abrir o banco-de-dados sqlite '%s'."
 
-#: ../backend/sqlite/qof-sqlite.c:713
+#: backend/sqlite/qof-sqlite.c:713
 msgid "Please provide a filename for sqlite."
 msgstr "Por favor apresente um nome de arquivo para o sqlite."
 
-#: ../backend/sqlite/qof-sqlite.c:827
+#: backend/sqlite/qof-sqlite.c:827
 msgid "Unable to delete record."
 msgstr "Impossível apagar o registro."
 
-#: ../backend/sqlite/qof-sqlite.c:829
+#: backend/sqlite/qof-sqlite.c:829
 msgid "Unable to create record."
 msgstr "Impossível criar o registro."
 
-#: ../backend/sqlite/qof-sqlite.c:831
+#: backend/sqlite/qof-sqlite.c:831
 msgid "Unable to insert a new record."
 msgstr "Impossível inserir um novo registro."
 
-#: ../backend/sqlite/qof-sqlite.c:833
+#: backend/sqlite/qof-sqlite.c:833
 msgid "Unable to update existing record."
 msgstr "Impossível atualizar o registro atual."
 
-#: ../qof/qofsession.c:1073
+#: qof/qofsession.c:1073
 msgid "This book appears to be open already."
 msgstr "Este livro aparentemente já está aberto."
 
 # Uma tradução para backend?
-#: ../qof/qofsession.c:1114
+#: qof/qofsession.c:1114
 #, c-format
 msgid ""
 "Unable to locate a suitable backend for '%s' - please check you have "
@@ -253,11 +253,11 @@ msgstr ""
 "se você especificou um método de acesso como file: ou sqlite:"
 
 # Uma tradução para backend?
-#: ../qof/qofsession.c:1351 ../qof/qofsession.c:1388
+#: qof/qofsession.c:1351 qof/qofsession.c:1388
 msgid "Failed to load backend, no suitable handler."
 msgstr "Falha ao carregar o backend, nenhum manipulador adequado."
 
-#: ../qof/qofsql.c:758 ../qof/qofsql.c:785
+#: qof/qofsql.c:758 qof/qofsql.c:785
 #, c-format
 msgid ""
 "When converting SQLite strings into numbers, an overflow has been detected. "
