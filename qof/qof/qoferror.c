@@ -185,7 +185,10 @@ qof_error_set_be (QofBackend * be, QofErrorId error)
 		return;
 	/* create a new error for the list */
 	set = g_new0 (QofError, 1);
-	set->message = g_strdup (qerr->message);
+	if (qerr->use_file)
+		set->message = g_strdup_printf (qerr->message, be->fullpath);
+	else
+		set->message = g_strdup (qerr->message);
 	set->id = error;
 	set->qt = qof_time_get_current ();
 	be->error_stack = g_list_prepend (be->error_stack,
@@ -287,12 +290,18 @@ qof_error_get_id (QofSession * session)
 	QofErrorId id;
 
 	g_return_val_if_fail (session, QOF_FATAL);
+	id = QOF_SUCCESS;
 	id = qof_error_get_id_be (session->backend);
 	{
 		QofError * qerr;
 
 		qerr = g_hash_table_lookup (error_table, 
 			GINT_TO_POINTER(id));
+		if (!qerr)
+		{
+			DEBUG (" empty QofError value");
+			return QOF_FATAL;
+		}
 		if (session->error_message)
 			g_free (session->error_message);
 		session->error_message = qerr->message;
@@ -339,12 +348,13 @@ qof_error_get_message (QofSession * session)
 
 		qerr = g_hash_table_lookup (error_table, 
 			GINT_TO_POINTER(session->backend->last_err));
-		if (!qerr)
-			return NULL;
-		if (session->error_message)
-			g_free (session->error_message);
-		session->error_message = g_strdup(msg);
-		session->last_err = qerr->id;
+		if (qerr)
+		{
+			if (session->error_message)
+				g_free (session->error_message);
+			session->error_message = g_strdup(msg);
+			session->last_err = qerr->id;
+		}
 	}
 #endif
 	return msg;
