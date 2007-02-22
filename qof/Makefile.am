@@ -8,16 +8,24 @@ pkgconfig_DATA = qof-1.pc
 noinst_DATA = make-potfiles
 
 make-potfiles: make-potfiles.in Makefile
-	rm -f $@.tmp
+	${RM} $@.tmp
 	sed < $< > $@.tmp \
       -e 's:@-PERL-@:${PERL}:g'
 	chmod +x $@.tmp
 	mv $@.tmp $@
+
+POTFILES: make-potfiles Makefile 
+	${RM} ./po/POTFILES.in
 	./make-potfiles > ./po/POTFILES.in
 
+BUILT_SOURCES=POTFILES make-potfiles
+
 pot: Makefile
-	rm -f po/$(PACKAGE).pot
-	make -C po $(PACKAGE).pot
+	${MAKE} make-potfiles
+	${MAKE} POTFILES
+	${MAKE} -C po $(PACKAGE).pot
+
+all-local: pot
 
 EXTRA_DIST = \
   HACKING \
