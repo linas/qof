@@ -326,6 +326,32 @@ qof_util_param_commit (QofInstance * inst, const QofParam * param)
 	return TRUE;
 }
 
+gchar *
+qof_util_make_utf8 (gchar * string)
+{
+	gchar *value;
+
+	if (!string)
+		return NULL;
+	if (g_utf8_validate (string, -1, NULL))
+		return string;
+	value = g_locale_to_utf8 (string, -1, NULL, NULL, NULL);
+	if (!value)
+	{
+		PWARN (" unable to convert from locale %s", string);
+		PINFO ("trying to convert from ISO-8859-15.");
+		value = g_convert (string, -1, "UTF-8", "ISO-8859-15",
+			NULL, NULL, NULL);
+		if (!value)
+		{
+			PERR (" conversion failed");
+			return string;
+		}
+		return value;
+	}
+	return value;
+}
+
 /* =================================================================== */
 /* The QOF string cache */
 /* =================================================================== */

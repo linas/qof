@@ -263,6 +263,18 @@ gboolean
 qof_util_param_set_string (QofEntity * ent, const QofParam * param,
 	const gchar * value_string);
 
+/** \brief Convert strings received from the wrapped objects into UTF-8
+
+A wrapper for g_locale_to_utf8 that removes the extra
+arguments. If the string is already valid UTF-8, it is returned
+unchanged.
+
+\return the converted string or the original, unchanged, string
+on error or if the string is already UTF-8.
+ */
+gchar *
+qof_util_make_utf8 (gchar * string);
+
 /** The QOF String Cache:
  *
  * Many strings used throughout QOF and QOF applications are likely to
