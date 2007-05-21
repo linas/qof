@@ -1004,12 +1004,8 @@ reformat to QSF_XSD_TIME or the QSF XML will
 FAIL the schema validation and QSF exports will become invalid.
 
 The QOF_TYPE_BOOLEAN is lowercase for the same reason.
-
-\todo deprecate and replace with
-gchar* qof_instance_param_as_string(const QofParam*, QofInstance*);
-and then add
-gchar* qof_class_get_param_as_string(QofIdTypeConst, QofInstance*); ?
 */
+/** \deprecated replace with qof_util_param_as_string */
 gchar *
 qof_book_merge_param_as_string (QofParam * qtparam, QofEntity * qtEnt)
 {
