@@ -24,7 +24,7 @@ foreach my $one_ignore (@cvsignores) {
   my ($name, $path) = fileparse($one_ignore);
   $path =~ s/^\.\///;
   open (IG, $one_ignore);
-  chdir $path;
+  chdir $path if ($path ne "");
   foreach my $fl (<IG>) {
     chomp $fl;
     next unless $fl;
