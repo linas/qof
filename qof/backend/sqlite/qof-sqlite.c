@@ -80,6 +80,7 @@ typedef struct
 	QofErrorId err_delete, err_insert, err_update, err_create;
 } QSQLiteBackend;
 
+/** \bug creates database fields for calculated values */
 static gchar*
 qsql_param_to_sql(QofParam *param)
 {
@@ -322,6 +323,8 @@ qsql_record_foreach(gpointer data, gint col_num, gchar **strings,
 			columnNames[i]);
 		if (!param)
 			continue;
+		/* set the inst->param entry */
+		inst->param = param;
 		if (0 == safe_strcmp (columnNames[i], QOF_TYPE_GUID))
 		{
 			GUID * guid;
