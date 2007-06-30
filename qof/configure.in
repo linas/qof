@@ -5,13 +5,13 @@ dnl ******************************
 dnl Initialise
 dnl ******************************
 
-AC_INIT(qof, 0.7.2, 
+AC_INIT(qof, 0.7.3, 
 	http://lists.sourceforge.net/lists/listinfo/qof-devel)
 
 AC_PREREQ(2.53)
 AC_GNU_SOURCE
 
-LIBQOF_LIBRARY_VERSION=1:8:0
+LIBQOF_LIBRARY_VERSION=1:9:0
 LIBQOF_BACKEND_QSF_LIBRARY_VERSION=0:7:0
 LIBQOF_BACKEND_QSQL_VERSION=0:1:0
 LIBQOF_BACKEND_QGDA_VERSION=0:0:0
