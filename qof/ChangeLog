@@ -1,3 +1,13 @@
+2007-07-03  Neil Williams <linux@codehelp.co.uk>
+
+	* backend/sqlite/qof-sqlite.c : Prevent be->begin
+	operating *during* the loading of a sqlite database.
+	* qof/deprecated.c,
+	qof/deprecated.h : Migrate edit and commit macros and
+	functions to parameter edit and parameter commit. Advise
+	in docs that this increases backend workload considerably
+	so users need to refactor before libqof2.
+
 2007-06-30  Neil Williams <linux@codehelp.co.uk>
 
 	* backend/sqlite/qof-sqlite.c : Ensure the current
