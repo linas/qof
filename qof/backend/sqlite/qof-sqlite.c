@@ -44,6 +44,7 @@
 #define END_DB_VERSION " dbversion int );"
 
 static QofLogModule log_module = QOF_MOD_SQLITE;
+static gboolean loading = FALSE;
 
 typedef enum
 {
@@ -309,18 +310,18 @@ qsql_record_foreach(gpointer data, gint col_num, gchar **strings,
 	QSQLiteBackend *qsql_be;
 	const QofParam * param;
 	QofInstance * inst;
+	QofEntity * ent;
 	gint i;
 
 	g_return_val_if_fail(data, QSQL_ERROR);
 	qsql_be = (QSQLiteBackend*)data;
 	qof_event_suspend ();
-	inst = (QofInstance*)qof_object_new_instance (qsql_be->e_type,
-		qsql_be->book);
+	inst = (QofInstance*)qof_object_new_instance (qsql_be->e_type, qsql_be->book);
+	ent = &inst->entity;
 	for(i = 0;i < col_num; i++)
 	{
 		/* get param and set as string */
-		param = qof_class_get_parameter (qsql_be->e_type, 
-			columnNames[i]);
+		param = qof_class_get_parameter (qsql_be->e_type, columnNames[i]);
 		if (!param)
 			continue;
 		/* set the inst->param entry */
@@ -334,10 +335,10 @@ qsql_record_foreach(gpointer data, gint col_num, gchar **strings,
 				DEBUG (" set guid failed:%s", strings[i]);
 				return QSQL_ERROR;
 			}
-			qof_entity_set_guid (&inst->entity, guid);
+			qof_entity_set_guid (ent, guid);
 		}
-		if (strings[1])
-			qof_util_param_set_string (&inst->entity, param, strings[i]);
+		if (strings[i])
+			qof_util_param_set_string (ent, param, strings[i]);
 	}
 	qof_event_resume ();
 	return SQLITE_OK;
@@ -470,6 +471,8 @@ qsql_create (QofBackend *be, QofInstance *inst)
 
 	qsql_be = (QSQLiteBackend*)be;
 	if (!inst)
+		return;
+	if (loading)
 		return;
 	ent = (QofEntity*) inst;	
 	guid_to_string_buff (qof_entity_get_guid (ent), gstr);
@@ -753,11 +756,13 @@ qsqlite_db_load (QofBackend *be, QofBook *book)
 
 	g_return_if_fail(be);
 	ENTER (" ");
+	loading = TRUE;
 	qsql_be = (QSQLiteBackend*)be;
 	qsql_be->stm_type = SQL_LOAD;
 	qsql_be->book = book;
 	/* iterate over registered objects */
 	qof_object_foreach_type(qsql_class_foreach, qsql_be);
+	loading = FALSE;
 	LEAVE (" ");
 }
 
