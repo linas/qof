@@ -219,9 +219,7 @@ qof_event_generate_internal (QofEntity * entity, QofEventId event_id,
 	g_return_if_fail (entity);
 
 	if (event_id <= QOF_EVENT__LAST)
-	{
 		use_old_handlers = TRUE;
-	}
 
 	switch (event_id)
 	{
@@ -292,8 +290,7 @@ qof_event_force (QofEntity * entity, QofEventId event_id,
 }
 
 void
-qof_event_gen (QofEntity * entity, QofEventId event_id,
-	gpointer event_data)
+qof_event_gen (QofEntity * entity, QofEventId event_id, gpointer event_data)
 {
 	if (!entity)
 		return;
@@ -306,8 +303,7 @@ qof_event_gen (QofEntity * entity, QofEventId event_id,
 
 /* deprecated */
 void
-qof_event_generate (const GUID * guid, QofIdType e_type,
-	QofEventId event_id)
+qof_event_generate (const GUID * guid, QofIdType e_type, QofEventId event_id)
 {
 	QofEntity ent;
 	ent.guid = *guid;
