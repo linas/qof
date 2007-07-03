@@ -477,6 +477,22 @@ gboolean qof_commit_edit (QofInstance * inst);
 
 */
 #define QOF_COMMIT_EDIT_PART2(inst,on_error,on_done,on_free)  {  \
+  QofBackend * be;                                               \
+                                                                 \
+  be = qof_book_get_backend ((inst)->book);                      \
+  if (be)                                                        \
+  {                                                              \
+    QofBackendError errcode;                                     \
+                                                                 \
+    errcode = qof_backend_get_error (be);                        \
+    if (ERR_BACKEND_NO_ERR != errcode)                           \
+    {                                                            \
+      (inst)->do_free = FALSE;                                   \
+      qof_backend_set_error (be, errcode);                       \
+      (on_error)((inst), errcode);                               \
+    }                                                            \
+    (inst)->dirty = FALSE;                                       \
+  }                                                              \
   if ((inst)->do_free) {                                         \
      (on_free)(inst);                                            \
      return;                                                     \

@@ -1740,9 +1740,29 @@ qof_commit_edit (QofInstance * inst)
 }
 gboolean
 qof_commit_edit_part2 (QofInstance * inst,
-	void (*on_error) (QofInstance *, QofBackendError),
+	void G_GNUC_UNUSED (*on_error) (QofInstance *, QofBackendError),
 	void (*on_done) (QofInstance *), void (*on_free) (QofInstance *))
 {
+	QofBackend *be;
+
+	/* See if there's a backend.  If there is, invoke it. */
+	be = qof_book_get_backend (inst->book);
+	if (be)
+	{
+		QofErrorId errcode;
+
+		errcode = qof_backend_get_error (be);
+		if (ERR_BACKEND_NO_ERR != errcode)
+		{
+			inst->do_free = FALSE;
+
+			qof_backend_set_error (be, errcode);
+			if (on_error)
+				on_error (inst, errcode);
+			return FALSE;
+		}
+		inst->dirty = FALSE;
+	}
     if (inst->do_free) {
         if (on_free)
             on_free(inst);
