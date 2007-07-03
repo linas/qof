@@ -433,95 +433,55 @@ void
 gnc_kvp_bag_merge (KvpFrame * kvp_into, const char *intopath,
 	KvpFrame * kvp_from, const char *frompath);
 /** \deprecated use ::qof_util_param_edit instead
-to edit at a parameter level, instead of a complete instance. */
-#define QOF_BEGIN_EDIT(inst)                                        \
-  if (!(inst)) return;                                              \
-                                                                    \
-  (inst)->editlevel++;                                              \
-  if (1 < (inst)->editlevel) return;                                \
-                                                                    \
-  if (0 >= (inst)->editlevel)                                       \
-  {                                                                 \
-    PERR ("unbalanced call - resetting (was %d)", (inst)->editlevel); \
-    (inst)->editlevel = 1;                                          \
-  }                                                                 \
-  ENTER ("(inst=%p)", (inst));                                      \
-                                                                    \
-  {                                                                 \
-    QofBackend * be;                                                \
-    be = qof_book_get_backend ((inst)->book);                       \
-      if (be && qof_backend_begin_exists(be)) {                     \
-         qof_backend_run_begin(be, (inst));                         \
-    } else {                                                        \
-      (inst)->dirty = TRUE;                                         \
-    }                                                               \
-  }                                                                 \
-  LEAVE (" ");
+to edit at a parameter level, instead of a complete instance.
 
+\warning <b>Important</b> The only workable implementation of
+this deprecated routine causes <b>a lot</b> of unnecessary work
+in the backend. All users should refactor their code to check 
+whether the incoming data is different to the existing data and
+avoid editing that parameter.
+
+*/
+#define QOF_BEGIN_EDIT(inst)   qof_begin_edit (inst)
 /** \deprecated use ::qof_util_param_edit instead
 to edit at a parameter level, instead of a complete instance.
+
+\warning <b>Important</b> The only workable implementation of
+this deprecated routine causes <b>a lot</b> of unnecessary work
+in the backend. All users should refactor their code to check 
+whether the incoming data is different to the existing data and
+avoid editing that parameter.
+
+\param inst pointer to the instance to prepare to edit.
+
 */
 gboolean qof_begin_edit (QofInstance * inst);
+/** \deprecated No replacement. See ::qof_commit_edit */
+#define QOF_COMMIT_EDIT_PART1(inst) qof_commit_edit (inst)
 
-/** \deprecated no replacement. Delayed updates are not supported. */
-#define QOF_COMMIT_EDIT_PART1(inst) {                            \
-  if (!(inst)) return;                                           \
-                                                                 \
-  (inst)->editlevel--;                                           \
-  if (0 < (inst)->editlevel) return;                             \
-                                                                 \
-  if ((-1 == (inst)->editlevel) && (inst)->dirty)                \
-  {                                                              \
-    QofBackend * be;                                             \
-    be = qof_book_get_backend ((inst)->book);                    \
-    if (be && qof_backend_begin_exists(be)) {                    \
-      qof_backend_run_begin(be, (inst));                         \
-    }                                                            \
-    (inst)->editlevel = 0;                                       \
-  }                                                              \
-  if (0 > (inst)->editlevel)                                     \
-  {                                                              \
-    PERR ("unbalanced call - resetting (was %d)", (inst)->editlevel); \
-    (inst)->editlevel = 0;                                       \
-  }                                                              \
-  ENTER ("(inst=%p) dirty=%d do-free=%d",                        \
-            (inst), (inst)->dirty, (inst)->do_free);             \
-}
+/** \deprecated Use ::qof_util_param_commit instead. 
 
-/** \deprecated no replacement. */
+\warning <b>Important</b> The only workable implementation of
+this deprecated routine causes <b>a lot</b> of unnecessary work
+in the backend. All users should refactor their code to check 
+whether the incoming data is different to the existing data and
+avoid editing that parameter.
+
+\param inst pointer to the instance to commit.
+*/
 gboolean qof_commit_edit (QofInstance * inst);
 
-/** \deprecated Use ::qof_util_param_commit instead. */
-#define QOF_COMMIT_EDIT_PART2(inst,on_error,on_done,on_free) {   \
-  QofBackend * be;                                               \
-                                                                 \
-  be = qof_book_get_backend ((inst)->book);                      \
-  if (be && qof_backend_commit_exists(be))                       \
-  {                                                              \
-    QofBackendError errcode;                                     \
-                                                                 \
-    do {                                                         \
-      errcode = qof_backend_get_error (be);                      \
-    } while (ERR_BACKEND_NO_ERR != errcode);                     \
-                                                                 \
-    qof_backend_run_commit(be, (inst));                          \
-    errcode = qof_backend_get_error (be);                        \
-    if (ERR_BACKEND_NO_ERR != errcode)                           \
-    {                                                            \
-      (inst)->do_free = FALSE;                                   \
-      qof_backend_set_error (be, errcode);                       \
-      (on_error)((inst), errcode);                               \
-    }                                                            \
-    (inst)->dirty = FALSE;                                       \
-  }                                                              \
-  (on_done)(inst);                                               \
-                                                                 \
-  LEAVE ("inst=%p, dirty=%d do-free=%d",                         \
-            (inst), (inst)->dirty, (inst)->do_free);             \
+/** \deprecated No replacement.
+
+\note This macro changes programme flow if the instance is freed.
+
+*/
+#define QOF_COMMIT_EDIT_PART2(inst,on_error,on_done,on_free)  {  \
   if ((inst)->do_free) {                                         \
      (on_free)(inst);                                            \
      return;                                                     \
   }                                                              \
+  (on_done)(inst);                                               \
 }
 
 /** \deprecated use ::qof_util_param_to_string instead. */

@@ -1697,77 +1697,61 @@ gnc_kvp_bag_merge (KvpFrame * kvp_into, const char *intopath,
 	qof_kvp_bag_merge (kvp_into, intopath, kvp_from, frompath);
 }
 
-gboolean qof_begin_edit (QofInstance * inst)
+static gboolean param_flag = TRUE;
+static void
+param_edit_cb (QofParam * param, gpointer user_data)
 {
-	return qof_util_param_edit (inst, NULL);
+	QofInstance * inst = (QofInstance*)user_data;
+	param_flag = qof_util_param_edit (inst, param);
+	if (!param_flag)
+		return;
 }
 
+static void
+param_commit_cb (QofParam * param, gpointer user_data)
+{
+	QofInstance * inst = (QofInstance*)user_data;
+	param_flag = qof_util_param_commit (inst, param);
+	if (!param_flag)
+		return;
+}
+gboolean qof_begin_edit (QofInstance * inst)
+{
+	QofIdTypeConst type;
+	QofEntity * ent;
+
+	param_flag = TRUE;
+	ent = &inst->entity;
+	type = ent->e_type;
+	qof_class_param_foreach (type, param_edit_cb, inst);
+	return param_flag;
+}
 gboolean
 qof_commit_edit (QofInstance * inst)
 {
-	QofBackend *be;
+	QofIdTypeConst type;
+	QofEntity * ent;
 
-	if (!inst)
-		return FALSE;
-	(inst->editlevel)--;
-	if (0 < inst->editlevel)
-		return FALSE;
-	if ((-1 == inst->editlevel) && inst->dirty)
-	{
-		be = qof_book_get_backend ((inst)->book);
-		if (be && qof_backend_begin_exists (be))
-			qof_backend_run_begin (be, inst);
-		inst->editlevel = 0;
-	}
-	if (0 > inst->editlevel)
-		inst->editlevel = 0;
-	return TRUE;
+	param_flag = TRUE;
+	ent = &inst->entity;
+	type = ent->e_type;
+	qof_class_param_foreach (type, param_commit_cb, inst);
+	return param_flag;
 }
-
-
 gboolean
 qof_commit_edit_part2 (QofInstance * inst,
 	void (*on_error) (QofInstance *, QofBackendError),
 	void (*on_done) (QofInstance *), void (*on_free) (QofInstance *))
 {
-	QofBackend *be;
-
-	/* See if there's a backend.  If there is, invoke it. */
-	be = qof_book_get_backend (inst->book);
-	if (be && qof_backend_commit_exists (be))
-	{
-		QofErrorId errcode;
-
-		do
-		{
-			errcode = qof_backend_get_error (be);
-		}
-		while (ERR_BACKEND_NO_ERR != errcode);
-
-		qof_backend_run_commit (be, inst);
-		errcode = qof_backend_get_error (be);
-		if (ERR_BACKEND_NO_ERR != errcode)
-		{
-			inst->do_free = FALSE;
-
-			qof_backend_set_error (be, errcode);
-			if (on_error)
-				on_error (inst, errcode);
-			return FALSE;
-		}
-		inst->dirty = FALSE;
-	}
-	if (inst->do_free)
-	{
-		if (on_free)
-			on_free (inst);
-		return TRUE;
-	}
-	if (on_done)
-		on_done (inst);
-	return TRUE;
+    if (inst->do_free) {
+        if (on_free)
+            on_free(inst);
+        return TRUE;
+    }
+    if (on_done)
+        on_done(inst);
+    return TRUE;
 }
-
 gchar *
 qof_util_param_as_string (QofEntity * ent, QofParam * param)
 {
