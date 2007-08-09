@@ -168,7 +168,6 @@ dnl *******************************
 dnl Internationalization
 dnl *******************************
 
-ALL_LINGUAS="en_GB sv vi ro id pt_BR "
 GETTEXT_PACKAGE=qof
 AC_SUBST(GETTEXT_PACKAGE)
 AM_GLIB_GNU_GETTEXT

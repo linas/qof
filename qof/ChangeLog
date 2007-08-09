@@ -1,3 +1,10 @@
+2007-08-09  Neil Williams <linux@codehelp.co.uk>
+
+	* configure.ac : Remove ALL_LINGUAS in preference
+	for po/LINGUAS to remove the need to edit
+	configure.ac for translation additions.
+	* po/LINGUAS : new file.
+
 2007-07-03  Neil Williams <linux@codehelp.co.uk>
 
 	* backend/sqlite/qof-sqlite.c : Prevent be->begin
