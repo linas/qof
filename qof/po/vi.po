@@ -5,8 +5,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: qof 0.7.2\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-02-18 01:04+0000\n"
+"Report-Msgid-Bugs-To: qof-devel@lists.sourceforge.net\n"
+"POT-Creation-Date: 2007-07-30 20:19+0100\n"
 "PO-Revision-Date: 2006-09-30 22:14+0930\n"
 "Last-Translator: Clytie Siddall <clytie@riverland.net.au>\n"
 "Language-Team: Vietnamese <vi-VN@googlegroups.com>\n"
@@ -16,11 +16,11 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: LocFactoryEditor 1.6fc1\n"
 
-#: backend/file/qsf-backend.c:118
+#: ../backend/file/qsf-backend.c:118
 msgid "Level of compression to use: 0 for none, 9 for highest."
 msgstr "Cấp nén cần dùng: từ 0 (không có) đến 9 (cao nhất)."
 
-#: backend/file/qsf-backend.c:120
+#: ../backend/file/qsf-backend.c:120
 msgid ""
 "QOF can compress QSF XML files using gzip. Note that compression is not used "
 "when outputting to STDOUT."
@@ -28,11 +28,11 @@ msgstr ""
 "QOF có khả năng nén tập tin XML kiểu QSF bằng gzip. Ghi chú rằng không nén "
 "gì khi xuất ra thiết bị xuất chuẩn."
 
-#: backend/file/qsf-backend.c:130
+#: ../backend/file/qsf-backend.c:130
 msgid "List of QSF map files to use for this session."
 msgstr "Danh sách các tập tin sơ đồ QSF cần dùng trong phiên chạy này."
 
-#: backend/file/qsf-backend.c:132
+#: ../backend/file/qsf-backend.c:132
 msgid ""
 "QOF can convert objects within QSF XML files using a map of the changes "
 "required."
@@ -40,11 +40,11 @@ msgstr ""
 "QOF có khả năng chuyển đổi đối tượng bên trong tập tin XML kiểu QSF, bằng sơ "
 "đồ các thay đổi cần thiết."
 
-#: backend/file/qsf-backend.c:141
+#: ../backend/file/qsf-backend.c:141
 msgid "Encoding string to use when writing the XML file."
 msgstr "Chuỗi mã hoá cần dùng khi ghi tập tin XML."
 
-#: backend/file/qsf-backend.c:143
+#: ../backend/file/qsf-backend.c:143
 msgid ""
 "QSF defaults to UTF-8. Other encodings are supported by passing the encoding "
 "string in this option."
@@ -52,11 +52,11 @@ msgstr ""
 "Bộ ký tự mặc định của QSF là UTF-8. Cũng có khả năng hỗ trợ được bộ ký tự "
 "khác bằng cách gởi chuỗi bảng mã trong tùy chọn này."
 
-#: backend/file/qsf-backend.c:152
+#: ../backend/file/qsf-backend.c:152
 msgid "Convert deprecated date values to time values."
 msgstr "Chuyển đổi các giá trị ngày tháng bị phản đối sang giá trị giờ."
 
-#: backend/file/qsf-backend.c:154
+#: ../backend/file/qsf-backend.c:154
 msgid ""
 "Applications that support the new QOF time format need to enable this option "
 "to convert older date values into time. Applications that still use date "
@@ -67,7 +67,7 @@ msgstr ""
 "dùng ngày tháng không nên đặt tùy chọn này, đến khi giá trị giờ đã được hỗ "
 "trợ."
 
-#: backend/file/qsf-backend.c:252
+#: ../backend/file/qsf-backend.c:252
 #, c-format
 msgid ""
 "The selected QSF Object file '%s' requires a map but it was not provided."
@@ -75,7 +75,7 @@ msgstr ""
 "Tập tin đối tương QSF đã chọn « %s » cần thiết một sơ đồ mà chưa được cung "
 "cấp."
 
-#: backend/file/qsf-backend.c:255
+#: ../backend/file/qsf-backend.c:255
 #, c-format
 msgid ""
 "When converting XML strings into numbers, an overflow has been detected. The "
@@ -85,7 +85,7 @@ msgstr ""
 "Tràn khi chuyển đổi chuỗi XML sang số. Tập tin đối tượng QSF « %s » chứa dữ "
 "liệu không hợp lệ trong trường nên chứa số."
 
-#: backend/file/qsf-backend.c:339
+#: ../backend/file/qsf-backend.c:339
 #, c-format
 msgid ""
 "could not write to '%s'. That database may be on a read-only file system, or "
@@ -94,25 +94,25 @@ msgstr ""
 "không thể ghi vào « %s ». Cơ sở dữ liệu có thể nằm trên hệ thống tập tin chỉ "
 "đọc, hoặc bạn có thể không có quyền ghi vào thư mục đó.\n"
 
-#: backend/file/qsf-backend.c:497
+#: ../backend/file/qsf-backend.c:497
 #, c-format
 msgid "There was an error parsing the file '%s'.\n"
 msgstr "Gặp lỗi khi phân tách tập tin « %s ».\n"
 
-#: backend/file/qsf-backend.c:532 backend/file/qsf-backend.c:575
-#: backend/file/qsf-xml-map.c:260 backend/file/qsf-xml-map.c:282
-#: backend/file/qsf-xml-map.c:341 backend/file/qsf-xml.c:266
-#: backend/file/qsf-xml.c:325
+#: ../backend/file/qsf-backend.c:532 ../backend/file/qsf-backend.c:575
+#: ../backend/file/qsf-xml-map.c:260 ../backend/file/qsf-xml-map.c:282
+#: ../backend/file/qsf-xml-map.c:341 ../backend/file/qsf-xml.c:266
+#: ../backend/file/qsf-xml.c:325
 #, c-format
 msgid "There was an error parsing the file '%s'."
 msgstr "Gặp lỗi khi phân tách tập tin « %s »."
 
-#: backend/file/qsf-backend.c:583
+#: ../backend/file/qsf-backend.c:583
 #, c-format
 msgid "There was an error reading the file '%s'."
 msgstr "Gặp lỗi khi đọc tập tin « %s »."
 
-#: backend/file/qsf-backend.c:616
+#: ../backend/file/qsf-backend.c:616
 #, c-format
 msgid ""
 "The selected file '%s' is a QSF map and cannot be opened as a QSF object."
@@ -120,7 +120,7 @@ msgstr ""
 "Tập tin đã chọn « %s » là một sơ đồ QSF nên không thể được mở như là đối "
 "tượng QSF."
 
-#: backend/file/qsf-backend.c:1179
+#: ../backend/file/qsf-backend.c:1179
 #, c-format
 msgid ""
 "Could not write to '%s'. Check that you have permission to write to this "
@@ -129,7 +129,7 @@ msgstr ""
 "Không thể ghi vào « %s ». Hãy kiểm tra bạn có quyền ghi vào tập tin này, "
 "cũng có đủ sức chứa rảnh để tạo nó."
 
-#: backend/file/qsf-backend.c:1471
+#: ../backend/file/qsf-backend.c:1471
 #, c-format
 msgid ""
 "The selected QSF object file '%s' contains one or more invalid GUIDs. The "
@@ -138,7 +138,7 @@ msgstr ""
 "Tập tin đối tượng QSF đã chọn « %s » chứa một hay nhiều GUID không hợp lệ. "
 "Tập tin không thể được xử lý — hãy kiểm tra nguồn tập tin rồi thử lại."
 
-#: backend/file/qsf-backend.c:1593
+#: ../backend/file/qsf-backend.c:1593
 #, c-format
 msgid ""
 "The selected QSF object file '%s' contains one or more invalid 'collect' "
@@ -149,14 +149,14 @@ msgstr ""
 "» (collect) không hợp lệ. Như thế thì không thể xử lý tập tin này — hãy kiểm "
 "tra nguồn tập tin rồi thử lại."
 
-#: backend/file/qsf-xml-map.c:253 backend/file/qsf-xml-map.c:334
-#: backend/file/qsf-xml.c:255 backend/file/qsf-xml.c:311
+#: ../backend/file/qsf-xml-map.c:253 ../backend/file/qsf-xml-map.c:334
+#: ../backend/file/qsf-xml.c:255 ../backend/file/qsf-xml.c:311
 #, c-format
 msgid "The QSF XML file '%s' could not be found."
 msgstr "Không tìm thấy tập tin XML QSF « %s »."
 
-#: backend/file/qsf-xml-map.c:266 backend/file/qsf-xml.c:272
-#: backend/file/qsf-xml.c:331
+#: ../backend/file/qsf-xml-map.c:266 ../backend/file/qsf-xml.c:272
+#: ../backend/file/qsf-xml.c:331
 #, c-format
 msgid ""
 "Invalid QSF Object file! The QSF object file '%s'  failed to validate  "
@@ -167,12 +167,12 @@ msgstr ""
 "tra được so với giản đồ đối tượng QSF. Cấu trúc XML của tập tin này hoặc "
 "dạng sai hoặc tập tin chứa dữ liệu cấm."
 
-#: backend/file/qsf-xml-map.c:275
+#: ../backend/file/qsf-xml-map.c:275
 #, c-format
 msgid "The QSF map file '%s' could not be found."
 msgstr "Không tìm thấy tập tin sơ đồ QSF « %s »."
 
-#: backend/file/qsf-xml-map.c:348
+#: ../backend/file/qsf-xml-map.c:348
 msgid ""
 "Invalid QSF Map file! The QSF map file failed to validate against the QSF "
 "map schema. The XML structure of the file is either not well-formed or the "
@@ -182,7 +182,7 @@ msgstr ""
 "giản đồ sơ đồ SF. Cấu trúc XML của tập tin này hoặc dạng sai hoặc tập tin "
 "chứa dữ liệu cấm."
 
-#: backend/file/qsf-xml-map.c:420
+#: ../backend/file/qsf-xml-map.c:420
 #, c-format
 msgid ""
 "The selected QSF map '%s' contains unusable or missing data. This is usually "
@@ -193,7 +193,7 @@ msgstr ""
 "phải tất cả các tham số cần thiết cho những đối tượng đã xác định có phép "
 "tính được diễn tả trong sơ đồ."
 
-#: backend/file/qsf-xml-map.c:514
+#: ../backend/file/qsf-xml-map.c:514
 #, c-format
 msgid ""
 "The QSF Map file '%s' was written for a different version of QOF. It may "
@@ -202,43 +202,43 @@ msgstr ""
 "Tập tin sơ đồ QSF « %s » đã được ghi cho phiên bản QSF khác. Có thể cần phải "
 "sửa đổi nó để hoạt động được với bản cài đặt QSF hiện thời."
 
-#: backend/sqlite/qof-sqlite.c:656
+#: ../backend/sqlite/qof-sqlite.c:653
 #, c-format
 msgid ""
 "Unable to open the output file '%s' - do you have permission to create this "
 "file?"
 msgstr "Không thể mở tập tin xuất « %s » — bạn có quyền tạo tập tin này không?"
 
-#: backend/sqlite/qof-sqlite.c:689
+#: ../backend/sqlite/qof-sqlite.c:683
 #, c-format
 msgid "Unable to open the sqlite database '%s'."
 msgstr "Không thể mở co sở dữ liệu SQLite « %s »."
 
-#: backend/sqlite/qof-sqlite.c:713
+#: ../backend/sqlite/qof-sqlite.c:706
 msgid "Please provide a filename for sqlite."
 msgstr "Hãy cung cấp tên tập tin cho SQLite."
 
-#: backend/sqlite/qof-sqlite.c:827
+#: ../backend/sqlite/qof-sqlite.c:819
 msgid "Unable to delete record."
 msgstr "Không thể xoá bỏ mục ghi."
 
-#: backend/sqlite/qof-sqlite.c:829
+#: ../backend/sqlite/qof-sqlite.c:820
 msgid "Unable to create record."
 msgstr "Không thể tạo mục ghi."
 
-#: backend/sqlite/qof-sqlite.c:831
+#: ../backend/sqlite/qof-sqlite.c:821
 msgid "Unable to insert a new record."
 msgstr "Không thể chèn mục ghi mới."
 
-#: backend/sqlite/qof-sqlite.c:833
+#: ../backend/sqlite/qof-sqlite.c:822
 msgid "Unable to update existing record."
 msgstr "Không thể cập nhật mục ghi đã có."
 
-#: qof/qofsession.c:1073
+#: ../qof/qofsession.c:1073
 msgid "This book appears to be open already."
 msgstr "Có vẻ là sổ này đã mở."
 
-#: qof/qofsession.c:1114
+#: ../qof/qofsession.c:1114
 #, c-format
 msgid ""
 "Unable to locate a suitable backend for '%s' - please check you have "
@@ -247,11 +247,11 @@ msgstr ""
 "Không thể định vị hậu phương thích hợp với « %s » — hãy kiểm tra xem bạn đã "
 "xác định phương pháp truy cập như « file: » hay « sqlite: »."
 
-#: qof/qofsession.c:1351 qof/qofsession.c:1388
+#: ../qof/qofsession.c:1351 ../qof/qofsession.c:1388
 msgid "Failed to load backend, no suitable handler."
 msgstr "Lỗi tải hậu phương; không có bộ quản lý thích hợp."
 
-#: qof/qofsql.c:758 qof/qofsql.c:785
+#: ../qof/qofsql.c:758 ../qof/qofsql.c:785
 #, c-format
 msgid ""
 "When converting SQLite strings into numbers, an overflow has been detected. "
