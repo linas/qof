@@ -1747,10 +1747,13 @@ qof_commit_edit_part2 (QofInstance * inst,
 
 	/* See if there's a backend.  If there is, invoke it. */
 	be = qof_book_get_backend (inst->book);
-	if (be)
+	if (be && qof_backend_commit_exists(be))
 	{
-		QofErrorId errcode;
-
+		QofBackendError errcode;
+		do {
+			errcode = qof_backend_get_error (be);
+		} while (ERR_BACKEND_NO_ERR != errcode);
+		qof_backend_run_commit(be, inst);
 		errcode = qof_backend_get_error (be);
 		if (ERR_BACKEND_NO_ERR != errcode)
 		{
