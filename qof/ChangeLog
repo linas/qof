@@ -1,3 +1,11 @@
+2007-09-16  Neil Williams  <linux@codehelp.co.uk>
+
+	* backend/sqlite/qof-sqlite.c: (delete_event), (create_event),
+	(qsql_modify), (update_dirty), (create_dirty_list), (mark_entity),
+	(qsql_class_foreach), (qsql_backend_createdb), (qsql_create) : 
+	Debug message tweaks - most to be removed before release.
+	(check_state) : Pass the GUID string to SQLite.
+
 2007-09-15  Neil Williams  <linux@codehelp.co.uk>
 
 	* backend/file/qsf-backend.c: (qsf_provider_init),

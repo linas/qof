@@ -286,7 +286,7 @@ delete_event (QofEntity *ent, QofEventId event_type,
 			{
 				qof_error_set_be (be, qsql_be->err_delete);
 				qsql_be->error = TRUE;
-				LEAVE (" %s", qsql_be->err);
+				LEAVE (" error on delete:%s", qsql_be->err);
 				break;
 			}
 			/** \todo delete records from QSQL_KVP_TABLE with this GUID */
@@ -325,6 +325,7 @@ create_event (QofEntity *ent, QofEventId event_type,
 			ENTER (" create:%s", ent->e_type);
 			gstr = g_strnfill (GUID_ENCODING_LENGTH+1, ' ');
 			guid_to_string_buff (qof_instance_get_guid ((QofInstance*)ent), gstr);
+			DEBUG (" guid=%s", gstr);
 			qb.ent = ent;
 			qb.sql_str = g_strdup_printf ("INSERT into %s (guid ", ent->e_type);
 			qof_class_param_foreach (ent->e_type, create_param_list, &qb);
@@ -339,7 +340,7 @@ create_event (QofEntity *ent, QofEventId event_type,
 			{
 				qof_error_set_be (be, qsql_be->err_insert);
 				qsql_be->error = TRUE;
-				PERR (" %s", qsql_be->err);
+				PERR (" error on create_event:%s", qsql_be->err);
 			}
 			else
 			{
@@ -402,7 +403,7 @@ qsql_modify (QofBackend *be, QofInstance *inst)
 	{
 		qof_error_set_be (be, qsql_be->err_update);
 		qsql_be->error = TRUE;
-		PERR (" %s", qsql_be->err);
+		PERR (" error on modify:%s", qsql_be->err);
 	}
 	else
 	{
@@ -542,7 +543,7 @@ update_dirty (gpointer value, gpointer user_data)
 	{
 		qof_error_set_be (be, qsql_be->err_update);
 		qsql_be->error = TRUE;
-		PERR (" %s", qsql_be->err);
+		PERR (" error on update_dirty:%s", qsql_be->err);
 	}
 	else
 		inst->dirty = FALSE;
@@ -573,7 +574,6 @@ create_dirty_list (gpointer data, gint col_num, gchar **strings,
 	if (!param)
 		return SQLITE_OK;
 	value = qof_util_param_to_string (qb->ent, param);
-	PINFO (" tmp=%s value=%s columnName=%s", tmp, value, columnName);
 	qb->dirty = param;
 	qb->dirty_list = g_list_prepend (qb->dirty_list, qb->ent);
 	DEBUG (" dirty_list=%d", g_list_length (qb->dirty_list));
@@ -588,7 +588,6 @@ mark_entity (gpointer data, gint col_num, gchar **strings,
 
 	qb = (struct QsqlBuilder*) data;
 	qb->exists = TRUE;
-	DEBUG (" already exists");
 	return SQLITE_OK;
 }
 
@@ -621,13 +620,12 @@ qsql_create (QofBackend *be, QofInstance *inst)
 	{
 		qof_error_set_be (be, qsql_be->err_update);
 		qsql_be->error = TRUE;
-		PERR (" %s", qsql_be->err);
+		PERR (" error on qsql_create:%s", qsql_be->err);
 	}
 	if (!qb.exists)
 	{
 		gchar * add;
 		/* create new entity */
-		PINFO (" insert");
 		qb.sql_str = g_strdup_printf ("INSERT into %s (guid ", ent->e_type);
 		qof_class_param_foreach (ent->e_type, create_param_list, &qb);
 		add = g_strconcat (") VALUES (\"", gstr, "\"", NULL);
@@ -641,7 +639,7 @@ qsql_create (QofBackend *be, QofInstance *inst)
 		{
 			qof_error_set_be (be, qsql_be->err_insert);
 			qsql_be->error = TRUE;
-			PERR (" %s", qsql_be->err);
+			PERR (" error creating new entity:%s", qsql_be->err);
 		}
 	}
 	g_free (qb.sql_str);
@@ -669,7 +667,6 @@ check_state (QofEntity * ent, gpointer user_data)
 	guid_to_string_buff (qof_entity_get_guid (ent), gstr);
 	qb.sql_str = g_strdup_printf(
 		"SELECT * FROM %s where guid = \"%s\";", ent->e_type, gstr);
-	PINFO (" write: %s", qb.sql_str);
 	qb.ent = ent;
 	qb.dirty_list = NULL;
 	/* assume entity does not yet exist in backend,
@@ -685,16 +682,15 @@ check_state (QofEntity * ent, gpointer user_data)
 	{
 		qof_error_set_be (be, qsql_be->err_update);
 		qsql_be->error = TRUE;
-		PERR (" %s", qsql_be->err);
+		PERR (" error on check_state:%s", qsql_be->err);
 	}
 	if (!qb.exists)
 	{
 		gchar * add;
 		/* create new entity */
-		PINFO (" insert");
-		qb.sql_str = g_strdup_printf ("INSERT into %s (", ent->e_type);
+		qb.sql_str = g_strdup_printf ("INSERT into %s (guid ", ent->e_type);
 		qof_class_param_foreach (ent->e_type, create_param_list, &qb);
-		add = g_strconcat (") VALUES (", NULL);
+		add = g_strconcat (") VALUES (\"", gstr, "\" ", NULL);
 		qb.sql_str = add_to_sql (qb.sql_str, add);
 		g_free (add);
 		qof_class_param_foreach (ent->e_type, create_each_param, &qb);
@@ -705,7 +701,7 @@ check_state (QofEntity * ent, gpointer user_data)
 		{
 			qof_error_set_be (be, qsql_be->err_insert);
 			qsql_be->error = TRUE;
-			PERR (" %s", qsql_be->err);
+			PERR (" error on check_state create_new:%s", qsql_be->err);
 		}
 	}
 	/* update instead */
@@ -743,9 +739,8 @@ qsql_class_foreach(QofObject *obj, gpointer data)
 			{
 				qof_error_set_be (be, qsql_be->err_create);
 				qsql_be->error = TRUE;
-				PERR (" %s", qsql_be->err);
+				PERR (" error on SQL_CREATE:%s", qsql_be->err);
 			}
-			PINFO(" %s", qsql_be->sql_str);
 			g_free(qsql_be->sql_str);
 			break;
 		}
@@ -758,7 +753,7 @@ qsql_class_foreach(QofObject *obj, gpointer data)
 				qsql_record_foreach, qsql_be, &qsql_be->err) != SQLITE_OK)
 			{
 				qsql_be->error = TRUE;
-				PERR (" %s", qsql_be->err);
+				PERR (" error on SQL_LOAD:%s", qsql_be->err);
 			}
 			break;
 		}
@@ -802,7 +797,7 @@ qsql_backend_createdb(QofBackend *be, QofSession *session)
 	{
 		qof_error_set_be (be, qsql_be->err_create);
 		qsql_be->error = TRUE;
-		LEAVE (" %s", qsql_be->err);
+		LEAVE (" unable to open sqlite:%s", qsql_be->err);
 		return;
 	}
 	qof_object_foreach_type(qsql_class_foreach, qsql_be);
@@ -817,7 +812,7 @@ qsql_backend_createdb(QofBackend *be, QofSession *session)
 		qsql_record_foreach, qsql_be, &qsql_be->err) != SQLITE_OK)
 	{
 		qsql_be->error = TRUE;
-		PERR (" %s", qsql_be->err);
+		PERR (" unable to create kvp table:%s", qsql_be->err);
 	}
 	g_free (qsql_be->sql_str);
 	LEAVE (" ");
