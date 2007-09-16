@@ -44,7 +44,7 @@ of databases using plugins.
 
 /** \brief Initialises the SQLite backend. 
 
-Sets QOF SQLite Backend Version 0.1, access method = sqlite:
+Sets QOF SQLite Backend Version 0.3, access method = sqlite:
 
 The ID in all SQLite tables created by QOF is the GUID of the entity,
 expressed as a hexadecimal string.
@@ -58,6 +58,18 @@ support new members and SQLite can support the new function, or
 Initialises the backend and provides access to the
 functions that will load and save the data. Initialises
 default values for the QofBackendOption KvpFrame.
+
+Instance KvpFrames are retrieved and stored as a separate table
+in the same SQLite file "sqlite_kvp". The primary key is an internal,
+sequential, identifier that does not need to be exposed. Each
+KvpValue is one record in the kvp table - frames are just a type
+of value. Records include fields for the path, type and value of
+the KvpValue as well as the GUID of the entity that holds the
+value.
+
+Table name: sqlite_kvp
+Table values: internal_id, guid_as_string, path, type, value
+
 
 At present, qof_sqlite has no QofBackendOption options
 and therefore no strings that are translatable.
