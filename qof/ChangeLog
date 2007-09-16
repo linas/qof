@@ -1,3 +1,37 @@
+2007-09-15  Neil Williams  <linux@codehelp.co.uk>
+
+	* backend/file/qsf-backend.c: (qsf_provider_init),
+	* backend/gda/qof-gda.c: (qof_gda_provider_init):
+	Expose translatable strings via bindtextdomain for qof.
+	* backend/sqlite/qof-sqlite.c: 
+	(add_to_sql) : Improve memory efficiency when preparing	the SQL strings.
+	(qsql_kvpvalue_to_sql): Prepare for KVP support (incomplete).
+	(qsql_param_to_sql): Support entity GUID and reference GUID - incomplete.
+	(create_param_list), (create_each_param) : use the new add_to_sql function.
+	(delete_event) : Ensure an entity of registered with QofClass before 
+	trying to delete it. Collapse SQL generation into a single command.
+	(create_event) : Ensure an entity of registered with QofClass before 
+	trying to create it. Improve memory handling when generating the SQL 
+	CREATE string.
+	(qsql_modify): Collapse SQL generation into a single command.
+	(qsql_record_foreach):  skip empty values (no param_setfcn) 
+	(qsql_param_foreach), (update_param_foreach) : Use the new add_to_sql 
+	function.
+	(update_dirty), (create_dirty_list), (check_state) : Remove the static 
+	buffer and allocate the GUID buffer dynamically.
+	(qsql_create), (qsql_class_foreach) : Use the new add_to_sql function.
+	(qsql_backend_createdb) : Create a KVP table in any new file
+	(qsql_backend_opendb), (qsqlite_session_begin) : whitespace tweaks.
+	(qsqlite_db_load) : Mark up possible KVP support.
+	(qsql_backend_new), (qof_sqlite_provider_init) : whitespace tweaks and 
+	ensure bindtextdomain is called.
+	* backend/sqlite/qof-sqlite.h: Documentation tweak.
+	* qof/deprecated.c: (qof_commit_edit_part2): Check the backend supports 
+	commit.
+	* qof/deprecated.h: (QOF_COMMIT_EDIT_PART2): Use the same definition as 
+	before deprecation.
+	* qof/qofutil.c: (qof_util_param_to_string): Require sensible arguments.
+
 2007-08-09  Neil Williams <linux@codehelp.co.uk>
 
 	* configure.ac : Remove ALL_LINGUAS in preference
