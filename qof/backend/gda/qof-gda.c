@@ -625,6 +625,7 @@ void qof_gda_provider_init(void)
 {
 	QofBackendProvider *prov;
 
+	bindtextdomain (PACKAGE, LOCALE_DIR);
 	prov = g_new0 (QofBackendProvider, 1);
 	prov->provider_name = "QOF GDA Backend Version 0.1";
 	prov->access_method = ACCESS_METHOD;

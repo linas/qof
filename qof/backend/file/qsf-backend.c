@@ -1683,6 +1683,7 @@ qsf_provider_init (void)
 {
 	QofBackendProvider *prov;
 
+	bindtextdomain (PACKAGE, LOCALE_DIR);
 	prov = g_new0 (QofBackendProvider, 1);
 	prov->provider_name = "QSF Backend Version 0.4";
 	prov->access_method = "file";
