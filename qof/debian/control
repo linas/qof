@@ -7,6 +7,9 @@ Build-Depends: debhelper (>= 5), cdbs, autotools-dev, libglib2.0-dev (>= 2.6.0),
  libxml2-dev (>= 2.5.10), libgda2-dev, libxml-parser-perl, libsqlite0-dev, dpkg-dev (>= 1.14)
 Build-Depends-Indep: doxygen
 Standards-Version: 3.7.2
+Homepage: http://qof.sourceforge.net/
+Vcs-Browser: http://qof.cvs.sourceforge.net/qof/qof/
+Vcs-CVS: -d:pserver:anonymous@qof.cvs.sourceforge.net:/cvsroot/qof
 
 Package: libqof1
 Priority: optional
@@ -21,14 +24,12 @@ Description: Query Object Framework
  .
  This package provides the shared libraries needed 
  to run programs developed using QOF.
- .
- Homepage: http://qof.sourceforge.net/
 
 Package: libqof-dev
 Priority: optional
 Section: libdevel
 Architecture: any
-Recommends: libqof-doc
+Suggests: libqof-doc
 Depends: libqof1 (= ${binary:Version}), libgda2-dev
 Description: Query Object Framework - Development Headers
  A framework to allow the execution of SQL-type queries
@@ -36,8 +37,6 @@ Description: Query Object Framework - Development Headers
  .
  This package provides the files needed to develop 
  applications using QOF.
- .
- Homepage: http://qof.sourceforge.net/
 
 Package: libqof-backend-qsf0
 Priority: optional
@@ -56,8 +55,6 @@ Description: Query Object Framework - XML backend module
  converted to other text-based formats using XSL.
  This package provides the XML schemas to validate files 
  and the QSF XML backend module.
- .
- Homepage: http://qof.sourceforge.net/
  
 Package: libqof-backend-sqlite0
 Priority: optional
@@ -71,8 +68,6 @@ Description: Query Object Framework - SQLite backend module
  This module provides a SQLite backend intended for
  embedded systems. The package can also be installed 
  alongside the default QSF XML backend.
- .
- Homepage: http://qof.sourceforge.net/
 
 Package: libqof1-dbg
 Priority: extra
@@ -86,8 +81,6 @@ Description: Query Object Framework - Debug Symbols
  .
  This package provides the debugging symbols that may be
  useful when developing applications using QOF.
- .
- Homepage: http://qof.sourceforge.net/
 
 Package: libqof-doc
 Priority: optional
@@ -104,5 +97,4 @@ Description: Query Object Framework - API Documentation
  and the documentation of the QOF API produced using 
  Doxygen in 
  /usr/share/doc/libqof-doc/html/doxy/
- .
- Homepage: http://qof.sourceforge.net/doxy/
+
