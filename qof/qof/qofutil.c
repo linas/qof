@@ -460,6 +460,7 @@ qof_util_param_to_string (QofEntity * ent, const QofParam * param)
 
 	param_string = NULL;
 	known_type = FALSE;
+	g_return_val_if_fail (ent && param, NULL);
 	paramType = param->param_type;
 	if (safe_strcmp (paramType, QOF_TYPE_STRING) == 0)
 	{
