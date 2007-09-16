@@ -493,11 +493,12 @@ gboolean qof_commit_edit (QofInstance * inst);
     }                                                            \
     (inst)->dirty = FALSE;                                       \
   }                                                              \
+  (on_done)(inst);                                               \
+                                                                 \
   if ((inst)->do_free) {                                         \
      (on_free)(inst);                                            \
      return;                                                     \
   }                                                              \
-  (on_done)(inst);                                               \
 }
 
 /** \deprecated use ::qof_util_param_to_string instead. */
