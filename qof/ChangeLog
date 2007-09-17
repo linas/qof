@@ -1,3 +1,23 @@
+2007-09-17  Neil Williams  <linux@codehelp.co.uk>
+
+	* backend/sqlite/qof-sqlite.c: 
+	(kvp_value_to_qof_type_helper), (sql_to_kvp_helper),
+	(string_to_kvp_value), (kvpvalue_to_sql), (build_kvp_table), 
+	(qsql_load_kvp) : New functions to support KVP
+	
+	(string_param_to_sql), (create_param_list), (create_each_param), 
+	(delete_event), (create_event), (qsql_modify), (record_foreach),
+	(string_param_foreach), (update_param_foreach), (update_dirty),
+	(create_dirty_list), (mark_entity), (qsql_create), (check_state),
+	(qsql_class_foreach), (qsql_backend_createdb), (qsql_backend_opendb),
+	(qsqlite_session_begin), (qsqlite_db_load), (qsqlite_write_db),
+	(qsql_determine_file_type), (qsqlite_session_end),
+	(qsqlite_destroy_backend), (qsql_provider_free),
+	(qsql_backend_new), (qof_sqlite_provider_init): KVP support and indent
+	/ whitespace fixes.
+	* backend/sqlite/qof-sqlite.h: KVP support.
+	* qof/deprecated.c: (qof_commit_edit_part2): whitespace tweaks.
+
 2007-09-16  Neil Williams  <linux@codehelp.co.uk>
 
 	* backend/sqlite/qof-sqlite.c: (delete_event), (create_event),

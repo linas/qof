@@ -20,12 +20,12 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
- 
+
 #ifndef _QOF_SQLITE_H
 #define _QOF_SQLITE_H
 
 /** @addtogroup Backend
-@{
+ @{
 */
 /**	@addtogroup SQLite QOF-backend-SQLite outline
 
@@ -35,7 +35,24 @@ is too large - other, larger, systems will be able to use a more
 comprehensive libgda backend that can connect with a variety
 of databases using plugins.
 
-@{
+SQLite is typeless so the types defined for the various QOF
+parameter types act as more of a guide than a rule.
+
+ \since 0.7.3 KVP support - a separate table in the sqlite file
+in order to support a value, a path and a type for each KvpValue 
+and to support more than one value (more than one frame) per entity. 
+i.e. a relational database arrangement where the entity record contains a 
+reference to the kvp table. That reference id is the GUID of the entity.
+The KVP table name is preset and created as:
+ \verbatim
+CREATE TABLE sqlite_kvp 
+("kvp_id int primary key not null", "guid char(32)", "path mediumtext", "type mediumtext", "value text", 
+END_DB_VERSION);
+ \verbatim
+Entity tables therefore do not contain kvp data. Although the KVP table uses
+an internal ID number, all lookups are done via the GUID of the entity.
+
+ @{
 */
 /** @file  qof-sqlite.h
 	@brief Public interface of qof-backend-sqlite
@@ -74,7 +91,7 @@ Table values: internal_id, guid_as_string, path, type, value
 At present, qof_sqlite has no QofBackendOption options
 and therefore no strings that are translatable.
 */
-void qof_sqlite_provider_init(void);
+void qof_sqlite_provider_init (void);
 
 /** @} */
 /** @} */

@@ -1740,11 +1740,12 @@ qof_commit_edit (QofInstance * inst)
 }
 gboolean
 qof_commit_edit_part2 (QofInstance * inst,
-	void G_GNUC_UNUSED (*on_error) (QofInstance *, QofBackendError),
+	void (*on_error) (QofInstance *, QofBackendError),
 	void (*on_done) (QofInstance *), void (*on_free) (QofInstance *))
 {
 	QofBackend *be;
 
+	ENTER (" ");
 	/* See if there's a backend.  If there is, invoke it. */
 	be = qof_book_get_backend (inst->book);
 	if (be && qof_backend_commit_exists(be))
@@ -1762,18 +1763,21 @@ qof_commit_edit_part2 (QofInstance * inst,
 			qof_backend_set_error (be, errcode);
 			if (on_error)
 				on_error (inst, errcode);
+			LEAVE (" errcode=%d", errcode);
 			return FALSE;
 		}
 		inst->dirty = FALSE;
 	}
-    if (inst->do_free) {
-        if (on_free)
-            on_free(inst);
-        return TRUE;
-    }
-    if (on_done)
-        on_done(inst);
-    return TRUE;
+	if (inst->do_free) {
+		LEAVE (" do_free");
+		if (on_free)
+			on_free(inst);
+		return TRUE;
+	}
+	if (on_done)
+		on_done(inst);
+	LEAVE (" done");
+	return TRUE;
 }
 gchar *
 qof_util_param_as_string (QofEntity * ent, QofParam * param)
