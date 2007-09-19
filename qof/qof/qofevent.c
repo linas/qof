@@ -247,8 +247,7 @@ qof_event_generate_internal (QofEntity * entity, QofEventId event_id,
 #endif
 		if (hi->handler)
 		{
-			PINFO ("id=%d hi=%p han=%p data=%p", hi->handler_id, hi,
-				hi->handler, event_data);
+			PINFO ("id=%d type=%s", hi->handler_id, entity->e_type);
 			hi->handler (entity, event_id, hi->user_data, event_data);
 		}
 	}
