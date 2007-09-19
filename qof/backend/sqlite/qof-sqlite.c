@@ -116,6 +116,8 @@ struct QsqlBuilder
 	GList *dirty_list;
 	/** whether to use UPDATE or INSERT */
 	gboolean exists;
+	/** ignore an empty KvpFrame */
+	gboolean has_slots;
 	/** which parameter needs updating in sqlite. */
 	const QofParam *dirty;
 };
@@ -312,6 +314,7 @@ kvpvalue_to_sql (const gchar * key, KvpValue * val, gpointer builder)
 	gchar *full_path;
 
 	full_path = NULL;
+	ENTER (" ");
 	qb = (struct QsqlBuilder *) builder;
 	qsql_be = qb->qsql_be;
 	g_return_if_fail (key && val && qsql_be);
@@ -337,6 +340,7 @@ kvpvalue_to_sql (const gchar * key, KvpValue * val, gpointer builder)
 				kvp_value_to_bare_string (val),
 				kvp_value_to_qof_type_helper (n));
 			DEBUG (" %s", qb->sql_str);
+			qb->has_slots = TRUE;
 			break;
 		}
 	case KVP_TYPE_FRAME:
@@ -351,6 +355,7 @@ kvpvalue_to_sql (const gchar * key, KvpValue * val, gpointer builder)
 			break;
 		}
 	}
+	LEAVE (" %s", qb->sql_str);
 }
 
 static gchar *
@@ -503,7 +508,7 @@ delete_event (QofEntity * ent, QofEventId event_type,
 	{
 	case QOF_EVENT_DESTROY:
 		{
-			ENTER (" %s", ent->e_type);
+			ENTER (" %s do_free=%d", ent->e_type, ((QofInstance*)ent)->do_free);
 			gstr = g_strnfill (GUID_ENCODING_LENGTH + 1, ' ');
 			guid_to_string_buff (qof_entity_get_guid (ent), gstr);
 			sql_str = g_strconcat ("DELETE from ", ent->e_type, " WHERE ",
@@ -893,6 +898,7 @@ qsql_create (QofBackend * be, QofInstance * inst)
 		return;
 	ent = (QofEntity *) inst;
 	qof_event_suspend ();
+	qb.has_slots = FALSE;
 	ENTER (" %s", ent->e_type);
 	gstr = g_strnfill (GUID_ENCODING_LENGTH + 1, ' ');
 	guid_to_string_buff (qof_entity_get_guid (ent), gstr);
@@ -936,15 +942,18 @@ qsql_create (QofBackend * be, QofInstance * inst)
 		{
 			/* id, guid, path, type, value */
 			qb.sql_str = g_strconcat ("INSERT into ", QSQL_KVP_TABLE,
-				"  (kvp_id \"", gstr, "\", ", NULL);
+				"  (kvp_id, \"", gstr, "\", ", NULL);
 			kvp_frame_for_each_slot (slots, kvpvalue_to_sql, &qb);
-			qb.sql_str = add_to_sql (qb.sql_str, END_DB_VERSION);
+			qb.sql_str = add_to_sql (qb.sql_str, ");");
+		}
+		if (qb.has_slots)
+		{
 			if (sqlite_exec (qsql_be->sqliteh, qb.sql_str,
 					NULL, &qb, &qsql_be->err) != SQLITE_OK)
 			{
 				qof_error_set_be (be, qsql_be->err_insert);
 				qsql_be->error = TRUE;
-				PERR (" error on KVP create_event:%s", qsql_be->err);
+				PERR (" error on KVP create_event:%s:%s", qsql_be->err, qb.sql_str);
 			}
 			else
 			{

@@ -1,3 +1,12 @@
+2007-09-19  Neil Williams  <linux@codehelp.co.uk>
+
+	* backend/sqlite/qof-sqlite.c: 
+	(delete_event): Improve debug message to show the status of the instance.
+	(kvpvalue_to_sql), qsql_create): Avoid trying to create a kvp record 
+	for an empty frame.
+	* qof/qofevent.c: (qof_event_generate_internal): Improve debug
+	messages to show the entity type affected by the event.
+
 2007-09-17  Neil Williams  <linux@codehelp.co.uk>
 
 	* backend/sqlite/qof-sqlite.c: 
