@@ -508,7 +508,8 @@ delete_event (QofEntity * ent, QofEventId event_type,
 	{
 	case QOF_EVENT_DESTROY:
 		{
-			ENTER (" %s do_free=%d", ent->e_type, ((QofInstance*)ent)->do_free);
+			ENTER (" %s do_free=%d", ent->e_type,
+				((QofInstance *) ent)->do_free);
 			gstr = g_strnfill (GUID_ENCODING_LENGTH + 1, ' ');
 			guid_to_string_buff (qof_entity_get_guid (ent), gstr);
 			sql_str = g_strconcat ("DELETE from ", ent->e_type, " WHERE ",
@@ -652,8 +653,8 @@ qsql_modify (QofBackend * be, QofInstance * inst)
 	if (param_str)
 		g_strescape (param_str, NULL);
 	qb.sql_str = g_strconcat ("UPDATE ", qb.ent->e_type, " SET ",
-		inst->param->param_name, " = \"", param_str, "\" WHERE ",
-		QOF_TYPE_GUID, "='", gstr, "';", NULL);
+		inst->param->param_name, " = \"", param_str,
+		"\" WHERE ", QOF_TYPE_GUID, "='", gstr, "';", NULL);
 	DEBUG (" sql_str=%s param_Str=%s", qb.sql_str, param_str);
 	if (sqlite_exec (qsql_be->sqliteh, qb.sql_str,
 			NULL, &qb, &qsql_be->err) != SQLITE_OK)
@@ -715,9 +716,7 @@ record_foreach (gpointer builder, gint col_num, gchar ** strings,
 	qb = (struct QsqlBuilder *) builder;
 	qsql_be = qb->qsql_be;
 	qof_event_suspend ();
-	inst =
-		(QofInstance *) qof_object_new_instance (qb->e_type,
-		qsql_be->book);
+	inst = (QofInstance *) qof_object_new_instance (qb->e_type,	qsql_be->book);
 	ent = &inst->entity;
 	for (i = 0; i < col_num; i++)
 	{
@@ -953,7 +952,8 @@ qsql_create (QofBackend * be, QofInstance * inst)
 			{
 				qof_error_set_be (be, qsql_be->err_insert);
 				qsql_be->error = TRUE;
-				PERR (" error on KVP create_event:%s:%s", qsql_be->err, qb.sql_str);
+				PERR (" error on KVP create_event:%s:%s", qsql_be->err,
+					qb.sql_str);
 			}
 			else
 			{
@@ -1242,9 +1242,9 @@ qsql_backend_createdb (QofBackend * be, QofSession * session)
 	 */
 	qb.sql_str =
 		g_strdup_printf ("CREATE TABLE %s (%s, %s, %s, %s, %s, %s",
-		QSQL_KVP_TABLE, "kvp_id int primary key not null", "guid char(32)",
-		"path mediumtext", "type mediumtext", "value text",
-		END_DB_VERSION);
+		QSQL_KVP_TABLE, "kvp_id int primary key not null",
+		"guid char(32)", "path mediumtext", "type mediumtext",
+		"value text", END_DB_VERSION);
 	PINFO (" sql=%s", qb.sql_str);
 	if (sqlite_exec (qsql_be->sqliteh, qb.sql_str,
 			record_foreach, &qb, &qsql_be->err) != SQLITE_OK)
