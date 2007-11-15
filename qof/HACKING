@@ -2,7 +2,7 @@ Packaging and building against QOF
 ==================================
 
 Advice for packagers / maintainers
-Updated December 2006 for QOF 0.7.2
+Updated November 2007 for QOF 0.7.3
 
     * Building against QOF
           o AUTOMAKE example
@@ -14,6 +14,7 @@ Updated December 2006 for QOF 0.7.2
           o libqof-backend-qsf.la in libqof1
           o libxml2 >= 2.5.10
           o There is no QOF dependency on Gtk!
+          o There is no need for perl or intltool
           o Which backend to use?
           o QOF for embedded devices
     * Using libqof-dev
@@ -242,6 +243,12 @@ That's all there ever was to the Gtk stuff. It's
 important because projects like pilot-link will not accept 
 code that links to GUI stuff for no good reason.
 
+There is no need for perl or intltool
+-------------------------------------
+
+The libxml-parser-perl build dependency has been removed
+by migrating from glib-gettextize to gettextize.
+All intltool-* scripts are removed by running ./autogen.sh.
 
 
 Which backend to use?

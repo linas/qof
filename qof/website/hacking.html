@@ -50,6 +50,7 @@ symbol of the same name"></div>
 <li><a href="#la">libqof-backend-qsf.la in libqof1</a></li>
 <li><a href="#libxml">libxml2 &gt;= 2.5.10</a></li>
 <li><a href="#nogtk">There is no QOF dependency on Gtk!</a></li>
+<li><a href="#noperl">There is no need for perl or intltool</a></li>
 <li><a href="#backend">Which backend to use?</a></li>
 <li><a href="#embedded">QOF for embedded devices</a></li>
 </ul>
@@ -260,6 +261,15 @@ the distribution tarball along with the other (outdated) examples.
 <p>That's all there ever was to the Gtk stuff. It's important 
 because projects like pilot-link will not accept code that links 
 to GUI stuff for no good reason.</p>
+</div>
+
+<hr>
+<h3 id="noperl">There is no need for perl or intltool</h3>
+<div>
+<p>The <tt>libxml-parser-perl</tt> build dependency has been removed
+by migrating from <tt>glib-gettextize</tt> to <tt>gettextize</tt>. 
+All <tt>intltool-*</tt> scripts are removed by running <tt>./autogen.sh</tt>.
+</p>
 </div>
 
 <hr>
