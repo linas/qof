@@ -12,7 +12,6 @@ all-local: pot
 
 EXTRA_DIST = config.rpath m4/ChangeLog  \
   HACKING \
-  po/POTFILES.in \
   po/POTFILES.skip \
   qof-1.pc.in \
   website/gobj-example.c.html \
