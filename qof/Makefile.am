@@ -32,10 +32,6 @@ EXTRA_DIST = config.rpath m4/ChangeLog  \
   make-potfiles.in \
   po/POTFILES.in \
   po/POTFILES.skip \
-  po/qof.pot \
-  intltool-extract.in \
-  intltool-merge.in \
-  intltool-update.in \
   qof-1.pc.in \
   website/gobj-example.c.html \
   website/my-obj-example.c.html \
@@ -49,11 +45,7 @@ EXTRA_DIST = config.rpath m4/ChangeLog  \
   website/qof-logo.jpg
 
 DISTCLEANFILES = \
-  intltool-update \
-  intltool-merge    \
-  intltool-extract \
   make-potfiles \
-  po/POTFILES.in \
-  po/.intltool-merge-cache
+  po/POTFILES.in
 
 ACLOCAL_AMFLAGS = -I m4

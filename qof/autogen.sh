@@ -8,17 +8,17 @@ set -e
 # script.
 
 : ${GETTEXTIZE=gettextize}
-: ${INTLTOOLIZE=intltoolize}
 : ${LIBTOOLIZE=libtoolize}
 : ${ACLOCAL=aclocal}
 : ${AUTOHEADER=autoheader}
 : ${AUTOMAKE=automake}
 : ${AUTOCONF=autoconf}
 
-if [ ! -e ABOUT_NLS ]; then
+if [ ! -e ABOUT-NLS ]; then
+	rm intltool*
 	${GETTEXTIZE} -f
+	rm po/Makevars.template
 fi
-${INTLTOOLIZE} --force
 ${LIBTOOLIZE} --force --automake
 ${ACLOCAL} ${ACLOCAL_FLAGS}
 ${AUTOHEADER}

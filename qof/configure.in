@@ -45,9 +45,6 @@ AC_PROG_MAKE_SET
 AC_FUNC_MKTIME
 AC_FUNC_STRTOD
 
-AC_PROG_INTLTOOL
-INTLTOOLIZE=${INTLTOOLIZE:-intltoolize}
-
 dnl *****************************************
 dnl pkg-config check time
 dnl *****************************************

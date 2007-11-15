@@ -8,4 +8,6 @@ stamp-it
 *.gmo
 messages.mo
 missing
+remove-potcdate.sed
+stamp-po
 

@@ -12,9 +12,6 @@ config.rpath
 configure
 depcomp
 install-sh
-intltool-extract.in
-intltool-merge.in
-intltool-update.in
 make-potfiles
 libtool
 ltmain.sh
