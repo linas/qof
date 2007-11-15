@@ -8,7 +8,6 @@ config.h.in
 config.log
 config.status
 config.sub
-config.rpath
 configure
 depcomp
 install-sh
