@@ -1,3 +1,8 @@
+2007-11-15  gettextize  <bug-gnu-gettext@gnu.org>
+
+	* Makefile.am (ACLOCAL_AMFLAGS): New variable.
+	(EXTRA_DIST): Add config.rpath, m4/ChangeLog.
+
 2007-11-15  Neil Williams  <linux@codehelp.co.uk>
 
 	* configure.in : Make the sqlite backend build

@@ -27,7 +27,7 @@ pot: Makefile
 
 all-local: pot
 
-EXTRA_DIST = \
+EXTRA_DIST = config.rpath m4/ChangeLog  \
   HACKING \
   make-potfiles.in \
   po/POTFILES.in \
@@ -55,3 +55,5 @@ DISTCLEANFILES = \
   make-potfiles \
   po/POTFILES.in \
   po/.intltool-merge-cache
+
+ACLOCAL_AMFLAGS = -I m4

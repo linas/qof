@@ -141,9 +141,7 @@ dnl *******************************
 
 GETTEXT_PACKAGE=qof
 AC_SUBST(GETTEXT_PACKAGE)
-AM_GLIB_GNU_GETTEXT
-AC_SUBST(ALL_LINGUAS)
-AC_SUBST(INTLTOOL_XGETTEXT)
+AM_GNU_GETTEXT([external])
 AC_DEFINE_UNQUOTED([GETTEXT_PACKAGE],["$GETTEXT_PACKAGE"], [gettext domain])
 
 dnl ********************************

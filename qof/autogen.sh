@@ -7,7 +7,7 @@ set -e
 # override the names, simply set the variables before calling this
 # script.
 
-: ${GLIB_GETTEXTIZE=glib-gettextize}
+: ${GETTEXTIZE=gettextize}
 : ${INTLTOOLIZE=intltoolize}
 : ${LIBTOOLIZE=libtoolize}
 : ${ACLOCAL=aclocal}
@@ -15,7 +15,9 @@ set -e
 : ${AUTOMAKE=automake}
 : ${AUTOCONF=autoconf}
 
-${GLIB_GETTEXTIZE} --force
+if [ ! -e ABOUT_NLS ]; then
+	${GETTEXTIZE} -f
+fi
 ${INTLTOOLIZE} --force
 ${LIBTOOLIZE} --force --automake
 ${ACLOCAL} ${ACLOCAL_FLAGS}
