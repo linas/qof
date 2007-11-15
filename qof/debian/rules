@@ -22,5 +22,5 @@ include /usr/share/cdbs/1/class/autotools.mk
 include /usr/share/cdbs/1/rules/simple-patchsys.mk
 
 DEB_MAKE_CHECK_TARGET = check
-
+DEB_CONFIGURE_SCRIPT_ENV :=
 DEB_CONFIGURE_EXTRA_FLAGS += --enable-sqlite
