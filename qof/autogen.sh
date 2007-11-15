@@ -19,7 +19,6 @@ if [ ! -e ABOUT-NLS ]; then
 fi
 rm -f intltool*
 rm -f po/Makevars.template
-rm -f po/Makefile.in.in
 ${LIBTOOLIZE} --force --automake
 ${ACLOCAL} ${ACLOCAL_FLAGS}
 ${AUTOHEADER}
