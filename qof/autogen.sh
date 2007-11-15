@@ -15,10 +15,10 @@ set -e
 : ${AUTOCONF=autoconf}
 
 if [ ! -e ABOUT-NLS ]; then
-	rm intltool*
 	${GETTEXTIZE} -f
-	rm po/Makevars.template
 fi
+rm -f intltool*
+rm -f po/Makevars.template
 ${LIBTOOLIZE} --force --automake
 ${ACLOCAL} ${ACLOCAL_FLAGS}
 ${AUTOHEADER}
