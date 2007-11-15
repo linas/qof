@@ -1,20 +1,26 @@
+2007-11-15  Neil Williams  <linux@codehelp.co.uk>
+
+	* configure.in : Make the sqlite backend build
+	by default. Tidy up the embedded option to drop
+	libgda and use internal SQL parsing.
+
 2007-09-19  Neil Williams  <linux@codehelp.co.uk>
 
-	* backend/sqlite/qof-sqlite.c: 
+	* backend/sqlite/qof-sqlite.c:
 	(delete_event): Improve debug message to show the status of the instance.
-	(kvpvalue_to_sql), qsql_create): Avoid trying to create a kvp record 
+	(kvpvalue_to_sql), qsql_create): Avoid trying to create a kvp record
 	for an empty frame.
 	* qof/qofevent.c: (qof_event_generate_internal): Improve debug
 	messages to show the entity type affected by the event.
 
 2007-09-17  Neil Williams  <linux@codehelp.co.uk>
 
-	* backend/sqlite/qof-sqlite.c: 
+	* backend/sqlite/qof-sqlite.c:
 	(kvp_value_to_qof_type_helper), (sql_to_kvp_helper),
-	(string_to_kvp_value), (kvpvalue_to_sql), (build_kvp_table), 
+	(string_to_kvp_value), (kvpvalue_to_sql), (build_kvp_table),
 	(qsql_load_kvp) : New functions to support KVP
-	
-	(string_param_to_sql), (create_param_list), (create_each_param), 
+
+	(string_param_to_sql), (create_param_list), (create_each_param),
 	(delete_event), (create_event), (qsql_modify), (record_foreach),
 	(string_param_foreach), (update_param_foreach), (update_dirty),
 	(create_dirty_list), (mark_entity), (qsql_create), (check_state),
@@ -31,7 +37,7 @@
 
 	* backend/sqlite/qof-sqlite.c: (delete_event), (create_event),
 	(qsql_modify), (update_dirty), (create_dirty_list), (mark_entity),
-	(qsql_class_foreach), (qsql_backend_createdb), (qsql_create) : 
+	(qsql_class_foreach), (qsql_backend_createdb), (qsql_create) :
 	Debug message tweaks - most to be removed before release.
 	(check_state) : Pass the GUID string to SQLite.
 
@@ -40,32 +46,32 @@
 	* backend/file/qsf-backend.c: (qsf_provider_init),
 	* backend/gda/qof-gda.c: (qof_gda_provider_init):
 	Expose translatable strings via bindtextdomain for qof.
-	* backend/sqlite/qof-sqlite.c: 
+	* backend/sqlite/qof-sqlite.c:
 	(add_to_sql) : Improve memory efficiency when preparing	the SQL strings.
 	(qsql_kvpvalue_to_sql): Prepare for KVP support (incomplete).
 	(qsql_param_to_sql): Support entity GUID and reference GUID - incomplete.
 	(create_param_list), (create_each_param) : use the new add_to_sql function.
-	(delete_event) : Ensure an entity of registered with QofClass before 
+	(delete_event) : Ensure an entity of registered with QofClass before
 	trying to delete it. Collapse SQL generation into a single command.
-	(create_event) : Ensure an entity of registered with QofClass before 
-	trying to create it. Improve memory handling when generating the SQL 
+	(create_event) : Ensure an entity of registered with QofClass before
+	trying to create it. Improve memory handling when generating the SQL
 	CREATE string.
 	(qsql_modify): Collapse SQL generation into a single command.
-	(qsql_record_foreach):  skip empty values (no param_setfcn) 
-	(qsql_param_foreach), (update_param_foreach) : Use the new add_to_sql 
+	(qsql_record_foreach):  skip empty values (no param_setfcn)
+	(qsql_param_foreach), (update_param_foreach) : Use the new add_to_sql
 	function.
-	(update_dirty), (create_dirty_list), (check_state) : Remove the static 
+	(update_dirty), (create_dirty_list), (check_state) : Remove the static
 	buffer and allocate the GUID buffer dynamically.
 	(qsql_create), (qsql_class_foreach) : Use the new add_to_sql function.
 	(qsql_backend_createdb) : Create a KVP table in any new file
 	(qsql_backend_opendb), (qsqlite_session_begin) : whitespace tweaks.
 	(qsqlite_db_load) : Mark up possible KVP support.
-	(qsql_backend_new), (qof_sqlite_provider_init) : whitespace tweaks and 
+	(qsql_backend_new), (qof_sqlite_provider_init) : whitespace tweaks and
 	ensure bindtextdomain is called.
 	* backend/sqlite/qof-sqlite.h: Documentation tweak.
-	* qof/deprecated.c: (qof_commit_edit_part2): Check the backend supports 
+	* qof/deprecated.c: (qof_commit_edit_part2): Check the backend supports
 	commit.
-	* qof/deprecated.h: (QOF_COMMIT_EDIT_PART2): Use the same definition as 
+	* qof/deprecated.h: (QOF_COMMIT_EDIT_PART2): Use the same definition as
 	before deprecation.
 	* qof/qofutil.c: (qof_util_param_to_string): Require sensible arguments.
 
@@ -101,16 +107,16 @@
 
 2007-02-22  Neil Williams <linux@codehelp.co.uk>
 
-	* Makefile.am : prevent code churn in the 
+	* Makefile.am : prevent code churn in the
 	translation files.
-	* qof/qoferror.c : fix QofError handling 
+	* qof/qoferror.c : fix QofError handling
 	to ensure filenames are used when requested
 	and missing values are handled without a crash.
 
 2006-12-26  Neil Williams <linux@codehelp.co.uk>
 
 	* backend/sqlite/qof-sqlite.c : Don't try to
-	update backend data unless it has actually 
+	update backend data unless it has actually
 	changed.
 	* backend/file/qsf-backend.c : In case of a stat
 	error, see if we can't create a file at that path.
@@ -119,7 +125,7 @@
 
 2006-11-30  Neil Williams <linux@codehelp.co.uk>
 
-	* qof/deprecated.c : Remove struct tm.tm_gmtoff 
+	* qof/deprecated.c : Remove struct tm.tm_gmtoff
 	define and wrapper - tm_gmtoff is required for
 	QofTime.
 	* configure.in : Remove struct tm.tm_gmtoff detection
@@ -127,9 +133,9 @@
 
 2006-11-27  Neil Williams <linux@codehelp.co.uk>
 
-	* Makefile.am : package the .pot file directly. 
+	* Makefile.am : package the .pot file directly.
 	TP is simply too slow.
-	* emdebian/ : "emdebian method changed - 
+	* emdebian/ : "emdebian method changed -
 	remove control files.
 	* qof/deprecated.h,
 	qof/deprecated.c : Fix compatibility issue.
@@ -145,8 +151,8 @@
 
 2006-10-15  Neil Williams <linux@codehelp.co.uk>
 
-	* qof/qofutil.c : Set the current parameter 
-	before asking the backend to commit that 
+	* qof/qofutil.c : Set the current parameter
+	before asking the backend to commit that
 	parameter value.
 
 2006-10-10  Neil Williams <linux@codehelp.co.uk>
@@ -187,7 +193,7 @@
 	* backend/sqlite/qof-sqlite.c : Check path is
 	writeable before trying to create a database.
 	* qof/qoferror.c,
-	 qof/qofsession-p.h : Use the session error Id 
+	 qof/qofsession-p.h : Use the session error Id
 	and message strings for times that no backend
 	is available.
 	* qof/qofsession.c : Improve error string.
@@ -197,7 +203,7 @@
 2006-09-21  Neil Williams <linux@codehelp.co.uk>
 
 	* backend/sqlite/qof-sqlite.c : Fix input_session XML
-	to export_session SQLITE failure by ensuring 
+	to export_session SQLITE failure by ensuring
 	entities are created in the backend at the same
 	time as the book.
 
@@ -223,7 +229,7 @@
 	* qof/qofutil.c,
 	qof/qofutil.h,
 	qof/deprecated.c,
-	qof/deprecated.h : move qof_util_double_compare 
+	qof/deprecated.h : move qof_util_double_compare
 	from kvp (deprecate old name double_compare).
 
 2006-09-14  Neil Williams <linux@codehelp.co.uk>
@@ -257,7 +263,7 @@
 
 	* configure.in,
 	backend/Makefile.am,
-	backend/sqlite/Makefile.am : Fix detection 
+	backend/sqlite/Makefile.am : Fix detection
 	of sqlite and backend selection options.
 
 	* backend/file/qsf-backend.c : Avoid closing
@@ -272,11 +278,11 @@
 	* qof/qofbookmerge.c : Tweak.
 
 	* qof/qoferror.c : Clarify variable names.
-	Improve handling of errors from deprecated 
+	Improve handling of errors from deprecated
 	code.
 
 	* qof/qofsession.c : Improve error handling
-	using QofError. Add libgda backend to provider 
+	using QofError. Add libgda backend to provider
 	list.
 
 	* backend/sqlite/qof-sqlite.c : Implement
@@ -289,19 +295,19 @@
 
 2006-09-12  Neil Williams <linux@codehelp.co.uk>
 
-	* debian/changelog : fix priority setting for 
+	* debian/changelog : fix priority setting for
 	the new backend packages.
 
 	* backend/Makefile.am,
 	backend/dwi/README,
-	po/POTFILES.skip : only distribute DWI, don't 
+	po/POTFILES.skip : only distribute DWI, don't
 	try to build it anymore.
 
 	* backend/gda/qof-gda.c,
-	backend/gda/qof-gda.h : improve gda backend 
+	backend/gda/qof-gda.h : improve gda backend
 	with error handling and data sources. Correct
 	gettext setup. Move to QofError.
-	
+
 	* backend/sqlite/qof-sqlite.c : Implement gettext
 	handling via dgettext.
 
@@ -348,7 +354,7 @@
 	* doc/doxygen.cfg.in : Include GDA in libqof-doc.
 
 	* backend/sqlite/qof-sqlite.c,
-	backend/sqlite/qof-sqlite.h : unregister 
+	backend/sqlite/qof-sqlite.h : unregister
 	handlers and tidy up g_free use.
 
 2006-08-31  Neil Williams <linux@codehelp.co.uk>
@@ -387,7 +393,7 @@
 	debian/linda/overrides/libqof-backend-qsf0,
 	debian/linda/overrides/libqof-backend-sqlite0 :
 	New Debian packaging for two new packages.
-	
+
 	* debian/linda/overrides/libqof1 : Removed.
 
 	* emdebian/changelog,
@@ -400,7 +406,7 @@
 	libgda installed).
 
 	* configure.in,
-	backend/Makefile.am : Reverse previous change to 
+	backend/Makefile.am : Reverse previous change to
 	always build qsqlite and omit qsf if embedded
 	enabled. Host machines build both.
 	* backend/sqlite/Makefile.am : Build qsqlite
@@ -491,7 +497,7 @@
 
 2006-08-14  Neil Williams <linux@codehelp.co.uk>
 
-	* qof/test/test-book-merge.c : 
+	* qof/test/test-book-merge.c :
 	* qof/test/test-date.c :
 	* qof/test/test-event.c :
 	* qof/test/test-guid.c :
@@ -550,20 +556,20 @@
 	* qof/qofquerycore.c : Fix --disable-deprecated-qof
 	build.
 	* website/hacking.html :
-	* NEWS : 
+	* NEWS :
 	* HACKING : Prepare for 0.7.0 release.
 
 2006-07-23  Neil Williams <linux@codehelp.co.uk>
 
-	* qof/qofdate.c : Fix qof_date_from_struct_tm 
-	and qof_date_to_struct_tm. Remove duplicate debug 
+	* qof/qofdate.c : Fix qof_date_from_struct_tm
+	and qof_date_to_struct_tm. Remove duplicate debug
 	log command.
 	* qof/qof/qofstrptime.c,
 	qof/qof/qofdate-p.h :
 	ERR_RECURSIVE_F is not an error, remove.
 	* qof/qofquery.c : Prevent typos by using the qofutil
 	enum to string macro.
-	
+
 	* qof/deprecated.c : Tidy up, remove old comments.
 	* qof/deprecated.h : Clarifying change from query_date_t
 	to query_time_t.
@@ -606,15 +612,15 @@
 	 qof/test/test-querynew.c : Ensure tests fail
 	reliably.
 
-	* qof/deprecated.c : Use the old gnc-date version 
+	* qof/deprecated.c : Use the old gnc-date version
 	as deprecated for those who depend on the bugs.
-	* qof/qofchoice.c : tweak to remove newline from 
+	* qof/qofchoice.c : tweak to remove newline from
 	debug logs
-	* qof/qofundo.c : Problems with clear_undo - 
+	* qof/qofundo.c : Problems with clear_undo -
 	temporary fix.
 	* qof/qofdate.h : Doxygen tweak.
 
-	* qof/qofsession.c : Added missing QofTime handler 
+	* qof/qofsession.c : Added missing QofTime handler
 	for copying between sessions.
 
 	* backend/file/qsf-backend.c : Fix missing (node)
@@ -622,8 +628,8 @@
 
 2006-07-15  Neil Williams <linux@codehelp.co.uk>
 
-	* qof/qofevent.h : new QOF_EVENT_COMMIT event to 
-	use alongside QOF_EVENT_MODIFY to handle before 
+	* qof/qofevent.h : new QOF_EVENT_COMMIT event to
+	use alongside QOF_EVENT_MODIFY to handle before
 	and after edit undo operations.
 	* qof/qoflog.c : adding undo the default log modules.
 	* qof/qofundo-p.h
@@ -633,7 +639,7 @@
 
 2006-07-14  Neil Williams <linux@codehelp.co.uk>
 
-	* backend/file/qsf-object.xsd.xml : Add time 
+	* backend/file/qsf-object.xsd.xml : Add time
 	type to the qsf schema.
 
 	* qof/qofinstance.c : Set a valid time when creating
@@ -641,7 +647,7 @@
 	* qof/qoftime.c : Upgrade qof_time_from_tm to
 	not use GDate.
 	* qof/qofdate.h :
-	* qof/qofdate.c : Change prototype of 
+	* qof/qofdate.c : Change prototype of
 	qof_date_format_add to return the first available
 	identifier, not assume the user knows this value in
 	advance.
@@ -676,7 +682,7 @@
 
 	* HACKING : Update for QOF_TYPE_DATE changes.
 	* README :  Update for QOF_TYPE_DATE changes.
-	* debian/changelog : Update for QOF_TYPE_DATE 
+	* debian/changelog : Update for QOF_TYPE_DATE
 	changes.
 	* qof/deprecated.c : Deprecating QOF_TYPE_DATE
 	handlers and current_session handlers.
@@ -686,7 +692,7 @@
 	handlers.
 	* qof/qofsession.h : Deprecate current_session
 	handlers.
-	* website/hacking.html : Update for 
+	* website/hacking.html : Update for
 	QOF_TYPE_DATE changes.
 
 	Implement QOF_TYPE_TIME in the Query system.
@@ -702,7 +708,7 @@
 	* qof/qofundo.h :
 
 	* qof/qofutil.c : Deprecate gnc_strisnum
-	in favour of qof_util_string_isnum. 
+	in favour of qof_util_string_isnum.
 	Implement QOF_TYPE_TIME in qof_util_param_as_string
 	* qof/qofutil.h : Deprecate gnc_strisnum
 	in favour of qof_util_string_isnum.
@@ -712,7 +718,7 @@
 	deprecated QOF code.
 	* configure.in : Add --disable-deprecated-qof
 	(off by default)
-	* backend/file/qsf-backend.c : 
+	* backend/file/qsf-backend.c :
 	* qof/kvp_frame.h :
 	* qof/kvp-util.c :
 	* qof/kvp-util-p.h :
@@ -731,13 +737,13 @@
 	* qof/test/test-object.c :
 	* qof/test/test-recursive.c :
 	* qof/test/test-event.c :
-	
+
 2006-07-10  Neil Williams <linux@codehelp.co.uk>
 
-	* qof/deprecated.c : Retain previous behaviour 
+	* qof/deprecated.c : Retain previous behaviour
 	if deprecated Timespec is set directly.
 	Deprecating clock timing functions.
-	* qof/deprecated.h : Deprecating clock timing 
+	* qof/deprecated.h : Deprecating clock timing
 	functions.
 	* qof/qofchoice.c :
 	* qof/qofchoice.h : minor char->gchar tweaks
@@ -765,10 +771,10 @@
 2006-07-09  Neil Williams <linux@codehelp.co.uk>
 
 	* backend/file/qsf-xml.h : Doxygen tweak.
-	* backend/file/qsf-backend.c : Move from Timespec 
+	* backend/file/qsf-backend.c : Move from Timespec
 	to QofTime and QofDate.
-	* qof/deprecated.c : Ensure QofDate is valid and 
-	add some logging calls. Revert QOF_D_T_FMT and 
+	* qof/deprecated.c : Ensure QofDate is valid and
+	add some logging calls. Revert QOF_D_T_FMT and
 	QOF_T_FMT to old values (to retain deprecated
 	behaviour). Deprecate Timespec within KVP.
 	* qof/deprecated.h : Deprecate Timespec within KVP.
@@ -818,9 +824,9 @@
 	* qof/qofdate.c,
 	qof/qofstrptime.c,
 	qof/test/test-date.c : Implement more tests and
-	allow partial testing of BC dates. BC dates are very 
-	difficult to parse because a minus sign is also a valid 
-	date separator. BC can be handled directly and printed, 
+	allow partial testing of BC dates. BC dates are very
+	difficult to parse because a minus sign is also a valid
+	date separator. BC can be handled directly and printed,
 	some restrictions are inevitable to parse BC date strings.
 
 2006-06-22 Neil Williams <linux@codehelp.co.uk>
@@ -858,7 +864,7 @@
 2006-05-31 Neil Williams <linux@codehelp.co.uk>
 
 	* lib/libtime/Makefile.am : New files added.
-	* lib/libtime/qofgmtime.c : Ensure qof_date_from_qtime 
+	* lib/libtime/qofgmtime.c : Ensure qof_date_from_qtime
 	returns a valid date, or NULL
 	* lib/libtime/qofstrftime.c : Tweak.
 	* lib/libtime/qofstrftime.h : Tweak.
@@ -883,14 +889,14 @@
 	mktime.
 	* lib/libtime/qofstrftime.c : Move to QofDate.
 	* lib/libtime/qofstrftime.h : Documentation tweak.
-	* qof/qofdate.c : Add detection of locale-specific 
+	* qof/qofdate.c : Add detection of locale-specific
 	formats.
 	* qof/qofdate.h : Document locale-specific restrictions.
 	* qof/qoftime.h : Clarify documentation.
 
 2006-05-28 Neil Williams <linux@codehelp.co.uk>
 
-	* qof/qofdate.c : 
+	* qof/qofdate.c :
 	* qof/qofdate.h : Add qof_date_time_difference
 	Add normalising code for QofDate.
 	* qof/test/test-date.c : Add more tests for when qofdate
@@ -902,9 +908,9 @@
 	* lib/libtime/qofgmtime.c :
 	* lib/libtime/qofgmtime.h : New file to handle
 	QofDate <-> QofTime conversions without overflows.
-	* qof/qofdate.c : 
+	* qof/qofdate.c :
 	* qof/qofdate.h : Create and free QofDate.
-	* qof/qoftime.c : 
+	* qof/qoftime.c :
 	* qof/qoftime.h :
 	* qof/test/Makefile.am : Plan for use of libqoftime library.
 	* qof/test/test-date.c : Avoid use of time_t to allow
@@ -919,7 +925,7 @@
 	* qof/qofinstance.c :
 	* qof/qofinstance.h :  First replacement of Timespec with QofTime.
 	* qof/qoflog.c : Remove unneeded ifdef directive.
-	* qof/qofobject.c : 
+	* qof/qofobject.c :
 	* qof/qofobject.h : gchar instead of char.
 
 	* all files : Setting a consistent indent style:
@@ -934,13 +940,13 @@
 	* doc/doxygen.cfg.in : Removing the search engine option.
 	* doc/doxygen_main_page.c : Update reference page.
 	* website/hacking.html : Advice on packaging the docs.
-	* configure.in : New tests for qofstrftime 
+	* configure.in : New tests for qofstrftime
 	* lib/libtime/qofstrftime.c : Remove more directives.
 	* qof/qofdate.c : outline new replacement for struct tm
 	* qof/qofdate.h : outline new replacement for struct tm
 	* qof/qoftime.c : replacement for time_t
 	* qof/qoftime.h : replacement for time_t
-	* qof/test/test-date.c : New tests for when qofstrftime 
+	* qof/test/test-date.c : New tests for when qofstrftime
 	is ready.
 
 2006-05-22 Neil Williams <linux@codehelp.co.uk>
@@ -969,7 +975,7 @@
 	* doc/Makefile.am : Build docs everytime.
 
 	* debian/control : New doc package.
-	* debian/libqof-dev.install : 
+	* debian/libqof-dev.install :
 	* debian/libqof1-dbg.install :
 	* debian/libqof1.install : Package new extension
 	library, libqofstrftime.
@@ -1005,13 +1011,13 @@
 	* qof/qofdate.c : Fix add_days and add_months
 	* qof/qofdate.h : Note remaining failures in stamp and scan.
 	* qof/qoftime.c : renamed function to make it clearer.
-	* qof/qoftime.h : 
+	* qof/qoftime.h :
 	* qof/test/test-date.c : More test case fixes.
 
 2006-05-16  Neil Williams <linux@codehelp.co.uk>
 
 	* qof/qofdate.c :
-	* qof/qofdate.h : 
+	* qof/qofdate.h :
 	* qof/qoftime.c :
 	* qof/qoftime.h :
 	* qof/test/test-date.c : More test case fixes.
@@ -1022,7 +1028,7 @@
 	* qof/qofbackend.h :
 	* qof/qofbackend.c : Whitespace, gchar standardisation.
 
-	* qof/qoftime.c : 
+	* qof/qoftime.c :
 	* qof/qoftime.h : Fixes from building the tests.
 	* qof/test/test-date.c : Lengthen the tests. (27 now).
 
@@ -1033,11 +1039,11 @@
 	* qof/qoftime-p.h : No need for deprecated code
 	to have access to a private function to validate.
 	Removed file.
-	* qof/qofdate-p.h : returning the previous 
+	* qof/qofdate-p.h : returning the previous
 	QofDateFormat removes the need for these functions.
 	Removed file.
 
-	* qof/qofutil.c : Bring date and time into default 
+	* qof/qofutil.c : Bring date and time into default
 	QOF startup and shutdown
 
 2006-05-13  Neil Williams <linux@codehelp.co.uk>
@@ -1052,7 +1058,7 @@
 
 2006-05-12  Neil Williams <linux@codehelp.co.uk>
 
-	* qof/deprecated.c : If the date_format needs to 
+	* qof/deprecated.c : If the date_format needs to
 	be changed for deprecated functions, change it back afterwards.
 	* qof/Makefile.am : add undo and don't install qoftime-p.h
 
@@ -1065,7 +1071,7 @@
 	* backend/file/qsf-xml-map.c :
 	* qof/gnc-numeric.c :
 	* qof/guid.c :
-	* qof/kvp_frame.c : 
+	* qof/kvp_frame.c :
 	* qof/qofbackend.c :
 	* qof/qofdate.c
 	* qof/qofbookmerge.h :
@@ -1120,7 +1126,7 @@
 	* qof/test/test-event.c :
 	* qof/test/test-guid.c :
 	* qof/test/test-recursive.c :
-	
+
 	* website/index.html :
 
 2006-05-05  Neil Williams <linux@codehelp.co.uk>
@@ -1132,7 +1138,7 @@
 
 2006-04-21  Neil Williams <linux@codehelp.co.uk>
 
-	* qof/test/test-date.c : Incorporate Toshio Kuratomi's patch 
+	* qof/test/test-date.c : Incorporate Toshio Kuratomi's patch
 	properly to fix Debian bug 364048. <toshio@tiki-lounge.com>
 
 2006-04-17  Neil Williams <linux@codehelp.co.uk>
@@ -1141,22 +1147,22 @@
 
 2006-04-16  Neil Williams <linux@codehelp.co.uk>
 
-	* src/backend/file/qsf-xml-map.c : Refactoring common 
+	* src/backend/file/qsf-xml-map.c : Refactoring common
 	code and fixing QOF_VERSION check.
 
 2006-04-14  Neil Williams <linux@codehelp.co.uk>
 
 	* backend/file/pilot-qsf-gncCustomer.xml :
-	remove gncBillTerm - isn't possible to create from 
+	remove gncBillTerm - isn't possible to create from
 	pilot data.
 	* backend/file/qsf-backend.c :
 	* backend/file/qsf-xml-map.c :
 	* backend/file/qsf-xml.c :
-	* backend/file/qsf-xml.h : Add control over status of 
+	* backend/file/qsf-xml.h : Add control over status of
 	various objects during mapping.
-	
+
 	* qof/test/Makefile.am : Remove unwanted include.
-	* qof/qofbackend.h : 
+	* qof/qofbackend.h :
 	* qof/qofsession.h : Andreas Köhler's changes to
 	add an encoding QofBackendError. r13781.
 
@@ -1182,11 +1188,11 @@
 
 	* qof/deprecated.c : Replace gnc_strpcpy.
 	* qof/qofbook-p.h :
-	* qof/deprecated.h : Deprecate 
+	* qof/deprecated.h : Deprecate
 	qof_book_set_schedxactions which has no
 	declaration.
 	* qof/qofutil.c :
-	* qof/qofbackend.c : Move the function 
+	* qof/qofbackend.c : Move the function
 	versions of the begin_edit and commit_edit
 	routines to the Utilities file alongside
 	the macro versions from qof-be-utils.h
@@ -1198,15 +1204,15 @@
 
 	* backend/file/qof-backend-qsf.h :
 	* backend/file/qsf-backend.c :
-	* backend/file/qsf-xml.h : add encoding backend 
+	* backend/file/qsf-xml.h : add encoding backend
 	option
-	
+
 	* qof/Makefile.am :
 	* qof/qof.h : remove qof-be-utils.h
 
 2006-03-28  Neil Williams <linux@codehelp.co.uk>
 
-	* doc/gnc-numeric-example.txt : Move example 
+	* doc/gnc-numeric-example.txt : Move example
 	to a doc file.
 	* deprecated.h : Deprecate the expression of
 	glib.h in the QOF API. libqof2 applications
@@ -1216,7 +1222,7 @@
 2006-03-26  Neil Williams <linux@codehelp.co.uk>
 
 	* configure.in :
-	* qof-1.pc.in : allowing qof_sql to be linked 
+	* qof-1.pc.in : allowing qof_sql to be linked
 	where libgda is not available.
 
 	* debian/control : Make libqof-dev depend on
@@ -1242,15 +1248,15 @@
 	* backend/file/qsf-xml.h : Standardise on gint and gchar.
 	Support iteration over incoming QSF objects inside map operations.
 	Remove gnucash-specific gettext defines.
-	* backend/file/qsf-backend.c : Standardise on gint and gchar. 
+	* backend/file/qsf-backend.c : Standardise on gint and gchar.
 	Skip unregistered objects when processing maps.
 	* backend/file/qsf-xml.c : Standardise on gint and gchar.
-	* backend/file/qsf-xml-map.c : Standardise on gint and gchar. 
-	Correct map handling to allow reverse operations and iteration 
-	over hierarchical objects. Improving debug messages and preventing 
+	* backend/file/qsf-xml-map.c : Standardise on gint and gchar.
+	Correct map handling to allow reverse operations and iteration
+	over hierarchical objects. Improving debug messages and preventing
 	a crash when loading a map directly.
 	* backend/file/Makefile.am : add new map file.
-	* backend/file/qsf-map.xsd.xml : allow for iteration of hierarchical 
+	* backend/file/qsf-map.xsd.xml : allow for iteration of hierarchical
 	objects
 	* qof/gnc-date.c : Hook langinfo.h check into legacy gnucash macro.
 
@@ -1265,10 +1271,10 @@
 
 2006-03-09  Neil Williams <linux@codehelp.co.uk>
 
-	* qof/guid.c : Christian Stimming's patch for 
+	* qof/guid.c : Christian Stimming's patch for
 	easier mingw32 builds. gnucash r13525.
 
-	* qof/qofbackend-p.h : 
+	* qof/qofbackend-p.h :
 	* qof/gnc-engine-util.h :
 	* qof/kvp-util.h :
 	* qof/kvp-util-p.h : David Hampton's patch to
@@ -1276,22 +1282,22 @@
 
 	* qof/backend/file/qsf-xml-map.c :
 	* qof/backend/file/qsf-xml.c :
-	* qof/qofchoice.c : 
+	* qof/qofchoice.c :
 	* qof/qofgobj.c :
 	* qof/qofinstance.c :
 	* qof/qofreference.c : David Hampton's patch to
 	keep config.h in C files only. gnucash r13549.
 
-	* qof/qofquery.c : 
-	* qof/qofsession.c : 
-	* qof/qoflog.h : Don't use deprecated code in our 
+	* qof/qofquery.c :
+	* qof/qofsession.c :
+	* qof/qoflog.h : Don't use deprecated code in our
 	own library.
 
 	* qof/qof_book_merge.h :
-	* qof/qof_book_merge.c : Deprecated to resolve file 
+	* qof/qof_book_merge.c : Deprecated to resolve file
 	naming and function naming conflicts.
 	* qof/qof.h :
-	* qof/qofbookmerge.c : 
+	* qof/qofbookmerge.c :
 	* qof/qofbookmerge.c : New file, new function names.
 	* qof/deprecated.h :
 	* qof/deprecated.c : Move old functions to deprecated.
@@ -1299,8 +1305,8 @@
 
 	* qof/qofevent.h :
 	* qof/qofevent.c : Derek Atkin's patch to
-	fix the definition of QOF_EVENT_BASE; use 
-	QOF_EVENT__LAST for tests. gnucash r13546. Doxygen 
+	fix the definition of QOF_EVENT_BASE; use
+	QOF_EVENT__LAST for tests. gnucash r13546. Doxygen
 	tweak.
 
 	* backend/file/qsf-backend.c : Remove deprecated
@@ -1313,16 +1319,16 @@
 
 	* qof/qof-be-utils.h : Replace macro to restore
 	programme flow.
-	* qof/qofevent.c : 
-	* qof/qofevent.h : Outline method to make application 
+	* qof/qofevent.c :
+	* qof/qofevent.h : Outline method to make application
 	events easier to use.
 	* qof/Makefile.am :
-	* qof-1.pc.in : Fedora fixes from Toshio Kuratomi 
+	* qof-1.pc.in : Fedora fixes from Toshio Kuratomi
 	<toshio@tiki-lounge.com>
 
 2006-02-25  Neil Williams <linux@codehelp.co.uk>
 
-	* qof/qof-be-utils.h : 
+	* qof/qof-be-utils.h :
 	* qof/qofbackend.c : Add function version of
 	QOF_COMMIT_EDIT_PART2
 	* qof/deprecated.c : Define deprecated event functions
@@ -1331,9 +1337,9 @@
 	* qof/qofevent.c : Allow events to be generated with an
 	optional event_data argument.
 	* qof/qofevent.h : Doxygen tweaks.
-	* qof/guid.c : Gnucash r13391 - Keep track of exactly how 
+	* qof/guid.c : Gnucash r13391 - Keep track of exactly how
 	many bytes have been sent to md5_process_bytes().
-	* qof/qofid.c : Gnucash r13351 - Mark the QofCollection 
+	* qof/qofid.c : Gnucash r13351 - Mark the QofCollection
 	as dirty when a new QofEntity is added or removed.
 
 2006-02-20  Neil Williams <linux@codehelp.co.uk>
@@ -1341,15 +1347,15 @@
 	* qof/gnc-event.c :
 	* qof/gnc-event-p.h :
 	* qof/gnc-event.h : Removed files.
-	
+
 	* qof/qofevent.c :
 	* qof/qofevent-p.h :
 	* qof/qofevent.h : Replacement files using extensible
 	event identifiers.
-	
+
 	* qof/deprecated.c : Old functions now pointed to
 	replacements.
-	* qof/deprecated.h : Old defines now pointed to 
+	* qof/deprecated.h : Old defines now pointed to
 	replacements.
 	* qof/deprecated-p.h : gnc-event-p.h deprecated
 	function declaration.
@@ -1359,13 +1365,13 @@
 
 2006-02-19  Neil Williams <linux@codehelp.co.uk>
 
-	* backend/file/qsf-backend.c : Correcting collect handling, 
+	* backend/file/qsf-backend.c : Correcting collect handling,
 	prevent duplication.
-	* qof/qof.h : Create reference group in doxygen and 
+	* qof/qof.h : Create reference group in doxygen and
 	export qofreference.h into the API.
-	* qof/qof/qofsession.c : Set QOF_TYPE_COLLECT as registered 
+	* qof/qof/qofsession.c : Set QOF_TYPE_COLLECT as registered
 	type and move qof_entity_get_reference_from to new file.
-	* qof/qof/qofsession.h : Move qof_entity_get_reference_from 
+	* qof/qof/qofsession.h : Move qof_entity_get_reference_from
 	to new file: qofreference.c|h.
 	* qof/qofreference.c : New file to handle reference related
 	code.
@@ -1379,22 +1385,22 @@
 	* backend/file/qsf-backend.c : Check that files can be opened before
 	trying to work out their type. Use new QofBackendError value
 	if open to read fails.
-	* qof/gnc-event.c : Derek Atkin's patch for better handling of event 
-	removal.  This allows us to actually clean up, but also makes sure we 
+	* qof/gnc-event.c : Derek Atkin's patch for better handling of event
+	removal.  This allows us to actually clean up, but also makes sure we
 	don't destroy the handler list out from under us as we're processing events.
 	* qof/test/Makefile.am : adding new events test.
 	* qof/test/test-events.c : New file: First set of tests, more needed.
-	* qof/test/test-recursive.c : Beginning fix of QOF_TYPE_COLLECT 
+	* qof/test/test-recursive.c : Beginning fix of QOF_TYPE_COLLECT
 	recursive copying. More to be done.
-	* qof/test/test-stuff.c : Ensuring get_random_double 
+	* qof/test/test-stuff.c : Ensuring get_random_double
 	returns at least some decimal places more often than not.
 
 2006-02-05  Neil Williams <linux@codehelp.co.uk>
 
-	* qof/deprecated.c : 
+	* qof/deprecated.c :
 	* qof/deprecated.h :
 	* qof/qoflog.c :
-	* qof/qoflog.h : Deprecating qof_log_set_level_global due to 
+	* qof/qoflog.h : Deprecating qof_log_set_level_global due to
 	misleading name
 
 2006-02-05  Neil Williams <linux@codehelp.co.uk>
@@ -1407,10 +1413,10 @@
 2006-02-01  Neil Williams <linux@codehelp.co.uk>
 
 	* qof/test/Makefile.am :
-	* qof/test/test-book-merge.c : adding some 
+	* qof/test/test-book-merge.c : adding some
 	randomness to the test
-	* qof/test/test-recursive.c : New test to 
-	identify and then fix problems in 
+	* qof/test/test-recursive.c : New test to
+	identify and then fix problems in
 	qof_entity_copy_coll_r
 
 2006-01-23  Neil Williams <linux@codehelp.co.uk>
@@ -1420,7 +1426,7 @@
 	* qof/qof_book_merge.c : Fix merge handling of
 	QOF_TYPE_CHAR to use gchar instead of casting
 	from a gchar*
-	* qof/test/test-book-merge.c : Add test case 
+	* qof/test/test-book-merge.c : Add test case
 	to make sure QOF_TYPE_CHAR handling is working.
 
 2006-01-22  Neil Williams <linux@codehelp.co.uk>
@@ -1447,20 +1453,20 @@
 
 	* Makefile.am : Add HACKING to dist.
 	* backend/file/pilot-qsf-GnuCashInvoice.xml :
-	update objects - the file may still be removed in a 
+	update objects - the file may still be removed in a
 	future release.
-	* backend/file/qsf-backend.c : remove uneven 
+	* backend/file/qsf-backend.c : remove uneven
 	debug call
 	* backend/file/qsf-xml-map.c : improve debug handling
 	* fink/qof1.info : Update library SONAMES for packaging.
-	* qof/qofbackend.c : 
+	* qof/qofbackend.c :
 	* qof/qof.h : Finalise module loading. Downgrade the reliance
 	on the .la files for backends.
 	* rpm/qof1.spec : Missed some symlinks.
 
 2006-01-01  Neil Williams <linux@codehelp.co.uk>
 
-	* qof/qofobject.c : 
+	* qof/qofobject.c :
 	* qof/qofobject-p.h : New function to check full
 	compliance of an object once instead of failing
 	repeatedly.
@@ -1481,7 +1487,7 @@
 	* qof/Makefile.am : New file compiled into libqof1.
 
 	Changes to use qof.h
-	* backend/file/qsf-backend.c : 
+	* backend/file/qsf-backend.c :
 	* backend/file/qsf-xml-map.c :
 	* backend/file/qsf-xml.c :
 	* qof/deprecated.h :
@@ -1502,11 +1508,11 @@
 
 2005-12-28  Neil Williams <linux@codehelp.co.uk>
 
-	* qof/qofbackend.c : Allow partial paths to make 
-	full use of GModule and the lack of a .la file 
+	* qof/qofbackend.c : Allow partial paths to make
+	full use of GModule and the lack of a .la file
 	non-critical.
 	* autogen.sh : Adopt a more streamlined script.
-	
+
 2005-12-18  Neil Williams <linux@codehelp.co.uk>
 
 	* configure.in : Adding extra compiler warnings.
@@ -1514,7 +1520,7 @@
 
 2005-12-14  Neil Williams <linux@codehelp.co.uk>
 
-	* backend/file/qof-backend-qsf.h : v0.2 of QSF, 
+	* backend/file/qof-backend-qsf.h : v0.2 of QSF,
 	including a	new QofBackendOption, QSF_MAP_FILES.
 	* backend/file/qsf-xml.h : Private header,
 	converted more functions to static.
@@ -1522,7 +1528,7 @@
 	use more static functions.
 	* backend/file/qsf-xml.c : Remove redundant
 	(private) functions.
-	
+
 	* configure.in : Bump source version to 0.6.1,
 	libqof1 library version to 1.2.0 and qsf library
 	version to 0.1.0.
@@ -1533,28 +1539,28 @@
 	Timespec. Deprecating date_add_months.
 	* qof/gnc-date.c :
 	* qof/gnc-date.h :
-	
+
 2005-12-06  Neil Williams <linux@codehelp.co.uk>
 
 	* QOF_MANIFEST_ENG :
 	* QOF_MANIFEST_QSF : removed.
 
 	* qof/qof_book_merge.c : detailing todo for param_as_string
-	* qof/qofquery.c : 
-	* qof/qofquery.h : Deprecate qof_query_print in favour of 
+	* qof/qofquery.c :
+	* qof/qofquery.h : Deprecate qof_query_print in favour of
 	log system
-	* qof/kvp_frame.c : Adding support for timespec and 
+	* qof/kvp_frame.c : Adding support for timespec and
 	correcting frame handler
 	* qof/qofsession.c : KVP does not need a set routine to be copied.
 
-	* backend/file/qsf-backend.c : Removing duplicate code, fixing 
+	* backend/file/qsf-backend.c : Removing duplicate code, fixing
 	timespec handling and kvp frame	handling.
 	* backend/file/qsf-xml.h : Correcting KVP path write-out in QSF.
 
 2005-12-04  Neil Williams <linux@codehelp.co.uk>
 
 	* qof/qofquery.c : Do not ignore the return value of GList
-	functions.  This is likely to become a warning in a future 
+	functions.  This is likely to become a warning in a future
 	version of glib. (David Hampton, <hampton@employees.org>).
 
 2005-11-29  Neil Williams <linux@codehelp.co.uk>
@@ -1571,7 +1577,7 @@
 	* qof/qofid.c : Rationalise the hash_table index, optimise
 	some error checks. GnuCash sync.
 	* qof/qoflog.c : New file, replaces gnc-trace.c - new function
-	names to fit convention and new enum names. Removing 
+	names to fit convention and new enum names. Removing
 	gnc_trace_num_spaces in favour of a simpler function call.
 	* qof/qoflog.h : New file, replaces gnc-trace.h
 	* qof/qofquery.c : Reviewing qof_query_print to be able to
@@ -1580,7 +1586,7 @@
 	instead.
 	* qof/qofsql.c : Fix INSERT SQL handling.
 	* website/hacking.html : New file.
-	* website/index.html : Updated to not link to pre1.	
+	* website/index.html : Updated to not link to pre1.
 
 2005-11-29  Neil Williams <linux@codehelp.co.uk>
 
@@ -1625,7 +1631,7 @@
 	* HACKING : Advice on how building / hacking
 	QOF 0.6.0 differs from previous versions,
 	including new requirements for packaging
-	and new methods of providing CFLAGS and LIBS 
+	and new methods of providing CFLAGS and LIBS
 	data via pkg-config.
 	* NEWS : Tweak for 0.6.0
 	* QOF_MANIFEST_ENG : Tweak.
@@ -1642,14 +1648,14 @@
 	* doc/doxygen_main_page.c : Warn of future changes
 	and new methods.
 	* examples/test-qsf.c : tweak.
-	* qof/Makefile.am : Temporarily make two private 
+	* qof/Makefile.am : Temporarily make two private
 	headers public.
 	* qof/gnc-date.c : Deprecating qof_date_format_get_format
 	and gnc_timet_get_day_start_gdate.
 	* qof/gnc-date.h : Doxygen tweaks.
 	* qof/gnc-engine-util.c : GnuCash sync, cache improvements.
-	* qof/gnc-engine-util.h : New cache methods. Deprecating 
-	the SAFE_STRCMP_REAL and SAFE_STRCASECMP macros in favour 
+	* qof/gnc-engine-util.h : New cache methods. Deprecating
+	the SAFE_STRCMP_REAL and SAFE_STRCASECMP macros in favour
 	of the function versions.
 	* qof/gnc-event-p.h : Deprecating gnc_engine_generate_event
 	* qof/gnc-event.c : Doxygen tweak and trace fix.
@@ -1689,9 +1695,9 @@
 	* qof/qofla-dir.h.in : Directory fix.
 	* qof/qofobject.c : Logging fix.
 	* qof/qofquery-deserial.c : Denoting removal from main library.
-	* qof/qofquery-deserial.h : 
-	* qof/qofquery-serialize.c : 
-	* qof/qofquery-serialize.h : 
+	* qof/qofquery-deserial.h :
+	* qof/qofquery-serialize.c :
+	* qof/qofquery-serialize.h :
 	* qof/qofquery.c : Logging fix and balancing log calls.
 	* qof/qofquery.h : Doxygen fix.
 	* qof/qofquerycore.c : Logging fix.
@@ -1721,7 +1727,7 @@
 	* backend/file/qsf-backend.c: New log_module support.
 	* backend/file/qsf-xml.c: QOF_MOD_QSF
 	* qof/gnc-date.c: QOF_MOD_ENGINE
-	* qof/gnc-event.c: QOF_MOD_ENGINE 
+	* qof/gnc-event.c: QOF_MOD_ENGINE
 	* qof/gnc-trace.c: Removing enum based module selection,
 	replacing with GHashTable method to support non-GnuCash usage.
 	* qof/gnc-trace.h: Documenting new log functions.
@@ -1806,7 +1812,7 @@
 	* qof/qofbackend.h: qof_load_backend_library.
 	* qof/qofchoice.h: Tweak.
 	* qof/qofid.h: Doxygen correction.
-	* qof/qofla-dir.h.in: Licence correction. 
+	* qof/qofla-dir.h.in: Licence correction.
 	* qof/qofquery-deserial.h: Removing from doxygen.
 	* qof/qofquery-serialize.h: Removing from doxygen.
 	* qof/qofsession.c: Deprecating current_session and
@@ -1822,7 +1828,7 @@
 	* backend/file/qsf-backend.c: Cast fixes
 	* backend/file/qsf-object.xsd.xml: QOF_TYPE_CHOICE attribute
 	* backend/file/qsf-xml-map.c: Cast changes.
-	* backend/file/qsf-xml.c: Casts 
+	* backend/file/qsf-xml.c: Casts
 	* configure.in: Tweak to library version
 	* qof/gnc-date.c: tweak
 	* qof/gnc-date.h: Remove todo marker
@@ -1850,8 +1856,8 @@
 	* configure.in: Support for STRUCT_TM_GMTOFF check.
 	* qof/gnc-numeric.h: Doxygen fixes.
 	* qof/qof_book_merge.c: Removing unused header.
-	* qof/qof_book_merge.h: 
-	* qof/qofbackend-p.h: 
+	* qof/qof_book_merge.h:
+	* qof/qofbackend-p.h:
 	* qof/qofbackend.h: Don't need the private header here.
 	* qof/qofinstance.c: Change in API to make collection
 	dirty when instance is dirty. API to handle do_free.
@@ -1873,7 +1879,7 @@
 	* qof/qofchoice.c: Fixing hash table lookup.
 	* qof/qofchoice.h: Check choice selections.
 	* qof/qofsession.c: Using editlevels.
-	* qof/qofsql.c: Fixing warnings.	
+	* qof/qofsql.c: Fixing warnings.
 
 2005-07-05  Neil Williams <linux@codehelp.co.uk>
 
@@ -1967,17 +1973,17 @@
 	* ./README.cvs:
 	* ./TODO: Documentation update.
 	* ./autogen.sh: Removing unused m4 macro.
-	* ./backend/.cvsignore: 
-	* ./backend/Makefile.am: 
-	* ./backend/dwi/Makefile.am: 
-	* ./backend/file/.cvsignore: 
+	* ./backend/.cvsignore:
+	* ./backend/Makefile.am:
+	* ./backend/dwi/Makefile.am:
+	* ./backend/file/.cvsignore:
 	* ./backend/file/Makefile.am: API freeze.
-	* ./backend/file/qof-backend-qsf.h: Freezing the API 
+	* ./backend/file/qof-backend-qsf.h: Freezing the API
 	* ./backend/file/qsf-backend.c: API freeze.
 	* ./backend/file/qsf-object.xsd.xml: QOF_TYPE_COLLECT
 	* ./backend/file/qsf-xml.h: Now a private header.
 	* ./configure.in: Pre-release version increments.
-	* ./doc/.cvsignore: 
+	* ./doc/.cvsignore:
 	* ./doc/Makefile.am:
 	* ./doc/backend-api.txt:
 	* ./doc/backend-errors.txt:
@@ -2016,7 +2022,7 @@
 	* backend/file/Makefile.am: Fixing dist build
 	* backend/file/qsf-backend.c: QOF_TYPE_COLLECT
 	* backend/file/qsf-object.xsd.xml: Validation typo
-	* configure.in: 
+	* configure.in:
 	* doc/Makefile.am:
 	* doc/doxygen.cfg.in:
 	* examples/Makefile.am:
@@ -2030,7 +2036,7 @@
 	* lib/libsql/Makefile.am:
 	* qof/Makefile.am: Fixing build errors.
 	* qof/kvp_frame.h: Doxygen fix
-	* qof/qof_book_merge.c: 
+	* qof/qof_book_merge.c:
 	* qof/qofclass.h:
 	* qof/qofid.c:
 	* qof/qofid.h: QOF_TYPE_COLLECT
@@ -2047,14 +2053,14 @@
 	* qof/gnc-engine-util.c: GnuCash changes
 	* qof/gnc-engine-util.h: enum as string
 	macro improved.
-	* qof/gnc-event.c: 
-	* qof/gnc-event.h: 
+	* qof/gnc-event.c:
+	* qof/gnc-event.h:
 	* qof/gnc-numeric.c:
-	* qof/gnc-numeric.h:  
+	* qof/gnc-numeric.h:
 	* qof/gnc-trace.c:
 	* qof/gnc-trace.h:
 	* qof/guid.h: GnuCash changes.
-	* qof/kvp_frame.c: New names for deprecated 
+	* qof/kvp_frame.c: New names for deprecated
 	functions.
 	* qof/kvp_frame.h: Doxygen improvements and
 	defines to replace deprecated functions.
