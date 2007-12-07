@@ -5,8 +5,9 @@ qof (0.7.3-1) unstable; urgency=low
   * debian/control: use new dpkg fields
   * configure.in : tidy up use of qofsql for embedded use
   * make the sqlite backend build by default
+  * Remove GFDL from debian/copyright and migrate to standards 3.7.3
 
- -- Neil Williams <codehelp@debian.org>  Thu, 15 Nov 2007 00:28:50 +0000
+ -- Neil Williams <codehelp@debian.org>  Fri, 07 Dec 2007 00:04:20 +0000
 
 qof (0.7.2-1) unstable; urgency=low
 

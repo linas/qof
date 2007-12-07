@@ -6,7 +6,7 @@ Uploaders: Goedson Teixeira Paixao <goedson@debian.org>, Neil Williams <codehelp
 Build-Depends: debhelper (>= 5), cdbs, autotools-dev, libglib2.0-dev (>= 2.6.0),
  libxml2-dev (>= 2.5.10), libgda2-dev, gettext, libsqlite0-dev, dpkg-dev (>= 1.14)
 Build-Depends-Indep: doxygen
-Standards-Version: 3.7.2
+Standards-Version: 3.7.3
 Homepage: http://qof.sourceforge.net/
 Vcs-Browser: http://qof.cvs.sourceforge.net/qof/qof/
 Vcs-CVS: -d:pserver:anonymous@qof.cvs.sourceforge.net:/cvsroot/qof
