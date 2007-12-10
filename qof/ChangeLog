@@ -1,3 +1,21 @@
+2007-12-10  Neil Williams  <linux@codehelp.co.uk>
+
+	* Makefile.am: Build library before backends.
+	* TODO: Notes on linking issues.
+	* backend/file/Makefile.am: Link the built qof library
+	* backend/sqlite/Makefile.am: Link the built qof library
+	  and the built qofsql library.
+	* backend/sqlite/qof-sqlite.c: Note presence of a bug
+	  (unfixed). Sqlite-kvp table is not being created.
+	* configure.in: Migrate to libgda3-3.
+	* qof-1.pc.in: Remove Requires.private as libxml2 is
+	  no longer needed, even for static. The XML backend
+	  is a GModule.
+	* qof/Makefile.am: Prune the linkages and use libgdasql-3.0
+	  instead of the entire libgda3-3.
+	* qof/qofsql.c: New header location for libgda3-3.
+	* qof/test/Makefile.am: Prune linkages.
+
 2007-11-15  Neil Williams  <linux@codehelp.co.uk>
 
 	* HACKING,
