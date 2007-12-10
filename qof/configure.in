@@ -159,6 +159,7 @@ dnl **************************************************************
 dnl Embedded systems only use the QofSQLite backend.
 dnl libxml2 and optional sqlite for host systems.
 dnl libxml2 v2.5.10 is required for QSF (backend/file)
+dnl libgdasql is omitted to prevent a need for libgda2-3 itself.
 dnl **************************************************************
 
 AC_ARG_ENABLE(embedded,
@@ -209,15 +210,18 @@ AM_CONDITIONAL(USE_SQLITE, [test "$sqlite" = "yes"])
 
 dnl **************************************************************
 dnl  GNOME Data Access library for GNOME2 libgda
-dnl  Enables use of gda within libqof1 *and* the gda backend.
-dnl  Automatically disabled in embedded mode to support removal of xml
+dnl  Enables use of gdasql within libqof1 *and* the gda backend.
 dnl **************************************************************
 
 AC_MSG_CHECKING(for SQL parser support)
 if test "$embedded" != "yes"; then
-	GDA_REQUIRED=1.2.0
-	LIBGDA_CFLAGS=`$PKG_CONFIG --silence-errors --cflags "libgda >= $GDA_REQUIRED"`
-	LIBGDA_LIBS=`$PKG_CONFIG --silence-errors --libs "libgda >= $GDA_REQUIRED"`
+#	GDA_REQUIRED=1.2.0
+	GDA_REQUIRED=3.0.1
+#	LIBGDA_CFLAGS=`$PKG_CONFIG --silence-errors --cflags "libgda >= $GDA_REQUIRED"`
+#	LIBGDA_LIBS=`$PKG_CONFIG --silence-errors --libs "libgda >= $GDA_REQUIRED"`
+	LIBGDA_CFLAGS=`$PKG_CONFIG --silence-errors --cflags "libgda-3.0 >= $GDA_REQUIRED"`
+	LIBGDA_LIBS=`$PKG_CONFIG --silence-errors --libs "libgda-3.0 >= $GDA_REQUIRED"`
+	# LIBGDA should only be used for the GDA backend
 	AC_SUBST(LIBGDA_CFLAGS)
 	AC_SUBST(LIBGDA_LIBS)
 fi
@@ -225,10 +229,14 @@ if test "x$LIBGDA_LIBS" = x; then
 	AC_MSG_RESULT([GDA not found (or disabled); will build using internal SQL library.])
 	SQL_PKG_LIB="-lqofsql"
 else
-    GDA_VERSION=`$PKG_CONFIG --modversion libgda`
+    GDA_VERSION=`$PKG_CONFIG --modversion libgda-3.0`
     AC_MSG_RESULT([yes, using GDA: ${GDA_VERSION}])
+    AC_MSG_CHECKING(for libgdasql-3.0 support)
+    save_LIBS="$LIBS"
+    AC_CHECK_LIB(gdasql-3.0, sql_parse, , [AC_MSG_ERROR([libgda3-3 found but missing libgdasql-3.0])])
     AC_DEFINE(HAVE_GDA,,[We have found GDA])
-	GDA_PKG_LIB="-lgda-2"
+	GDA_PKG_LIB="-lgdasql-3.0"
+    LIBS="$save_LIBS"
     HAVE_GDA="use_gda"
 	AC_SUBST(GDA_VERSION)
 fi
@@ -366,6 +374,7 @@ if test "$GCC" = "yes" -a "$set_compile_warnings" != "no"; then
  -Wmissing-prototypes -Wmissing-declarations -Werror -Wmissing-include-dirs \
  -Wstrict-prototypes -Winline -Wnested-externs -Wpointer-arith \
  -Wmissing-field-initializers"
+#	LDFLAGS="$LDFLAGS -Wl,-z,defs"
 fi
 
 AC_SUBST(CFLAGS)
@@ -390,6 +399,7 @@ QOF_VERSION="$VERSION"
 QSF_LIB_DIR=`eval echo $libdir | sed "s%^NONE%$prefix%"`
 QSF_LIB_DIR=`eval echo $QSF_LIB_DIR | sed "s%^NONE%$prefix%"`
 AC_SUBST(QSF_LIB_DIR)
+AC_SUBST(QOF_LIBS)
 
 dnl ******************************
 dnl Check if this was CVS source
