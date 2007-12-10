@@ -33,7 +33,7 @@ title="Query Object Framework">QOF</acronym></h1>
 symbol of the same name"></div>
 
 <h2>Advice for packagers / maintainers</h2>
-<h3>Updated December 2006 for QOF 0.7.2</h3>
+<h3>Updated December 2007 for QOF 0.7.3</h3>
 
 <ul>
 <li>Building against QOF
@@ -69,7 +69,7 @@ dnl *************************************
 dnl QOF
 dnl *************************************
 
-QOF_REQUIRED=0.7.2
+QOF_REQUIRED=0.7.3
 PKG_CHECK_MODULES([QOF], [qof-1 >= ${QOF_REQUIRED}])
 AC_SUBST(QOF_CFLAGS)
 AC_SUBST(QOF_LIBS)
@@ -102,7 +102,7 @@ dnl *************************************
 dnl QOF
 dnl *************************************
 
-QOF_REQUIRED=0.7.2
+QOF_REQUIRED=0.7.3
 AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
 if test pkg-config = no; then
 	AC_MSG_ERROR([Please install pkgconfig])
@@ -201,18 +201,12 @@ http://lists.sourceforge.net/lists/listinfo/qof-devel</a></p>
 <hr>
 
 <h3 id="libgda">libgda versions</h3>
-<div><p>(See the notes on <a href="index.html#libgda">libgda module delays</a>.)</p>
-<p>libda-2.0 is nearing release but is not yet ready - despite some
-distributions packaging the unreleased code. QOF only uses the SQL handling
+<div>
+<p>libda-3.3 is now in Debian. QOF only uses the SQL handling
 code from libgda at this time - until the GDA backend is reviewed. This SQL
 handling code was copied out of libgda at an earlier release and is built by
-QOF internally if libgda is not found.</p>
-<p>This arrangement will continue until libgda-2.0 is on full release. QOF 0.7.2
-does not support libgda-2.0 and will ignore libgda-2.0 on systems where it is 
-installed. This is <b>not</b> a problem or a bug but a deliberate decision. Patches
-to support libgda-2.0 will <b>not</b> be accepted. It is preferable to let QOF
-build the SQL handling code internally. Once the gda backend is reviewed, support 
-for libgda can be updated. See also <a href="#libsql">libsql in QOF</a>.</p>
+QOF internally if libgda is not found.
+See also <a href="#libsql">libsql in QOF</a>.</p>
 </div>
 
 <hr>
@@ -320,30 +314,6 @@ packaged separately:</p>
 QSF XML should be the default for all systems that can support libxml2
 because the sqlite backend is not yet comprehensive. Full support is
 due in the next backend module based on GnomeDB (via libgda).</p>
-<dl>
-<dt>Packaging the QSF XML backend separately from the main library
-does not actually remove libxml2 from the dependency list of the library.
-Why?</dt>
-<dd>libgda includes a dependency on libxml2 that replaces the
-dependency removed by packaging QSF XML separately. If you've built QOF with
-libgda installed, the libxml2 dependency will be retained. I believe this
-is fixed in libgda-2.0 (see <a href="#libgda">QOF and GDA</a>) but QOF
-0.7.2 does not yet support libgda-2.0. See also <a href="#libsql">libsql in QOF</a>.
-</dd>
-<dt>What's the solution?</dt>
-<dd>To remove libxml2 from the dependency list, also remove libgda so that
-QOF uses the internal SQL handling. This leaves only a dependency on glib
-and the inevitable GNU libc. Using <code>libqof-backend-sqlite0</code>
-only adds a dependency on libsqlite0.</dd>
-</dl>
-<pre>
- Package: libqof1
- Version: 0.7.2-1
- Section: libs
- Priority: optional
- Architecture: amd64
- Depends: libc6 (>= 2.3.5-1), libglib2.0-0 (>= 2.10.0)
-</pre>
 </div>
 
 <hr>
@@ -353,37 +323,21 @@ only adds a dependency on libsqlite0.</dd>
 <pre>#include "qof.h"</pre>
 <p>or</p>
 <pre>#include &lt;qof.h&gt;</pre>
-<p>- this is because some headers in
-libqof-dev need to be included in the correct sequence.
-Individual filenames and file contents are also subject
-to change during the life of libqof1 and packages using QOF
-need to only use qof.h to avoid problems moving to libqof2.</p>
+<p>- this is because some headers in libqof-dev need to be included 
+in the correct sequence. Individual filenames and file contents 
+are also subject to change during the life of libqof1 and packages 
+using QOF need to only use qof.h to avoid problems moving to libqof2.</p>
 </div>
 <hr>
 
 <h3 id="libsql">Replacement of lib/libsql</h3>
 <div>
-<p>
-The code in lib/libsql came from the libgda package
+<p>The code in lib/libsql came from the libgda package
 at about v1.0.3 and is now commonly available, including
 on Mac OSX via fink - albeit at only v1.0.4-3.</p>
-
-<p>Fedora Core 3 has 1.0.4, Fedora Core 4 has 1.2.0 and Debian
-has 1.2.2.</p>
-
-<p>libgda comes in stable and unstable releases. At time of
-writing, the stable release is 1.2.3 (libgda2-3 in Debian).
-<b>QOF does not support the unstable libgda releases.</b>
-If your distribution has libgda 1.3.x or 1.9.x, please do <b>not</b>
-patch QOF to use the unstable code. Instead, let QOF use it's internal
-code. QOF currently uses a fraction of the libgda codebase and until
-a full QOF/GDA backend is available, QOF will not be supporting
-any of the unstable libgda releases.
-</p>
-
-<p>This also helps complete the CashUtil project that will need the
-SQL handling in QOF and GnuCash itself which is likely to use more
-SQL directly in the future.</p>
+<p>This code is used if libgda3-3 is not available or
+the <tt>--enable-embedded</tt> option is given to
+<tt>./configure</tt></p>
 </div>
 
 <h3 id="roadmap">Roadmap</h3>
@@ -439,7 +393,7 @@ and the website content:
 <li><code>website/*.css</code> <b>=&gt;</b> <code>/usr/share/doc/libqof-doc/html/</code></li>
 <li><code>website/*.png</code> <b>=&gt;</b> <code>/usr/share/doc/libqof-doc/html/</code></li>
 <li><code>website/*.jpg</code> <b>=&gt;</b> <code>/usr/share/doc/libqof-doc/html/</code></li>
-</ul>
+ul>
 
 </div>
 

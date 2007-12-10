@@ -133,10 +133,9 @@ contain multiple parameter changes, entity creations or deletions according
 to the needs of the user. Undo currently supports up to 300 operations.
 </li>
 <li><b>SQLite backend</b>
-Intended for embedded usage only and still alpha code. Non-embedded systems
-should wait for the libgnome-db backend that will support plugins to
-various database managers, including sqlite.
-</li>
+Intended for embedded usage only but relatively stable. Non-embedded systems
+may want to wait for the libgnome-db backend that will support plugins to
+various database managers, including sqlite.</li>
 </ul>
 </div>
 <hr>
@@ -182,13 +181,7 @@ non-Gnome applications. This should be able to provide the generic access to
 various database managers like Postgres, MySQL, SQLite, Oracle and others 
 using ODBC. Unfortunately, although work has begun to use libgda, the current
 gnome-db stable release does not support creating (or deleting) tables. The
-module will be revisited when this support is complete. Note that
-there are known API changes in libgda between the current stable
-libgda2-3 1.2.3 release and the unstable/CVS code. These changes 
-may become more noticeable in the period to the next stable
-release. See the <a 
-href="http://mail.gnome.org/archives/gnome-db-list/2006-September/msg00058.html">
-gnome-db mailing list archive</a>.</p></li>
+module will be revisited when this support is complete. </p></li>
 <li><p> The current 'client-side' SQL engine is rather basic in its features and
 performance. For example, the current search over object fields is O(N),
 because each object instance is checked for a match. It would be nice to add
@@ -233,7 +226,7 @@ has version 0.6.1-1.</li>
 at version 0.6.4-2.</li>
 <li>Ubuntu Feisty : 
 <a href="http://packages.ubuntu.com/feisty/libs/libqof1">[universe]</a>
-usually at the same version as Debian testing, currently (0.7.2-1).</li>
+usually at the same version as Debian testing, currently (0.7.3-1).</li>
 </ul>
 <h3>RPM packages</h3>
 <p>There is a sample .spec file available in QOF CVS, available via 
