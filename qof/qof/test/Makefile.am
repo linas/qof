@@ -9,22 +9,20 @@ AM_CFLAGS = \
 if USE_LIBGDA
 LDADD = \
    ${top_builddir}/qof/libqof.la \
-   ${LIBXML2_LIBS} \
    ${GLIB_LIBS} \
    ${GMODULE_LIBS} \
    ${GOBJECT_LIBS} \
-   ${LIBGDA_LIBS} \
-   -lm
+   ${GDA_PKG_LIBS}
 else
 LDADD = \
    ${top_builddir}/qof/libqof.la \
    ${top_builddir}/lib/libsql/libqofsql.la \
-   ${LIBXML2_LIBS} \
    ${GLIB_LIBS} \
    ${GMODULE_LIBS} \
-   ${GOBJECT_LIBS} \
-   -lm
+   ${GOBJECT_LIBS}
 endif
+
+#   ${LIBXML2_LIBS} 
 
 test_book_merge_SOURCES = \
   test-stuff.c \
