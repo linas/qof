@@ -33,7 +33,7 @@
 #include <glib.h>
 #include <libintl.h>
 #ifdef HAVE_GDA
-#include <sql/sql_parser.h>
+#include <libsql/sql_parser.h>
 #else
 #include "sql_parser.h"
 #endif
