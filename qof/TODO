@@ -14,6 +14,19 @@ describes all the functions, objects, values and
 types that need to be replaced in code using QOF
 to make the transition to libqof2.
 
+LDFLAGS issue:
+ Should be able to use -Wl,-z,defs but hangovers in
+libqofsql mean that some functions need to be deprecated
+and missing symbols removed. Not a major issue because
+no extraneous dependencies are caused, AFAICT.
+
+This is part of the libgda2 mess - qof only needs to
+link against /usr/lib/libgdasql.so.3.0.0 but this is not
+exposed directly via pkgconfig. /usr/lib/libgda-2.so.3.0.0
+is linked against libgdasql so linking qof against libgda-2
+allows the missing symbols (from qof/qofsql.c) to be
+resolved. Not ideal.
+
 QofTime/QofDate in QSF
 
 QSF still supports both <date> and <time> when built
