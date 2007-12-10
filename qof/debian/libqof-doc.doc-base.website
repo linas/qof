@@ -5,13 +5,11 @@ Abstract: Query Object Framework Introduction
   QOF, the Query Object Framework, provides a set of C
   Language utilities for performing generic structured complex
   queries on a set of data held by a set of C/C++ objects. 
-  .
+ .
   This introduction is a copy of the QOF website content, explaining
   Why QOF exists, how to develop packages using QOF, generating
   examples, QOF roadmap, goals, status and links to other related
   www sites, including translation support.
-  .
-  Homepage: http://qof.sourceforge.net/
 Section: Apps/Programming
 
 Format: HTML

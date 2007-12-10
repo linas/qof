@@ -9,7 +9,7 @@ Abstract: Query Object Framework Developer Reference
   database at all to perform the query. Thus, it allows programmers
   to add query support to their applications without having to hook
   into an SQL Database.
-  .
+ .
   This manual describes the full QOF API to develop applications
   using libqof1.
 Section: Apps/Programming
