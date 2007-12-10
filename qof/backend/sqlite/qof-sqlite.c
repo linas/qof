@@ -43,7 +43,12 @@
 #define PRIORITY_LOW        0
 /** Indicate an error to sqlite */
 #define QSQL_ERROR          -1
-/** One KVP table per file for all instances. */
+/** One KVP table per file for all instances. 
+
+ \bug Table is not being created - prevents gpe-expenses
+from loading sqlite data.
+
+ */
 #define QSQL_KVP_TABLE "sqlite_kvp"
 
 #define END_DB_VERSION " dbversion int );"
