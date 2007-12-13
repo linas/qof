@@ -1,10 +1,6 @@
 For a full list of TODO items, see the Doxygen output in
 the documentation package: doxy/todo.html
 
-** PROBLEM ** Conversion now fixed but very slow
-because begin and commit are being called during
-session copy operations. Need to bypass.
-
 Typically installed into 
 /usr/share/doc/libqof-doc/html/doxy/todo.html
 or similar, depending on your distribution.
@@ -20,12 +16,12 @@ libqofsql mean that some functions need to be deprecated
 and missing symbols removed. Not a major issue because
 no extraneous dependencies are caused, AFAICT.
 
-This is part of the libgda2 mess - qof only needs to
-link against /usr/lib/libgdasql.so.3.0.0 but this is not
-exposed directly via pkgconfig. /usr/lib/libgda-2.so.3.0.0
-is linked against libgdasql so linking qof against libgda-2
+This is part of the libgda3 mess - qof only needs to
+link against /usr/lib/libgdasql-3.0.so.3.0.0 but this is not
+exposed directly via pkgconfig. /usr/lib/libgda-3.0.so.3.0.0
+is linked against libgdasql so linking qof against libgda-3.0
 allows the missing symbols (from qof/qofsql.c) to be
-resolved. Not ideal.
+resolved. Not ideal. Can be disabled using --enable-embedded.
 
 QofTime/QofDate in QSF
 

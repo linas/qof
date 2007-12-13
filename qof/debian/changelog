@@ -7,8 +7,9 @@ qof (0.7.3-1) unstable; urgency=low
   * make the sqlite backend build by default
   * Remove GFDL from debian/copyright and migrate to standards 3.7.3
   * Migrate to libgda3-3
+  * qof -- Please consider transitioning to libgda3 (Closes: #455835)
 
- -- Neil Williams <codehelp@debian.org>  Mon, 10 Dec 2007 17:29:51 +0000
+ -- Neil Williams <codehelp@debian.org>  Thu, 13 Dec 2007 23:00:11 +0000
 
 qof (0.7.2-1) unstable; urgency=low
 
