@@ -35,6 +35,11 @@
 #define QOF_MOD_SQLITE "qof-sqlite-module"
 #define ACCESS_METHOD "sqlite"
 
+/** @file  qof-sqlite.c
+	@brief Public interface of qof-backend-sqlite
+	@author Copyright 2006-2007 Neil Williams <linux@codehelp.co.uk>
+*/
+
 /** Indicates an item with high priority.  */
 #define PRIORITY_HIGH       9
 /** Indicates an item with default priority. */
@@ -43,12 +48,7 @@
 #define PRIORITY_LOW        0
 /** Indicate an error to sqlite */
 #define QSQL_ERROR          -1
-/** One KVP table per file for all instances. 
-
- \bug Table is not being created - prevents gpe-expenses
-from loading sqlite data.
-
- */
+/** One KVP table per file for all instances.  */
 #define QSQL_KVP_TABLE "sqlite_kvp"
 
 #define END_DB_VERSION " dbversion int );"
@@ -138,7 +138,10 @@ add_to_sql (gchar * sql_str, const gchar * add)
 	return sql_str;
 }
 
-/** \todo reconcile the duplication with the QSF version */
+/** \brief Map a KvpValue to a QofIdType
+
+ \todo reconcile the duplication with the QSF version
+*/
 static QofIdTypeConst
 kvp_value_to_qof_type_helper (KvpValueType n)
 {
@@ -309,7 +312,7 @@ string_to_kvp_value (const gchar * content, KvpValueType type)
 	return NULL;
 }
 
-/* returns the VALUES for INSERT in pre-defined order */
+/** returns the VALUES for INSERT in pre-defined order */
 static void
 kvpvalue_to_sql (const gchar * key, KvpValue * val, gpointer builder)
 {
@@ -440,6 +443,7 @@ create_param_list (QofParam * param, gpointer builder)
 		qb->sql_str = add_to_sql (qb->sql_str, param->param_name);
 }
 
+/** create the sql for each parameter */
 static void
 create_each_param (QofParam * param, gpointer builder)
 {
@@ -488,7 +492,7 @@ create_each_param (QofParam * param, gpointer builder)
 	}
 }
 
-/* use the new-style event handlers for insert and update 
+/** \brief use the new-style event handlers for insert and update 
 insert runs after QOF_EVENT_CREATE
 delete runs before QOF_EVENT_DESTROY
 */
@@ -540,7 +544,7 @@ delete_event (QofEntity * ent, QofEventId event_type,
 	}
 }
 
-/* receives QSQLiteBackend, passes on QsqlBuilder */
+/** receives QSQLiteBackend, passes on QsqlBuilder */
 static void
 create_event (QofEntity * ent, QofEventId event_type,
 	gpointer handler_data, gpointer event_data)
@@ -1062,7 +1066,7 @@ check_state (QofEntity * ent, gpointer builder)
 	g_free (gstr);
 }
 
-/** runs once per record 
+/** \brief chekc kvp data once per record 
 
 creates a new KvpFrame as data for a GHashTable with the guid as key
 
@@ -1120,7 +1124,7 @@ build_kvp_table (gpointer builder, gint col_num, gchar ** strings,
 	return SQLITE_OK;
 }
 
-/* only call once per book */
+/** only call once per book */
 static void
 qsql_load_kvp (QSQLiteBackend * qsql_be)
 {
@@ -1161,7 +1165,7 @@ qsql_load_kvp (QSQLiteBackend * qsql_be)
 	g_free (qb.sql_str);
 }
 
-/* receives QSQLiteBackend from QofBackend */
+/** receives QSQLiteBackend from QofBackend */
 static void
 qsql_class_foreach (QofObject * obj, gpointer data)
 {

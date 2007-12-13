@@ -2,7 +2,7 @@
  *            qof-sqlite.h
  *
  *  Sun Jan 15 12:52:58 2006
- *  Copyright  2006  Neil Williams
+ *  Copyright  2006-2007  Neil Williams
  *  linux@codehelp.co.uk
  ****************************************************************************/
 /*
@@ -18,19 +18,15 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#ifndef _QOF_SQLITE_H
-#define _QOF_SQLITE_H
-
 /** @addtogroup Backend
- @{
-*/
-/**	@addtogroup SQLite QOF-backend-SQLite outline
+    @{ */
+/** @addtogroup SQLite QOF-backend-SQLite support
 
-This is a prototype only, it is not yet fully functional. This
-backend is only to be used by embedded systems where libxml2
+The QOF SQLite backend is now mostly functional. This
+backend is designed for use by embedded systems where libxml2
 is too large - other, larger, systems will be able to use a more 
 comprehensive libgda backend that can connect with a variety
 of databases using plugins.
@@ -48,16 +44,18 @@ The KVP table name is preset and created as:
 CREATE TABLE sqlite_kvp 
 ("kvp_id int primary key not null", "guid char(32)", "path mediumtext", "type mediumtext", "value text", 
 END_DB_VERSION);
- \verbatim
+ \endverbatim
 Entity tables therefore do not contain kvp data. Although the KVP table uses
 an internal ID number, all lookups are done via the GUID of the entity.
 
- @{
-*/
+    @{ */
 /** @file  qof-sqlite.h
 	@brief Public interface of qof-backend-sqlite
 	@author Copyright 2006 Neil Williams <linux@codehelp.co.uk>
 */
+
+#ifndef _QOF_SQLITE_H
+#define _QOF_SQLITE_H
 
 /** \brief Initialises the SQLite backend. 
 
