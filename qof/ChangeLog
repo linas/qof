@@ -1,3 +1,8 @@
+2007-12-13  Neil Williams  <linux@codehelp.co.uk>
+
+	* backend/sqlite/qof-sqlite.c: (qsql_load_kvp): Create the
+	new sqlite_kvp table if not already present.
+
 2007-12-10  Neil Williams  <linux@codehelp.co.uk>
 
 	* Makefile.am: Build library before backends.

@@ -1126,17 +1126,37 @@ qsql_load_kvp (QSQLiteBackend * qsql_be)
 {
 	struct QsqlBuilder qb;
 	QofBackend *be;
+	gint sq_code;
 
 	g_return_if_fail (qsql_be);
+	sq_code = SQLITE_OK;
 	be = (QofBackend *) qsql_be;
 	qb.sql_str =
 		g_strdup_printf ("SELECT kvp_id from %s;", QSQL_KVP_TABLE);
-	if (sqlite_exec (qsql_be->sqliteh, qb.sql_str, build_kvp_table, &qb,
-			&qsql_be->err) != SQLITE_OK)
+	sq_code = sqlite_exec (qsql_be->sqliteh, qb.sql_str, build_kvp_table, 
+			&qb, &qsql_be->err);
+	/* catch older files without a sqlite_kvp table */
+	if (sq_code == SQLITE_ERROR)
+	{
+		g_free (qb.sql_str);
+		qb.sql_str =
+			g_strdup_printf ("CREATE TABLE %s (%s, %s, %s, %s, %s, %s",
+			QSQL_KVP_TABLE, "kvp_id int primary key not null",
+			"guid char(32)", "path mediumtext", "type mediumtext",
+			"value text", END_DB_VERSION);
+		PINFO (" creating kvp table. sql=%s", qb.sql_str);
+		if (sqlite_exec (qsql_be->sqliteh, qb.sql_str,
+			record_foreach, &qb, &qsql_be->err) != SQLITE_OK)
+		{
+			qsql_be->error = TRUE;
+			PERR (" unable to create kvp table:%s", qsql_be->err);
+		}
+	}
+	else if (sq_code != SQLITE_OK)
 	{
 		qof_error_set_be (be, qsql_be->err_create);
 		qsql_be->error = TRUE;
-		PERR (" error on KVP select:%s:%s", qb.sql_str, qsql_be->err);
+		PERR (" error on KVP select:%s:%s:%d", qb.sql_str, qsql_be->err, sq_code);
 	}
 	g_free (qb.sql_str);
 }
