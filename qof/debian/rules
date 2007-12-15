@@ -21,6 +21,16 @@ include /usr/share/cdbs/1/rules/debhelper.mk
 include /usr/share/cdbs/1/class/autotools.mk
 include /usr/share/cdbs/1/rules/simple-patchsys.mk
 
+ifneq ($(DEB_BUILD_GNU_TYPE),$(DEB_HOST_GNU_TYPE))
+# internal libraries need to be redirected to cross version
+DEB_MAKE_INVOKE+="QOF_LIBS=-L/usr/$(DEB_HOST_GNU_TYPE)/lib -lqof"
+# prevent CDBS overwriting CC
+DEB_CONFIGURE_SCRIPT_ENV =
+# Emdebian-specific customisation
+DEB_CONFIGURE_EXTRA_FLAGS += --disable-gdasql
+# enable dpkg-shlibdeps to find the internal libraries.
+DEB_SHLIBDEPS_INCLUDE_libqof1 = ./debian/tmp/usr/lib/
+else
 DEB_MAKE_CHECK_TARGET = check
-DEB_CONFIGURE_SCRIPT_ENV :=
-DEB_CONFIGURE_EXTRA_FLAGS += --enable-sqlite
+endif
+

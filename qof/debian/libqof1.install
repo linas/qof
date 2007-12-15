@@ -1,2 +1,2 @@
-debian/tmp/usr/lib/libqof.so.*
+debian/tmp/usr/lib/libqof[s.]*so.*
 debian/tmp/usr/share/locale/*

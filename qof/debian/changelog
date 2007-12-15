@@ -8,8 +8,10 @@ qof (0.7.3-1) unstable; urgency=low
   * Remove GFDL from debian/copyright and migrate to standards 3.7.3
   * Migrate to libgda3-3
   * qof -- Please consider transitioning to libgda3 (Closes: #455835)
+  * Add full cross build support, including regexp in .install file to
+    cover libqof1 and libqofsql (if built)
 
- -- Neil Williams <codehelp@debian.org>  Thu, 13 Dec 2007 23:00:11 +0000
+ -- Neil Williams <codehelp@debian.org>  Sat, 15 Dec 2007 20:13:31 +0000
 
 qof (0.7.2-1) unstable; urgency=low
 
