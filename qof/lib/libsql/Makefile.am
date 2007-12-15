@@ -16,6 +16,8 @@ libqofsql_la_SOURCES = \
 	sql_tree.c \
 	sql_tree.h
 
+libqofsql_la_LIBADD = ${GLIB_LIBS}
+
 qofsqlincludedir = ${pkgincludedir}
 qofsqlinclude_HEADERS = sql_parser.h
 
@@ -42,7 +44,7 @@ lexer.c: lexer.l parser.c
 sql_parse_test_SOURCES=sql_parse_test.c
 # sql_parse_test_LDFLAGS = $(LIBGDA_LIBS)
 sql_parse_test_DEPENDENCIES =
-sql_parse_test_LDADD = ./libqofsql.la @GLIB_LIBS@
+sql_parse_test_LDADD = ./libqofsql.la ${GLIB_LIBS}
 
 tests: sql_parse_test
 
