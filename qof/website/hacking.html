@@ -47,7 +47,6 @@ symbol of the same name"></div>
 </li>
 <li>Packaging QOF.
 <ul>
-<li><a href="#la">libqof-backend-qsf.la in libqof1</a></li>
 <li><a href="#libxml">libxml2 &gt;= 2.5.10</a></li>
 <li><a href="#nogtk">There is no QOF dependency on Gtk!</a></li>
 <li><a href="#noperl">There is no need for perl or intltool</a></li>
@@ -136,7 +135,7 @@ fi
 </pre>
 
 <div>For more information, see the source for Pilot-QOF,
-gpe-expenses or CashUtil which include an optional 
+gpe-expenses or CashUtil which include an optional
 method to build from QOF CVS source as well as the package.</div>
 
 <div>
@@ -151,19 +150,19 @@ http://gpe-expenses.sourceforge.net/</a></p>
 <h3 id="libqof1">libqof1 API/ABI compatibility.</h3>
 
 <div>
-<p>During the life of the QOF the 0.6.x and 0.7.x trees, 
-various functions will be deprecated and renamed - leaving a 
-#define or deprecated version to support the old name. New code 
-will be expected to use the new name and old code the deprecated 
-version. Then when all such code has been sorted out, applications 
+<p>During the life of the QOF the 0.6.x and 0.7.x trees,
+various functions will be deprecated and renamed - leaving a
+#define or deprecated version to support the old name. New code
+will be expected to use the new name and old code the deprecated
+version. Then when all such code has been sorted out, applications
 have two choices:</p>
 <ol>
 <li>Move to the new API with the library, or</li>
 <li>Integrate the #define's in a header of their own.</li>
 </ol>
 
-<p>Either way, the deprecated functions will then be removed from 
-QOF in a single operation that takes us smoothly from libqof1 to 
+<p>Either way, the deprecated functions will then be removed from
+QOF in a single operation that takes us smoothly from libqof1 to
 libqof2.</p>
 </div>
 <hr>
@@ -173,40 +172,30 @@ libqof2.</p>
 <pre>LIBQOF_REQUIRED_MIN=0.5.2
 LIBQOF_REQUIRED_MAX=0.5.2</pre>
 
-<p>The MAX value is no longer required. QOF will only change the 
-API/ABI on a SONAME increment. So each release of libqof1 will 
-always be API/ABI compatible with previous releases of libqof1. 
-It is recommended to only specify a minimum and accept any later 
+<p>The MAX value is no longer required. QOF will only change the
+API/ABI on a SONAME increment. So each release of libqof1 will
+always be API/ABI compatible with previous releases of libqof1.
+It is recommended to only specify a minimum and accept any later
 version of QOF.</p>
 </div>
 <hr>
 <h3 id="dwi">DWI has stalled</h3>
 <h4>Updated for QOF 0.7.2</h4>
 <div>
-<p>DWI - Data With Interaction - was in development 
+<p>DWI - Data With Interaction - was in development
 but it's SourceForge project has seen little recent
 activity and is now out of date with the main QOF library.</p>
 
-<p>DWI development has stalled and it has not been tested 
+<p>DWI development has stalled and it has not been tested
 against libqof1. QOF configuration checks for DWI have been
-removed in QOF 0.7.2 and there is unlikely to be any DWI 
+removed in QOF 0.7.2 and there is unlikely to be any DWI
 support in libqof2.</p>
 
-<p>If you decide to try using DWI against libqof1, please report 
+<p>If you decide to try using DWI against libqof1, please report
 your results (good or bad) to the QOF-devel mailing list.</p>
 
 <p><a href="http://lists.sourceforge.net/lists/listinfo/qof-devel">
 http://lists.sourceforge.net/lists/listinfo/qof-devel</a></p>
-</div>
-<hr>
-
-<h3 id="libgda">libgda versions</h3>
-<div>
-<p>libda-3.3 is now in Debian. QOF only uses the SQL handling
-code from libgda at this time - until the GDA backend is reviewed. This SQL
-handling code was copied out of libgda at an earlier release and is built by
-QOF internally if libgda is not found.
-See also <a href="#libsql">libsql in QOF</a>.</p>
 </div>
 
 <hr>
@@ -225,35 +214,30 @@ export ACLOCAL_FLAGS="-I /sw/share/aclocal"
 <pre>export MANPATH="/sw/share/man:&lt;build_path&gt;"
 export PAGER="less -s"
 </pre>
-<p>To only use these for this one build, create a bash script and 
+<p>To only use these for this one build, create a bash script and
 export the variables before calling ./autogen.sh</p>
-<p>QOF is no longer routinely built on OSX. If you encounter 
-problems, post the '<code>config.h</code>' file from the top 
+<p>QOF is no longer routinely built on OSX. If you encounter
+problems, post the '<code>config.h</code>' file from the top
 directory of your build to the QOF-devel mailing list.<p>
 </div>
 <hr>
 <h2>PACKAGING QOF</h2>
 
-<h3 id="la">libqof-backend-qsf.la in libqof1</h3>
-<div>
-<h4>Updated</h4>
-<p>See the section on <a href="#backend">backends</a>.</p>
-</div>
 <hr>
 <h3 id="libxml">libxml2 &gt;= 2.5.10</h3>
 
-<p>The version string is vital. (Earlier versions will break the QSF 
+<p>The version string is vital. (Earlier versions will break the QSF
 backend horribly.)</p>
 
 <hr>
 <h3 id="nogtk">There is no QOF dependency on Gtk!</h3>
 <div>
-<p>Do <b>not</b> list a QOF runtime or build dependency on libgtk. 
+<p>Do <b>not</b> list a QOF runtime or build dependency on libgtk.
 The one example that could use Gtk has now been <b>removed</b> from
 the distribution tarball along with the other (outdated) examples.
 </p>
-<p>That's all there ever was to the Gtk stuff. It's important 
-because projects like pilot-link will not accept code that links 
+<p>That's all there ever was to the Gtk stuff. It's important
+because projects like pilot-link will not accept code that links
 to GUI stuff for no good reason.</p>
 </div>
 
@@ -261,7 +245,7 @@ to GUI stuff for no good reason.</p>
 <h3 id="noperl">There is no need for perl or intltool</h3>
 <div>
 <p>The <tt>libxml-parser-perl</tt> build dependency has been removed
-by migrating from <tt>glib-gettextize</tt> to <tt>gettextize</tt>. 
+by migrating from <tt>glib-gettextize</tt> to <tt>gettextize</tt>.
 All <tt>intltool-*</tt> scripts are removed by running <tt>./autogen.sh</tt>.
 </p>
 </div>
@@ -270,8 +254,8 @@ All <tt>intltool-*</tt> scripts are removed by running <tt>./autogen.sh</tt>.
 <h3 id="backend">Which backend to use?</h3>
 <div>
 <p>QSF XML has always been a separate module, the new SQLite
-backend is also a separate module. When packaging QOF &gt;=0.7.1, 
-maintainers have the option to use one or both backends (QOF requires 
+backend is also a separate module. When packaging QOF &gt;=0.7.1,
+maintainers have the option to use one or both backends (QOF requires
 at least one backend to be available).
 </p>
 <ul><li><b>libqof-backend-qsf0</b> : Default XML backend for most
@@ -283,19 +267,40 @@ available storage space.</li>
 own backends for use via QOF.</li>
 <li><b>Future backends</b> : GnomeDB support is expected for a
 future QOF release. This will add a further module which in turn
-allow for other plugins for libgda itself. (See the notes on <a 
+allow for other plugins for libgda itself. (See the notes on <a
 href="index.html#libgda">libgda module delays</a>.)</li>
 </ul>
 <p>QOF can be packaged separately from the modules but care is needed
 to ensure that existing applications can locate and load the necessary
 backend. Applications that cannot load the necessary backend will
 typically fail to start or be unable to load or save data.</p>
-<p>At present, only <a href="http://pilot-qof.sourceforge.net/">pilot-qof</a> 
+<p>At present, only <a href="http://pilot-qof.sourceforge.net/">pilot-qof</a>
 and <a href="http://gpe-expenses.sourceforge.net/">gpe-expenses</a>
 support all available QOF backends. In most cases, it is wise to ensure that
 at least <b>libqof-backend-qsf0</b> is available for all existing QOF
 applications. New applications and new versions of existing applications
 can be configured to load new and additional backends.</p>
+</div>
+<hr/>
+
+<h3 id="gda">libgda versions</h3>
+<div>
+<p><tt>libda-3.3</tt> is now in Debian. QOF only uses the SQL handling
+code from libgda at this time - until the GDA backend is reviewed. This SQL
+handling code was copied out of libgda at an earlier release and is built by
+QOF internally if libgda is either not found or is disabled. libgda can be
+explicitly disabled using the <tt>--disable-libgdasql</tt> flag to ./configure.
+See also <a href="#libsql">libsql in QOF</a>.</p>
+<p>If you choose to disable libgdasql from libgda3-3, ensure that the internal
+<tt>lib/libsql/libqofsql.so</tt> library is available in the packages. For example, in
+Debian, this is done using the regular expression: <tt>usr/lib/libqof[s.]*so.*</tt>
+This ensures that whether libgdasql is used or not, the libqof1 package contains
+libqof.so.* and libqofsql.so.* (if built) without including the libqof-backend* modules
+into the main package (which would lose the benefits of smaller dependencies).
+</p>
+<p>Disabling libgdasql removes the libgda3-3 dependency from libqof1 and allows
+the installation of libqof1 and libqof-backend-sqlite0 without requiring libxml2.
+</p>
 </div>
 
 <hr>
@@ -314,6 +319,19 @@ packaged separately:</p>
 QSF XML should be the default for all systems that can support libxml2
 because the sqlite backend is not yet comprehensive. Full support is
 due in the next backend module based on GnomeDB (via libgda).</p>
+<p>To get the full benefits of using the sqlite backend instead of qsf, ensure
+that you use <tt>--disable-gdasql</tt> so that libqof1 does not depend on libgda3-3
+and therefore libxml2.</p>
+</div>
+
+<h3 id="libsql">Replacement of lib/libsql</h3>
+<div>
+<p>The code in lib/libsql came from the libgda package
+at about v1.0.3 and is now commonly available, including
+on Mac OSX via fink - albeit at only v1.0.4-3.</p>
+<p>This code is used if libgda3-3 is not available or
+disabled when either <tt>--disable-gdasql</tt> or
+<tt>--enable-embedded</tt> option is given to <tt>./configure</tt></p>
 </div>
 
 <hr>
@@ -323,26 +341,16 @@ due in the next backend module based on GnomeDB (via libgda).</p>
 <pre>#include "qof.h"</pre>
 <p>or</p>
 <pre>#include &lt;qof.h&gt;</pre>
-<p>- this is because some headers in libqof-dev need to be included 
-in the correct sequence. Individual filenames and file contents 
-are also subject to change during the life of libqof1 and packages 
+<p>- this is because some headers in libqof-dev need to be included
+in the correct sequence. Individual filenames and file contents
+are also subject to change during the life of libqof1 and packages
 using QOF need to only use qof.h to avoid problems moving to libqof2.</p>
 </div>
 <hr>
 
-<h3 id="libsql">Replacement of lib/libsql</h3>
-<div>
-<p>The code in lib/libsql came from the libgda package
-at about v1.0.3 and is now commonly available, including
-on Mac OSX via fink - albeit at only v1.0.4-3.</p>
-<p>This code is used if libgda3-3 is not available or
-the <tt>--enable-embedded</tt> option is given to
-<tt>./configure</tt></p>
-</div>
-
 <h3 id="roadmap">Roadmap</h3>
 <div>
-<p>Outline plan of the next few releases. All items are subject to 
+<p>Outline plan of the next few releases. All items are subject to
 change, but this is how it looks so far.</p>
 <p>Note that the schedule for libqof2 has been postponed - the use of
 QOF in embedded systems is expected to prove useful in reorganising libqof1
@@ -380,7 +388,7 @@ libqof2 will proceed without GLib Gobject mapping.</p>
 
 <h3 id="docs">Packaging documentation</h3>
 <div>
-The <i>doxy</i> symlink in the website directory is provided for CVS users and 
+The <i>doxy</i> symlink in the website directory is provided for CVS users and
 the main SourceForge site. When packaging the website HTML alongside
 the Doxygen output, ignore the symlink and just package the Doxygen output:
 
@@ -393,7 +401,7 @@ and the website content:
 <li><code>website/*.css</code> <b>=&gt;</b> <code>/usr/share/doc/libqof-doc/html/</code></li>
 <li><code>website/*.png</code> <b>=&gt;</b> <code>/usr/share/doc/libqof-doc/html/</code></li>
 <li><code>website/*.jpg</code> <b>=&gt;</b> <code>/usr/share/doc/libqof-doc/html/</code></li>
-ul>
+<ul>
 
 </div>
 
@@ -409,9 +417,9 @@ ul>
 <p>Copyright &copy; 2005,2006 Neil Williams</p>
 <p>Permission is granted to copy, distribute, and/or modify this document under
 the terms of the GNU Free Documentation License, Version 1.2 or any later
-version published by the Free Software Foundation; with no Invariant Sections, 
-with no Front-Cover Texts, and with no Back-Cover Texts. 
-In installed versions, the licence can be found in the 
+version published by the Free Software Foundation; with no Invariant Sections,
+with no Front-Cover Texts, and with no Back-Cover Texts.
+In installed versions, the licence can be found in the
 <a href="../copyright">copyright</a> file.</p>
 </div>
 </body>
