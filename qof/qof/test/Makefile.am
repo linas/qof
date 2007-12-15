@@ -16,10 +16,10 @@ LDADD = \
 else
 LDADD = \
    ${top_builddir}/qof/libqof.la \
-   ${top_builddir}/lib/libsql/libqofsql.la \
    ${GLIB_LIBS} \
    ${GMODULE_LIBS} \
-   ${GOBJECT_LIBS}
+   ${GOBJECT_LIBS} \
+   ${SQL_PKG_LIB}
 endif
 
 #   ${LIBXML2_LIBS} 

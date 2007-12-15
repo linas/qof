@@ -2,7 +2,8 @@ SUBDIRS = . test
 
 lib_LTLIBRARIES = libqof.la
 
-libqof_la_LDFLAGS= -version-info $(LIBQOF_LIBRARY_VERSION)
+libqof_la_LDFLAGS= -version-info $(LIBQOF_LIBRARY_VERSION) \
+  -L${top_srcdir}/lib/libsql
 
 libqof_la_SOURCES =  \
    qoflog.c \
@@ -109,12 +110,9 @@ libqof_la_LIBADD = \
   ${GOBJECT_LIBS} \
   ${GLIB_LIBS} \
   ${GDA_PKG_LIB} \
+  ${SQL_PKG_LIB} \
   -lm
 
-#-lgdasql -lm
-
-#   -lm
-#  ${LIBGDA_LIBS} 
 
 EXTRA_DIST = \
   qofla-dir.h.in \
