@@ -71,6 +71,7 @@
     @brief QOF entity type identification system 
     @author Copyright (C) 2000 Dave Peticolas <peticola@cs.ucdavis.edu> 
     @author Copyright (C) 2003 Linas Vepstas <linas@linas.org>
+	@author Copyright (C) 2006-2007 Neil Williams <linux@codehelp.co.uk>
 */
 
 #include <string.h>

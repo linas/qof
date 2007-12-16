@@ -1,5 +1,9 @@
 /********************************************************************\
  * qof.h -- Master QOF public include file                          *
+ *                                                                  *
+ * Copyright (c) 2000,2001,2004 Linas Vepstas <linas@linas.org>     *
+ * Copyright (c) 2005-2007 Neil Williams <linux@codehelp.co.uk>     *
+ *                                                                  *
  * This program is free software; you can redistribute it and/or    *
  * modify it under the terms of the GNU General Public License as   *
  * published by the Free Software Foundation; either version 2 of   *
