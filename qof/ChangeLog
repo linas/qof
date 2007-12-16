@@ -1,3 +1,16 @@
+2007-12-15  Neil Williams  <linux@codehelp.co.uk>
+
+	* configure.in : Remove need for perl. Add the
+	--disable-gdasql configure option and tie it into
+	--enable-embedded.
+	* lib/libsql/Makefile.am : Ensure libqofsql is linked
+	against libglib2.0-0
+	* qof/Makefile.am,
+	qof/test/Makefile.am : Rationalise the SQL_PKG_LIB 
+	support in libqof1 and the test suite.
+	* website/hacking.html : Update hacking advice for
+	0.7.3 changes.
+
 2007-12-13  Neil Williams  <linux@codehelp.co.uk>
 
 	* backend/sqlite/qof-sqlite.c: (qsql_load_kvp): Create the
