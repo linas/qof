@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: qof 0.7.2\n"
 "Report-Msgid-Bugs-To: qof-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2007-11-15 20:20+0000\n"
+"POT-Creation-Date: 2007-12-13 23:48+0000\n"
 "PO-Revision-Date: 2006-09-29 23:15-0300\n"
 "Last-Translator: J. Victor D. Martins <jvdm@sdf.lonestar.org>\n"
 "Language-Team: Brazilian Portuguese <ldp-br@bazar.conectiva.com.br>\n"
@@ -204,7 +204,7 @@ msgstr ""
 "inválidos. O arquivo não pode ser processado - por favor verifique a origem "
 "do arquivo e tente novamente."
 
-#: backend/sqlite/qof-sqlite.c:1224
+#: backend/sqlite/qof-sqlite.c:1253
 #, c-format
 msgid ""
 "Unable to open the output file '%s' - do you have permission to create this "
@@ -213,28 +213,28 @@ msgstr ""
 "Impossível abrir o arquivo de saída '%s' - você tem permissão para criar "
 "este arquivo?"
 
-#: backend/sqlite/qof-sqlite.c:1272
+#: backend/sqlite/qof-sqlite.c:1301
 #, c-format
 msgid "Unable to open the sqlite database '%s'."
 msgstr "Impossível abrir o banco-de-dados sqlite '%s'."
 
-#: backend/sqlite/qof-sqlite.c:1296
+#: backend/sqlite/qof-sqlite.c:1325
 msgid "Please provide a filename for sqlite."
 msgstr "Por favor apresente um nome de arquivo para o sqlite."
 
-#: backend/sqlite/qof-sqlite.c:1433
+#: backend/sqlite/qof-sqlite.c:1462
 msgid "Unable to delete record."
 msgstr "Impossível apagar o registro."
 
-#: backend/sqlite/qof-sqlite.c:1435
+#: backend/sqlite/qof-sqlite.c:1464
 msgid "Unable to create record."
 msgstr "Impossível criar o registro."
 
-#: backend/sqlite/qof-sqlite.c:1437
+#: backend/sqlite/qof-sqlite.c:1466
 msgid "Unable to insert a new record."
 msgstr "Impossível inserir um novo registro."
 
-#: backend/sqlite/qof-sqlite.c:1439
+#: backend/sqlite/qof-sqlite.c:1468
 msgid "Unable to update existing record."
 msgstr "Impossível atualizar o registro atual."
 

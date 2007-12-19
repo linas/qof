@@ -1,12 +1,12 @@
 # Vietnamese translation for QOF.
 # Copyright © 2006 Free Software Foundation, Inc.
 # Clytie Siddall <clytie@riverland.net.au>, 2006.
-# 
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: qof 0.7.2\n"
 "Report-Msgid-Bugs-To: qof-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2007-11-15 20:20+0000\n"
+"POT-Creation-Date: 2007-12-13 23:48+0000\n"
 "PO-Revision-Date: 2006-09-30 22:14+0930\n"
 "Last-Translator: Clytie Siddall <clytie@riverland.net.au>\n"
 "Language-Team: Vietnamese <vi-VN@googlegroups.com>\n"
@@ -179,8 +179,8 @@ msgid ""
 "Could not write to '%s'. Check that you have permission to write to this "
 "file and that there is sufficient space to create it."
 msgstr ""
-"Không thể ghi vào « %s ». Hãy kiểm tra bạn có quyền ghi vào tập tin này, "
-"cũng có đủ sức chứa rảnh để tạo nó."
+"Không thể ghi vào « %s ». Hãy kiểm tra bạn có quyền ghi vào tập tin này, cũng "
+"có đủ sức chứa rảnh để tạo nó."
 
 #: backend/file/qsf-backend.c:1471
 #, c-format
@@ -202,35 +202,35 @@ msgstr ""
 "» (collect) không hợp lệ. Như thế thì không thể xử lý tập tin này — hãy kiểm "
 "tra nguồn tập tin rồi thử lại."
 
-#: backend/sqlite/qof-sqlite.c:1224
+#: backend/sqlite/qof-sqlite.c:1253
 #, c-format
 msgid ""
 "Unable to open the output file '%s' - do you have permission to create this "
 "file?"
 msgstr "Không thể mở tập tin xuất « %s » — bạn có quyền tạo tập tin này không?"
 
-#: backend/sqlite/qof-sqlite.c:1272
+#: backend/sqlite/qof-sqlite.c:1301
 #, c-format
 msgid "Unable to open the sqlite database '%s'."
 msgstr "Không thể mở co sở dữ liệu SQLite « %s »."
 
-#: backend/sqlite/qof-sqlite.c:1296
+#: backend/sqlite/qof-sqlite.c:1325
 msgid "Please provide a filename for sqlite."
 msgstr "Hãy cung cấp tên tập tin cho SQLite."
 
-#: backend/sqlite/qof-sqlite.c:1433
+#: backend/sqlite/qof-sqlite.c:1462
 msgid "Unable to delete record."
 msgstr "Không thể xoá bỏ mục ghi."
 
-#: backend/sqlite/qof-sqlite.c:1435
+#: backend/sqlite/qof-sqlite.c:1464
 msgid "Unable to create record."
 msgstr "Không thể tạo mục ghi."
 
-#: backend/sqlite/qof-sqlite.c:1437
+#: backend/sqlite/qof-sqlite.c:1466
 msgid "Unable to insert a new record."
 msgstr "Không thể chèn mục ghi mới."
 
-#: backend/sqlite/qof-sqlite.c:1439
+#: backend/sqlite/qof-sqlite.c:1468
 msgid "Unable to update existing record."
 msgstr "Không thể cập nhật mục ghi đã có."
 
@@ -258,5 +258,5 @@ msgid ""
 "The SQLite database '%s' contains invalid data in a field that is meant to "
 "hold a number."
 msgstr ""
-"Tràn khi chuyển đổi chuỗi SQLite sang số. Cơ sở dữ liệu SQLite « %s » chứa "
-"dữ liệu không hợp lệ trong trường nên chứa số."
+"Tràn khi chuyển đổi chuỗi SQLite sang số. Cơ sở dữ liệu SQLite « %s » chứa dữ "
+"liệu không hợp lệ trong trường nên chứa số."
