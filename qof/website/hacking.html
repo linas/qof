@@ -42,6 +42,7 @@ symbol of the same name"></div>
 <li><a href="#libqof1">libqof1 API/ABI compatibility</a>.</li>
 <li><a href="#required">MAX_REQUIRED specifiers</a></li>
 <li><a href="#dwi">DWI now unsupported.</a></li>
+<li><a href="#datetime">Date and time changes</a></li>
 <li><a href="#gda">libgda versions.</a></li>
 </ul>
 </li>
@@ -196,6 +197,41 @@ your results (good or bad) to the QOF-devel mailing list.</p>
 
 <p><a href="http://lists.sourceforge.net/lists/listinfo/qof-devel">
 http://lists.sourceforge.net/lists/listinfo/qof-devel</a></p>
+</div>
+
+<hr/>
+<h3 id="datetime">Date and Time changes</h3>
+<div>
+<p>The date and time handlers have been overhauled and
+there are large changes. Timespec has been deprecated
+and replaced by QofTime which is an opaque type. QofTime
+has completely replaced the previous code and includes
+handlers to avoid pitfalls of incompatible date/time format
+conversions. QofTime only handles times in seconds.
+All date handling is done exclusively in a new type, QofDate,
+an extended version of struct tm. Applications using QOF
+should now use QofTime to replace time_t and QofDate to
+replace struct tm. Functions like localtime, gmtime, mktime
+and time can be used externally - subject to the more limited
+range of values supported in each case.</p>
+<p>QOF_TYPE_DATE is now deprecated, to be replaced by
+QOF_TYPE_TIME. This is the first change in the QofObject
+API in libqof1 and requires significant changes within
+all QOF objects to be supported by libqof2. libqof2 will
+therefore use a incremented QOF_OBJECT_VERSION. libqof1
+retains the existing version, using QOF_TYPE_TIME as an
+optional extra. Packages using QOF_TYPE_TIME need to depend
+on QOF &gt;= 0.7.0</p>
+<p>QofTime is opaque, firstly, to implement strict validity
+checking and secondly to ensure consistent handling
+within objects. QofTime and QofDate now support all
+times and dates within a couple of dozen times the age of
+the universe by using 64bit values wherever necessary.</p>
+<p>0.7.0 introduced strftime and strptime extended code
+based on the Debian coreutils package (specifically the 'date'
+command) and the glibc source code, providing support for
+nanosecond formats and the full range of QofTime and QofDate.</p>
+
 </div>
 
 <hr>

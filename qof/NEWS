@@ -1,3 +1,34 @@
+December 2007 : Migrate to libgda3-3.
+	Create the new sqlite_kvp table if not already present.
+	Build library before backends.
+	Remove Requires.private from pkg-config data as
+	libxml2 is no longer needed, even for static. The
+	XML backend is a GModule.
+	Ensure libqofsql is linked against libglib2.0-0
+	and libqof1 linked against libqofsql (when built).
+	Remove need for perl. Add the --disable-gdasql configure
+	option and tie it into --enable-embedded.
+	0.7.3 release.
+
+November 2007 : Make the sqlite backend build
+	by default. Tidy up the embedded option to drop
+	libgda and use internal SQL parsing.
+	Remove intltool and glib-gettextize
+	in favour of plain gettext.
+
+September 2007 : SQlite backend fixes.
+	Improve memory efficiency when preparing the SQL strings.
+	KVP support in SQLite backend.
+
+June 2007 : Migrated deprecated edit and commit macros and
+	functions to parameter edit and parameter commit - i.e.
+	each parameter of each object is committed upon change instead
+	of waiting to commit the entire instance. This can increase
+	backend workload, depending on how the parameters are set
+	and updated.
+	Removed ALL_LINGUAS in preference for po/LINGUAS to remove
+	the need to edit configure.ac for translation additions.
+
 December  2006: Bug fixes
 	Removed some build macros that complicated
 	cross-building. Improved speed of sqlite
@@ -29,9 +60,9 @@ September 2006: Extensible error handling.
 	messages that are as detailed, relevant and helpful as possible.
 	Programming output should still be logged with QofLog.
 
-August 2006: The SQLite backend for embedded systems 
+August 2006: The SQLite backend for embedded systems
 	is now working.
-	The gnc-numeric to QofNumeric transition is 
+	The gnc-numeric to QofNumeric transition is
 	complete.
 	Other bugfixes in 0.7.1 :
 	QofDate and QofTime fixes to avoid using GDate except in explicit
@@ -65,20 +96,20 @@ April 2006:
 	be written out using a different locale.
 	Improved map handling.
 	Replace gnc-engine-util with qofutil.
-	Move the function versions of the begin_edit 
-	and commit_edit routines to the new Utilities 
-	file alongside the macro versions from 
+	Move the function versions of the begin_edit
+	and commit_edit routines to the new Utilities
+	file alongside the macro versions from
 	qof-be-utils.h
 
-March 2006: Support iteration over incoming QSF objects 
+March 2006: Support iteration over incoming QSF objects
 	inside map operations.
 	Skip unregistered objects when processing maps.
-	Correct map handling to allow reverse operations and 
-	iteration over hierarchical objects. Improving debug 
-	messages and preventing a crash when loading a map 
+	Correct map handling to allow reverse operations and
+	iteration over hierarchical objects. Improving debug
+	messages and preventing a crash when loading a map
 	directly.
-	David Hampton's patches to allow users to skip 
-	deprecated code in libqof1 and to remove use of 
+	David Hampton's patches to allow users to skip
+	deprecated code in libqof1 and to remove use of
 	config.h in a header.
 	qof_book_merge replaced with qofbookmerge, structures
 	and functions renamed according to libqof2 convention.
@@ -91,11 +122,11 @@ February 2006: Replaced gnc-event.* with qofevent files,
 	references and new files: qofreference.c|.h
 	Add error handler for files that cannot be opened.
 	Derek Atkin's patch to improve error handler removal.
-	Deprecating qof_log_set_level_global due to 
+	Deprecating qof_log_set_level_global due to
 	misleading name.
 	Derek Atkin's fixes for reciprocal numeric handling.
 
-January 2006: Backend loader now less reliant on .la 
+January 2006: Backend loader now less reliant on .la
 	files - still recommended. Added deprecated.c to
 	preserve deprecated function names into the binary.
 
@@ -107,7 +138,7 @@ November 2005: Preparing 0.6.1 - 64bit patch for qofgobj.c,
 October 2005: Preparing for libqof1 final release and outlining
     how QOF will change in the future.
 
-May 2005 : Tidying up calls to create a usable distribution 
+May 2005 : Tidying up calls to create a usable distribution
      for packaging.
 
 March 2005 : Partial book support to make import/export
@@ -121,7 +152,7 @@ August 2004 : add support for merging QofBook structures with
 April 2004 : make the documentation look much nicer by using doxygen
      markup correctly.
 
-June 27 2003 : rename many files and functions to use qof prefix, and 
+June 27 2003 : rename many files and functions to use qof prefix, and
      to use a gnome style naming convention.
 
 June 16 2003 : Initial split-off from gnucash
