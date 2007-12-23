@@ -1,3 +1,9 @@
+2007-12-23  Neil Williams  <linux@codehelp.co.uk>
+
+	* qof/qofquery.c: (qof_query_init): Ensure that
+	qof_date_init is called even if only queries are
+	initialised. Fix for Gnotime.
+
 2007-12-15  Neil Williams  <linux@codehelp.co.uk>
 
 	* configure.in : Remove need for perl. Add the
