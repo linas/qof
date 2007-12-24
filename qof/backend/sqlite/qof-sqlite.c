@@ -104,7 +104,7 @@ typedef struct
 /** \brief QOF SQLite context
 
 Used to correlate the sqlite data with the
-live data. Contains mainly transient data 
+live data. Contains mainly transient data
 for the current entity or the current operation.
 */
 struct QsqlBuilder
@@ -340,7 +340,7 @@ kvpvalue_to_sql (const gchar * key, KvpValue * val, gpointer builder)
 	case KVP_TYPE_TIMESPEC:
 #endif
 		{
-			/* ("kvp_id int primary key not null", "guid char(32)", "path mediumtext", 
+			/* ("kvp_id int primary key not null", "guid char(32)", "path mediumtext",
 			   "type mediumtext", "value text", */
 
 			qb->sql_str =
@@ -401,7 +401,7 @@ string_param_to_sql (QofParam * param)
 		return g_strdup_printf (" %s datetime", param->param_name);
 	if (0 == safe_strcmp (param->param_type, QOF_TYPE_CHAR))
 		return g_strdup_printf (" %s char(1)", param->param_name);
-	/* kvp data is stored separately - actually this is really  
+	/* kvp data is stored separately - actually this is really
 	   a no-op because entities do not need a param_setfcn for kvp data. */
 	if (0 == safe_strcmp (param->param_type, QOF_TYPE_KVP))
 		return g_strdup ("");
@@ -425,7 +425,7 @@ create_param_list (QofParam * param, gpointer builder)
 	/* avoid creating database fields for calculated values */
 	if (!param->param_setfcn)
 		return;
-	/* avoid setting KVP even if a param_setfcn has been set 
+	/* avoid setting KVP even if a param_setfcn has been set
 	   because a QofSetterFunc for KVP is quite pointless. */
 	if (0 == safe_strcmp (param->param_type, QOF_TYPE_KVP))
 	{
@@ -455,7 +455,7 @@ create_each_param (QofParam * param, gpointer builder)
 	/* avoid creating database fields for calculated values */
 	if (!param->param_setfcn)
 		return;
-	/* avoid setting KVP even if a param_setfcn has been set 
+	/* avoid setting KVP even if a param_setfcn has been set
 	   because a QofSetterFunc for KVP is quite pointless. */
 	if (0 == safe_strcmp (param->param_type, QOF_TYPE_KVP))
 		return;
@@ -492,7 +492,7 @@ create_each_param (QofParam * param, gpointer builder)
 	}
 }
 
-/** \brief use the new-style event handlers for insert and update 
+/** \brief use the new-style event handlers for insert and update
 insert runs after QOF_EVENT_CREATE
 delete runs before QOF_EVENT_DESTROY
 */
@@ -763,7 +763,6 @@ string_param_foreach (QofParam * param, gpointer builder)
 
 	qb = (struct QsqlBuilder *) builder;
 	qsql_be = qb->qsql_be;
-	/** \bug how to handle kvp ? */
 	if (0 == safe_strcmp (param->param_type, QOF_TYPE_KVP))
 		return;
 	p_str = string_param_to_sql (param);
@@ -1007,7 +1006,7 @@ check_state (QofEntity * ent, gpointer builder)
 	qb->qsql_be = qsql_be;
 	/* update each dirty instance */
 	/* Make a GList of dirty instances
-	   Don't update during a SELECT, 
+	   Don't update during a SELECT,
 	   UPDATE will fail with DB_LOCKED */
 	if (sqlite_exec (qsql_be->sqliteh, qb->sql_str,
 			create_dirty_list, qb, &qsql_be->err) != SQLITE_OK)
@@ -1066,7 +1065,7 @@ check_state (QofEntity * ent, gpointer builder)
 	g_free (gstr);
 }
 
-/** \brief chekc kvp data once per record 
+/** \brief chekc kvp data once per record
 
 creates a new KvpFrame as data for a GHashTable with the guid as key
 
@@ -1137,7 +1136,7 @@ qsql_load_kvp (QSQLiteBackend * qsql_be)
 	be = (QofBackend *) qsql_be;
 	qb.sql_str =
 		g_strdup_printf ("SELECT kvp_id from %s;", QSQL_KVP_TABLE);
-	sq_code = sqlite_exec (qsql_be->sqliteh, qb.sql_str, build_kvp_table, 
+	sq_code = sqlite_exec (qsql_be->sqliteh, qb.sql_str, build_kvp_table,
 			&qb, &qsql_be->err);
 	/* catch older files without a sqlite_kvp table */
 	if (sq_code == SQLITE_ERROR)
@@ -1439,8 +1438,8 @@ able to locate the QSQLiteBackend. Functions started from the
 QofBackend routines or from the event handlers will be passed the
 QofBackend which can be cast to QSQLiteBackend. Internal functions
 create a local QsqlBuilder struct and set the QSQLiteBackend pointer
-before passing a pointer to the QsqlBuilder. Use the qsql_ prefix 
-only for functions that are started from QofBackend 
+before passing a pointer to the QsqlBuilder. Use the qsql_ prefix
+only for functions that are started from QofBackend
 and the _event suffix for QofEvent.
 
 */
