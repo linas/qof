@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: qof 0.7.0\n"
 "Report-Msgid-Bugs-To: qof-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2007-12-13 23:48+0000\n"
+"POT-Creation-Date: 2007-12-24 20:37+0000\n"
 "PO-Revision-Date: 2006-07-25 12:00-0500\n"
 "Last-Translator: Laurentiu Buzdugan <lbuz@rolix.org>\n"
 "Language-Team: Romanian <translation-team-ro@lists.sourceforge.net>\n"
@@ -175,6 +175,73 @@ msgid ""
 "The selected QSF object file '%s' contains one or more invalid 'collect' "
 "values. The file cannot be processed - please check the source of the file "
 "and try again."
+msgstr ""
+
+#: backend/gda/qof-gda.c:220
+msgid "GDA: Missing data source name."
+msgstr ""
+
+#: backend/gda/qof-gda.c:230
+#, c-format
+msgid "GDA Provider '%s' could not be found"
+msgstr ""
+
+#: backend/gda/qof-gda.c:273
+msgid "GDA: No data source path specified."
+msgstr ""
+
+#: backend/gda/qof-gda.c:290
+msgid "GDA: Unable to locate your home directory."
+msgstr ""
+
+#: backend/gda/qof-gda.c:301
+msgid "GDA: Unable to create a .libgda directory within your home directory."
+msgstr ""
+
+#: backend/gda/qof-gda.c:325
+#, c-format
+msgid ""
+"GDA: No data source found at '%s' - Try loading data from another file and "
+"write to gda: again to create the GDA data source."
+msgstr ""
+
+#: backend/gda/qof-gda.c:374
+#, c-format
+msgid "Failed to connect to '%s'."
+msgstr ""
+
+#: backend/gda/qof-gda.c:534
+msgid "Name of the database to use."
+msgstr ""
+
+#: backend/gda/qof-gda.c:536
+msgid "Override the default database name with a name of your own choice."
+msgstr ""
+
+#: backend/gda/qof-gda.c:545
+msgid "The username to use to access this data source."
+msgstr ""
+
+#: backend/gda/qof-gda.c:547
+msgid ""
+"The username specified in the configuration of this data source that "
+"provides write access to the data."
+msgstr ""
+
+#: backend/gda/qof-gda.c:556
+msgid "Password to use with the username."
+msgstr ""
+
+#: backend/gda/qof-gda.c:558
+msgid "The password that is to be used with the specified username."
+msgstr ""
+
+#: backend/gda/qof-gda.c:567
+msgid "Name of this data source."
+msgstr ""
+
+#: backend/gda/qof-gda.c:569
+msgid "The name of this data source as specified in the GDA configuration."
 msgstr ""
 
 #: backend/sqlite/qof-sqlite.c:1253
