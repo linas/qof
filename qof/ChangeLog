@@ -3,6 +3,13 @@
 	* qof/qofquery.c: (qof_query_init): Ensure that
 	qof_date_init is called even if only queries are
 	initialised. Fix for Gnotime.
+	* configure.in : Allow gdabackend but not as a default.
+	* qof.pc.in : New pkgconfig file for libqof2.
+	* backend/Makefile.am,
+	backend/gda/Makefile.am,
+	backend/gda/qof-gda.c,
+	backend/gda/qof-gda.h : Begin the transition to
+	libgda3-3.
 
 2007-12-15  Neil Williams  <linux@codehelp.co.uk>
 

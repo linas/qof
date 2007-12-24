@@ -21,8 +21,8 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
  
-#ifndef _QOF-GDA_H
-#define _QOF-GDA_H
+#ifndef _QOF_GDA_H
+#define _QOF_GDA_H
 
 /** @addtogroup Backend
 @{
@@ -145,4 +145,4 @@ and therefore no strings that are translatable.
 
 void qof_gda_provider_init(void);
 
-#endif /* _QOF-GDA_H */
+#endif /* _QOF_GDA_H */
