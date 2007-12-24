@@ -1,3 +1,11 @@
+2007-12-24  Neil Williams  <linux@codehelp.co.uk>
+
+	* configure.in,
+	backend/gda/Makefile.am,
+	backend/gda/qof-gda.c,
+	backend/gda/qof-gda.h : Migrate prototype GDA backend
+	to libgda3-3 - not working yet.
+
 2007-12-23  Neil Williams  <linux@codehelp.co.uk>
 
 	* qof/qofquery.c: (qof_query_init): Ensure that
@@ -19,7 +27,7 @@
 	* lib/libsql/Makefile.am : Ensure libqofsql is linked
 	against libglib2.0-0
 	* qof/Makefile.am,
-	qof/test/Makefile.am : Rationalise the SQL_PKG_LIB 
+	qof/test/Makefile.am : Rationalise the SQL_PKG_LIB
 	support in libqof1 and the test suite.
 	* website/hacking.html : Update hacking advice for
 	0.7.3 changes.

@@ -15,6 +15,7 @@ libqof_backend_gda_la_LDFLAGS = \
  -version-info $(LIBQOF_BACKEND_QGDA_VERSION)
 
 libqof_backend_gda_la_LIBADD = \
+ ${QOF_LIBS} \
  ${GLIB_LIBS} \
  ${LIBGDA_LIBS}
 

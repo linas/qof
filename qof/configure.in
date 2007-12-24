@@ -220,6 +220,7 @@ if test "$embedded" != "yes"; then
 	usegdasql="yes"
 else
 	usegdasql="no"
+	usegdabackend="no"
 fi
 AC_ARG_ENABLE(gdasql,
   [  --disable-gdasql        Disable the use of libgdasql.],
@@ -233,34 +234,36 @@ if test "$usegdasql" = "yes"; then
 	AC_MSG_CHECKING(for SQL parser support)
 	if test "$embedded" != "yes"; then
 		GDA_REQUIRED=3.0.1
-		LIBGDA_CFLAGS=`$PKG_CONFIG --silence-errors --cflags "libgda-3.0 >= $GDA_REQUIRED"`
-		LIBGDA_LIBS=`$PKG_CONFIG --silence-errors --libs "libgda-3.0 >= $GDA_REQUIRED"`
+		LIBGDA_CFLAGS=`$PKG_CONFIG --cflags "libgda-3.0 >= $GDA_REQUIRED"`
+		LIBGDA_LIBS="-lgda-3.0"
 		# LIBGDA should only be used for the GDA backend
 		AC_SUBST(LIBGDA_CFLAGS)
 		AC_SUBST(LIBGDA_LIBS)
 	fi
 fi
-if test "x$LIBGDA_LIBS" = x; then
+if test "x$LIBGDA_CFLAGS" = x; then
 	AC_MSG_RESULT([GDA not found (or disabled); will build using internal SQL library.])
 	SQL_PKG_LIB="-lqofsql"
 else
 	AC_ARG_ENABLE(gdabackend,
-	  [  --enable-gdabackend   Enable the use of the gda backend (off).],
+	  [  --enable-gdabackend     Enable the use of the gda backend (off).],
 	  [case "${enableval}" in
 			no) usegdabackend="no" ;;
 			yes) usegdabackend="yes" ;;
 			*) AC_MSG_ERROR(bad value ${enableval} for --enable-gdabackend) ;;
 			esac])
 	GDA_VERSION=`$PKG_CONFIG --modversion libgda-3.0`
+	AC_SUBST(GDA_VERSION)
 	AC_MSG_RESULT([yes, using GDA: ${GDA_VERSION}])
-	AC_MSG_CHECKING(for libgdasql-3.0 support)
 	save_LIBS="$LIBS"
+	AC_CHECK_LIB(gda-3.0, gda_client_open_connection, ,
+		[AC_MSG_ERROR([libgda3-3 found but missing gda_client_open_connection])])
+	AC_MSG_CHECKING(for libgdasql-3.0 support)
 	AC_CHECK_LIB(gdasql-3.0, sql_parse, , [AC_MSG_ERROR([libgda3-3 found but missing libgdasql-3.0])])
 	AC_DEFINE(HAVE_GDA,,[We have found GDA])
 	GDA_PKG_LIB="-lgdasql-3.0"
 	LIBS="$save_LIBS"
 	HAVE_GDA="use_gda"
-	AC_SUBST(GDA_VERSION)
 	if test "$usegdabackend" = "yes"; then
 		backend3="Enabled"
 	fi
