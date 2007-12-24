@@ -465,6 +465,7 @@ WARN_LOGFILE           = doxygen.log
 INPUT                  = . \
                          ../qof \
                          ../backend/file \
+                         ../backend/gda \
                          ../backend/sqlite
 
 # This tag can be used to specify the character encoding of the source files that 
