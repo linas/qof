@@ -24,6 +24,7 @@ intltool-merge
 intltool-update
 stamp-h
 qof-1.pc
+qof.pc
 .DS_Store
 .tm_project.cache
 bin
