@@ -1,12 +1,11 @@
 # This is free software, licensed under the GNU Public License V2.
 # See the file COPYING for details.
 
-dnl ******************************
-dnl Initialise
-dnl ******************************
+dnl # ******************************
+dnl # Initialise
+dnl # ******************************
 
-AC_INIT(qof, 0.7.3,
-	http://lists.sourceforge.net/lists/listinfo/qof-devel)
+AC_INIT(qof, 0.7.3, http://lists.sourceforge.net/lists/listinfo/qof-devel)
 
 AC_PREREQ(2.53)
 AC_GNU_SOURCE
@@ -45,9 +44,9 @@ AC_PROG_MAKE_SET
 AC_FUNC_MKTIME
 AC_FUNC_STRTOD
 
-dnl *****************************************
-dnl pkg-config check time
-dnl *****************************************
+dnl # *****************************************
+dnl # pkg-config check time
+dnl # *****************************************
 
 AM_PATH_GLIB_2_0("2.6.0", , ,gobject)
 
@@ -73,9 +72,29 @@ else
 	AC_MSG_RESULT(no)
 fi
 
-dnl ********************************
-dnl Auto-disable deprecated QOF
-dnl ********************************
+dnl # ********************************
+dnl # Symbol versioning support
+dnl # ********************************
+
+dnl # use symbol versioning on Linux, to avoid problems when
+dnl # mixing-and-matching multiple lib versions; may be useful on other
+dnl # platforms that support symbol versioning (BSDs?)
+
+AC_MSG_CHECKING(whether to implement symbol versioning)
+case $host_os in
+  *linux*)
+	LINKER_SCRIPT="-Wl,--version-script=\$(srcdir)/libqof.ver"
+	AC_MSG_RESULT(yes)
+	;;
+  *)
+	AC_MSG_RESULT(no)
+	;;
+esac
+AC_SUBST(LINKER_SCRIPT)
+
+dnl # ********************************
+dnl # Auto-disable deprecated QOF
+dnl # ********************************
 
 AC_ARG_ENABLE(deprecated-qof,
   [  --disable-deprecated-qof
@@ -110,9 +129,9 @@ case $host_os in
 		;;
 esac
 
-dnl **************************************************************
-dnl Checks for typedefs, structures, and compiler characteristics.
-dnl **************************************************************
+dnl # **************************************************************
+dnl # Checks for typedefs, structures, and compiler characteristics.
+dnl # **************************************************************
 
 AC_C_CONST
 AC_C_INLINE
@@ -123,27 +142,27 @@ AC_HEADER_TIME
 AC_STRUCT_TM
 AC_TYPE_UID_T
 
-dnl *****************************
-dnl Checks for library functions.
-dnl *****************************
+dnl # *****************************
+dnl # Checks for library functions.
+dnl # *****************************
 AC_FUNC_STRFTIME
 AC_CHECK_HEADERS(sys/times.h time.h langinfo.h wchar.h )
 AC_CHECK_FUNCS(getcwd gettimeofday getline getwd stpcpy strdup strtoul \
 	strcasestr gmtime_r mblen tzname tzset)
 AC_CHECK_MEMBERS([struct stat.st_rdev])
 
-dnl *******************************
-dnl Internationalization
-dnl *******************************
+dnl # *******************************
+dnl # Internationalization
+dnl # *******************************
 
 GETTEXT_PACKAGE=qof
 AC_SUBST(GETTEXT_PACKAGE)
 AM_GNU_GETTEXT([external])
 AC_DEFINE_UNQUOTED([GETTEXT_PACKAGE],["$GETTEXT_PACKAGE"], [gettext domain])
 
-dnl ********************************
-dnl Auto-disable deprecated glib
-dnl ********************************
+dnl # ********************************
+dnl # Auto-disable deprecated glib
+dnl # ********************************
 
 AC_ARG_ENABLE(deprecated-glib,
   [  --disable-deprecated-glib
@@ -155,12 +174,12 @@ AC_ARG_ENABLE(deprecated-glib,
         *) AC_MSG_ERROR(bad value ${enableval} for --enable-deprecated-glib) ;;
         esac])
 
-dnl **************************************************************
-dnl Embedded systems only use the QofSQLite backend.
-dnl libxml2 and optional sqlite for host systems.
-dnl libxml2 v2.5.10 is required for QSF (backend/file)
-dnl libgdasql is omitted to prevent a need for libgda2-3 itself.
-dnl **************************************************************
+dnl # **************************************************************
+dnl # Embedded systems only use the QofSQLite backend.
+dnl # libxml2 and optional sqlite for host systems.
+dnl # libxml2 v2.5.10 is required for QSF (backend/file)
+dnl # libgdasql is omitted to prevent a need for libgda2-3 itself.
+dnl # **************************************************************
 
 AC_ARG_ENABLE(embedded,
 	[  --enable-embedded       Enable the SQLite backend for embedded systems
@@ -208,12 +227,12 @@ fi
 
 AM_CONDITIONAL(USE_SQLITE, [test "$sqlite" = "yes"])
 
-dnl **************************************************************
-dnl  GNOME Data Access library for GNOME2 libgda
-dnl  Enables use of gdasql within libqof1 *and* the gda backend.
-dnl **************************************************************
+dnl # **************************************************************
+dnl # GNOME Data Access library for GNOME2 libgda
+dnl # Enables use of gdasql within libqof1 *and* the gda backend.
+dnl # **************************************************************
 
-dnl Not ready yet.
+dnl # Not ready yet.
 usegdabackend="no"
 backend3="Disabled (default)"
 if test "$embedded" != "yes"; then
@@ -277,15 +296,15 @@ AC_SUBST(USE_LIBGDA)
 AC_SUBST(GDA_PKG_LIB)
 AC_SUBST(SQL_PKG_LIB)
 
-dnl **************************************************************
-dnl DWI is now unsupported.
-dnl The DWI code is still packaged for now
-dnl but will be removed in libqof2.
-dnl **************************************************************
+dnl # **************************************************************
+dnl # DWI is now unsupported.
+dnl # The DWI code is still packaged for now
+dnl # but will be removed in libqof2.
+dnl # **************************************************************
 
-dnl =========================
-dnl Perl - no longer needed
-dnl =========================
+dnl # =========================
+dnl # Perl - no longer needed
+dnl # =========================
 
 # check for doxygen, mostly stolen from http://log4cpp.sourceforge.net/
 # ------------------------------------------------------------------
@@ -333,9 +352,9 @@ AC_SUBST(enable_latex_docs)
 BB_ENABLE_DOXYGEN
 # ----------------------------------------------------------------
 
-dnl *************************************
-dnl Extra warnings
-dnl *************************************
+dnl # *************************************
+dnl # Extra warnings
+dnl # *************************************
 AC_MSG_CHECKING(what extra warning flags to pass to the C compiler)
 if test ${GCC}x = yesx; then
   warnFLAGS=
@@ -380,7 +399,7 @@ if test "$GCC" = "yes" -a "$set_compile_warnings" != "no"; then
  -Wmissing-prototypes -Wmissing-declarations -Werror -Wmissing-include-dirs \
  -Wstrict-prototypes -Winline -Wnested-externs -Wpointer-arith \
  -Wmissing-field-initializers"
-#	LDFLAGS="$LDFLAGS -Wl,-z,defs"
+# LDFLAGS="$LDFLAGS -Wl,-z,defs"
 fi
 
 AC_SUBST(CFLAGS)
@@ -403,9 +422,9 @@ QSF_LIB_DIR=`eval echo $QSF_LIB_DIR | sed "s%^NONE%$prefix%"`
 AC_SUBST(QSF_LIB_DIR)
 AC_SUBST(QOF_LIBS)
 
-dnl ******************************
-dnl Check if this was CVS source
-dnl ******************************
+dnl # ******************************
+dnl # Check if this was CVS source
+dnl # ******************************
 if test -f "${srcdir}/README.cvs" ; then
 	AC_DEFINE([TEST_DEBUG],1,
 		[Run test code in debug mode])
@@ -432,14 +451,14 @@ qof-1.pc
 qof.pc
 ])
 
-dnl <= Configuration summary =>
+dnl # <= Configuration summary =>
 
 echo ""
 echo "qof configuration summary:"
 echo "==========================="
 echo ""
 
-dnl <= CFLAGS and LDFLAGS =>
+dnl # <= CFLAGS and LDFLAGS =>
 echo "CFLAGS      :   $warnFLAGS"
 echo "LDFLAGS     :   $LDFLAGS"
 echo "QOF_CFLAGS  :   "`eval echo $QOF_CFLAGS`
@@ -458,7 +477,7 @@ echo "include dir :   "`eval echo $includedir`
 echo "lib dir     :   "`eval echo $QSF_LIB_DIR`
 echo ""
 echo ""
-dnl <= End of configuration summary =>
+dnl # <= End of configuration summary =>
 
 if [[ x"$QOF_FROM_CVS" = xyes ]]; then
   echo " .----- NOTICE ------------------------------------------------."

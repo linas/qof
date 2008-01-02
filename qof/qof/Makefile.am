@@ -3,7 +3,7 @@ SUBDIRS = . test
 lib_LTLIBRARIES = libqof.la
 
 libqof_la_LDFLAGS= -version-info $(LIBQOF_LIBRARY_VERSION) \
-  -L${top_srcdir}/lib/libsql
+  $(LINKER_SCRIPT) -L${top_srcdir}/lib/libsql
 
 libqof_la_SOURCES =  \
    qoflog.c \
@@ -92,7 +92,7 @@ noinst_HEADERS = \
 AM_CFLAGS = -g \
   ${warnFLAGS} \
   ${LIBGDA_CFLAGS} \
-  ${GLIB_CFLAGS} 
+  ${GLIB_CFLAGS}
 
 if USE_LIBGDA
 INCLUDES = \
@@ -113,7 +113,7 @@ libqof_la_LIBADD = \
   ${SQL_PKG_LIB} \
   -lm
 
-
 EXTRA_DIST = \
+  libqof.ver \
   qofla-dir.h.in \
   qofmath128.c
