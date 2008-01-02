@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: qof 0.7.0\n"
 "Report-Msgid-Bugs-To: qof-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2007-12-24 20:37+0000\n"
+"POT-Creation-Date: 2008-01-02 10:59+0000\n"
 "PO-Revision-Date: 2006-07-25 12:00-0500\n"
 "Last-Translator: Laurentiu Buzdugan <lbuz@rolix.org>\n"
 "Language-Team: Romanian <translation-team-ro@lists.sourceforge.net>\n"
@@ -177,102 +177,102 @@ msgid ""
 "and try again."
 msgstr ""
 
-#: backend/gda/qof-gda.c:220
+#: backend/gda/qof-gda.c:225
 msgid "GDA: Missing data source name."
 msgstr ""
 
-#: backend/gda/qof-gda.c:230
+#: backend/gda/qof-gda.c:234
 #, c-format
 msgid "GDA Provider '%s' could not be found"
 msgstr ""
 
-#: backend/gda/qof-gda.c:273
+#: backend/gda/qof-gda.c:276
 msgid "GDA: No data source path specified."
 msgstr ""
 
-#: backend/gda/qof-gda.c:290
+#: backend/gda/qof-gda.c:293
 msgid "GDA: Unable to locate your home directory."
 msgstr ""
 
-#: backend/gda/qof-gda.c:301
+#: backend/gda/qof-gda.c:304
 msgid "GDA: Unable to create a .libgda directory within your home directory."
 msgstr ""
 
-#: backend/gda/qof-gda.c:325
+#: backend/gda/qof-gda.c:328
 #, c-format
 msgid ""
 "GDA: No data source found at '%s' - Try loading data from another file and "
 "write to gda: again to create the GDA data source."
 msgstr ""
 
-#: backend/gda/qof-gda.c:374
+#: backend/gda/qof-gda.c:353
 #, c-format
-msgid "Failed to connect to '%s'."
+msgid "GDA encountered an error '%s' using data source '%s'."
 msgstr ""
 
-#: backend/gda/qof-gda.c:534
+#: backend/gda/qof-gda.c:518
 msgid "Name of the database to use."
 msgstr ""
 
-#: backend/gda/qof-gda.c:536
+#: backend/gda/qof-gda.c:520
 msgid "Override the default database name with a name of your own choice."
 msgstr ""
 
-#: backend/gda/qof-gda.c:545
+#: backend/gda/qof-gda.c:529
 msgid "The username to use to access this data source."
 msgstr ""
 
-#: backend/gda/qof-gda.c:547
+#: backend/gda/qof-gda.c:531
 msgid ""
 "The username specified in the configuration of this data source that "
 "provides write access to the data."
 msgstr ""
 
-#: backend/gda/qof-gda.c:556
+#: backend/gda/qof-gda.c:540
 msgid "Password to use with the username."
 msgstr ""
 
-#: backend/gda/qof-gda.c:558
+#: backend/gda/qof-gda.c:542
 msgid "The password that is to be used with the specified username."
 msgstr ""
 
-#: backend/gda/qof-gda.c:567
+#: backend/gda/qof-gda.c:551
 msgid "Name of this data source."
 msgstr ""
 
-#: backend/gda/qof-gda.c:569
+#: backend/gda/qof-gda.c:553
 msgid "The name of this data source as specified in the GDA configuration."
 msgstr ""
 
-#: backend/sqlite/qof-sqlite.c:1253
+#: backend/sqlite/qof-sqlite.c:1252
 #, c-format
 msgid ""
 "Unable to open the output file '%s' - do you have permission to create this "
 "file?"
 msgstr ""
 
-#: backend/sqlite/qof-sqlite.c:1301
+#: backend/sqlite/qof-sqlite.c:1300
 #, c-format
 msgid "Unable to open the sqlite database '%s'."
 msgstr ""
 
-#: backend/sqlite/qof-sqlite.c:1325
+#: backend/sqlite/qof-sqlite.c:1324
 msgid "Please provide a filename for sqlite."
 msgstr ""
 
-#: backend/sqlite/qof-sqlite.c:1462
+#: backend/sqlite/qof-sqlite.c:1461
 msgid "Unable to delete record."
 msgstr ""
 
-#: backend/sqlite/qof-sqlite.c:1464
+#: backend/sqlite/qof-sqlite.c:1463
 msgid "Unable to create record."
 msgstr ""
 
-#: backend/sqlite/qof-sqlite.c:1466
+#: backend/sqlite/qof-sqlite.c:1465
 msgid "Unable to insert a new record."
 msgstr ""
 
-#: backend/sqlite/qof-sqlite.c:1468
+#: backend/sqlite/qof-sqlite.c:1467
 msgid "Unable to update existing record."
 msgstr ""
 
