@@ -1,0 +1,3 @@
+libqof-backend-sqlite.so.0 libqof1 #MINVER#
+ qof_sqlite_provider_init@Base 0.7.3
+ string_to_kvp_value@Base 0.7.3
