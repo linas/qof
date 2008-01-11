@@ -1,3 +1,21 @@
+2008-01-11  Neil Williams  <linux@codehelp.co.uk>
+
+	* .cvsignore: Ignore the built symbols file.
+	* configure.in: Generate the symbols file for
+      libqof1. Test for versioned symbol support and
+      use --version-script.
+	* debian/libqof-backend-qsf0.symbols: Temporary
+      symbols file alongside generated libqof1 symbols.
+	* debian/libqof-backend-sqlite0.symbols: Temporary
+      symbols file alongside generated libqof1 symbols.
+	* debian/rules: Copy the generated symbols file into
+      debian directory.
+	* qof.symbols.in: Static list of symbols for 
+      pre-processing.
+	* qof/libqof.ver: Implement symbol versioning alongside
+      the symbols file.
+    * Prepare 0.7.4.
+
 2008-01-02  Neil Williams  <linux@codehelp.co.uk>
 
  * configure.in,

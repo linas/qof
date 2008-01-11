@@ -34,4 +34,5 @@ bin
 *.anjuta
 TODO.tasks
 .tm_project2.cache
+qof.symbols
 
