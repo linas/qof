@@ -2,7 +2,7 @@
  *            qof-gda.c
  *
  *  Sat Sep  9 13:11:17 2006
- *  Copyright  2006-2007  Neil Williams
+ *  Copyright  2006-2008  Neil Williams
  *  linux@codehelp.co.uk
  ********************************************************************/
 /*
@@ -40,7 +40,7 @@
 
 /** @file  qof-gda.c
 	@brief Public interface of qof-backend-gda
-	@author Copyright 2006-2007 Neil Williams <linux@codehelp.co.uk>
+	@author Copyright 2006-2008 Neil Williams <linux@codehelp.co.uk>
 */
 
 static QofLogModule log_module = QOFGDA_MODULE;
@@ -63,7 +63,7 @@ typedef struct
 	gint delete_handler;
 	const gchar *fullpath;
 	const gchar * table_name;   /* revised each iteration. */
-	GList * field_list;
+	GSList * field_list;
 	/* QofBackendOption settings: */
 	gchar * data_source_name;
 	gchar * provider_name;
@@ -125,7 +125,7 @@ qoftype_to_gdafield (QofIdTypeConst qoftype)
 	if (0 == safe_strcasecmp (qoftype, QOF_TYPE_INT64))
 		gda_column_set_g_type (p, G_TYPE_INT64);
 /*	if (0 == safe_strcasecmp (qoftype, QOF_TYPE_KVP))
-		gda_column_set_g_type (p, G_TYPE_);
+		gda_column_set_g_type (p, G_TYPE_); ??
 */
 	if (gda_column_get_g_type (p) == G_TYPE_NONE)
 	{
@@ -155,7 +155,7 @@ convert_params (QofParam * param, gpointer user_data)
 	}
 	gda_column_set_name (p, param->param_name);
 	gda_column_set_table (p, qgda_be->table_name);
-	qgda_be->field_list = g_list_append (qgda_be->field_list, p);
+	qgda_be->field_list = g_slist_append (qgda_be->field_list, p);
 	PINFO (" name=%s table=%s type=%s", param->param_name,
 		qgda_be->table_name, param->param_type);
 }
@@ -164,6 +164,7 @@ static void
 build_table (gpointer value, gpointer user_data)
 {
 	QGdaBackend * qgda_be;
+	GdaParameterList * plist;
 	GError * qgda_err;
 	gint c;
 
@@ -171,27 +172,33 @@ build_table (gpointer value, gpointer user_data)
 	qgda_be = (QGdaBackend*)user_data;
 	if (!gda_connection_is_opened (qgda_be->connection))
 	{
+		/* this probably needs to be a user error/ */
 		PERR (" no connection to gda available");
 		return;
 	}
-	PINFO (" length=%d", g_list_length(qgda_be->field_list));
-	c = g_list_length(qgda_be->field_list);
+	PINFO (" length=%d", g_slist_length(qgda_be->field_list));
+	c = g_slist_length(qgda_be->field_list);
 	if (c > 0)
 	{
-		const GdaColumn *attrib[c];
-		gint f;
+		gchar * text;
 
-		for (f = 0; f < c; f++)
+		/* need a plain text SQL statement for the table. 
+		(meaning that this will end up looking a lot like
+		QSQLiteBackend).
+		*/
+		text = g_strdup ("create table ... ");
+		plist = NULL;
+		qgda_be->command = gda_command_new (text, GDA_COMMAND_TYPE_SQL, 
+			GDA_COMMAND_OPTION_STOP_ON_ERRORS);
+		gda_connection_execute_non_select_command (qgda_be->connection, 
+			qgda_be->command, plist, &qgda_err);
+		/* plist contains a GdaParameterList of results - probably ignore. */
+		if (qgda_err)
 		{
-			GdaColumn * p;
-			p = (GdaColumn*)qgda_be->field_list->data;
-			attrib[f] = p;
-			qgda_be->field_list = g_list_next (qgda_be->field_list);
+			/* handle the error here */
+			g_clear_error (&qgda_err);
 		}
-/** \bug separate GdaColumns into name and GType.
-		gda_create_table (qgda_be->connection, qgda_be->table_name,
-			&qgda_err, attrib);
-*/
+		gda_command_free (qgda_be->command);
 	}
 }
 
@@ -202,12 +209,12 @@ create_tables (QofObject * obj, gpointer user_data)
 
 	qgda_be = (QGdaBackend*)user_data;
 	if (qgda_be->field_list)
-		g_list_free (qgda_be->field_list);
+		g_slist_free (qgda_be->field_list);
 	qgda_be->field_list = NULL;
 	qgda_be->table_name = obj->e_type;
 	qof_class_param_foreach (obj->e_type, convert_params,
 		qgda_be);
-	g_list_foreach (qgda_be->field_list, build_table, qgda_be);
+	g_slist_foreach (qgda_be->field_list, build_table, qgda_be);
 }
 
 static gboolean
