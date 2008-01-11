@@ -1,3 +1,10 @@
+qof (0.7.4-1) unstable; urgency=low
+
+  * New upstream release.
+  * Implement versioned symbols and a symbols file for each library
+
+ -- Neil Williams <codehelp@debian.org>  Fri, 11 Jan 2008 20:54:27 +0000
+
 qof (0.7.3-1) unstable; urgency=low
 
   * New upstream release

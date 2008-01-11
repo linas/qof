@@ -34,3 +34,6 @@ else
 DEB_MAKE_CHECK_TARGET = check
 endif
 
+configure/libqof1::
+	cp qof.symbols debian/libqof1.symbols
+
