@@ -5,12 +5,7 @@ DIST_SUBDIRS = lib qof . backend po doc
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = qof-1.pc qof.pc
 
-#pot: Makefile
-#	${MAKE} -C po $(PACKAGE).pot
-
-#all-local: pot
-
-EXTRA_DIST = config.rpath m4/ChangeLog  \
+EXTRA_DIST = m4/ChangeLog  \
   po/POTFILES.skip \
   qof-1.pc.in \
   qof.pc.in \
