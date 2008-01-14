@@ -2,8 +2,9 @@ qof (0.7.4-1) unstable; urgency=low
 
   * New upstream release.
   * Implement versioned symbols and a symbols file for each library
+  * Avoid preparing docs in Emdebian
 
- -- Neil Williams <codehelp@debian.org>  Fri, 11 Jan 2008 20:54:27 +0000
+ -- Neil Williams <codehelp@debian.org>  Mon, 14 Jan 2008 22:24:20 +0000
 
 qof (0.7.3-1) unstable; urgency=low
 

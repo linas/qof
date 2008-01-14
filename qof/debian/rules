@@ -27,7 +27,7 @@ DEB_MAKE_INVOKE+="QOF_LIBS=-L/usr/$(DEB_HOST_GNU_TYPE)/lib -lqof"
 # prevent CDBS overwriting CC
 DEB_CONFIGURE_SCRIPT_ENV =
 # Emdebian-specific customisation
-DEB_CONFIGURE_EXTRA_FLAGS += --disable-gdasql
+DEB_CONFIGURE_EXTRA_FLAGS += --disable-gdasql --disable-doxygen
 # enable dpkg-shlibdeps to find the internal libraries.
 DEB_SHLIBDEPS_INCLUDE_libqof1 = ./debian/tmp/usr/lib/
 else
