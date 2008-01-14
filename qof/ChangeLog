@@ -1,3 +1,16 @@
+2008-01-14  Neil Williams  <linux@codehelp.co.uk>
+
+	* NEWS: release update.
+	* README: release update.
+	* debian/rules: omit docs in Emdebian.
+	* qof/qofclass.h: Explain about registering dynamic objects.
+	* qof/test/test-object.c: (test_dyn_printable), (dyn_create),
+	(dynamic_get_string), (dynamic_get_int), (dynamic_get_boolean),
+	(add_boolean_param), (test_boolean_param), (test_class_register),
+	(test_dynamic_object), (main): Test dynamic object support.
+	* website/hacking.html: 0.7.4 updates
+	* website/index.html: pre-release updates.
+
 2008-01-11  Neil Williams  <linux@codehelp.co.uk>
 
 	* .cvsignore: Ignore the built symbols file.

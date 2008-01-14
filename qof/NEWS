@@ -1,3 +1,10 @@
+December 2007 : Update gda backend for libgda3-3.
+	Implement pkg-config qof.pc file for libqof2.
+	Support building the GDA backend again but not by
+	default.
+	Implement testing for dynamic QofObject definitions
+	and QofClass registrations.
+
 December 2007 : Migrate to libgda3-3.
 	Create the new sqlite_kvp table if not already present.
 	Build library before backends.

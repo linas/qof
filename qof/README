@@ -11,10 +11,4 @@ can build an html version of the documentation by installing the
 'doxygen' package, and then 'cd doc; make doc'.  Skim the doc/README
 file for more info.
 
-Linking/Building
-----------------
-This version of QOF uses the 'pkg' system of managing include files
-and libraries.  To compile and link your program against QOF, see the
-example in the HACKING file.
-
 ------------------------- END OF DOCUMENT -------------------------
