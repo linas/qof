@@ -12,7 +12,6 @@ title="Query Object Framework">QOF</acronym></h1>
 <div id="resource">
 <ul>
 <li><a href="index.html#intro">Introduction</a></li>
-<li><a href="#roadmap">Roadmap</a></li>
 <li><a href="#libsql">QOF and libgda</a></li>
 <li><a href="#docs">Packaging documentation.</a></li>
 <li><a href="http://sourceforge.net/projects/qof/">SourceForge</a></li>
@@ -33,7 +32,7 @@ title="Query Object Framework">QOF</acronym></h1>
 symbol of the same name"></div>
 
 <h2>Advice for packagers / maintainers</h2>
-<h3>Updated December 2007 for QOF 0.7.3</h3>
+<h3>Updated December 2007 for QOF 0.7.4</h3>
 
 <ul>
 <li>Building against QOF
@@ -56,6 +55,7 @@ symbol of the same name"></div>
 </ul>
 </li>
 <li><a href="#dev">Using libqof-dev</a></li>
+<li><a href="#libqof2">Preparing for libqof2</a></li>
 </ul>
 
 <h2>BUILDING AGAINST QOF</h2>
@@ -63,14 +63,17 @@ symbol of the same name"></div>
 <h3 id="automake">AUTOMAKE</h3>
 <div>
 <p>The simplest way to use QOF is with PKG_CHECK_MODULES
-in configure.ac:</p>
+in configure.ac <b>Note the change in 
+the pkgconfig filename from qof-1 to qof</b> in 0.7.4 - this
+is to allow easier migration to the upcoming libqof2. qof-1.pc
+will be removed in libqof2.</p>
 <pre>
 dnl *************************************
 dnl QOF
 dnl *************************************
 
-QOF_REQUIRED=0.7.3
-PKG_CHECK_MODULES([QOF], [qof-1 >= ${QOF_REQUIRED}])
+QOF_REQUIRED=0.7.4
+PKG_CHECK_MODULES([QOF], [qof >= ${QOF_REQUIRED}])
 AC_SUBST(QOF_CFLAGS)
 AC_SUBST(QOF_LIBS)
 
@@ -79,19 +82,19 @@ AC_SUBST(QOF_LIBS)
 <ul>
 <li>QOF Version string:
 <pre>
-QOF_VERSION=`$PKG_CONFIG --silence-errors --modversion qof-1`
+QOF_VERSION=`$PKG_CONFIG --silence-errors --modversion qof`
 </pre></li>
 <li>QOF prefix
 <pre>
-QOF_PREFIX=`$PKG_CONFIG --silence-errors --variable=prefix qof-1`
+QOF_PREFIX=`$PKG_CONFIG --silence-errors --variable=prefix qof`
 </pre></li>
 <li>Location of QOF backend modules
 <pre>
-QOF_LIB_DIR=`$PKG_CONFIG --silence-errors --variable=libdir qof-1`
+QOF_LIB_DIR=`$PKG_CONFIG --silence-errors --variable=libdir qof`
 </pre>
 <li>Location of the QSF XML schemas
 <pre>
-QOF_XML_DIR=`$PKG_CONFIG --silence-errors --variable=xmldir qof-1`
+QOF_XML_DIR=`$PKG_CONFIG --silence-errors --variable=xmldir qof`
 </pre></li>
 </ul>
 </div>
@@ -102,20 +105,20 @@ dnl *************************************
 dnl QOF
 dnl *************************************
 
-QOF_REQUIRED=0.7.3
+QOF_REQUIRED=0.7.4
 AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
 if test pkg-config = no; then
 	AC_MSG_ERROR([Please install pkgconfig])
 	exit 1
 fi
 AC_MSG_CHECKING([for QOF - version >= $QOF_REQUIRED])
-QOF=`$PKG_CONFIG --silence-errors --exists 'qof-1 >= $QOF_REQUIRED'`
-QOF_LIBS=`$PKG_CONFIG --silence-errors --libs qof-1`
-QOF_CFLAGS=`$PKG_CONFIG --silence-errors --cflags qof-1`
-QOF_VERSION=`$PKG_CONFIG --silence-errors --modversion qof-1`
-QOF_PREFIX=`$PKG_CONFIG --silence-errors --variable=prefix qof-1`
-QOF_LIB_DIR=`$PKG_CONFIG --silence-errors --variable=libdir qof-1`
-QOF_XML_DIR=`$PKG_CONFIG --silence-errors --variable=xmldir qof-1`
+QOF=`$PKG_CONFIG --silence-errors --exists 'qof >= $QOF_REQUIRED'`
+QOF_LIBS=`$PKG_CONFIG --silence-errors --libs qof`
+QOF_CFLAGS=`$PKG_CONFIG --silence-errors --cflags qof`
+QOF_VERSION=`$PKG_CONFIG --silence-errors --modversion qof`
+QOF_PREFIX=`$PKG_CONFIG --silence-errors --variable=prefix qof`
+QOF_LIB_DIR=`$PKG_CONFIG --silence-errors --variable=libdir qof`
+QOF_XML_DIR=`$PKG_CONFIG --silence-errors --variable=xmldir qof`
 
 AC_SUBST(QOF_CFLAGS)
 AC_SUBST(QOF_LIBS)
@@ -164,7 +167,8 @@ have two choices:</p>
 
 <p>Either way, the deprecated functions will then be removed from
 QOF in a single operation that takes us smoothly from libqof1 to
-libqof2.</p>
+libqof2. This is expected to happen with QOF v0.8.0, once the GDA
+backend is functional.</p>
 </div>
 <hr>
 <h3 id="required">MAX_REQUIRED specifiers</h3>
@@ -185,18 +189,9 @@ version of QOF.</p>
 <div>
 <p>DWI - Data With Interaction - was in development
 but it's SourceForge project has seen little recent
-activity and is now out of date with the main QOF library.</p>
-
-<p>DWI development has stalled and it has not been tested
-against libqof1. QOF configuration checks for DWI have been
-removed in QOF 0.7.2 and there is unlikely to be any DWI
-support in libqof2.</p>
-
-<p>If you decide to try using DWI against libqof1, please report
-your results (good or bad) to the QOF-devel mailing list.</p>
-
-<p><a href="http://lists.sourceforge.net/lists/listinfo/qof-devel">
-http://lists.sourceforge.net/lists/listinfo/qof-devel</a></p>
+activity and is now out of date with the main QOF library.
+DWI support will be retained in CVS but will not be implemented
+in libqof2.</p>
 </div>
 
 <hr/>
@@ -231,7 +226,6 @@ the universe by using 64bit values wherever necessary.</p>
 based on the Debian coreutils package (specifically the 'date'
 command) and the glibc source code, providing support for
 nanosecond formats and the full range of QofTime and QofDate.</p>
-
 </div>
 
 <hr>
@@ -301,8 +295,8 @@ embedded applications where libxml2 is simply too large for the
 available storage space.</li>
 <li><b>roll-your-own</b> : Some applications already have their
 own backends for use via QOF.</li>
-<li><b>Future backends</b> : GnomeDB support is expected for a
-future QOF release. This will add a further module which in turn
+<li><b>Future backends</b> : GnomeDB support is expected for 
+libqof2. This will add a further module which in turn
 allow for other plugins for libgda itself. (See the notes on <a
 href="index.html#libgda">libgda module delays</a>.)</li>
 </ul>
@@ -322,10 +316,9 @@ can be configured to load new and additional backends.</p>
 <h3 id="gda">libgda versions</h3>
 <div>
 <p><tt>libda-3.3</tt> is now in Debian. QOF only uses the SQL handling
-code from libgda at this time - until the GDA backend is reviewed. This SQL
-handling code was copied out of libgda at an earlier release and is built by
-QOF internally if libgda is either not found or is disabled. libgda can be
-explicitly disabled using the <tt>--disable-libgdasql</tt> flag to ./configure.
+code, originally copied out of libgda but built by QOF internally if libgda 
+is either not found or is disabled. libgda can be explicitly disabled by
+passing the <tt>--disable-libgdasql</tt> flag to ./configure.
 See also <a href="#libsql">libsql in QOF</a>.</p>
 <p>If you choose to disable libgdasql from libgda3-3, ensure that the internal
 <tt>lib/libsql/libqofsql.so</tt> library is available in the packages. For example, in
@@ -351,13 +344,13 @@ packaged separately:</p>
 <li><b>libqof-backend-qsf0</b> : Depends on libxml2.</li>
 <li><b>libqof-backend-sqlite0</b> (new) : Depends on libsqlite0.</li>
 </ul>
-<p>libqof1 requires the installation of at least one backend module,
+<p>libqof1 and libqof2 require the installation of at least one backend module,
 QSF XML should be the default for all systems that can support libxml2
 because the sqlite backend is not yet comprehensive. Full support is
 due in the next backend module based on GnomeDB (via libgda).</p>
 <p>To get the full benefits of using the sqlite backend instead of qsf, ensure
-that you use <tt>--disable-gdasql</tt> so that libqof1 does not depend on libgda3-3
-and therefore libxml2.</p>
+that you use <tt>--disable-gdasql</tt> so that libqof1 and libqof2 does not 
+depend on libgda3-3 and therefore libxml2.</p>
 </div>
 
 <h3 id="libsql">Replacement of lib/libsql</h3>
@@ -382,44 +375,23 @@ in the correct sequence. Individual filenames and file contents
 are also subject to change during the life of libqof1 and packages
 using QOF need to only use qof.h to avoid problems moving to libqof2.</p>
 </div>
+
 <hr>
-
-<h3 id="roadmap">Roadmap</h3>
+<h3 id="libqof2">libqof2</h3>
 <div>
-<p>Outline plan of the next few releases. All items are subject to
-change, but this is how it looks so far.</p>
-<p>Note that the schedule for libqof2 has been postponed - the use of
-QOF in embedded systems is expected to prove useful in reorganising libqof1
-in preparation for libqof2.</p>
-<ol>
-
-<li><h4>libqof2</h4><p>
-Once these steps are complete, the rest of QOF will be reviewed -
+<p>Once the GDA backend is functional, QOF will migrate to libqof2. To test
+compatibility, pass the --disable-deprecated-qof option to ./configure and
+rebuild your application.
+</p>
+<p>Once the migration starts, the rest of QOF will be reviewed -
 including moving certain sections of code around within the codebase to
 make the overview clearer and the library easier to follow. A series of
-pre-releases for libqof2 can then begin. <b>Expect pre-releases Summer 2007
-and libqof2, QOF 1.0.0, Autumn 2007.</b> Note that libqof2 will start with
+pre-releases for libqof2 can then begin. Note that libqof2 will start with
 the last release of libqof1 but with all deprecated code removed. Users
 who migrate with libqof1 will be able to transfer to libqof2 without
 problems. The libqof2 API will then remain stable, just as with libqof1,
 but with a reduced release cycle. No large changes are anticipated in
-libqof2, the aim is to get all those done in libqof1.</p></li>
-</ol>
-
-<li><h4>QOF/GDA Backend</h4><p>
-A more comprehensive backend based on libgda is planned, supporting
-various databases via GnomeDB plugins. This will not be implemented
-directly on embedded systems. This could be a relatively large amount of
-new code. Early work has now stalled, pending a new stable release of
-libgda upstream that allows the creation (and deletion) of tables within
-new or existing data sources. (See <a href="#libgda">above</a>.)
-<b>Pending.</b> Hopefully before liqof2, but delays in libgda will not
-delay libqof2.</p></li>
-
-<p>Support for GLib GObject mapping (qofgobj.c) is not currently
-anticipated before libqof2. If everything else is ready for libqof2,
-libqof2 will proceed without GLib Gobject mapping.</p>
-
+libqof2, the aim is to get all those done in libqof1.</p>
 </div>
 
 <h3 id="docs">Packaging documentation</h3>
@@ -443,14 +415,14 @@ and the website content:
 
 <hr>
 <div><p>Written by Neil Williams &lt;linux@codehelp.co.uk&gt; December 2005.
-</p><p>Last updated by Neil Williams &lt;linux@codehelp.co.uk&gt; December 2006.
+</p><p>Last updated by Neil Williams &lt;linux@codehelp.co.uk&gt; December 2007.
 </p></div>
 <hr>
 <div><a href="http://sourceforge.net/projects/qof/">
 <img src="sflogolg.png" id="sflogo" alt="SourceForge Logo"></a></div>
 <div id="licence">
 <p>The copyright licensing notice below applies to this text.</p>
-<p>Copyright &copy; 2005,2006 Neil Williams</p>
+<p>Copyright &copy; 2005-2007 Neil Williams</p>
 <p>Permission is granted to copy, distribute, and/or modify this document under
 the terms of the GNU Free Documentation License, Version 1.2 or any later
 version published by the Free Software Foundation; with no Invariant Sections,
