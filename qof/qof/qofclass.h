@@ -178,7 +178,8 @@ struct _QofParam
 typedef 
 gint (*QofSortFunc) (gconstpointer, gconstpointer);
 
-/** This function registers a new object class with the Qof subsystem.
+/** \brief registers a new object class with the Qof subsystem.
+ *
  *  In particular, it registers the set of setters and getters for
  *  controlling the object.   The getters are typically used by the
  *  query subsystem to query type specific data.   Note that there
@@ -188,8 +189,11 @@ gint (*QofSortFunc) (gconstpointer, gconstpointer);
  *  parameters are really just a set of value setting and getting 
  *  routines.
  *
- *  The "params" argument must be a NULL-terminated array of QofParam. 
- *  It may be NULL if there are no parameters to be registered.
+ *  The "params" argument must be a NULL-terminated array of QofParam
+ *  with a constant storage size. It may be NULL if there are no 
+ *  parameters to be registered. When creating dynamic QofObjects,
+ *  ensure the array is long enough for all objects. Registration
+ *  will stop at the first NULL parameter.
  */
 void qof_class_register (QofIdTypeConst obj_name,
 						 QofSortFunc default_sort_fcn,
