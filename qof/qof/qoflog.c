@@ -4,7 +4,7 @@
  *  Mon Nov 21 14:41:59 2005
  *  Author: Rob Clark (rclark@cs.hmc.edu)
  *  Copyright (C) 1997-2003 Linas Vepstas <linas@linas.org>
- *  Copyright  2005  Neil Williams
+ *  Copyright  2005-2008  Neil Williams
  *  linux@codehelp.co.uk
  *************************************************************************** */
 /*
@@ -248,6 +248,9 @@ qof_log_set_default (QofLogLevel log_level)
 	qof_log_set_level (QOF_MOD_DATE, log_level);
 	qof_log_set_level (QOF_MOD_UNDO, log_level);
 	qof_log_set_level (QOF_MOD_ERROR, log_level);
+	qof_log_set_level (QOF_MOD_QSF, log_level);
+	qof_log_set_level (QOF_MOD_SQLITE, log_level);
+	qof_log_set_level (QOF_MOD_GDA, log_level);
 }
 
 struct hash_s
