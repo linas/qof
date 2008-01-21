@@ -31,7 +31,7 @@
 
 #define _(String) dgettext (GETTEXT_PACKAGE, String)
 #define ACCESS_METHOD  "gda"
-#define LIBGDA_DIR     ".libgda"
+#define LIBGDA_DIR     ".qofgda"
 #define GDA_DBNAME     "gda-database-name"
 #define GDA_USERNAME   "gda-username"
 #define GDA_PASSWORD   "gda-password"
