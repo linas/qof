@@ -31,7 +31,6 @@
 
 #define _(String) dgettext (GETTEXT_PACKAGE, String)
 #define ACCESS_METHOD  "gda"
-#define QOFGDA_MODULE  "qof-backend-gda"
 #define LIBGDA_DIR     ".libgda"
 #define GDA_DBNAME     "gda-database-name"
 #define GDA_USERNAME   "gda-username"
@@ -43,7 +42,7 @@
 	@author Copyright 2006-2008 Neil Williams <linux@codehelp.co.uk>
 */
 
-static QofLogModule log_module = QOFGDA_MODULE;
+static QofLogModule log_module = QOF_MOD_GDA;
 
 typedef struct
 {
@@ -291,9 +290,7 @@ qgda_session_begin(QofBackend *be, QofSession *session, const
 		struct stat lg;
 		gint ret;
 
-		gdahome = g_strconcat (g_get_home_dir(),
-			"/", LIBGDA_DIR, NULL);
-		ret = g_stat (gdahome, &lg);
+		ret = g_stat (g_get_home_dir(), &lg);
 		if (ret)
 		{
 			qof_error_set_be (be, qof_error_register
@@ -303,6 +300,8 @@ qgda_session_begin(QofBackend *be, QofSession *session, const
 			LEAVE (" unable to use stat on home_dir.");
 			return;
 		}
+		gdahome = g_strconcat (g_get_home_dir(),
+			"/", LIBGDA_DIR, NULL);
 		if (!S_ISDIR (lg.st_mode) || lg.st_size == 0)
 			ret = g_mkdir_with_parents (gdahome, 0700);
 		if (ret)
@@ -635,5 +634,4 @@ void qof_gda_provider_init(void)
 	prov->check_data_type = qgda_determine_file_type;
 	prov->provider_free = qgda_provider_free;
 	qof_backend_register_provider (prov);
-	qof_log_set_level (QOFGDA_MODULE, QOF_LOG_DETAIL);
 }
