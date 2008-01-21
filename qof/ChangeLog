@@ -1,3 +1,15 @@
+2008-01-21  Neil Williams  <linux@codehelp.co.uk>
+
+	* backend/gda/qof-gda.c: (qgda_session_begin),
+	(qof_gda_provider_init): Test home_dir before trying to
+       make gda directory.
+	* backend/sqlite/qof-sqlite.c: Migrate module name into
+       main library.
+	* qof/qof.h: Add backend log modules to main library
+	* qof/qoflog.c: (qof_log_set_default): Log backend modules
+      by default.
+	* qof/qofsession.c: Enable the GDA backend upon request.
+
 2008-01-14  Neil Williams  <linux@codehelp.co.uk>
 
 	* NEWS: release update.
