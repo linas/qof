@@ -953,7 +953,9 @@ and use JUST the module name without .so - .so is not portable! */
 struct backend_providers backend_list[] = {
 	{QOF_LIB_DIR, QSF_BACKEND_LIB, QSF_MODULE_INIT},
 	{QOF_LIB_DIR, "libqof-backend-sqlite", "qof_sqlite_provider_init"},
-/*	{QOF_LIB_DIR, "libqof-backend-gda", "qof_gda_provider_init"},*/
+#ifdef HAVE_GDA
+	{QOF_LIB_DIR, "libqof-backend-gda", "qof_gda_provider_init"},
+#endif
 #ifdef HAVE_DWI
 	{QOF_LIB_DIR, "libqof_backend_dwi", "dwiend_provider_init"},
 #endif
