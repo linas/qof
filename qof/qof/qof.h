@@ -2,7 +2,7 @@
  * qof.h -- Master QOF public include file                          *
  *                                                                  *
  * Copyright (c) 2000,2001,2004 Linas Vepstas <linas@linas.org>     *
- * Copyright (c) 2005-2007 Neil Williams <linux@codehelp.co.uk>     *
+ * Copyright (c) 2005-2008 Neil Williams <linux@codehelp.co.uk>     *
  *                                                                  *
  * This program is free software; you can redistribute it and/or    *
  * modify it under the terms of the GNU General Public License as   *
@@ -98,5 +98,11 @@
 #define QSF_BACKEND_LIB "libqof-backend-qsf"
 /** allow easy loading of the QSF backend */
 #define QSF_MODULE_INIT "qsf_provider_init"
+
+/** allow easy logging of GDA backend messages */
+#define QOF_MOD_GDA  "qof-backend-gda"
+
+/** allow easy logging of SQLITE backend messages */
+#define QOF_MOD_SQLITE "qof-sqlite-module"
 
 #endif /* QOF_H_ */
