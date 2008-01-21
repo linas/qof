@@ -32,7 +32,6 @@
 #include "qof.h"
 
 #define _(String) dgettext (GETTEXT_PACKAGE, String)
-#define QOF_MOD_SQLITE "qof-sqlite-module"
 #define ACCESS_METHOD "sqlite"
 
 /** @file  qof-sqlite.c
