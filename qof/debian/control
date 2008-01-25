@@ -9,7 +9,7 @@ Build-Depends-Indep: doxygen
 Standards-Version: 3.7.3
 Homepage: http://qof.sourceforge.net/
 Vcs-Browser: http://qof.cvs.sourceforge.net/qof/qof/
-Vcs-CVS: -d:pserver:anonymous@qof.cvs.sourceforge.net:/cvsroot/qof
+Vcs-CVS: :pserver:anonymous@qof.cvs.sourceforge.net:/cvsroot/qof qof
 
 Package: libqof1
 Priority: optional
