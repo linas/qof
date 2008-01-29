@@ -1,3 +1,11 @@
+2008-01-29  Neil Williams  <linux@codehelp.co.uk>
+
+ * configure.in : 0.7.4 release.
+ * NEWS, README : Document provision of qof.pc in advance
+ of libqof2 to ease transition - packages can now check for
+ qof via pkg-config and still build against libqof2 when
+ qof-1.pc is removed.
+
 2008-01-21  Neil Williams  <linux@codehelp.co.uk>
 
 	* backend/gda/qof-gda.c: (qgda_session_begin),
@@ -35,7 +43,7 @@
       symbols file alongside generated libqof1 symbols.
 	* debian/rules: Copy the generated symbols file into
       debian directory.
-	* qof.symbols.in: Static list of symbols for 
+	* qof.symbols.in: Static list of symbols for
       pre-processing.
 	* qof/libqof.ver: Implement symbol versioning alongside
       the symbols file.

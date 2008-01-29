@@ -1,3 +1,12 @@
+Jan 2008 : pkg-config support prior to libqof2
+	v0.7.4 includes 'qof.pc' in advance of libqof2 to ease the
+	imminent transition - packages can now check for 'qof' via
+	pkg-config (instead of 'qof-1') and still build against
+	libqof2 when qof-1.pc is removed.
+	GDA backend improvements - likely to be enabled for libqof2.
+	0.7.4 is expected to be the last release of libqof1.
+	0.8.0 will be the first release of libqof2.
+
 December 2007 : Update gda backend for libgda3-3.
 	Implement pkg-config qof.pc file for libqof2.
 	Support building the GDA backend again but not by
