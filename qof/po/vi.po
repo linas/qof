@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: qof 0.7.2\n"
 "Report-Msgid-Bugs-To: qof-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2008-01-19 01:50+0000\n"
+"POT-Creation-Date: 2008-01-21 14:09+0000\n"
 "PO-Revision-Date: 2006-09-30 22:14+0930\n"
 "Last-Translator: Clytie Siddall <clytie@riverland.net.au>\n"
 "Language-Team: Vietnamese <vi-VN@googlegroups.com>\n"
@@ -202,111 +202,111 @@ msgstr ""
 "» (collect) không hợp lệ. Như thế thì không thể xử lý tập tin này — hãy kiểm "
 "tra nguồn tập tin rồi thử lại."
 
-#: backend/gda/qof-gda.c:232
+#: backend/gda/qof-gda.c:231
 msgid "GDA: Missing data source name."
 msgstr ""
 
-#: backend/gda/qof-gda.c:241
+#: backend/gda/qof-gda.c:240
 #, fuzzy, c-format
 msgid "GDA Provider '%s' could not be found"
 msgstr "Không tìm thấy tập tin XML QSF « %s »."
 
-#: backend/gda/qof-gda.c:283
+#: backend/gda/qof-gda.c:282
 msgid "GDA: No data source path specified."
 msgstr ""
 
-#: backend/gda/qof-gda.c:300
+#: backend/gda/qof-gda.c:297
 #, fuzzy
 msgid "GDA: Unable to locate your home directory."
 msgstr "Không thể tạo mục ghi."
 
-#: backend/gda/qof-gda.c:311
+#: backend/gda/qof-gda.c:310
 msgid "GDA: Unable to create a .libgda directory within your home directory."
 msgstr ""
 
-#: backend/gda/qof-gda.c:335
+#: backend/gda/qof-gda.c:334
 #, c-format
 msgid ""
 "GDA: No data source found at '%s' - Try loading data from another file and "
 "write to gda: again to create the GDA data source."
 msgstr ""
 
-#: backend/gda/qof-gda.c:360
+#: backend/gda/qof-gda.c:359
 #, c-format
 msgid "GDA encountered an error '%s' using data source '%s'."
 msgstr ""
 
-#: backend/gda/qof-gda.c:525
+#: backend/gda/qof-gda.c:524
 msgid "Name of the database to use."
 msgstr ""
 
-#: backend/gda/qof-gda.c:527
+#: backend/gda/qof-gda.c:526
 msgid "Override the default database name with a name of your own choice."
 msgstr ""
 
-#: backend/gda/qof-gda.c:536
+#: backend/gda/qof-gda.c:535
 msgid "The username to use to access this data source."
 msgstr ""
 
-#: backend/gda/qof-gda.c:538
+#: backend/gda/qof-gda.c:537
 msgid ""
 "The username specified in the configuration of this data source that "
 "provides write access to the data."
 msgstr ""
 
-#: backend/gda/qof-gda.c:547
+#: backend/gda/qof-gda.c:546
 msgid "Password to use with the username."
 msgstr ""
 
-#: backend/gda/qof-gda.c:549
+#: backend/gda/qof-gda.c:548
 msgid "The password that is to be used with the specified username."
 msgstr ""
 
-#: backend/gda/qof-gda.c:558
+#: backend/gda/qof-gda.c:557
 msgid "Name of this data source."
 msgstr ""
 
-#: backend/gda/qof-gda.c:560
+#: backend/gda/qof-gda.c:559
 msgid "The name of this data source as specified in the GDA configuration."
 msgstr ""
 
-#: backend/sqlite/qof-sqlite.c:1252
+#: backend/sqlite/qof-sqlite.c:1251
 #, c-format
 msgid ""
 "Unable to open the output file '%s' - do you have permission to create this "
 "file?"
 msgstr "Không thể mở tập tin xuất « %s » — bạn có quyền tạo tập tin này không?"
 
-#: backend/sqlite/qof-sqlite.c:1300
+#: backend/sqlite/qof-sqlite.c:1299
 #, c-format
 msgid "Unable to open the sqlite database '%s'."
 msgstr "Không thể mở co sở dữ liệu SQLite « %s »."
 
-#: backend/sqlite/qof-sqlite.c:1324
+#: backend/sqlite/qof-sqlite.c:1323
 msgid "Please provide a filename for sqlite."
 msgstr "Hãy cung cấp tên tập tin cho SQLite."
 
-#: backend/sqlite/qof-sqlite.c:1461
+#: backend/sqlite/qof-sqlite.c:1460
 msgid "Unable to delete record."
 msgstr "Không thể xoá bỏ mục ghi."
 
-#: backend/sqlite/qof-sqlite.c:1463
+#: backend/sqlite/qof-sqlite.c:1462
 msgid "Unable to create record."
 msgstr "Không thể tạo mục ghi."
 
-#: backend/sqlite/qof-sqlite.c:1465
+#: backend/sqlite/qof-sqlite.c:1464
 msgid "Unable to insert a new record."
 msgstr "Không thể chèn mục ghi mới."
 
-#: backend/sqlite/qof-sqlite.c:1467
+#: backend/sqlite/qof-sqlite.c:1466
 msgid "Unable to update existing record."
 msgstr "Không thể cập nhật mục ghi đã có."
 
-#: qof/qofsession.c:1073
+#: qof/qofsession.c:1075
 msgid "This book appears to be open already."
 msgstr "Có vẻ là sổ này đã mở."
 
-#: qof/qofsession.c:1114
+#: qof/qofsession.c:1116
 #, c-format
 msgid ""
 "Unable to locate a suitable backend for '%s' - please check you have "
@@ -315,7 +315,7 @@ msgstr ""
 "Không thể định vị hậu phương thích hợp với « %s » — hãy kiểm tra xem bạn đã "
 "xác định phương pháp truy cập như « file: » hay « sqlite: »."
 
-#: qof/qofsession.c:1351 qof/qofsession.c:1388
+#: qof/qofsession.c:1353 qof/qofsession.c:1390
 msgid "Failed to load backend, no suitable handler."
 msgstr "Lỗi tải hậu phương; không có bộ quản lý thích hợp."
 
