@@ -5,7 +5,7 @@ dnl # ******************************
 dnl # Initialise
 dnl # ******************************
 
-AC_INIT(qof, 0.7.4, http://lists.sourceforge.net/lists/listinfo/qof-devel)
+AC_INIT(qof, 0.7.5, http://lists.sourceforge.net/lists/listinfo/qof-devel)
 
 AC_PREREQ(2.53)
 AC_GNU_SOURCE
@@ -84,7 +84,7 @@ dnl # platforms that support symbol versioning (BSDs?)
 
 AC_MSG_CHECKING(whether to implement symbol versioning)
 case $host_os in
-  *linux* | *freebsd*)
+  *gnu*)
 	LINKER_SCRIPT="-Wl,--version-script=\$(srcdir)/libqof.ver"
 	AC_MSG_RESULT(yes)
 	;;
