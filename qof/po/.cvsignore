@@ -9,4 +9,5 @@ messages.mo
 missing
 remove-potcdate.sed
 stamp-po
+Makevars.template
 
