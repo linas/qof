@@ -3,7 +3,7 @@ SUBDIRS = . test
 lib_LTLIBRARIES = libqof.la
 
 libqof_la_LDFLAGS= -version-info $(LIBQOF_LIBRARY_VERSION) \
-  $(LINKER_SCRIPT) -L${top_srcdir}/lib/libsql
+  $(LINKER_SCRIPT) -L${top_builddir}/lib/libsql
 
 libqof_la_SOURCES =  \
    qoflog.c \
