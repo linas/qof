@@ -35,4 +35,5 @@ bin
 TODO.tasks
 .tm_project2.cache
 qof.symbols
-m4
+ABOUT-NLS
+config.rpath
