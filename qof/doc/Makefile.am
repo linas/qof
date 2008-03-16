@@ -12,7 +12,7 @@ EXTRA_DIST = \
   doxygen.cfg.in \
   backend-api.txt \
   backend-errors.txt \
-  gnc-numeric-example.txt \
+  qofnumeric-example.txt \
   qofdatelocale.txt \
   map-plan.txt
 

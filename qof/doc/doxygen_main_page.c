@@ -1,45 +1,21 @@
 /*! \mainpage QOF design and developers reference
 
 This is the developer and design manual for the Query Object
-Framework. Previous documentation has been integrated into this 
-and it should always be up to date since it is generated directly 
+Framework. Previous documentation has been integrated into this
+and it should always be up to date since it is generated directly
 from the source files using Doxygen.
 
 \section changes Future changes within QOF
 
-QOF v0.7.0 introduces a complete rewrite of the date and time
-handling to fully support the 64bit internal math. See ::QofTime.
+QOF v0.8.0 introduces \b libqof2, including a complete rewrite of the
+date and time handling to fully support the 64bit internal math. See ::QofTime.
 
-QOF v0.6.0 introduces \b libqof1 which will remain API compatible
-until all the changes below can be folded into libqof2:
-
-	-# All gnucash-specific code to be removed. Most of this
-		has been done in v0.6.0
-	-# Filename and function name conventions to be made to 
-		conform to a single method:
-		-# filenames: qof<module>.c|h
-		-# functions: qof_<module>_<function>_ ... 
-		\n e.g.
-			-# qof_book_mergeInit becomes qof_book_merge_init
-			-# gnc_numeric_zero becomes qof_numeric_zero
-			-# gnc_set_logfile becomes qof_log_setfile.
-			-# gnc-trace.c|h becomes qoflog.c|h
-	-# These changes will be made by deprecating old names
-		and making old files into placeholders. When libqof2
-		is ready for pre-release, all deprecated elements will
-		include compiler flags that will highlight the code that
-		needs to be changed and placeholder files may be removed
-		at this stage. All flags and deprecated code will
-		then be removed in the final libqof2 release.
-	-# To make this change easier, the qof.h header has been fixed
-		in v0.6.0 and is now the only header file required to be
-		included to use QOF. Using individual header files in 
-		applications linked against QOF is now \b deprecated. All
+	-# All gnucash-specific code has been removed.
+	-# qof.h is the only header file required to be
+		included to use QOF. All
 		code that uses QOF should only use:
 			-# include <qof.h>   // or
 			-# include "qof.h"\n
-		This is the \b only file guaranteed to maintain access to the
-		full QOF API during the entire life of libqof1 and libqof2.
 
 \section general General design documents.
 
@@ -79,13 +55,13 @@ Doxygen manual for the full command set.
 
 The copyright licensing notice below applies to this text.
 
-Copyright &copy; 2005-2006 Neil Williams
+Copyright &copy; 2005-2008 Neil Williams
 
-Permission is granted to copy, distribute, and/or modify this 
-document under the terms of the GNU Free Documentation License, 
-Version 1.2 or any later version published by the Free Software 
-Foundation; with no Invariant Sections, with no Front-Cover Texts, 
-and with no Back-Cover Texts. 
+Permission is granted to copy, distribute, and/or modify this
+document under the terms of the GNU Free Documentation License,
+Version 1.2 or any later version published by the Free Software
+Foundation; with no Invariant Sections, with no Front-Cover Texts,
+and with no Back-Cover Texts.
 A copy of this license is available at
 http://qof.sourceforge.net/copying.txt or installed alongside
 this documentation in the &quot;copyright&quot; file.
@@ -121,7 +97,7 @@ identified to doxygen using a '\\file' section:
 
 \subsection Methods How to document
 
-Every doxygen comment block starts with an adapted comment marker. 
+Every doxygen comment block starts with an adapted comment marker.
 You can use an extra slash /// or an extra asterisk. Blocks end
 in the usual way. Doxygen accepts commands using a backslash.
 

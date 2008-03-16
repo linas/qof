@@ -1,7 +1,5 @@
 # List of files which containing translatable strings.
 
-backend/dwi/dwi-backend.c
-backend/dwi/qofmap.c
 backend/file/qsf-xml-map.c
 backend/file/qsf-xml.c
 backend/file/qsf-backend.c
@@ -17,7 +15,6 @@ qof/test/test-object.c
 qof/test/test-querynew.c
 qof/test/test-recursive.c
 qof/test/test-stuff.c
-qof/deprecated.c
 qof/guid.c
 qof/kvpframe.c
 qof/md5.c
