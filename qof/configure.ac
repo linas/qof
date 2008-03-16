@@ -5,9 +5,9 @@ dnl # ******************************
 dnl # Initialise
 dnl # ******************************
 
-AC_INIT(qof, 0.8.0, http://lists.sourceforge.net/lists/listinfo/qof-devel)
+AC_INIT([qof],[0.8.0],[http://lists.sourceforge.net/lists/listinfo/qof-devel])
 
-AC_PREREQ(2.53)
+AC_PREREQ(2.61)
 AC_GNU_SOURCE
 
 LIBQOF_LIBRARY_VERSION=2:0:0
@@ -18,7 +18,7 @@ AC_SUBST(LIBQOFSQL_LIBRARY_VERSION)
 SONAME=`echo $LIBQOF_LIBRARY_VERSION | cut -d: -f1`
 AC_SUBST(SONAME)
 
-AC_PREFIX([/usr])
+AC_PREFIX_PROGRAM([/usr])
 VERSION=AC_PACKAGE_VERSION
 AC_SUBST(VERSION)
 PACKAGE=AC_PACKAGE_NAME
@@ -26,13 +26,13 @@ AC_SUBST(PACKAGE)
 AM_INIT_AUTOMAKE(AC_PACKAGE_NAME, AC_PACKAGE_VERSION)
 
 AC_PROG_LIBTOOL
-AM_CONFIG_HEADER(config.h)
+AC_CONFIG_HEADERS([config.h])
 
 AC_ISC_POSIX
 AC_PROG_CXX
 AC_PROG_CC
 AC_PROG_CPP
-AC_STDC_HEADERS
+AC_HEADER_STDC
 AC_PROG_YACC
 AC_PROG_INSTALL
 AC_PROG_LN_S
@@ -420,7 +420,7 @@ if test -f "${srcdir}/README.cvs" ; then
 	QOF_FROM_CVS=yes
 fi
 
-AC_OUTPUT([ po/Makefile.in
+AC_CONFIG_FILES([ po/Makefile.in
 Makefile
 backend/Makefile
 backend/file/Makefile
@@ -438,6 +438,7 @@ qof/test/Makefile
 qof.pc
 qof.symbols
 ])
+AC_OUTPUT
 
 dnl # <= Configuration summary =>
 
