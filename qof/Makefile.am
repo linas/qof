@@ -3,11 +3,10 @@ SUBDIRS = lib qof . backend po doc
 DIST_SUBDIRS = lib qof . backend po doc
 
 pkgconfigdir = $(libdir)/pkgconfig
-pkgconfig_DATA = qof-1.pc qof.pc
+pkgconfig_DATA = qof.pc
 
 EXTRA_DIST = config.rpath \
   po/POTFILES.skip \
-  qof-1.pc.in \
   qof.pc.in \
   website/gobj-example.c.html \
   website/my-obj-example.c.html \

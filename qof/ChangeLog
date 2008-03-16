@@ -1,3 +1,33 @@
+2008-03-16  Neil Williams  <linux@codehelp.co.uk>
+
+ * Start changes for libqof2
+ * Makefile.am : Remove qof-1.pc support.
+ * qof.symbols.in : Remove dropped symbols and
+ migrate others to LIBQOF_0.8.0 due to SONAME bump.
+ * qof/libqof.ver : Migrate to LIBQOF_0.8.0
+ * backend/Makefile.am : Drop DWI (no longer compatible)
+ * backend/file/Makefile.am, backend/gda/Makefile.am
+ backend/sqlite/Makefile.am : Make the backend modules
+ private libraries (i.e. plugins).
+ * backend/file/qsf-backend.c,
+ backend/sqlite/qof-sqlite.c, qof/qof.h, qof/qofbackend-p.h,
+ qof/kvpframe.c, qof/kvpframe.h, qof/qofbackend.c
+ qof/qofbookmerge.c, qof/qofbookmerge.h, qof/qofclass.c,
+ qof/qoferror-p.h, qof/qoferror.c, qof/qofevent.c,
+ qof/qofevent-p.h, qof/qofinstance-p.h, qof/qofnumeric.c,
+ qof/qofobject.h, qof/qofquery-p.h, qof/qofquery.c,
+ qof/qofquerycore.c, qof/qofsession.c, qof/qofsql.c,
+ qof/qoftime.h, qof/qofundo.c, qof/qofutil.c, 
+ qof/qofutil.h : Remove deprecated code.
+ * doc/doxygen_main_page.c : Drop description of removed
+ code.
+ * po/POTFILES.in, po/POTFILES.skip : Drop DWI, add GDA.
+ * qof/Makefile.am : Remove deprecated.c until needed again.
+ * qof/deprecated.c, qof/deprecated.h : Remove all deprecated code.
+ * qof/test/test-book-merge.c, qof/test/test-date.c,
+ qof/test/test-engine-stuff.c,
+ qof/test/test-engine-stuff.h : migrate from deprecated code.
+
 2008-03-04  Neil Williams  <linux@codehelp.co.uk>
 
  * autogen.sh : Migrate to autoreconf -ifs instead
