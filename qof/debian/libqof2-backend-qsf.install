@@ -1,0 +1,3 @@
+debian/tmp/usr/lib/qof/libqof-backend-qsf.so
+debian/tmp/usr/lib/qof/libqof-backend-qsf.la
+debian/tmp/usr/share/xml/*

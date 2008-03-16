@@ -11,12 +11,13 @@ Homepage: http://qof.sourceforge.net/
 Vcs-Browser: http://qof.cvs.sourceforge.net/qof/qof/
 Vcs-CVS: :pserver:anonymous@qof.cvs.sourceforge.net:/cvsroot/qof qof
 
-Package: libqof1
+Package: libqof2
 Priority: optional
 Section: libs
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
-Recommends: libqof-backend-qsf0 | libqof-backend-sqlite0
+Recommends: libqof2-backend-qsf | libqof2-backend-sqlite
+Replaces: libqof1
 Conflicts: pilot-qof (<< 0.1.1-2)
 Description: Query Object Framework
  A framework to allow the execution of SQL-type queries
@@ -29,8 +30,8 @@ Package: libqof-dev
 Priority: optional
 Section: libdevel
 Architecture: any
-Suggests: libqof-doc
-Depends: libqof1 (= ${binary:Version}), libgda3-dev
+Suggests: libqof-doc, libgda3-dev
+Depends: libqof2 (= ${binary:Version}), ${misc:Depends}, libglib2.0-dev
 Description: Query Object Framework - Development Headers
  A framework to allow the execution of SQL-type queries
  using collections of in-memory objects as 'tables'.
@@ -38,13 +39,13 @@ Description: Query Object Framework - Development Headers
  This package provides the files needed to develop 
  applications using QOF.
 
-Package: libqof-backend-qsf0
+Package: libqof2-backend-qsf
 Priority: optional
 Section: libs
 Architecture: any
-Depends: libqof1 (= ${binary:Version}), libglib2.0-0 (>= 2.6.0), libxml2 (>= 2.5.10)
+Depends: ${shlibs:Depends}, libqof2 (= ${binary:Version}), ${misc:Depends}
 Recommends: xsltproc, xml-core
-Replaces: libqof1 (<= 0.7.0-2), libqof-backend-sqlite0
+Replaces: libqof1 (<= 0.7.0-2), libqof-backend-sqlite0, libqof-backend-qsf0
 Description: Query Object Framework - XML backend module
  QOF is a framework to allow the execution of SQL-type 
  queries using collections of in-memory objects as 'tables'.
@@ -56,11 +57,12 @@ Description: Query Object Framework - XML backend module
  This package provides the XML schemas to validate files 
  and the QSF XML backend module.
  
-Package: libqof-backend-sqlite0
+Package: libqof2-backend-sqlite
 Priority: optional
 Section: libs
 Architecture: any
-Depends: libqof1 (= ${binary:Version}), libglib2.0-0 (>= 2.6.0), libsqlite0
+Depends: ${shlibs:Depends}, libqof2 (= ${binary:Version}), ${misc:Depends}
+Replaces: libqof-backend-sqlite0
 Description: Query Object Framework - SQLite backend module
  QOF is a framework to allow the execution of SQL-type 
  queries using collections of in-memory objects as 'tables'.
@@ -69,12 +71,12 @@ Description: Query Object Framework - SQLite backend module
  embedded systems. The package can also be installed 
  alongside the default QSF XML backend.
 
-Package: libqof1-dbg
+Package: libqof2-dbg
 Priority: extra
 Section: libs
 Architecture: any
 Recommends: libqof-doc
-Depends: libqof1 (= ${binary:Version})
+Depends: libqof2 (= ${binary:Version})
 Description: Query Object Framework - Debug Symbols
  A framework to allow the execution of SQL-type queries
  using collections of in-memory objects as 'tables'.
