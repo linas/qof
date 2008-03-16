@@ -6,8 +6,10 @@ qof (0.8.0-1) unstable; urgency=low
     (NEW package names)
   * migrate doc-base sections
   * Drop .la files from plugin packages
+  * Make -dev package depend on libgda3-dev and drop outdated Replaces:
+    flags
 
- -- Neil Williams <codehelp@debian.org>  Sun, 16 Mar 2008 12:22:22 +0000
+ -- Neil Williams <codehelp@debian.org>  Sun, 16 Mar 2008 12:34:28 +0000
 
 qof (0.7.5-1) unstable; urgency=low
 
