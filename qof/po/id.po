@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: id\n"
 "Report-Msgid-Bugs-To: qof-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2008-01-29 21:34+0000\n"
+"POT-Creation-Date: 2008-03-16 11:13+0000\n"
 "PO-Revision-Date: 2007-08-30 21:33+0700\n"
 "Last-Translator: Tedi Heriyanto <tedi.heriyanto@gmail.com>\n"
 "Language-Team: Indonesian <translation-team-id@lists.sourceforge.net>\n"
@@ -25,8 +25,8 @@ msgstr "File XML QSF '%s' tidak ditemukan."
 
 #: backend/file/qsf-xml-map.c:260 backend/file/qsf-xml-map.c:282
 #: backend/file/qsf-xml-map.c:341 backend/file/qsf-xml.c:266
-#: backend/file/qsf-xml.c:325 backend/file/qsf-backend.c:532
-#: backend/file/qsf-backend.c:575
+#: backend/file/qsf-xml.c:325 backend/file/qsf-backend.c:526
+#: backend/file/qsf-backend.c:569
 #, c-format
 msgid "There was an error parsing the file '%s'."
 msgstr "Terjadi kesalahan memparsing file '%s'."
@@ -129,14 +129,14 @@ msgstr ""
 "menggunakan tanggal tidak boleh menset opsi ini hingga nilai waktu telah "
 "didukung."
 
-#: backend/file/qsf-backend.c:252
+#: backend/file/qsf-backend.c:246
 #, c-format
 msgid ""
 "The selected QSF Object file '%s' requires a map but it was not provided."
 msgstr ""
 "File Object QSF terpilih '%s' membutuhkan sebuah peta namun tidak diberikan."
 
-#: backend/file/qsf-backend.c:255
+#: backend/file/qsf-backend.c:249
 #, c-format
 msgid ""
 "When converting XML strings into numbers, an overflow has been detected. The "
@@ -147,7 +147,7 @@ msgstr ""
 "obyek QSF '%s' berisi data tidak valid dalam sebuah field yang seharusnya "
 "menyimpan angka."
 
-#: backend/file/qsf-backend.c:339
+#: backend/file/qsf-backend.c:333
 #, c-format
 msgid ""
 "could not write to '%s'. That database may be on a read-only file system, or "
@@ -156,17 +156,17 @@ msgstr ""
 "tidak dapat menulis ke '%s'. Database itu mungkin berada pada filesystem "
 "read-only, atau anda tidak memiliki ijin menulis ke direktori itu.\n"
 
-#: backend/file/qsf-backend.c:497
+#: backend/file/qsf-backend.c:491
 #, c-format
 msgid "There was an error parsing the file '%s'.\n"
 msgstr "Terjadi kesalahan memparsing file '%s'.\n"
 
-#: backend/file/qsf-backend.c:583
+#: backend/file/qsf-backend.c:577
 #, c-format
 msgid "There was an error reading the file '%s'."
 msgstr "Terjadi kesalahan membaca file '%s'."
 
-#: backend/file/qsf-backend.c:616
+#: backend/file/qsf-backend.c:610
 #, c-format
 msgid ""
 "The selected file '%s' is a QSF map and cannot be opened as a QSF object."
@@ -174,7 +174,7 @@ msgstr ""
 "File terpilih '%s' merupakan sebuah peta QSF dan tidak dapat dibuka sebagai "
 "obyek QSF."
 
-#: backend/file/qsf-backend.c:1179
+#: backend/file/qsf-backend.c:1159
 #, c-format
 msgid ""
 "Could not write to '%s'. Check that you have permission to write to this "
@@ -183,7 +183,7 @@ msgstr ""
 "Tidak dapat menulis ke '%s'. Periksalah permisi anda untuk menulis ke file "
 "ini dan pastikan tersedia ruang yang cukup."
 
-#: backend/file/qsf-backend.c:1471
+#: backend/file/qsf-backend.c:1395
 #, c-format
 msgid ""
 "The selected QSF object file '%s' contains one or more invalid GUIDs. The "
@@ -192,7 +192,7 @@ msgstr ""
 "File obyek QSF terpilih '%s' berisi satu atau lebih GUID tidak valid. File "
 "tidak dapat diproses - periksa sumber file dan coba lagi."
 
-#: backend/file/qsf-backend.c:1593
+#: backend/file/qsf-backend.c:1517
 #, c-format
 msgid ""
 "The selected QSF object file '%s' contains one or more invalid 'collect' "
@@ -270,7 +270,7 @@ msgstr ""
 msgid "The name of this data source as specified in the GDA configuration."
 msgstr ""
 
-#: backend/sqlite/qof-sqlite.c:1251
+#: backend/sqlite/qof-sqlite.c:1217
 #, c-format
 msgid ""
 "Unable to open the output file '%s' - do you have permission to create this "
@@ -279,36 +279,36 @@ msgstr ""
 "Tidak dapat membuka file output '%s' - apakah anda memiliki ijin untuk "
 "membuat file ini ?"
 
-#: backend/sqlite/qof-sqlite.c:1299
+#: backend/sqlite/qof-sqlite.c:1265
 #, c-format
 msgid "Unable to open the sqlite database '%s'."
 msgstr "Tidak dapat membuka database sqlite '%s'."
 
-#: backend/sqlite/qof-sqlite.c:1323
+#: backend/sqlite/qof-sqlite.c:1289
 msgid "Please provide a filename for sqlite."
 msgstr "Silakan berikan namafile untuk sqlite."
 
-#: backend/sqlite/qof-sqlite.c:1460
+#: backend/sqlite/qof-sqlite.c:1426
 msgid "Unable to delete record."
 msgstr "Tidak dapat menghapus record."
 
-#: backend/sqlite/qof-sqlite.c:1462
+#: backend/sqlite/qof-sqlite.c:1428
 msgid "Unable to create record."
 msgstr "Tidak dapat membuat record."
 
-#: backend/sqlite/qof-sqlite.c:1464
+#: backend/sqlite/qof-sqlite.c:1430
 msgid "Unable to insert a new record."
 msgstr "Tidak dapat menyisipkan record baru."
 
-#: backend/sqlite/qof-sqlite.c:1466
+#: backend/sqlite/qof-sqlite.c:1432
 msgid "Unable to update existing record."
 msgstr "Tidak dapat mengupdate record yang ada."
 
-#: qof/qofsession.c:1075
+#: qof/qofsession.c:1050
 msgid "This book appears to be open already."
 msgstr "Buku ini tampaknya sudah dibuka."
 
-#: qof/qofsession.c:1116
+#: qof/qofsession.c:1091
 #, c-format
 msgid ""
 "Unable to locate a suitable backend for '%s' - please check you have "
@@ -317,11 +317,11 @@ msgstr ""
 "Tidak dapat menemukan backend yang sesuai untuk '%s' - silakan periksa "
 "apakah anda telah menentukan metode akses seperti file: atau sqlite:"
 
-#: qof/qofsession.c:1353 qof/qofsession.c:1390
+#: qof/qofsession.c:1328 qof/qofsession.c:1365
 msgid "Failed to load backend, no suitable handler."
 msgstr "Gagal memuatkan backend, tidak tersedia handler yang sesuai."
 
-#: qof/qofsql.c:758 qof/qofsql.c:785
+#: qof/qofsql.c:713 qof/qofsql.c:740
 #, c-format
 msgid ""
 "When converting SQLite strings into numbers, an overflow has been detected. "

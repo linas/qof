@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: qof 0.7.2\n"
 "Report-Msgid-Bugs-To: qof-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2008-01-29 21:34+0000\n"
+"POT-Creation-Date: 2008-03-16 11:13+0000\n"
 "PO-Revision-Date: 2006-09-28 17:54+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
@@ -23,8 +23,8 @@ msgstr "QSF XML-filen \"%s\" kunde inte hittas."
 
 #: backend/file/qsf-xml-map.c:260 backend/file/qsf-xml-map.c:282
 #: backend/file/qsf-xml-map.c:341 backend/file/qsf-xml.c:266
-#: backend/file/qsf-xml.c:325 backend/file/qsf-backend.c:532
-#: backend/file/qsf-backend.c:575
+#: backend/file/qsf-xml.c:325 backend/file/qsf-backend.c:526
+#: backend/file/qsf-backend.c:569
 #, c-format
 msgid "There was an error parsing the file '%s'."
 msgstr "Det inträffade ett fel vid tolkning av filen \"%s\"."
@@ -127,13 +127,13 @@ msgstr ""
 "fortfarande använder datum bör inte ställa in det här alternativet förrän "
 "tidsvärden stöds."
 
-#: backend/file/qsf-backend.c:252
+#: backend/file/qsf-backend.c:246
 #, c-format
 msgid ""
 "The selected QSF Object file '%s' requires a map but it was not provided."
 msgstr "Den valda QSF-objektfilen \"%s\" kräver en karta men den angavs inte."
 
-#: backend/file/qsf-backend.c:255
+#: backend/file/qsf-backend.c:249
 #, c-format
 msgid ""
 "When converting XML strings into numbers, an overflow has been detected. The "
@@ -144,7 +144,7 @@ msgstr ""
 "objektfilen \"%s\" innehåller ogiltigt data i ett fält som är tänkt att "
 "innehålla siffror."
 
-#: backend/file/qsf-backend.c:339
+#: backend/file/qsf-backend.c:333
 #, c-format
 msgid ""
 "could not write to '%s'. That database may be on a read-only file system, or "
@@ -153,17 +153,17 @@ msgstr ""
 "kunde inte skriva till \"%s\". Den databasen kan finnas på ett skrivskyddat "
 "filsystem, eller att du inte har skrivrättighet för katalogen.\n"
 
-#: backend/file/qsf-backend.c:497
+#: backend/file/qsf-backend.c:491
 #, c-format
 msgid "There was an error parsing the file '%s'.\n"
 msgstr "Det inträffade ett fel vid tolkning av filen \"%s\".\n"
 
-#: backend/file/qsf-backend.c:583
+#: backend/file/qsf-backend.c:577
 #, c-format
 msgid "There was an error reading the file '%s'."
 msgstr "Det inträffade ett fel vid läsning av filen \"%s\"."
 
-#: backend/file/qsf-backend.c:616
+#: backend/file/qsf-backend.c:610
 #, c-format
 msgid ""
 "The selected file '%s' is a QSF map and cannot be opened as a QSF object."
@@ -171,7 +171,7 @@ msgstr ""
 "Den valda filen \"%s\" är en QSF-karta och kan inte öppnas som ett QSF-"
 "objekt."
 
-#: backend/file/qsf-backend.c:1179
+#: backend/file/qsf-backend.c:1159
 #, c-format
 msgid ""
 "Could not write to '%s'. Check that you have permission to write to this "
@@ -181,7 +181,7 @@ msgstr ""
 "den här filen och att det finns tillräckligt ledigt utrymme för att skapa "
 "den."
 
-#: backend/file/qsf-backend.c:1471
+#: backend/file/qsf-backend.c:1395
 #, c-format
 msgid ""
 "The selected QSF object file '%s' contains one or more invalid GUIDs. The "
@@ -190,7 +190,7 @@ msgstr ""
 "Den valda QSF-objektfilen \"%s\" innehåller en eller flera ogiltiga GUID. "
 "Filen kan inte behandlas - kontrollera källan för filen och försök igen."
 
-#: backend/file/qsf-backend.c:1593
+#: backend/file/qsf-backend.c:1517
 #, c-format
 msgid ""
 "The selected QSF object file '%s' contains one or more invalid 'collect' "
@@ -269,7 +269,7 @@ msgstr ""
 msgid "The name of this data source as specified in the GDA configuration."
 msgstr ""
 
-#: backend/sqlite/qof-sqlite.c:1251
+#: backend/sqlite/qof-sqlite.c:1217
 #, c-format
 msgid ""
 "Unable to open the output file '%s' - do you have permission to create this "
@@ -278,36 +278,36 @@ msgstr ""
 "Kunde inte öppna utdatafilen \"%s\" - har du rättighet att skapa den här "
 "filen?"
 
-#: backend/sqlite/qof-sqlite.c:1299
+#: backend/sqlite/qof-sqlite.c:1265
 #, c-format
 msgid "Unable to open the sqlite database '%s'."
 msgstr "Kunde inte öppna sqlite-databasen \"%s\"."
 
-#: backend/sqlite/qof-sqlite.c:1323
+#: backend/sqlite/qof-sqlite.c:1289
 msgid "Please provide a filename for sqlite."
 msgstr "Ange ett filnamn för sqlite."
 
-#: backend/sqlite/qof-sqlite.c:1460
+#: backend/sqlite/qof-sqlite.c:1426
 msgid "Unable to delete record."
 msgstr "Kunde inte ta bort post."
 
-#: backend/sqlite/qof-sqlite.c:1462
+#: backend/sqlite/qof-sqlite.c:1428
 msgid "Unable to create record."
 msgstr "Kunde inte skapa post."
 
-#: backend/sqlite/qof-sqlite.c:1464
+#: backend/sqlite/qof-sqlite.c:1430
 msgid "Unable to insert a new record."
 msgstr "Kunde inte infoga en ny post."
 
-#: backend/sqlite/qof-sqlite.c:1466
+#: backend/sqlite/qof-sqlite.c:1432
 msgid "Unable to update existing record."
 msgstr "Kunde inte uppdatera existerande post."
 
-#: qof/qofsession.c:1075
+#: qof/qofsession.c:1050
 msgid "This book appears to be open already."
 msgstr "Den här boken verkar redan vara öppnad."
 
-#: qof/qofsession.c:1116
+#: qof/qofsession.c:1091
 #, c-format
 msgid ""
 "Unable to locate a suitable backend for '%s' - please check you have "
@@ -316,11 +316,11 @@ msgstr ""
 "Kunde inte hitta en lämplig bakände för \"%s\" - kontrollera att du har "
 "angivit en åtkomstmetod som file: eller sqlite:"
 
-#: qof/qofsession.c:1353 qof/qofsession.c:1390
+#: qof/qofsession.c:1328 qof/qofsession.c:1365
 msgid "Failed to load backend, no suitable handler."
 msgstr "Misslyckades med att läsa in bakände, ingen lämplig hanterare."
 
-#: qof/qofsql.c:758 qof/qofsql.c:785
+#: qof/qofsql.c:713 qof/qofsql.c:740
 #, c-format
 msgid ""
 "When converting SQLite strings into numbers, an overflow has been detected. "

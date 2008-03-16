@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: qof 0.7.2\n"
 "Report-Msgid-Bugs-To: qof-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2008-01-29 21:34+0000\n"
+"POT-Creation-Date: 2008-03-16 11:13+0000\n"
 "PO-Revision-Date: 2006-09-29 23:15-0300\n"
 "Last-Translator: J. Victor D. Martins <jvdm@sdf.lonestar.org>\n"
 "Language-Team: Brazilian Portuguese <ldp-br@bazar.conectiva.com.br>\n"
@@ -24,8 +24,8 @@ msgstr "Não foi possível encontrar o arquivo XML QSF '%s'."
 
 #: backend/file/qsf-xml-map.c:260 backend/file/qsf-xml-map.c:282
 #: backend/file/qsf-xml-map.c:341 backend/file/qsf-xml.c:266
-#: backend/file/qsf-xml.c:325 backend/file/qsf-backend.c:532
-#: backend/file/qsf-backend.c:575
+#: backend/file/qsf-xml.c:325 backend/file/qsf-backend.c:526
+#: backend/file/qsf-backend.c:569
 #, c-format
 msgid "There was an error parsing the file '%s'."
 msgstr "Ocorreu um erro ao analisar gramaticalmente o arquivo '%s'."
@@ -129,13 +129,13 @@ msgstr ""
 "opção para converter valores antigos. Aplicativos que ainda usam data não "
 "devem definir esta opção até que valores de horas sejam suportados."
 
-#: backend/file/qsf-backend.c:252
+#: backend/file/qsf-backend.c:246
 #, c-format
 msgid ""
 "The selected QSF Object file '%s' requires a map but it was not provided."
 msgstr "O arquivo Objeto QSF '%s' precisa de um mapa mas este não foi dado."
 
-#: backend/file/qsf-backend.c:255
+#: backend/file/qsf-backend.c:249
 #, c-format
 msgid ""
 "When converting XML strings into numbers, an overflow has been detected. The "
@@ -146,7 +146,7 @@ msgstr ""
 "números. O arquivo objeto QSF '%s' contém dados inválidos em um campo onde "
 "deveria haver números."
 
-#: backend/file/qsf-backend.c:339
+#: backend/file/qsf-backend.c:333
 #, c-format
 msgid ""
 "could not write to '%s'. That database may be on a read-only file system, or "
@@ -156,17 +156,17 @@ msgstr ""
 "de arquivos de somente leitura ou você talvez não tenha permissão para "
 "escrever neste diretório.\n"
 
-#: backend/file/qsf-backend.c:497
+#: backend/file/qsf-backend.c:491
 #, c-format
 msgid "There was an error parsing the file '%s'.\n"
 msgstr "Ocorreu um erro ao analisar gramaticalmente o arquivo '%s'.\n"
 
-#: backend/file/qsf-backend.c:583
+#: backend/file/qsf-backend.c:577
 #, c-format
 msgid "There was an error reading the file '%s'."
 msgstr "Ocorreu um erro ao ler o arquivo '%s'."
 
-#: backend/file/qsf-backend.c:616
+#: backend/file/qsf-backend.c:610
 #, c-format
 msgid ""
 "The selected file '%s' is a QSF map and cannot be opened as a QSF object."
@@ -174,7 +174,7 @@ msgstr ""
 "O arquivo '%s' selecionado é um mapa QSF e não pode ser aberto como um "
 "objeto QSF."
 
-#: backend/file/qsf-backend.c:1179
+#: backend/file/qsf-backend.c:1159
 #, c-format
 msgid ""
 "Could not write to '%s'. Check that you have permission to write to this "
@@ -183,7 +183,7 @@ msgstr ""
 "Não é escrever em '%s'. Verifique se você possuir permissões para escrever "
 "neste arquivo e se há espaço suficiente para criá-lo."
 
-#: backend/file/qsf-backend.c:1471
+#: backend/file/qsf-backend.c:1395
 #, c-format
 msgid ""
 "The selected QSF object file '%s' contains one or more invalid GUIDs. The "
@@ -193,7 +193,7 @@ msgstr ""
 "arquivo não pode ser processado - por favor verifique a origem do arquivo e "
 "tente novamente."
 
-#: backend/file/qsf-backend.c:1593
+#: backend/file/qsf-backend.c:1517
 #, c-format
 msgid ""
 "The selected QSF object file '%s' contains one or more invalid 'collect' "
@@ -272,7 +272,7 @@ msgstr ""
 msgid "The name of this data source as specified in the GDA configuration."
 msgstr ""
 
-#: backend/sqlite/qof-sqlite.c:1251
+#: backend/sqlite/qof-sqlite.c:1217
 #, c-format
 msgid ""
 "Unable to open the output file '%s' - do you have permission to create this "
@@ -281,37 +281,37 @@ msgstr ""
 "Impossível abrir o arquivo de saída '%s' - você tem permissão para criar "
 "este arquivo?"
 
-#: backend/sqlite/qof-sqlite.c:1299
+#: backend/sqlite/qof-sqlite.c:1265
 #, c-format
 msgid "Unable to open the sqlite database '%s'."
 msgstr "Impossível abrir o banco-de-dados sqlite '%s'."
 
-#: backend/sqlite/qof-sqlite.c:1323
+#: backend/sqlite/qof-sqlite.c:1289
 msgid "Please provide a filename for sqlite."
 msgstr "Por favor apresente um nome de arquivo para o sqlite."
 
-#: backend/sqlite/qof-sqlite.c:1460
+#: backend/sqlite/qof-sqlite.c:1426
 msgid "Unable to delete record."
 msgstr "Impossível apagar o registro."
 
-#: backend/sqlite/qof-sqlite.c:1462
+#: backend/sqlite/qof-sqlite.c:1428
 msgid "Unable to create record."
 msgstr "Impossível criar o registro."
 
-#: backend/sqlite/qof-sqlite.c:1464
+#: backend/sqlite/qof-sqlite.c:1430
 msgid "Unable to insert a new record."
 msgstr "Impossível inserir um novo registro."
 
-#: backend/sqlite/qof-sqlite.c:1466
+#: backend/sqlite/qof-sqlite.c:1432
 msgid "Unable to update existing record."
 msgstr "Impossível atualizar o registro atual."
 
-#: qof/qofsession.c:1075
+#: qof/qofsession.c:1050
 msgid "This book appears to be open already."
 msgstr "Este livro aparentemente já está aberto."
 
 # Uma tradução para backend?
-#: qof/qofsession.c:1116
+#: qof/qofsession.c:1091
 #, c-format
 msgid ""
 "Unable to locate a suitable backend for '%s' - please check you have "
@@ -321,11 +321,11 @@ msgstr ""
 "se você especificou um método de acesso como file: ou sqlite:"
 
 # Uma tradução para backend?
-#: qof/qofsession.c:1353 qof/qofsession.c:1390
+#: qof/qofsession.c:1328 qof/qofsession.c:1365
 msgid "Failed to load backend, no suitable handler."
 msgstr "Falha ao carregar o backend, nenhum manipulador adequado."
 
-#: qof/qofsql.c:758 qof/qofsql.c:785
+#: qof/qofsql.c:713 qof/qofsql.c:740
 #, c-format
 msgid ""
 "When converting SQLite strings into numbers, an overflow has been detected. "

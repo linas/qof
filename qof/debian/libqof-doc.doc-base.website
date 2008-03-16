@@ -10,7 +10,7 @@ Abstract: Query Object Framework Introduction
   Why QOF exists, how to develop packages using QOF, generating
   examples, QOF roadmap, goals, status and links to other related
   www sites, including translation support.
-Section: Apps/Programming
+Section: Programming/C
 
 Format: HTML
 Index: /usr/share/doc/libqof-doc/html/index.html
