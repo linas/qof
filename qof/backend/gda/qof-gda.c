@@ -126,11 +126,6 @@ qoftype_to_gdafield (QofIdTypeConst qoftype)
 /*	if (0 == safe_strcasecmp (qoftype, QOF_TYPE_KVP))
 		gda_column_set_g_type (p, G_TYPE_); ??
 */
-	if (gda_column_get_g_type (p) == G_TYPE_NONE)
-	{
-		g_free (p);
-		return NULL;
-	}
 	return p;
 }
 
@@ -185,16 +180,31 @@ build_table (gpointer value, gpointer user_data)
 		(meaning that this will end up looking a lot like
 		QSQLiteBackend).
 		*/
-		text = g_strdup ("create table ... ");
+/*		while (qgda_be->field_list)
+		{
+			if (qgda_be->field_list->data)
+			{
+				g_message("field_type:%s", g_type_name 
+					(gda_column_get_g_type (qgda_be->field_list->data)));
+				qgda_be->field_list = qgda_be->field_list->next;
+			}
+			return;
+		}*/
+		text = g_strdup ("create table dump (id int, name varchar(25));");
 		plist = NULL;
 		qgda_be->command = gda_command_new (text, GDA_COMMAND_TYPE_SQL, 
 			GDA_COMMAND_OPTION_STOP_ON_ERRORS);
 		gda_connection_execute_non_select_command (qgda_be->connection, 
 			qgda_be->command, plist, &qgda_err);
+		if (! qgda_be->command)
+		{
+			g_message ("gda_command_new - expected stop reached.");
+		}
 		/* plist contains a GdaParameterList of results - probably ignore. */
 		if (qgda_err)
 		{
 			/* handle the error here */
+			g_message ("GDA: %s", qgda_err->message);
 			g_clear_error (&qgda_err);
 		}
 		gda_command_free (qgda_be->command);
@@ -222,8 +232,10 @@ create_data_source (QGdaBackend * qgda_be)
 	gchar * cnc_string;
 	QofBackend * be;
 	GdaProviderInfo * prov;
+	GError * qgda_err;
 
 	ENTER (" ");
+	qgda_err = NULL;
 	be = (QofBackend*)qgda_be;
 	if (!qgda_be->data_source_name)
 	{
@@ -246,12 +258,40 @@ create_data_source (QGdaBackend * qgda_be)
 	}
 /*	cnc_string = g_strconcat ("DATABASE=", qgda_be->database_name,
 		NULL);*/
-	cnc_string = g_strdup ("URI=/home/neil/gda-test.db");
+	cnc_string = g_strdup ("DB_DIR=/home/neil/;DB_NAME=gda-test");
 	/* creates db within source if db does not exist */
-	gda_config_save_data_source (qgda_be->data_source_name,
-		qgda_be->provider_name, cnc_string,
-		qgda_be->source_description, qgda_be->username,
-		qgda_be->password, TRUE);
+	{
+		GdaServerOperation * prepare;
+		gboolean modify_global_config, save_data_source, test;
+		prepare = gda_client_prepare_create_database (qgda_be->client_pool, 
+			qgda_be->data_source_name, qgda_be->provider_name);
+		test = gda_client_perform_create_database (qgda_be->client_pool, prepare, NULL);
+		if (test)
+			PINFO ("performed creation of new database ok");
+		else
+			g_message ("creation of new database failed");
+		modify_global_config = gda_config_can_modify_global_config ();
+		/* only the root user can modify global config in GDA - find out */
+		gda_config_has_section ("/apps/libgda/Datasources/QOF_DEBUG");
+		modify_global_config = gda_config_can_modify_global_config ();
+		save_data_source = gda_config_save_data_source (qgda_be->data_source_name,
+			qgda_be->provider_name, cnc_string,
+			qgda_be->source_description, qgda_be->username,
+			qgda_be->password, modify_global_config);
+		g_return_val_if_fail (save_data_source, FALSE);
+	}
+	qgda_be->connection = gda_client_open_connection
+		(qgda_be->client_pool, qgda_be->data_source_name,
+		NULL, NULL, GDA_CONNECTION_OPTIONS_NONE, &qgda_err);
+	if (!qgda_be->connection)
+	{
+		/** \bug make this a user error */
+		g_message ("FAIL:%s", qgda_err->message);
+		PERR ("connect request failed, removing %s", qgda_be->data_source_name);
+		g_message ("connect request failed, removing %s", qgda_be->data_source_name);
+		gda_config_remove_data_source (qgda_be->data_source_name);
+		return FALSE;
+	}
 	/* create tables per QofObject */
 	qof_object_foreach_type (create_tables, qgda_be);
 	/* gda_connection_create_table (don't log password) */
@@ -315,11 +355,14 @@ qgda_session_begin(QofBackend *be, QofSession *session, const
 		}
 		g_free (gdahome);
 	}
+	if (qgda_be->data_source_name)
 	{
 		/* check data source */
 		GdaDataSourceInfo * source;
 		gboolean created;
 
+		PINFO ("name=%s", qgda_be->data_source_name);
+		PINFO ("provider=%s", qgda_be->provider_name);
 		created = FALSE;
 		source = gda_config_find_data_source
 			(qgda_be->data_source_name);
@@ -361,7 +404,11 @@ qgda_session_begin(QofBackend *be, QofSession *session, const
 		qof_error_set_be (be, qof_error_register (msg, FALSE));
 		PERR (" failed to connect to GDA: '%s'", msg);
 		qgda_be->error = TRUE;
+		g_message (msg);
 		g_free (msg);
+		PERR ("connect request failed, removing %s", qgda_be->data_source_name);
+		g_message ("connect request failed, removing %s", qgda_be->data_source_name);
+		gda_config_remove_data_source (qgda_be->data_source_name);
 	}
 }
 
@@ -447,7 +494,6 @@ qgda_session_end (QofBackend *be)
 	qgda_be = (QGdaBackend*)be;
 	if (qgda_be->dm)
 		g_object_unref(G_OBJECT(qgda_be->dm));
-	gda_client_close_all_connections (qgda_be->client_pool);
 }
 
 static void
@@ -457,7 +503,12 @@ qgda_destroy_backend (QofBackend *be)
 
 	qgda_be = (QGdaBackend*)be;
 	if (qgda_be)
+	{
+		PINFO ("removing %s", qgda_be->data_source_name);
+		gda_config_remove_data_source (qgda_be->data_source_name);
+		gda_client_close_all_connections (qgda_be->client_pool);
 		g_object_unref(G_OBJECT(qgda_be->client_pool));
+	}
 	qof_event_unregister_handler (qgda_be->create_handler);
 	qof_event_unregister_handler (qgda_be->delete_handler);
 	g_free (be);
@@ -606,9 +657,11 @@ qgda_backend_new (void)
 
 /* DEBUG */
 	qgda_be->data_source_name = "QOF_DEBUG";
-	qgda_be->database_name = "URI=/home/neil/test.gda";
-	qgda_be->provider_name = "XML";
+	qgda_be->database_name = "DB_DIR=/home/neil/";
+	qgda_be->provider_name = "SQLite";
 	qgda_be->source_description = "QOF GDA debug data";
+	/** \todo Need a way to delete the apps/libgda/Datasources/$name key
+	  or remove it from libgda3 config. */
 /* end debug */
 	return be;
 }

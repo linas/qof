@@ -1,5 +1,12 @@
 2008-03-16  Neil Williams  <linux@codehelp.co.uk>
 
+ * backend/gda/qof-gda.c (qoftype_to_gdafield), (build_table),
+ (create_data_source), (qgda_session_begin), (qgda_session_end),
+ (qgda_destroy_backend), (qgda_backend_new): Enabling creation
+ of new GDA data sources and tables.
+
+2008-03-16  Neil Williams  <linux@codehelp.co.uk>
+
  * Start changes for libqof2
  * Makefile.am : Remove qof-1.pc support.
  * qof.symbols.in : Remove dropped symbols and
