@@ -54,7 +54,7 @@
  * interface.  Only object modules compiled against this version
  * of the interface will load properly
  */
-#define QOF_OBJECT_VERSION 3
+#define QOF_OBJECT_VERSION 4
 
 #define QOF_MOD_OBJECT "qof-object"
 

@@ -614,14 +614,12 @@ test_rule_loop (QofBookMergeData * mergeData, QofBookMergeRule * rule,
 		}
 		/* param_as_string does the conversion for display purposes only */
 		/* do NOT use as_string for calculations or set_fcn */
-		importstring =
-			qof_book_merge_param_as_string (eachParam, rule->importEnt);
+		importstring = qof_util_param_to_string (rule->importEnt, eachParam);
 		do_test ((importstring != NULL),
 				 "loop:#16 import param_as_string is null");
 		if (!skip_target)
 		{
-			targetstring =
-				qof_book_merge_param_as_string (eachParam, rule->targetEnt);
+			targetstring = qof_util_param_to_string (rule->targetEnt, eachParam);
 			do_test ((targetstring != NULL),
 					 "loop:#17 target param_as_string is null");
 		}

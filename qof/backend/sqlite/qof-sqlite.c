@@ -2,7 +2,7 @@
  *            qof-sqlite.c
  *
  *  Sun Jan 15 12:52:46 2006
- *  Copyright  2006-2007  Neil Williams
+ *  Copyright  2006-2008  Neil Williams
  *  linux@codehelp.co.uk
  ****************************************************************/
 /*
@@ -171,13 +171,6 @@ kvp_value_to_qof_type_helper (KvpValueType n)
 			return QOF_TYPE_GUID;
 			break;
 		}
-#ifndef QOF_DISABLE_DEPRECATED
-	case KVP_TYPE_TIMESPEC:
-		{
-			return QOF_TYPE_DATE;
-			break;
-		}
-#endif
 	case KVP_TYPE_BOOLEAN:
 		{
 			return QOF_TYPE_BOOLEAN;
@@ -209,10 +202,6 @@ sql_to_kvp_helper (const gchar * type_string)
 		return KVP_TYPE_STRING;
 	if (0 == safe_strcmp (QOF_TYPE_GUID, type_string))
 		return KVP_TYPE_GUID;
-#ifndef QOF_DISABLE_DEPRECATED
-	if (0 == safe_strcmp (QOF_TYPE_DATE, type_string))
-		return KVP_TYPE_TIMESPEC;
-#endif
 	if (0 == safe_strcmp (QOF_TYPE_TIME, type_string))
 		return KVP_TYPE_TIME;
 	return 0;
@@ -227,11 +216,6 @@ string_to_kvp_value (const gchar * content, KvpValueType type)
 	gdouble cm_double;
 	QofNumeric cm_numeric;
 	GUID *cm_guid;
-#ifndef QOF_DISABLE_DEPRECATED
-	struct tm kvp_time;
-	time_t kvp_time_t;
-	Timespec cm_date;
-#endif
 
 	switch (type)
 	{
@@ -289,16 +273,6 @@ string_to_kvp_value (const gchar * content, KvpValueType type)
 			else
 				PERR (" failed to parse date");
 		}
-#ifndef QOF_DISABLE_DEPRECATED
-	case KVP_TYPE_TIMESPEC:
-		{
-			strptime (content, QOF_UTC_DATE_FORMAT, &kvp_time);
-			kvp_time_t = mktime (&kvp_time);
-			timespecFromTime_t (&cm_date, kvp_time_t);
-			return kvp_value_new_timespec (cm_date);
-			break;
-		}
-#endif
 	case KVP_TYPE_BOOLEAN:
 		{
 			gboolean val;
@@ -335,9 +309,6 @@ kvpvalue_to_sql (const gchar * key, KvpValue * val, gpointer builder)
 	case KVP_TYPE_GUID:
 	case KVP_TYPE_TIME:
 	case KVP_TYPE_BOOLEAN:
-#ifndef QOF_DISABLE_DEPRECATED
-	case KVP_TYPE_TIMESPEC:
-#endif
 		{
 			/* ("kvp_id int primary key not null", "guid char(32)", "path mediumtext",
 			   "type mediumtext", "value text", */
@@ -391,12 +362,7 @@ string_param_to_sql (QofParam * param)
 	}
 	if (0 == safe_strcmp (param->param_type, QOF_TYPE_INT32))
 		return g_strdup_printf (" %s int", param->param_name);
-#ifndef QOF_DISABLE_DEPRECATED
-	if ((0 == safe_strcmp (param->param_type, QOF_TYPE_DATE)) ||
-		(0 == safe_strcmp (param->param_type, QOF_TYPE_TIME)))
-#else
 	if (0 == safe_strcmp (param->param_type, QOF_TYPE_TIME))
-#endif
 		return g_strdup_printf (" %s datetime", param->param_name);
 	if (0 == safe_strcmp (param->param_type, QOF_TYPE_CHAR))
 		return g_strdup_printf (" %s char(1)", param->param_name);

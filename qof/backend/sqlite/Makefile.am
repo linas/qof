@@ -6,7 +6,7 @@ AM_CFLAGS = \
   ${DEPS_CFLAGS} \
   ${SQLITE_CFLAGS}
 
-lib_LTLIBRARIES=libqof-backend-sqlite.la
+pkglib_LTLIBRARIES=libqof-backend-sqlite.la
 
 libqof_backend_sqlite_la_SOURCES = \
  qof-sqlite.c
@@ -14,7 +14,9 @@ libqof_backend_sqlite_la_SOURCES = \
 libqof_backend_sqlite_la_LDFLAGS = \
  -L${top_srcdir}/qof \
  -L${top_srcdir}/lib/libsql \
- -version-info $(LIBQOF_BACKEND_QSQL_VERSION)
+ -avoid-version
+
+# -version-info $(LIBQOF_BACKEND_QSQL_VERSION)
 
 libqof_backend_sqlite_la_LIBADD = \
  ${QOF_LIBS} \

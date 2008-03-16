@@ -1,6 +1,7 @@
 /********************************************************************\
  * qofclass.c -- provide QOF parameterized data objects             *
  * Copyright (C) 2002 Derek Atkins <warlord@MIT.EDU>                *
+ * Copyright 2008 Neil Williams <linux@codehelp.co.uk>              *
  *                                                                  *
  * This program is free software; you can redistribute it and/or    *
  * modify it under the terms of the GNU General Public License as   *
@@ -303,10 +304,6 @@ find_reference_param_cb (QofParam * param, gpointer user_data)
 		return;
 	if (0 == safe_strcmp (param->param_type, QOF_TYPE_TIME))
 		return;
-#ifndef QOF_DISABLE_DEPRECATED
-	if (0 == safe_strcmp (param->param_type, QOF_TYPE_DATE))
-		return;
-#endif
 	if (0 == safe_strcmp (param->param_type, QOF_TYPE_CHAR))
 		return;
 	if (0 == safe_strcmp (param->param_type, QOF_TYPE_DEBCRED))

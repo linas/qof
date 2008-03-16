@@ -2,7 +2,7 @@
  * qofnumeric.c -- an exact-number library for accounting use       *
  * Copyright (C) 2000 Bill Gribble                                  *
  * Copyright (C) 2004 Linas Vepstas <linas@linas.org>               *
- * Copyright (c) 2006 Neil Williams <linux@codehelp.co.uk>          *
+ * Copyright (c) 2006-2008 Neil Williams <linux@codehelp.co.uk>     *
  *                                                                  *
  * This program is free software; you can redistribute it and/or    *
  * modify it under the terms of the GNU General Public License as   *
@@ -30,11 +30,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
+#include "qof.h"
 #include "qofnumeric.h"
 #include "qofmath128.c"
-
-/*static QofLogModule log_module = QOF_MOD_ENGINE;*/
 
 /* =============================================================== */
 /* This function is small, simple, and used everywhere below, 
@@ -1126,15 +1124,6 @@ qof_numeric_from_string (const gchar * str, QofNumeric * n)
 
 	if (!str)
 		return FALSE;
-
-#ifdef QOF_DEPRECATED
-	/* must use "<" here because %n's effects aren't well defined */
-	if (sscanf (str, " " QOF_SCANF_LLD "/" QOF_SCANF_LLD "%n",
-			&tmpnum, &tmpdenom, &num_read) < 2)
-	{
-		return FALSE;
-	}
-#else
 	tmpnum = strtoll (str, NULL, 0);
 	str = strchr (str, '/');
 	if (!str)
@@ -1142,78 +1131,9 @@ qof_numeric_from_string (const gchar * str, QofNumeric * n)
 	str++;
 	tmpdenom = strtoll (str, NULL, 0);
 	num_read = strspn (str, "0123456789");
-#endif
 	n->num = tmpnum;
 	n->denom = tmpdenom;
 	return TRUE;
 }
-
-/* ***************************************************************
- *  qof_numeric misc testing
- ****************************************************************/
-#ifdef _QOF_NUMERIC_TEST
-
-static gchar *
-qof_numeric_print (QofNumeric in)
-{
-	gchar *retval;
-	if (qof_numeric_check (in))
-	{
-		retval =
-			g_strdup_printf ("<ERROR> [%" G_GINT64_FORMAT " / %"
-			G_GINT64_FORMAT "]", in.num, in.denom);
-	}
-	else
-	{
-		retval =
-			g_strdup_printf ("[%" G_GINT64_FORMAT " / %" G_GINT64_FORMAT
-			"]", in.num, in.denom);
-	}
-	return retval;
-}
-
-int
-main (void)
-{
-	QofNumeric a = qof_numeric_create (1, 3);
-	QofNumeric b = qof_numeric_create (1, 4);
-	QofNumeric c;
-
-	QofNumeric err;
-
-	c = qof_numeric_add_with_error (a, b, 100, QOF_HOW_RND_ROUND, &err);
-	printf ("add 100ths/error : %s + %s = %s + (error) %s\n\n",
-		qof_numeric_print (a), qof_numeric_print (b),
-		qof_numeric_print (c), qof_numeric_print (err));
-
-	c = qof_numeric_sub_with_error (a, b, 100, QOF_HOW_RND_FLOOR, &err);
-	printf ("sub 100ths/error : %s - %s = %s + (error) %s\n\n",
-		qof_numeric_print (a), qof_numeric_print (b),
-		qof_numeric_print (c), qof_numeric_print (err));
-
-	c = qof_numeric_mul_with_error (a, b, 100, QOF_HOW_RND_ROUND, &err);
-	printf ("mul 100ths/error : %s * %s = %s + (error) %s\n\n",
-		qof_numeric_print (a), qof_numeric_print (b),
-		qof_numeric_print (c), qof_numeric_print (err));
-
-	c = qof_numeric_div_with_error (a, b, 100, QOF_HOW_RND_ROUND, &err);
-	printf ("div 100ths/error : %s / %s = %s + (error) %s\n\n",
-		qof_numeric_print (a), qof_numeric_print (b),
-		qof_numeric_print (c), qof_numeric_print (err));
-
-	printf ("multiply (EXACT): %s * %s = %s\n",
-		qof_numeric_print (a), qof_numeric_print (b),
-		qof_numeric_print (qof_numeric_mul
-			(a, b, QOF_DENOM_AUTO, QOF_HOW_DENOM_EXACT)));
-
-	printf ("multiply (REDUCE): %s * %s = %s\n",
-		qof_numeric_print (a), qof_numeric_print (b),
-		qof_numeric_print (qof_numeric_mul
-			(a, b, QOF_DENOM_AUTO, QOF_HOW_DENOM_REDUCE)));
-
-
-	return 0;
-}
-#endif
 
 /* ======================== END OF FILE =================== */

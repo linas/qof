@@ -1,7 +1,7 @@
 /********************************************************************\
  * qof_query.c -- Implement predicate API for searching for objects *
  * Copyright (C) 2002 Derek Atkins <warlord@MIT.EDU>                *
- * Copyright (C) 2006 Neil Williams <linux@codehelp.co.uk>          *
+ * Copyright (C) 2006-2008 Neil Williams <linux@codehelp.co.uk>     *
  *                                                                  *
  * This program is free software; you can redistribute it and/or    *
  * modify it under the terms of the GNU General Public License as   *
@@ -1902,19 +1902,6 @@ qof_query_printValueForParam (QofQueryPredData * pd, GString * gs)
 			qof_date_print (qd, QOF_DATE_FORMAT_UTC));
 		qof_date_free (qd);
 	}
-#ifndef QOF_DISABLE_DEPRECATED
-	if (!safe_strcmp (pd->type_name, QOF_TYPE_DATE))
-	{
-		query_date_t pdata;
-
-		pdata = (query_date_t) pd;
-	    g_string_append_printf (gs, "Match type %s ",
-			qof_query_printDateMatch (pdata->options));
-		g_string_append_printf (gs, " query_date: %s", 
-			gnc_print_date (pdata->date));
-		return;
-	}
-#endif
 	if (!safe_strcmp (pd->type_name, QOF_TYPE_CHAR))
 	{
 		query_char_t pdata = (query_char_t) pd;

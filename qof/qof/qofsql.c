@@ -24,7 +24,7 @@
     @file qofsql.c
     @brief QOF client-side SQL parser - interfaces with libgda.
     @author Copyright (C) 2004 Linas Vepstas <linas@linas.org>
-
+    @author Copyright 2008 Neil Williams <linux@codehelp.co.uk>
 */
 
 #include "config.h"
@@ -258,9 +258,6 @@ handle_single_condition (QofSqlQuery * query, sql_condition * cond)
 			break;
 		case KVP_TYPE_GUID:
 		case KVP_TYPE_TIME :
-#ifndef QOF_DISABLE_DEPRECATED
-		case KVP_TYPE_TIMESPEC:
-#endif
 		case KVP_TYPE_BOOLEAN :
 		case KVP_TYPE_BINARY:
 		case KVP_TYPE_GLIST:
@@ -377,29 +374,6 @@ handle_single_condition (QofSqlQuery * query, sql_condition * cond)
 			qof_query_time_predicate (qop, QOF_DATE_MATCH_NORMAL, 
 			qt);
 	}
-#ifndef QOF_DISABLE_DEPRECATED
-	else if (!strcmp (param_type, QOF_TYPE_DATE))
-	{
-		gint rc;
-		Timespec ts;
-		time_t exact;
-
-		/* Use a timezone independent setting */
-		qof_date_format_set (QOF_DATE_FORMAT_UTC);
-		rc = 0;
-		if (FALSE == qof_scan_date_secs (qvalue_name, &exact))
-		{
-			char *tail;
-			exact = strtoll (qvalue_name, &tail, 0);
-//          PWARN ("unable to parse date: %s", qvalue_name);
-//          return NULL;
-		}
-		ts.tv_sec = exact;
-		ts.tv_nsec = 0;
-		pred_data =
-			qof_query_date_predicate (qop, QOF_DATE_MATCH_NORMAL, ts);
-	}
-#endif
 	else if (!strcmp (param_type, QOF_TYPE_NUMERIC))
 	{
 		QofNumeric ival;
@@ -684,25 +658,6 @@ qof_sql_insertCB (const QofParam * param, const gchar * insert_string,
 			time_setter (ent, qt);
 		}
 	}
-#ifndef QOF_DISABLE_DEPRECATED
-	if (safe_strcmp (param->param_type, QOF_TYPE_DATE) == 0)
-	{
-		void (*date_setter) (QofEntity *, Timespec);
-		Timespec cm_date;
-		struct tm query_time;
-		time_t query_time_t;
-
-		date_setter =
-			(void (*)(QofEntity *, Timespec)) param->param_setfcn;
-		strptime (insert_string, QOF_UTC_DATE_FORMAT, &query_time);
-		query_time_t = mktime (&query_time);
-		timespecFromTime_t (&cm_date, query_time_t);
-		if (date_setter != NULL)
-		{
-			date_setter (ent, cm_date);
-		}
-	}
-#endif
 	if ((safe_strcmp (param->param_type, QOF_TYPE_NUMERIC) == 0) ||
 		(safe_strcmp (param->param_type, QOF_TYPE_DEBCRED) == 0))
 	{

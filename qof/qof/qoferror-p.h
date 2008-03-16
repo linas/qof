@@ -2,7 +2,7 @@
  *            qoferror-p.h
  *
  *  Sun Sep 10 21:19:25 2006
- *  Copyright  2006  Neil Williams
+ *  Copyright  2006-2008  Neil Williams
  *  linux@codehelp.co.uk
  *******************************************************************/
 /*
@@ -23,24 +23,6 @@
  
 #ifndef _QOFERROR_P_H
 #define _QOFERROR_P_H
-
-#ifndef QOF_DISABLE_DEPRECATED
-/* deprecated code support */
-#define ERR_LAST 5000
-void
-set_deprecated_errors (void);
-/** \deprecated setup the deprecated error values
-
-The deprecated error handlers only accepted the error
-number, not the string, so this is continued here. The
-err_message for deprecated error values is just the name
-of the QofBackendError as a string. No format specifiers
-are supported - the string is not intended to be passed
-to the user.
-*/
-void
-deprecated_support (QofErrorId id, const gchar * err_message);
-#endif
 
 void
 qof_error_init (void);

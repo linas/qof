@@ -1,7 +1,7 @@
 /********************************************************************\
  * qofbackend.c -- utility routines for the data backend            *
  * Copyright (C) 2000 Linas Vepstas <linas@linas.org>               *
- * Copyright (C) 2004-2006 Neil Williams <linux@codehelp.co.uk>     *
+ * Copyright (C) 2004-2008 Neil Williams <linux@codehelp.co.uk>     *
  *                                                                  *
  * This program is free software; you can redistribute it and/or    *
  * modify it under the terms of the GNU General Public License as   *
@@ -52,16 +52,6 @@ qof_backend_init (QofBackend * be)
 	be->process_events = NULL;
 	be->percentage = NULL;
 	be->backend_configuration = kvp_frame_new ();
-#ifndef QOF_DISABLE_DEPRECATED
-	be->last_err = QOF_SUCCESS;
-	if (be->error_msg)
-		g_free (be->error_msg);
-	be->error_msg = NULL;
-	/** \deprecated */
-	be->price_lookup = NULL;
-	/** \deprecated */
-	be->export = NULL;
-#endif
 }
 
 void
@@ -154,13 +144,6 @@ qof_backend_prepare_option (QofBackend * be,
 			value = kvp_value_new_time ((QofTime*) option->value);
 			break;
 		}
-#ifndef QOF_DISABLE_DEPRECATED
-		case KVP_TYPE_TIMESPEC:
-		{
-			value = kvp_value_new_timespec (*(Timespec *) option->value);
-			break;
-		}
-#endif
 		case KVP_TYPE_BINARY:
 		{
 			break;
@@ -276,15 +259,6 @@ config_foreach_cb (const gchar * key, KvpValue * value, gpointer data)
 		{
 			option.value = (gpointer) kvp_value_get_time (value);
 		}
-#ifndef QOF_DISABLE_DEPRECATED
-		case KVP_TYPE_TIMESPEC:
-		{
-			Timespec ts;
-			ts = kvp_value_get_timespec (value);
-			option.value = (gpointer) & ts;
-			break;
-		}
-#endif
 		case KVP_TYPE_BOOLEAN :
 		{
 			break;
@@ -347,14 +321,6 @@ config_foreach_cb (const gchar * key, KvpValue * value, gpointer data)
 				(QofTime*) option.value);
 			break;
 		}
-#ifndef QOF_DISABLE_DEPRECATED
-		case KVP_TYPE_TIMESPEC:
-		{
-			kvp_frame_set_timespec (helper->recursive, key,
-				(*(Timespec *) option.value));
-			break;
-		}
-#endif
 		case KVP_TYPE_BOOLEAN :
 		{
 			break;

@@ -1,6 +1,7 @@
 /********************************************************************
- * qofevent-p.h -- private engine event handling interface         *
+ * qofevent-p.h -- private engine event handling interface          *
  * Copyright 2000 Dave Peticolas <dave@krondo.com>                  *
+ * Copyright 2008 Neil Williams <linux@codehelp.co.uk>              *
  *                                                                  *
  * This program is free software; you can redistribute it and/or    *
  * modify it under the terms of the GNU General Public License as   *
@@ -30,9 +31,6 @@
 /* for backwards compatibility - to be moved back to qofevent.c in libqof2 */
 typedef struct
 {
-#ifndef QOF_DISABLE_DEPRECATED
-	GNCEngineEventHandler old_handler;		/** \deprecated */
-#endif
 	QofEventHandler handler;
 	gpointer user_data;
 

@@ -94,23 +94,6 @@ random_glist_strings_only (gboolean strings_only)
 }
 
 
-#ifndef QOF_DISABLE_DEPRECATED
-static gboolean zero_nsec = FALSE;
-
-void
-random_timespec_zero_nsec (gboolean zero_nsec_in)
-{
-	zero_nsec = zero_nsec_in;
-}
-
-static gboolean usec_resolution = FALSE;
-
-void
-random_timespec_usec_resolution (gboolean usec_resolution_in)
-{
-	usec_resolution = usec_resolution_in;
-}
-#endif
 /* ========================================================== */
 
 static gint borked = 80;
@@ -177,34 +160,6 @@ get_random_glist (void)
 
 /* ========================================================== */
 /* Time/Date, GUID, binary data stuff */
-#ifndef QOF_DISABLE_DEPRECATED
-Timespec *
-get_random_timespec (void)
-{
-	Timespec *ret;
-
-	ret = g_new0 (Timespec, 1);
-
-	while (ret->tv_sec <= 0)
-		ret->tv_sec = rand ();
-
-	if (zero_nsec)
-		ret->tv_nsec = 0;
-	else
-	{
-		ret->tv_nsec = rand ();
-
-		if (usec_resolution)
-		{
-			ret->tv_nsec = MIN (ret->tv_nsec, 999999999);
-			ret->tv_nsec /= 1000;
-			ret->tv_nsec *= 1000;
-		}
-	}
-
-	return ret;
-}
-#endif
 
 GUID *
 get_random_guid (void)
@@ -301,15 +256,6 @@ get_random_kvp_value_depth (int type, gint depth)
 			g_free (tmp_guid);
 		}
 		break;
-#ifndef QOF_DISABLE_DEPRECATED
-	case KVP_TYPE_TIMESPEC:
-		{
-			Timespec *ts = get_random_timespec ();
-			ret = kvp_value_new_timespec (*ts);
-			g_free (ts);
-		}
-		break;
-#endif
 	case KVP_TYPE_BINARY:
 		{
 			bin_data *tmp_data;

@@ -1,8 +1,8 @@
 /***************************************************************************
  *            test-date.c
- *       Rewritten from scratch for QOF 0.7.0
+ *       Rewritten from scratch for QOF 0.8.0
  *
- *  Copyright (C) 2002, 2004, 2005, 2006 
+ *  Copyright (C) 2002-2008
  *  Free Software Foundation, Inc.
  *
  ****************************************************************************/

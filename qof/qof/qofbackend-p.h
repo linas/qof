@@ -34,7 +34,7 @@
    @file qofbackend-p.h
    @brief private api for data storage backend
    @author Copyright (c) 2000,2001,2004 Linas Vepstas <linas@linas.org> 
-   @author Copyright (c) 2005 Neil Williams <linux@codehelp.co.uk>
+   @author Copyright (c) 2005-2008 Neil Williams <linux@codehelp.co.uk>
 @{ */
 
 #ifndef QOF_BACKEND_P_H
@@ -319,12 +319,6 @@ data loss, otherwise FALSE.
 */
 	gboolean (*save_may_clobber_data) (QofBackend *);
 
-#ifndef QOF_DISABLE_DEPRECATED
-	/** \deprecated use qof_error_check instead. */
-	QofErrorId last_err;
-	/** \deprecated use stack instead. */
-	gchar *error_msg;
-#endif
 	/* stack of previous errors.
 	   Similar errors can repeat within the stack. */
 	GList * error_stack;
@@ -336,12 +330,6 @@ data loss, otherwise FALSE.
 This holds the filepath and communicates it to the frontends.
 */
 	gchar *fullpath;
-
-/** \deprecated */
-	void (*price_lookup) (QofBackend *, gpointer);
-
-/** \deprecated */
-	void (*export) (QofBackend *, QofBook *);
 
 };
 

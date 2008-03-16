@@ -2,7 +2,7 @@
  * kvpframe.c -- Implements a key-value frame system                *
  * Copyright (C) 2000 Bill Gribble                                  *
  * Copyright (C) 2001,2003 Linas Vepstas <linas@linas.org>          *
- * Copyright (c) 2006 Neil Williams <linux@codehelp.co.uk>          *
+ * Copyright (c) 2006-2008 Neil Williams <linux@codehelp.co.uk>     *
  *                                                                  *
  * This program is free software; you can redistribute it and/or    *
  * modify it under the terms of the GNU General Public License as   *
@@ -58,9 +58,6 @@ struct _KvpValue
 		GUID *guid;
 		QofTime *qt;
 		gboolean gbool;     /* since 0.7.2 */
-#ifndef QOF_DISABLE_DEPRECATED
-		Timespec timespec;
-#endif
 		KvpValueBinaryData binary;
 		GList *list;
 		KvpFrame *frame;
@@ -1627,11 +1624,6 @@ kvp_value_copy (const KvpValue * value)
 	case KVP_TYPE_TIME :
 		return kvp_value_new_time (value->value.qt);
 		break;
-#ifndef QOF_DISABLE_DEPRECATED
-	case KVP_TYPE_TIMESPEC:
-		return kvp_value_new_timespec (value->value.timespec);
-		break;
-#endif
 	case KVP_TYPE_BINARY:
 		return kvp_value_new_binary (value->value.binary.data,
 			value->value.binary.datasize);
@@ -1707,12 +1699,6 @@ kvp_value_compare (const KvpValue * kva, const KvpValue * kvb)
 	case KVP_TYPE_TIME :
 		return qof_time_cmp (kva->value.qt, kvb->value.qt);
 		break;
-#ifndef QOF_DISABLE_DEPRECATED
-	case KVP_TYPE_TIMESPEC:
-		return timespec_cmp (&(kva->value.timespec),
-			&(kvb->value.timespec));
-		break;
-#endif
 	case KVP_TYPE_BINARY:
 		if (kva->value.binary.datasize < kvb->value.binary.datasize)
 			return -1;
@@ -1887,16 +1873,6 @@ kvp_value_to_bare_string (const KvpValue * val)
 			return tmp2;
 			break;
 		}
-#ifndef QOF_DISABLE_DEPRECATED
-		case KVP_TYPE_TIMESPEC:
-		{
-			time_t t;
-			t = timespecToTime_t (kvp_value_get_timespec (val));
-			qof_date_format_set (QOF_DATE_FORMAT_UTC);
-			return qof_print_date (t);
-			break;
-		}
-#endif
 		case KVP_TYPE_BOOLEAN :
 			return (kvp_value_get_boolean (val)) ? "TRUE" : "FALSE";
 		case KVP_TYPE_BINARY:
@@ -1982,17 +1958,6 @@ kvp_value_to_string (const KvpValue * val)
 			return tmp2;
 			break;
 		}
-#ifndef QOF_DISABLE_DEPRECATED
-		case KVP_TYPE_TIMESPEC:
-		{
-			tmp1 = g_new0 (gchar, 40);
-	        gnc_timespec_to_iso8601_buff (kvp_value_get_timespec (val), tmp1);
-			tmp2 = g_strdup_printf ("KVP_VALUE_TIMESPEC(%s)", tmp1);
-			g_free (tmp1);
-			return tmp2;
-			break;
-		}
-#endif
 		case KVP_TYPE_BINARY:
 		{
 			guint64 len;

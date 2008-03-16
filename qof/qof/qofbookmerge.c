@@ -1,6 +1,6 @@
 /*********************************************************************
  * QofBookMerge.c -- api for QoFBook merge with collision handling   *
- * Copyright (C) 2004,2005,2006                                      *
+ * Copyright (C) 2004-2008                                           *
  *    Neil Williams <linux@codehelp.co.uk>                           *
  *                                                                   *
  * This program is free software; you can redistribute it and/or     *
@@ -159,22 +159,6 @@ qof_book_merge_compare (QofBookMergeData * mergeData)
 					mergeMatch, DEFAULT_MERGE_WEIGHT);
 			knowntype = TRUE;
 		}
-#ifndef QOF_DISABLE_DEPRECATED
-		if (safe_strcmp (mergeType, QOF_TYPE_DATE) == 0)
-		{
-			Timespec tsImport, tsTarget, (*date_getter) (QofEntity *, QofParam *);
-			date_getter =
-				(Timespec (*)(QofEntity *,
-					QofParam *)) qtparam->param_getfcn;
-			tsImport = date_getter (mergeEnt, qtparam);
-			tsTarget = date_getter (targetEnt, qtparam);
-			if (timespec_cmp (&tsImport, &tsTarget) == 0)
-				mergeMatch = TRUE;
-			currentRule = qof_book_merge_update_rule (currentRule,
-				mergeMatch, DEFAULT_MERGE_WEIGHT);
-			knowntype = TRUE;
-		}
-#endif
 		if ((safe_strcmp (mergeType, QOF_TYPE_NUMERIC) == 0) ||
 			(safe_strcmp (mergeType, QOF_TYPE_DEBCRED) == 0))
 		{
@@ -774,23 +758,6 @@ qof_book_merge_commit_rule_loop (QofBookMergeData * mergeData,
 				time_setter (rule->targetEnt, cm_qt);
 			registered_type = TRUE;
 		}
-#ifndef QOF_DISABLE_DEPRECATED
-		if (safe_strcmp (rule->mergeType, QOF_TYPE_DATE) == 0)
-		{
-			Timespec cm_date, (*date_getter) (QofEntity *, QofParam *);
-			void (*date_setter) (QofEntity *, Timespec);
-
-			date_getter =
-				(Timespec (*)(QofEntity *, QofParam *)) cm_param->
-				param_getfcn;
-			cm_date = date_getter (rule->importEnt, cm_param);
-			date_setter =
-				(void (*)(QofEntity *, Timespec)) cm_param->param_setfcn;
-			if (date_setter != NULL)
-				date_setter (rule->targetEnt, cm_date);
-			registered_type = TRUE;
-		}
-#endif
 		if ((safe_strcmp (rule->mergeType, QOF_TYPE_NUMERIC) == 0) ||
 			(safe_strcmp (rule->mergeType, QOF_TYPE_DEBCRED) == 0))
 		{
@@ -993,139 +960,6 @@ qof_book_merge_abort (QofBookMergeData * mergeData)
 		g_slist_free (mergeData->orphan_list);
 	g_hash_table_destroy (mergeData->target_table);
 	g_free (mergeData);
-}
-
-/* The QOF_TYPE_DATE output format from
-qof_book_merge_param_as_string has been changed to QSF_XSD_TIME,
-a UTC formatted timestring: 2005-01-01T10:55:23Z
-If you change QOF_UTC_DATE_FORMAT, change 
-backend/file/qsf-xml.c : qsf_entity_foreach to
-reformat to QSF_XSD_TIME or the QSF XML will
-FAIL the schema validation and QSF exports will become invalid.
-
-The QOF_TYPE_BOOLEAN is lowercase for the same reason.
-*/
-/** \deprecated replace with qof_util_param_as_string */
-gchar *
-qof_book_merge_param_as_string (QofParam * qtparam, QofEntity * qtEnt)
-{
-	gchar *param_string;
-	gchar param_sa[GUID_ENCODING_LENGTH + 1];
-	QofType paramType;
-	const GUID *param_guid;
-	QofTime *param_qt;
-	QofNumeric param_numeric, (*numeric_getter) (QofEntity *, QofParam *);
-	gdouble param_double, (*double_getter) (QofEntity *, QofParam *);
-	gboolean param_boolean, (*boolean_getter) (QofEntity *, QofParam *);
-	gint32 param_i32, (*int32_getter) (QofEntity *, QofParam *);
-	gint64 param_i64, (*int64_getter) (QofEntity *, QofParam *);
-	gchar param_char, (*char_getter) (QofEntity *, QofParam *);
-
-	param_string = NULL;
-	paramType = qtparam->param_type;
-	if (safe_strcmp (paramType, QOF_TYPE_STRING) == 0)
-	{
-		param_string = qtparam->param_getfcn (qtEnt, qtparam);
-		if (param_string == NULL)
-			param_string = "";
-		return param_string;
-	}
-	if (safe_strcmp (paramType, QOF_TYPE_TIME) == 0)
-	{
-		QofDate *qd;
-
-		param_qt = qof_time_copy (
-			qtparam->param_getfcn (qtEnt, qtparam));
-		if (!param_qt)
-			return NULL;
-		qd = qof_date_from_qtime (param_qt);
-		param_string = qof_date_print (qd, QOF_DATE_FORMAT_UTC);
-		qof_date_free (qd);
-		qof_time_free (param_qt);
-		return param_string;
-	}
-#ifndef QOF_DISABLE_DEPRECATED
-	if (safe_strcmp (paramType, QOF_TYPE_DATE) == 0)
-	{
-		Timespec param_ts, (*date_getter) (QofEntity *, QofParam *);
-		time_t param_t;
-		gchar param_date[QOF_DATE_STRING_LENGTH];
-
-		date_getter =
-			(Timespec (*)(QofEntity *, QofParam *)) qtparam->param_getfcn;
-		param_ts = date_getter (qtEnt, qtparam);
-		param_t = timespecToTime_t (param_ts);
-		strftime (param_date, QOF_DATE_STRING_LENGTH, QOF_UTC_DATE_FORMAT,
-			gmtime (&param_t));
-		param_string = g_strdup (param_date);
-		return param_string;
-	}
-#endif
-	if ((safe_strcmp (paramType, QOF_TYPE_NUMERIC) == 0) ||
-		(safe_strcmp (paramType, QOF_TYPE_DEBCRED) == 0))
-	{
-		numeric_getter =
-			(QofNumeric (*)(QofEntity *,
-				QofParam *)) qtparam->param_getfcn;
-		param_numeric = numeric_getter (qtEnt, qtparam);
-		param_string = g_strdup (qof_numeric_to_string (param_numeric));
-		return param_string;
-	}
-	if (safe_strcmp (paramType, QOF_TYPE_GUID) == 0)
-	{
-		param_guid = qtparam->param_getfcn (qtEnt, qtparam);
-		guid_to_string_buff (param_guid, param_sa);
-		param_string = g_strdup (param_sa);
-		return param_string;
-	}
-	if (safe_strcmp (paramType, QOF_TYPE_INT32) == 0)
-	{
-		int32_getter =
-			(gint32 (*)(QofEntity *, QofParam *)) qtparam->param_getfcn;
-		param_i32 = int32_getter (qtEnt, qtparam);
-		param_string = g_strdup_printf ("%d", param_i32);
-		return param_string;
-	}
-	if (safe_strcmp (paramType, QOF_TYPE_INT64) == 0)
-	{
-		int64_getter =
-			(gint64 (*)(QofEntity *, QofParam *)) qtparam->param_getfcn;
-		param_i64 = int64_getter (qtEnt, qtparam);
-		param_string = g_strdup_printf ("%" G_GINT64_FORMAT, param_i64);
-		return param_string;
-	}
-	if (safe_strcmp (paramType, QOF_TYPE_DOUBLE) == 0)
-	{
-		double_getter =
-			(double (*)(QofEntity *, QofParam *)) qtparam->param_getfcn;
-		param_double = double_getter (qtEnt, qtparam);
-		param_string = g_strdup_printf ("%f", param_double);
-		return param_string;
-	}
-	if (safe_strcmp (paramType, QOF_TYPE_BOOLEAN) == 0)
-	{
-		boolean_getter =
-			(gboolean (*)(QofEntity *, QofParam *)) qtparam->param_getfcn;
-		param_boolean = boolean_getter (qtEnt, qtparam);
-		/* Boolean values need to be lowercase for QSF validation. */
-		if (param_boolean == TRUE)
-			param_string = g_strdup ("true");
-		else
-			param_string = g_strdup ("false");
-		return param_string;
-	}
-	/* "kvp" contains repeating values, cannot be a single string for the frame. */
-	if (safe_strcmp (paramType, QOF_TYPE_KVP) == 0)
-		return param_string;
-	if (safe_strcmp (paramType, QOF_TYPE_CHAR) == 0)
-	{
-		char_getter =
-			(gchar (*)(QofEntity *, QofParam *)) qtparam->param_getfcn;
-		param_char = char_getter (qtEnt, qtparam);
-		param_string = g_strdup_printf ("%c", param_char);
-		return param_string;
-	}
-	return NULL;
 }
 
 QofBookMergeData *

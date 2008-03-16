@@ -2,7 +2,7 @@
  *            qsf-backend.c
  *
  *  Sat Jan  1 15:07:14 2005
- *  Copyright  2005, 2006  Neil Williams
+ *  Copyright  2005-2008  Neil Williams
  *  linux@codehelp.co.uk
  *******************************************************************/
 /*
@@ -212,12 +212,6 @@ qsf_param_init (QsfParam * params)
 		g_slist_append (params->supported_types, QOF_TYPE_BOOLEAN);
 	params->supported_types =
 		g_slist_append (params->supported_types, QOF_TYPE_NUMERIC);
-#ifndef QOF_DISABLE_DEPRECATED
-	/*  Support read if built with deprecated code included.
-		Support write only if convert option is not enabled. */
-	params->supported_types =
-		g_slist_append (params->supported_types, QOF_TYPE_DATE);
-#endif
 	params->supported_types = 
 		g_slist_append (params->supported_types, QOF_TYPE_TIME);
 	params->supported_types =
@@ -685,10 +679,6 @@ qsf_to_kvp_helper (const char *type_string)
 		return KVP_TYPE_STRING;
 	if (0 == safe_strcmp (QOF_TYPE_GUID, type_string))
 		return KVP_TYPE_GUID;
-#ifndef QOF_DISABLE_DEPRECATED
-	if (0 == safe_strcmp (QOF_TYPE_DATE, type_string))
-		return KVP_TYPE_TIMESPEC;
-#endif
 	if (0 == safe_strcmp (QOF_TYPE_TIME, type_string))
 		return KVP_TYPE_TIME;
 	if (0 == safe_strcmp (QSF_TYPE_BINARY, type_string))
@@ -730,13 +720,6 @@ kvp_value_to_qof_type_helper (KvpValueType n)
 			return QOF_TYPE_GUID;
 			break;
 		}
-#ifndef QOF_DISABLE_DEPRECATED
-		case KVP_TYPE_TIMESPEC:
-		{
-			return QOF_TYPE_DATE;
-			break;
-		}
-#endif
 		case KVP_TYPE_BOOLEAN :
 		{
 			return QOF_TYPE_BOOLEAN;
@@ -794,9 +777,6 @@ qsf_from_kvp_helper (const gchar * path, KvpValue * content,
 		case KVP_TYPE_GUID:
 		case KVP_TYPE_TIME :
 		case KVP_TYPE_BOOLEAN :
-#ifndef QOF_DISABLE_DEPRECATED
-		case KVP_TYPE_TIMESPEC:
-#endif
 		case KVP_TYPE_BINARY:
 		case KVP_TYPE_GLIST:
 		{
@@ -1080,8 +1060,8 @@ qsf_entity_foreach (QofEntity * ent, gpointer data)
 					node = xmlAddChild (object_node,
 						xmlNewNode (ns, BAD_CAST qof_param->param_type));
 					string_buffer =
-						g_strdup (qof_book_merge_param_as_string
-						(qof_param, ent));
+						g_strdup (qof_util_param_to_string
+						(ent, qof_param));
 					xmlNodeAddContent (node, BAD_CAST string_buffer);
 					xmlNewProp (node, BAD_CAST QSF_OBJECT_TYPE, BAD_CAST
 						qof_param->param_name);
@@ -1227,11 +1207,6 @@ string_to_kvp_value (const gchar * content, KvpValueType type)
 	gdouble cm_double;
 	QofNumeric cm_numeric;
 	GUID *cm_guid;
-#ifndef QOF_DISABLE_DEPRECATED
-	struct tm kvp_time;
-	time_t kvp_time_t;
-	Timespec cm_date;
-#endif
 
 	switch (type)
 	{
@@ -1289,16 +1264,6 @@ string_to_kvp_value (const gchar * content, KvpValueType type)
 			else
 				PERR (" failed to parse date");
 		}
-#ifndef QOF_DISABLE_DEPRECATED
-		case KVP_TYPE_TIMESPEC:
-		{
-			strptime (content, QSF_XSD_TIME, &kvp_time);
-			kvp_time_t = mktime (&kvp_time);
-			timespecFromTime_t (&cm_date, kvp_time_t);
-			return kvp_value_new_timespec (cm_date);
-			break;
-		}
-#endif
 		case KVP_TYPE_BOOLEAN :
 		{
 			gboolean val;
@@ -1382,17 +1347,8 @@ qsf_object_commitCB (gpointer key, gpointer value, gpointer data)
 			qof_util_param_commit ((QofInstance *) qsf_ent, cm_param);
 		}
 	}
-#ifndef QOF_DISABLE_DEPRECATED
-	/* use convert here to read "date" */
-	if ((params->convert != 0) &&
-		((safe_strcmp (qof_type, QOF_TYPE_DATE) == 0) ||
-		(safe_strcmp (qof_type, QOF_TYPE_TIME) == 0)))
-	{
-	/* just reading the same value from a different tag */
-#else
 	if (safe_strcmp (qof_type, QOF_TYPE_TIME) == 0)
 	{
-#endif
 		time_setter = (void (*)(QofEntity *, QofTime*)) cm_setter;
 		if (time_setter != NULL)
 		{
@@ -1414,38 +1370,6 @@ qsf_object_commitCB (gpointer key, gpointer value, gpointer data)
 				PERR (" failed to parse date string");
 		}
 	}
-#ifndef QOF_DISABLE_DEPRECATED
-	if ((params->convert == 0) &&
-		(safe_strcmp (qof_type, QOF_TYPE_DATE) == 0))
-	{
-		void (*date_setter) (QofEntity *, Timespec);
-		struct tm qsf_time;
-		time_t qsf_time_t;
-		Timespec cm_date;
-		const gchar *timechk;
-
-		memset (&qsf_time, '\0', sizeof (qsf_time));
-		cm_date.tv_nsec = 0;
-		cm_date.tv_sec = 0;
-		date_setter = (void (*)(QofEntity *, Timespec)) cm_setter;
-		timechk = NULL;
-		timechk =
-			strptime ((char *) xmlNodeGetContent (node), QSF_XSD_TIME,
-			&qsf_time);
-		g_return_if_fail (timechk != NULL);
-		qsf_time_t = mktime (&qsf_time);
-		if (qsf_time_t != -3600)
-		{
-			timespecFromTime_t (&cm_date, qsf_time_t);
-			if (date_setter != NULL)
-			{
-				qof_util_param_edit ((QofInstance *) qsf_ent, cm_param);
-				date_setter (qsf_ent, cm_date);
-				qof_util_param_commit ((QofInstance *) qsf_ent, cm_param);
-			}
-		}
-	}
-#endif
 	if ((safe_strcmp (qof_type, QOF_TYPE_NUMERIC) == 0) ||
 		(safe_strcmp (qof_type, QOF_TYPE_DEBCRED) == 0))
 	{

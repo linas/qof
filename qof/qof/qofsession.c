@@ -28,7 +28,7 @@
 
  @author Copyright (c) 1998-2004 Linas Vepstas <linas@linas.org>
  @author Copyright (c) 2000 Dave Peticolas
- @author Copyright (c) 2005-2006 Neil Williams <linux@codehelp.co.uk>
+ @author Copyright (c) 2005-2008 Neil Williams <linux@codehelp.co.uk>
    */
 
 #include "config.h"
@@ -111,9 +111,6 @@ qof_session_init (QofSession * session)
 	if (!session)
 		return;
 
-#ifndef QOF_DISABLE_DEPRECATED
-	session->entity.e_type = QOF_ID_SESSION;
-#endif
 	session->books = g_list_append (NULL, qof_book_new ());
 	session->book_id = NULL;
 	session->backend = NULL;
@@ -366,28 +363,6 @@ qof_entity_foreach_copy (gpointer data, gpointer user_data)
 		}
 		registered_type = TRUE;
 	}
-#ifndef QOF_DISABLE_DEPRECATED
-	if (safe_strcmp (cm_param->param_type, QOF_TYPE_DATE) == 0)
-	{
-		Timespec cm_date, (*date_getter) (QofEntity *, QofParam *);
-		void (*date_setter) (QofEntity *, Timespec);
-
-		cm_date.tv_nsec = 0;
-		cm_date.tv_sec = 0;
-		date_getter =
-			(Timespec (*)(QofEntity *, QofParam *)) cm_param->param_getfcn;
-		cm_date = date_getter (importEnt, cm_param);
-		date_setter =
-			(void (*)(QofEntity *, Timespec)) cm_param->param_setfcn;
-		if (date_setter != NULL)
-		{
-			qof_util_param_edit ((QofInstance *) targetEnt, cm_param);
-			date_setter (targetEnt, cm_date);
-			qof_util_param_commit ((QofInstance *) targetEnt, cm_param);
-		}
-		registered_type = TRUE;
-	}
-#endif
 	if ((safe_strcmp (cm_param->param_type, QOF_TYPE_NUMERIC) == 0) ||
 		(safe_strcmp (cm_param->param_type, QOF_TYPE_DEBCRED) == 0))
 	{
@@ -1442,10 +1417,6 @@ qof_session_destroy (QofSession * session)
 	}
 
 	session->books = NULL;
-#ifndef QOF_DISABLE_DEPRECATED
-	if (session == qof_session_get_current_session())
-		qof_session_clear_current_session();
-#endif
 	g_free (session);
 	qof_error_close ();
 

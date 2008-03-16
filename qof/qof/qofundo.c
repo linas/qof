@@ -2,7 +2,7 @@
  *            qofundo.c
  *
  *  Thu Aug 25 09:19:17 2005
- *  Copyright  2005,2006  Neil Williams
+ *  Copyright  2005,2006,2008  Neil Williams
  *  linux@codehelp.co.uk
  ****************************************************************************/
 /*
@@ -178,25 +178,6 @@ set_param (QofEntity * ent, const QofParam * param,
 			time_setter (ent, cli_time);
 		}
 	}
-#ifndef QOF_DISABLE_DEPRECATED
-	if (0 == safe_strcmp (param->param_type, QOF_TYPE_DATE))
-	{
-		Timespec cli_date;
-		time_t cli_time_t;
-		void (*date_setter) (QofEntity *, Timespec);
-		struct tm cli_time;
-
-		date_setter =
-			(void (*)(QofEntity *, Timespec)) param->param_setfcn;
-		strptime (value, QOF_UTC_DATE_FORMAT, &cli_time);
-		cli_time_t = mktime (&cli_time);
-		timespecFromTime_t (&cli_date, cli_time_t);
-		if (date_setter != NULL)
-		{
-			date_setter (ent, cli_date);
-		}
-	}
-#endif
 	if (0 == safe_strcmp (param->param_type, QOF_TYPE_CHAR))
 	{
 		param->param_setfcn (ent, value);
@@ -235,8 +216,7 @@ qof_prepare_undo (QofEntity * ent, const QofParam * param)
 	undo_entity->param = param;
 	undo_entity->how = UNDO_MODIFY;
 	undo_entity->type = ent->e_type;
-	undo_entity->value = 
-		qof_book_merge_param_as_string ((QofParam*) param, ent);
+	undo_entity->value = qof_util_param_to_string (ent, param);
 	if (0 == (safe_strcmp (param->param_type, QOF_TYPE_KVP)))
 	{
 		undo_frame = kvp_frame_copy (param->param_getfcn (ent, param));

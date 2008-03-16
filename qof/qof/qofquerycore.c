@@ -1,7 +1,7 @@
 /********************************************************************\
  * QueryCore.c -- API for providing core Query data types           *
  * Copyright (C) 2002 Derek Atkins <warlord@MIT.EDU>                *
- * Copyright (C) 2006 Neil Williams <linux@codehelp.co.uk>          *
+ * Copyright (C) 2006-2008 Neil Williams <linux@codehelp.co.uk>     *
  *                                                                  *
  * This program is free software; you can redistribute it and/or    *
  * modify it under the terms of the GNU General Public License as   *
@@ -1739,150 +1739,6 @@ qof_query_register_core_object (QofType core_name,
 			pred_equal);
 }
 
-/* Deprecated */
-#ifndef QOF_DISABLE_DEPRECATED
-/* QOF_TYPE_DATE =================================================== */
-typedef Timespec (*query_date_getter) (gpointer, QofParam *);
-static const gchar *query_date_type = QOF_TYPE_DATE;
-
-static gint
-date_compare (Timespec ta, Timespec tb, QofDateMatch options)
-{
-
-	if (options == QOF_DATE_MATCH_DAY)
-	{
-		ta = timespecCanonicalDayTime (ta);
-		tb = timespecCanonicalDayTime (tb);
-	}
-
-	if (ta.tv_sec < tb.tv_sec)
-		return -1;
-	if (ta.tv_sec > tb.tv_sec)
-		return 1;
-
-	if (ta.tv_nsec < tb.tv_nsec)
-		return -1;
-	if (ta.tv_nsec > tb.tv_nsec)
-		return 1;
-
-	return 0;
-}
-
-static int
-date_match_predicate (gpointer object, QofParam *getter,
-                                 QofQueryPredData *pd)
-{
-  query_date_t pdata = (query_date_t)pd;
-  Timespec objtime;
-  int compare;
-
-  VERIFY_PREDICATE (query_date_type);
-
-  objtime = ((query_date_getter)getter->param_getfcn) (object, getter);
-  compare = date_compare (objtime, pdata->date, pdata->options);
-
-  switch (pd->how) {
-  case QOF_COMPARE_LT:
-    return (compare < 0);
-  case QOF_COMPARE_LTE:
-    return (compare <= 0);
-  case QOF_COMPARE_EQUAL:
-    return (compare == 0);
-  case QOF_COMPARE_GT:
-    return (compare > 0);
-  case QOF_COMPARE_GTE:
-    return (compare >= 0);
-  case QOF_COMPARE_NEQ:
-    return (compare != 0);
-  default:
-    PWARN ("bad match type: %d", pd->how);
-    return 0;
-  }
-}
-
-static gint
-date_compare_func (gpointer a, gpointer b, gint options, QofParam * getter)
-{
-	Timespec ta, tb;
-
-	g_return_val_if_fail (a && b && getter
-		&& getter->param_getfcn, COMPARE_ERROR);
-
-	ta = ((query_date_getter) getter->param_getfcn) (a, getter);
-	tb = ((query_date_getter) getter->param_getfcn) (b, getter);
-
-	return date_compare (ta, tb, options);
-}
-
-static void
-date_free_pdata (QofQueryPredData * pd)
-{
-	query_date_t pdata = (query_date_t) pd;
-
-	VERIFY_PDATA (query_date_type);
-
-	g_free (pdata);
-}
-
-static QofQueryPredData *
-date_copy_predicate (QofQueryPredData *pd)
-{
-  query_date_t pdata = (query_date_t)pd;
-
-  VERIFY_PDATA_R (query_date_type);
-
-  return qof_query_date_predicate (pd->how, pdata->options, pdata->date);
-}
-
-static gboolean
-date_predicate_equal (QofQueryPredData *p1, QofQueryPredData *p2)
-{
-  query_date_t pd1 = (query_date_t) p1;
-  query_date_t pd2 = (query_date_t) p2;
-
-  if (pd1->options != pd2->options) return FALSE;
-  return timespec_equal (&(pd1->date), &(pd2->date));
-}
-
-QofQueryPredData *
-qof_query_date_predicate (QofQueryCompare how,
-                          QofDateMatch options, Timespec date)
-{
-  query_date_t pdata;
-
-  pdata = g_new0 (query_date_def, 1);
-  pdata->pd.type_name = query_date_type;
-  pdata->pd.how = how;
-  pdata->options = options;
-  pdata->date = date;
-  return ((QofQueryPredData*)pdata);
-}
-
-gboolean
-qof_query_date_predicate_get_date (QofQueryPredData *pd, Timespec *date)
-{
-  query_date_t pdata = (query_date_t)pd;
-
-  if (pdata->pd.type_name != query_date_type)
-    return FALSE;
-  *date = pdata->date;
-  return TRUE;
-}
-
-static gchar *
-date_to_string (gpointer object, QofParam * getter)
-{
-	Timespec ts =
-		((query_date_getter) getter->param_getfcn) (object, getter);
-
-	if (ts.tv_sec || ts.tv_nsec)
-		return g_strdup (gnc_print_date (ts));
-
-	return NULL;
-}
-
-#endif // QOF_DISABLE_DEPRECATED QOF_TYPE_DATE
-
 static void
 init_tables (void)
 {
@@ -1902,12 +1758,6 @@ init_tables (void)
 		QOF_TYPE_STRING, string_match_predicate, string_compare_func,
 				string_copy_predicate, string_free_pdata,
 				string_to_string, string_predicate_equal},
-#ifndef QOF_DISABLE_DEPRECATED
-		{
-		QOF_TYPE_DATE, date_match_predicate, date_compare_func,
-				date_copy_predicate, date_free_pdata, date_to_string,
-				date_predicate_equal},
-#endif
 		{
 		QOF_TYPE_TIME, time_match_predicate, time_compare_func,
 				time_copy_predicate, time_free_pdata, time_to_string,

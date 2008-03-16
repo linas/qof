@@ -24,6 +24,7 @@
  * QofObjects use.
  * 
  * Copyright (C) 2003 Linas Vepstas <linas@linas.org>
+ * Copyright 2008 Neil Williams <linux@codehelp.co.uk>
  */
 
 #ifndef QOF_INSTANCE_P_H
@@ -59,9 +60,7 @@ struct QofInstance_s
 	\since 0.7.0
 	*/
 	QofTime *update_time;
-#ifndef QOF_DISABLE_DEPRECATED
-	Timespec last_update;
-#endif
+
 	/*  Keep track of nesting level of begin/end edit calls */
 	gint editlevel;
 

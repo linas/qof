@@ -19,4 +19,4 @@ endif
 
 SUBDIRS = $(XML) $(SQLITE) $(GDA)
 
-DIST_SUBDIRS = dwi file sqlite gda
+DIST_SUBDIRS = file sqlite gda

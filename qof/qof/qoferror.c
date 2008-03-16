@@ -2,7 +2,7 @@
  *            qoferror.c
  *
  *  Sun Sep 10 19:55:08 2006
- *  Copyright  2006  Neil Williams
+ *  Copyright  2006-2008  Neil Williams
  *  linux@codehelp.co.uk
  ****************************************************************/
 /*
@@ -44,9 +44,6 @@ void
 qof_error_init (void)
 {
 	error_table = g_hash_table_new (g_direct_hash, g_direct_equal);
-#ifndef QOF_DISABLE_DEPRECATED
-	set_deprecated_errors ();
-#endif
 }
 
 static void
@@ -72,21 +69,6 @@ qof_error_close (void)
 	g_hash_table_destroy (error_table);
 }
 
-#ifndef QOF_DISABLE_DEPRECATED
-void
-deprecated_support (QofErrorId id, const gchar * err_message)
-{
-	QofError * qerr;
-
-	if (id >= ERR_LAST)
-		return;
-	qerr = g_new0 (QofError, 1);
-	qerr->id = id;
-	qerr->message = g_strdup (err_message);
-	g_hash_table_insert (error_table, GINT_TO_POINTER(id), qerr);
-}
-#endif
-
 QofErrorId
 qof_error_register (const gchar * err_message, gboolean use_file)
 {
@@ -95,9 +77,6 @@ qof_error_register (const gchar * err_message, gboolean use_file)
 	ENTER (" ");
 	qerr = g_new0 (QofError, 1);
 	count++;
-#ifndef QOF_DISABLE_DEPRECATED
-	count += ERR_LAST;
-#endif
 	qerr->id = count;
 	if (use_file)
 	{
@@ -167,9 +146,6 @@ qof_error_set (QofSession * session, QofErrorId error)
 	set->qt = qof_time_get_current ();
 	session->backend->error_stack = 
 		g_list_prepend (session->backend->error_stack, set);
-#ifndef QOF_DISABLE_DEPRECATED
-	session->backend->last_err = error;
-#endif
 }
 
 void
@@ -193,9 +169,6 @@ qof_error_set_be (QofBackend * be, QofErrorId error)
 	set->qt = qof_time_get_current ();
 	be->error_stack = g_list_prepend (be->error_stack,
 		set);
-#ifndef QOF_DISABLE_DEPRECATED
-	be->last_err = error;
-#endif
 }
 
 /* clear the list of actual errors */
@@ -218,9 +191,6 @@ qof_error_clear (QofSession * session)
 		g_free (session->error_message);
 	session->error_message = NULL;
 	session->last_err = QOF_SUCCESS;
-#ifndef QOF_DISABLE_DEPRECATED
-	session->backend->last_err = QOF_SUCCESS;
-#endif
 }
 
 QofErrorId
@@ -266,24 +236,6 @@ qof_error_get_time (QofSession * session)
 	return qof_error_get_time_be (session->backend);
 }
 
-#ifndef QOF_DISABLE_DEPRECATED
-static void
-set_previous_error (QofBackend * be)
-{
-	QofError * qerr;
-	GList * pop;
-
-	if (!be)
-		return;
-	if (g_list_length(be->error_stack) == 0)
-		return;
-	pop = g_list_last (be->error_stack);
-	qerr = (QofError*)pop->data;
-	be->last_err = qerr->id;
-	be->error_msg = qerr->message;
-}
-#endif
-
 QofErrorId
 qof_error_get_id (QofSession * session)
 {
@@ -326,9 +278,6 @@ qof_error_get_id_be (QofBackend * be)
 		return QOF_FATAL;
 	be->error_stack = 
 		g_list_remove (be->error_stack, qerr);
-#ifndef QOF_DISABLE_DEPRECATED
-	set_previous_error (be);
-#endif
 	return qerr->id;
 }
 
@@ -342,21 +291,6 @@ qof_error_get_message (QofSession * session)
 		return session->error_message;
 	msg = qof_error_get_message_be (session->backend);
 	DEBUG (" msg_1=%s", msg);
-#ifndef QOF_DISABLE_DEPRECATED
-	{
-		QofError * qerr;
-
-		qerr = g_hash_table_lookup (error_table, 
-			GINT_TO_POINTER(session->backend->last_err));
-		if (qerr)
-		{
-			if (session->error_message)
-				g_free (session->error_message);
-			session->error_message = g_strdup(msg);
-			session->last_err = qerr->id;
-		}
-	}
-#endif
 	return msg;
 }
 
@@ -382,9 +316,5 @@ qof_error_get_message_be (QofBackend * be)
 	DEBUG (" qerr->message=%s", qerr->message);
 	be->error_stack = 
 		g_list_remove (be->error_stack, qerr);
-#ifndef QOF_DISABLE_DEPRECATED
-	be->error_msg = qerr->message;
-	set_previous_error (be);
-#endif
 	return qerr->message;
 }

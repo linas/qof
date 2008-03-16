@@ -33,8 +33,9 @@ libqof_la_SOURCES =  \
    qoftime.c \
    qofstrftime.c \
    qofstrptime.c \
-   qofundo.c \
-   deprecated.c
+   qofundo.c
+
+#   deprecated.c
 
 qofincludedir = ${pkgincludedir}
 
@@ -71,8 +72,7 @@ qofinclude_HEADERS = \
    qofbookmerge.h \
    qofdate.h \
    qoftime.h \
-   qofundo.h \
-   deprecated.h
+   qofundo.h
 
 noinst_HEADERS = \
    md5.h  \
@@ -87,7 +87,8 @@ noinst_HEADERS = \
    qofdate-p.h \
    qofobject-p.h  \
    qofsession-p.h \
-   qofundo-p.h
+   qofundo-p.h \
+   deprecated.h
 
 AM_CFLAGS = -g \
   ${warnFLAGS} \

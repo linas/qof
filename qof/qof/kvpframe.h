@@ -116,10 +116,6 @@ typedef enum
 - GLib      : no direct equivalent, can be stored as QOF_TYPE_STRING
 */
 	KVP_TYPE_GUID,
-#ifndef QOF_DISABLE_DEPRECATED
-	/** \deprecated QOF_TYPE_DATE */
-	KVP_TYPE_TIMESPEC,
-#endif
 	/** \brief 64bit time/date handling.
 - QofType   : QOF_TYPE_TIME
 - GType     : No equivalent.

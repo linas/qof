@@ -149,7 +149,7 @@ The boolean value mergeAbsolute defaults to \c FALSE
 NOTE 1: if mergeAbsolute == \c TRUE, ::QofBookMergeResult will still be set
 to ::MERGE_UPDATE if parameters within this entity have been modified.
 
-NOTE 2: ::qof_book_merge_param_as_string returns \b string representations of
+NOTE 2: ::qof_util_param_to_string returns \b string representations of
 the parameter data that is causing a collision. These values must \b NOT be
 used to set the target parameter - the function is provided for display
 purposes only, to make it simple to explain the collision to the user using
@@ -348,22 +348,6 @@ and again the qof_book_mergeRule::targetEnt to return the two specific entities.
 void qof_book_merge_rule_foreach (QofBookMergeData * mergeData,
 								  QofBookMergeRuleForeachCB callback,
 								  QofBookMergeResult mergeResult);
-
-/** \brief provides easy string access to parameter data for dialogue use
-
-Uses the param_getfcn to retrieve the parameter value as a string, suitable for
-display in dialogues and user intervention output. Within a QofBookMerge context,
-only the parameters used in the merge are available, i.e. parameters where both
-param_getfcn and param_setfcn are not NULL.
-
-Note that the object type description (a full text version of the object name) is
-also available to the dialogue as QofBookMergeRule::mergeLabel.
-
-This allows the dialog to display the description of the object and all
-parameter data.
-
-*/
-gchar *qof_book_merge_param_as_string (QofParam * qtparam, QofEntity * qtEnt);
 
 /** \brief called by dialogue callback to set the result of user intervention
 

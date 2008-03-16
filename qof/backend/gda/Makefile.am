@@ -6,14 +6,16 @@ AM_CFLAGS = \
   ${GLIB_CFLAGS}  \
   ${LIBGDA_CFLAGS}
 
-lib_LTLIBRARIES=libqof-backend-gda.la
+pkglib_LTLIBRARIES=libqof-backend-gda.la
 
 libqof_backend_gda_la_SOURCES = \
  qof-gda.c
 
 libqof_backend_gda_la_LDFLAGS = \
  -L${top_srcdir}/qof \
- -version-info $(LIBQOF_BACKEND_QGDA_VERSION)
+ -avoid-version
+
+#-version-info $(LIBQOF_BACKEND_QGDA_VERSION)
 
 libqof_backend_gda_la_LIBADD = \
  ${QOF_LIBS} \

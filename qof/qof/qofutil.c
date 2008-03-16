@@ -2,7 +2,7 @@
  * qofutil.c -- QOF utility functions                               *
  * Copyright (C) 1997 Robin D. Clark                                *
  * Copyright (C) 1997-2001,2004 Linas Vepstas <linas@linas.org>     *
- * Copyright 2006  Neil Williams  <linux@codehelp.co.uk>            *
+ * Copyright 2006,2008  Neil Williams  <linux@codehelp.co.uk>       *
  *                                                                  *
  * This program is free software; you can redistribute it and/or    *
  * modify it under the terms of the GNU General Public License as   *
@@ -358,54 +358,8 @@ qof_util_make_utf8 (gchar * string)
 
 static GCache *qof_string_cache = NULL;
 
-#ifdef THESE_CAN_BE_USEFUL_FOR_DEGUGGING
-static guint
-g_str_hash_KEY (gconstpointer v)
-{
-	return g_str_hash (v);
-}
-
-static guint
-g_str_hash_VAL (gconstpointer v)
-{
-	return g_str_hash (v);
-}
-
-static gpointer
-g_strdup_VAL (gpointer v)
-{
-	return g_strdup (v);
-}
-
-static gpointer
-g_strdup_KEY (gpointer v)
-{
-	return g_strdup (v);
-}
-static void
-g_free_VAL (gpointer v)
-{
-	return g_free (v);
-}
-static void
-g_free_KEY (gpointer v)
-{
-	return g_free (v);
-}
-
-static gboolean
-qof_util_str_equal (gconstpointer v, gconstpointer v2)
-{
-	return (v && v2) ? g_str_equal (v, v2) : FALSE;
-}
-#endif
-#ifdef QOF_DISABLE_DEPRECATED
 static GCache *
 qof_util_get_string_cache (void)
-#else
-GCache *
-qof_util_get_string_cache (void)
-#endif
 {
 	if (!qof_string_cache)
 	{
@@ -480,24 +434,6 @@ qof_util_param_to_string (QofEntity * ent, const QofParam * param)
 		qd = qof_date_from_qtime (param_qt);
 		return qof_date_print (qd, QOF_DATE_FORMAT_UTC);
 	}
-#ifndef QOF_DISABLE_DEPRECATED
-	if (safe_strcmp (paramType, QOF_TYPE_DATE) == 0)
-	{
-		Timespec param_ts, (*date_getter) (QofEntity *, const QofParam *);
-		time_t param_t;
-		gchar param_date[MAX_DATE_LENGTH];
-
-		date_getter =
-			(Timespec (*)(QofEntity *, const QofParam *)) param->param_getfcn;
-		param_ts = date_getter (ent, param);
-		param_t = param_ts.tv_sec;
-		strftime (param_date, MAX_DATE_LENGTH,
-			QOF_UTC_DATE_FORMAT, gmtime (&param_t));
-		param_string = g_strdup (param_date);
-		known_type = TRUE;
-		return param_string;
-	}
-#endif
 	if ((safe_strcmp (paramType, QOF_TYPE_NUMERIC) == 0) ||
 		(safe_strcmp (paramType, QOF_TYPE_DEBCRED) == 0))
 	{
@@ -687,13 +623,6 @@ qof_util_param_set_string (QofEntity * ent, const QofParam * param,
 		qof_date_free (qd);
 //		registered_type = TRUE;
 	}
-#ifndef QOF_DISABLE_DEPRECATED
-	if (safe_strcmp (param->param_type, QOF_TYPE_DATE) == 0)
-	{
-		return FALSE;
-//		registered_type = TRUE;
-	}
-#endif
 	if ((safe_strcmp (param->param_type, QOF_TYPE_NUMERIC) == 0) ||
 		(safe_strcmp (param->param_type, QOF_TYPE_DEBCRED) == 0))
 	{
