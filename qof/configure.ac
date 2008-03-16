@@ -5,24 +5,18 @@ dnl # ******************************
 dnl # Initialise
 dnl # ******************************
 
-AC_INIT(qof, 0.7.5, http://lists.sourceforge.net/lists/listinfo/qof-devel)
+AC_INIT(qof, 0.8.0, http://lists.sourceforge.net/lists/listinfo/qof-devel)
 
 AC_PREREQ(2.53)
 AC_GNU_SOURCE
 
-LIBQOF_LIBRARY_VERSION=1:10:0
+LIBQOF_LIBRARY_VERSION=2:0:0
 LIBQOFSQL_LIBRARY_VERSION=1:1:0
-LIBQOF_BACKEND_QSF_LIBRARY_VERSION=0:7:0
-LIBQOF_BACKEND_QSQL_VERSION=0:2:0
-LIBQOF_BACKEND_QGDA_VERSION=0:0:0
 
+AC_SUBST(LIBQOF_LIBRARY_VERSION)
+AC_SUBST(LIBQOFSQL_LIBRARY_VERSION)
 SONAME=`echo $LIBQOF_LIBRARY_VERSION | cut -d: -f1`
 AC_SUBST(SONAME)
-AC_SUBST(LIBQOF_LIBRARY_VERSION)
-AC_SUBST(LIBQOF_BACKEND_QSF_LIBRARY_VERSION)
-AC_SUBST(LIBQOF_BACKEND_QSQL_VERSION)
-AC_SUBST(LIBQOF_BACKEND_QGDA_VERSION)
-AC_SUBST(LIBQOFSQL_LIBRARY_VERSION)
 
 AC_PREFIX([/usr])
 VERSION=AC_PACKAGE_VERSION
@@ -54,10 +48,10 @@ AM_PATH_GLIB_2_0("2.6.0", , ,gobject)
 
 AC_PATH_PROG(PKG_CONFIG,pkg-config)
 if test "x$PKG_CONFIG" != x; then
-    GLIB_LIBS=`$PKG_CONFIG --libs glib-2.0`
-    GLIB_CFLAGS=`$PKG_CONFIG --cflags glib-2.0`
-    GOBJECT_LIBS=`$PKG_CONFIG --libs gobject-2.0`
-    GMODULE_LIBS=`$PKG_CONFIG --libs gmodule-2.0`
+	GLIB_LIBS=`$PKG_CONFIG --libs glib-2.0`
+	GLIB_CFLAGS=`$PKG_CONFIG --cflags glib-2.0`
+	GOBJECT_LIBS=`$PKG_CONFIG --libs gobject-2.0`
+	GMODULE_LIBS=`$PKG_CONFIG --libs gmodule-2.0`
 fi
 AC_SUBST(GLIB_CFLAGS)
 AC_SUBST(GLIB_LIBS)
@@ -67,11 +61,11 @@ AC_SUBST(GMODULE_LIBS)
 AC_MSG_CHECKING(for GLIB - version >= 2.9.0)
 if $PKG_CONFIG 'glib-2.0 >= 2.9.0'
 then
-    AC_MSG_RESULT(yes)
-    AC_DEFINE(HAVE_GLIB29,1,[System has glib 2.9.0 or better])
-    HAVE_GLIB29=yes
+	AC_MSG_RESULT(yes)
+	AC_DEFINE(HAVE_GLIB29,1,[System has glib 2.9.0 or better])
+	HAVE_GLIB29=yes
 else
-    AC_MSG_RESULT(no)
+	AC_MSG_RESULT(no)
 fi
 
 dnl # ********************************
@@ -98,37 +92,29 @@ dnl # ********************************
 dnl # Auto-disable deprecated QOF
 dnl # ********************************
 
-AC_ARG_ENABLE(deprecated-qof,
-  [  --disable-deprecated-qof
-                          Do not use deprecated QOF functions],
-  [case "${enableval}" in
-        no) AC_DEFINE(QOF_DISABLE_DEPRECATED,1,
-          [Do not use deprecated QOF functions]) ;;
-        yes) ;;
-        *) AC_MSG_ERROR(bad value ${enableval} for --enable-deprecated-qof) ;;
-        esac])
+# nothing to do, yet.
 
 AC_MSG_CHECKING(for darwin)
 case $host_os in
-    rhapsody* | darwin1*)
-        AC_MSG_RESULT([yes, but too old])
-        AC_MSG_ERROR([This platform is too old, please update to the latest darwin])
-        ;;
-    darwin*)
-        AC_MSG_RESULT([yes, patching libtool to always build dylibs])
-        mv libtool libtool.old
-        sed -e 's/^deplibs_check_method.*/deplibs_check_method=pass_all/g' \
-            -e 's|^library_names_spec.*|library_names_spec="\\$libname\\$release\\$versuffix.dylib \\$libname\\$release\\${major}.dylib \\$libname.dylib"|g' \
-            -e 's|^soname_spec.*|soname_spec="\\$libname\\$release\\$major.dylib"|g' \
-            < libtool.old > libtool
-        rm libtool.old
-        AC_DEFINE(DARWIN,,Found Mac OSX Darwin)
-        DARWIN="dylib"
-        AC_SUBST(DARWIN)
-        ;;
-    *)
-        AC_MSG_RESULT(no)
-        ;;
+	rhapsody* | darwin1*)
+		AC_MSG_RESULT([yes, but too old])
+		AC_MSG_ERROR([This platform is too old, please update to the latest darwin])
+		;;
+	darwin*)
+		AC_MSG_RESULT([yes, patching libtool to always build dylibs])
+		mv libtool libtool.old
+		sed -e 's/^deplibs_check_method.*/deplibs_check_method=pass_all/g' \
+			-e 's|^library_names_spec.*|library_names_spec="\\$libname\\$release\\$versuffix.dylib \\$libname\\$release\\${major}.dylib \\$libname.dylib"|g' \
+			-e 's|^soname_spec.*|soname_spec="\\$libname\\$release\\$major.dylib"|g' \
+			< libtool.old > libtool
+		rm libtool.old
+		AC_DEFINE(DARWIN,,Found Mac OSX Darwin)
+		DARWIN="dylib"
+		AC_SUBST(DARWIN)
+		;;
+	*)
+		AC_MSG_RESULT(no)
+		;;
 esac
 
 dnl # **************************************************************
@@ -150,7 +136,7 @@ dnl # *****************************
 AC_FUNC_STRFTIME
 AC_CHECK_HEADERS(sys/times.h time.h langinfo.h wchar.h )
 AC_CHECK_FUNCS(getcwd gettimeofday getline getwd stpcpy strdup strtoul \
-    strcasestr gmtime_r mblen tzname tzset)
+	strcasestr gmtime_r mblen tzname tzset)
 AC_CHECK_MEMBERS([struct stat.st_rdev])
 
 dnl # *******************************
@@ -185,26 +171,26 @@ dnl # libgdasql is omitted to prevent a need for libgda2-3 itself.
 dnl # **************************************************************
 
 AC_ARG_ENABLE(embedded,
-    [  --enable-embedded       Enable the SQLite backend for embedded systems
+	[  --enable-embedded       Enable the SQLite backend for embedded systems
                           and DISABLE libgdasql and the QSF XML backend. (no)],
-    [case "${enableval}" in
-        no) embedded="no" ;;
-        yes) embedded="yes" ;;
-        *) AC_MSG_ERROR(bad value ${enableval} for --enable-embedded) ;;
-        esac])
+	[case "${enableval}" in
+		no) embedded="no" ;;
+		yes) embedded="yes" ;;
+		*) AC_MSG_ERROR(bad value ${enableval} for --enable-embedded) ;;
+		esac])
 
 if test "$embedded" = "yes"; then
-    PKG_CHECK_MODULES(SQLITE, sqlite >= 2.8.0)
-    AC_SUBST(SQLITE_LIBS)
-    AC_SUBST(SQLITE_CFLAGS)
-    backend="sqlite"
+	PKG_CHECK_MODULES(SQLITE, sqlite >= 2.8.0)
+	AC_SUBST(SQLITE_LIBS)
+	AC_SUBST(SQLITE_CFLAGS)
+	backend="sqlite"
 else
-    LIBXML2_REQUIRED=2.5.10
-    PKG_CHECK_MODULES(LIBXML2, libxml-2.0 >= $LIBXML2_REQUIRED)
-    LIBXML_VERSION=`xml2-config --version`
-    AC_SUBST(LIBXML2_CFLAGS)
-    AC_SUBST(LIBXML2_LIBS)
-    backend="libxml2 == $LIBXML_VERSION"
+	LIBXML2_REQUIRED=2.5.10
+	PKG_CHECK_MODULES(LIBXML2, libxml-2.0 >= $LIBXML2_REQUIRED)
+	LIBXML_VERSION=`xml2-config --version`
+	AC_SUBST(LIBXML2_CFLAGS)
+	AC_SUBST(LIBXML2_LIBS)
+	backend="libxml2 == $LIBXML_VERSION"
 fi
 
 AM_CONDITIONAL(EMBEDDED, [test "$embedded" = "yes"])
@@ -213,19 +199,19 @@ sqlite="yes"
 AC_ARG_ENABLE(sqlite,
   [  --disable-sqlite        Disable the SQLite backend module.],
   [case "${enableval}" in
-        no) sqlite="no" ;;
-        yes) sqlite="yes" ;;
-        *) AC_MSG_ERROR(bad value ${enableval} for --disable-sqlite) ;;
-        esac])
+  		no) sqlite="no" ;;
+		yes) sqlite="yes" ;;
+		*) AC_MSG_ERROR(bad value ${enableval} for --disable-sqlite) ;;
+		esac])
 
 if test "$embedded" != "yes"; then
-    if test "$sqlite" = "yes"; then
-        SQLITE_REQUIRED=2.8.0
-        PKG_CHECK_MODULES(SQLITE, sqlite >= $SQLITE_REQUIRED)
-        AC_SUBST(SQLITE_LIBS)
-        AC_SUBST(SQLITE_CFLAGS)
-        backend2="sqlite"
-    fi
+	if test "$sqlite" = "yes"; then
+		SQLITE_REQUIRED=2.8.0
+		PKG_CHECK_MODULES(SQLITE, sqlite >= $SQLITE_REQUIRED)
+		AC_SUBST(SQLITE_LIBS)
+		AC_SUBST(SQLITE_CFLAGS)
+		backend2="sqlite"
+	fi
 fi
 
 AM_CONDITIONAL(USE_SQLITE, [test "$sqlite" = "yes"])
@@ -239,56 +225,56 @@ dnl # Not ready yet.
 usegdabackend="no"
 backend3="Disabled (default)"
 if test "$embedded" != "yes"; then
-    usegdasql="yes"
+	usegdasql="yes"
 else
-    usegdasql="no"
-    usegdabackend="no"
+	usegdasql="no"
+	usegdabackend="no"
 fi
 AC_ARG_ENABLE(gdasql,
   [  --disable-gdasql        Disable the use of libgdasql.],
   [case "${enableval}" in
-        no) usegdasql="no" ;;
-        yes) usegdasql="yes" ;;
-        *) AC_MSG_ERROR(bad value ${enableval} for --disable-gda) ;;
-        esac])
+		no) usegdasql="no" ;;
+		yes) usegdasql="yes" ;;
+		*) AC_MSG_ERROR(bad value ${enableval} for --disable-gda) ;;
+		esac])
 
 if test "$usegdasql" = "yes"; then
-    AC_MSG_CHECKING(for SQL parser support)
-    if test "$embedded" != "yes"; then
-        GDA_REQUIRED=3.0.2
-        LIBGDA_CFLAGS=`$PKG_CONFIG --cflags "libgda-3.0 >= $GDA_REQUIRED"`
-        LIBGDA_LIBS="-lgda-3.0"
-        # LIBGDA should only be used for the GDA backend
-        AC_SUBST(LIBGDA_CFLAGS)
-        AC_SUBST(LIBGDA_LIBS)
-    fi
+	AC_MSG_CHECKING(for SQL parser support)
+	if test "$embedded" != "yes"; then
+		GDA_REQUIRED=3.0.1
+		LIBGDA_CFLAGS=`$PKG_CONFIG --cflags "libgda-3.0 >= $GDA_REQUIRED"`
+		LIBGDA_LIBS="-lgda-3.0"
+		# LIBGDA should only be used for the GDA backend
+		AC_SUBST(LIBGDA_CFLAGS)
+		AC_SUBST(LIBGDA_LIBS)
+	fi
 fi
 if test "x$LIBGDA_CFLAGS" = x; then
-    AC_MSG_RESULT([GDA not found (or disabled); will build using internal SQL library.])
-    SQL_PKG_LIB="-lqofsql"
+	AC_MSG_RESULT([GDA not found (or disabled); will build using internal SQL library.])
+	SQL_PKG_LIB="-lqofsql"
 else
-    AC_ARG_ENABLE(gdabackend,
-      [  --enable-gdabackend     Enable the use of the gda backend (off).],
-      [case "${enableval}" in
-            no) usegdabackend="no" ;;
-            yes) usegdabackend="yes" ;;
-            *) AC_MSG_ERROR(bad value ${enableval} for --enable-gdabackend) ;;
-            esac])
-    GDA_VERSION=`$PKG_CONFIG --modversion libgda-3.0`
-    AC_SUBST(GDA_VERSION)
-    AC_MSG_RESULT([yes, using GDA: ${GDA_VERSION}])
-    save_LIBS="$LIBS"
-    AC_CHECK_LIB(gda-3.0, gda_client_open_connection, ,
-        [AC_MSG_ERROR([libgda3-3 found but missing gda_client_open_connection])])
-    AC_MSG_CHECKING(for libgdasql-3.0 support)
-    AC_CHECK_LIB(gdasql-3.0, sql_parse, , [AC_MSG_ERROR([libgda3-3 found but missing libgdasql-3.0])])
-    AC_DEFINE(HAVE_GDA,,[We have found GDA])
-    GDA_PKG_LIB="-lgdasql-3.0"
-    LIBS="$save_LIBS"
-    HAVE_GDA="use_gda"
-    if test "$usegdabackend" = "yes"; then
-        backend3="Enabled"
-    fi
+	AC_ARG_ENABLE(gdabackend,
+	  [  --enable-gdabackend     Enable the use of the gda backend (off).],
+	  [case "${enableval}" in
+			no) usegdabackend="no" ;;
+			yes) usegdabackend="yes" ;;
+			*) AC_MSG_ERROR(bad value ${enableval} for --enable-gdabackend) ;;
+			esac])
+	GDA_VERSION=`$PKG_CONFIG --modversion libgda-3.0`
+	AC_SUBST(GDA_VERSION)
+	AC_MSG_RESULT([yes, using GDA: ${GDA_VERSION}])
+	save_LIBS="$LIBS"
+	AC_CHECK_LIB(gda-3.0, gda_client_open_connection, ,
+		[AC_MSG_ERROR([libgda3-3 found but missing gda_client_open_connection])])
+	AC_MSG_CHECKING(for libgdasql-3.0 support)
+	AC_CHECK_LIB(gdasql-3.0, sql_parse, , [AC_MSG_ERROR([libgda3-3 found but missing libgdasql-3.0])])
+	AC_DEFINE(HAVE_GDA,,[We have found GDA])
+	GDA_PKG_LIB="-lgdasql-3.0"
+	LIBS="$save_LIBS"
+	HAVE_GDA="use_gda"
+	if test "$usegdabackend" = "yes"; then
+		backend3="Enabled"
+	fi
 fi
 
 AM_CONDITIONAL(USE_GDABACKEND, [ test x"$usegdabackend" != x"no"])
@@ -318,8 +304,8 @@ AC_ARG_ENABLE(dot, [  --enable-dot            use 'dot' to generate graphs in do
 AC_ARG_ENABLE(html-docs, [  --enable-html-docs      enable HTML generation with doxygen (yes)], [], [ enable_html_docs=yes])
 AC_ARG_ENABLE(latex-docs, [  --enable-latex-docs     enable LaTeX documentation generation with doxygen (no)], [], [ enable_latex_docs=no])
 if test "$embedded" = "yes"; then
-    enable_doxygen=no
-    enable_doc=no
+	enable_doxygen=no
+	enable_doc=no
 fi
 if test "x$enable_doxygen" = xno; then
         enable_doc=no
@@ -421,7 +407,7 @@ QOF_LIBDEPS="$LDFLAGS"
 QOF_VERSION="$VERSION"
 
 QSF_LIB_DIR=`eval echo $libdir | sed "s%^NONE%$prefix%"`
-QSF_LIB_DIR=`eval echo $QSF_LIB_DIR | sed "s%^NONE%$prefix%"`
+QSF_LIB_DIR=`eval echo $QSF_LIB_DIR/qof/ | sed "s%^NONE%$prefix%"`
 AC_SUBST(QSF_LIB_DIR)
 AC_SUBST(QOF_LIBS)
 
@@ -429,15 +415,14 @@ dnl # ******************************
 dnl # Check if this was CVS source
 dnl # ******************************
 if test -f "${srcdir}/README.cvs" ; then
-    AC_DEFINE([TEST_DEBUG],1,
-        [Run test code in debug mode])
-    QOF_FROM_CVS=yes
+	AC_DEFINE([TEST_DEBUG],1,
+		[Run test code in debug mode])
+	QOF_FROM_CVS=yes
 fi
 
 AC_OUTPUT([ po/Makefile.in
 Makefile
 backend/Makefile
-backend/dwi/Makefile
 backend/file/Makefile
 backend/gda/Makefile
 backend/file/qsf-dir.h
@@ -450,7 +435,6 @@ lib/libsql/Makefile
 qof/Makefile
 qof/qofla-dir.h
 qof/test/Makefile
-qof-1.pc
 qof.pc
 qof.symbols
 ])
