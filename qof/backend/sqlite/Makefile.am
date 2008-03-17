@@ -1,4 +1,5 @@
 AM_CFLAGS = \
+  ${warnFLAGS} \
   -I.. -I../.. \
   -I${top_srcdir}/qof/ \
   -DLOCALE_DIR=\""$(datadir)/locale"\" \
