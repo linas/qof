@@ -59,6 +59,11 @@ test_event_SOURCES = \
   test-stuff.c \
   test-event.c
 
+test_sql_SOURCES = \
+  test-engine-stuff.c \
+  test-stuff.c \
+  test-sql.c
+
 noinst_PROGRAMS = \
   test-book-merge \
   test-date \
@@ -67,7 +72,8 @@ noinst_PROGRAMS = \
   test-object \
   test-querynew \
   test-recursive \
-  test-event
+  test-event \
+  test-sql
 
 TESTS = \
   test-book-merge \
@@ -77,7 +83,8 @@ TESTS = \
   test-object \
   test-querynew \
   test-recursive \
-  test-event
+  test-event \
+  test-sql
 
 EXTRA_DIST = \
   test-stuff.h \

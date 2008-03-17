@@ -9,6 +9,7 @@ test-numeric
 test-guid
 test-recursive
 test-event
+test-sql
 *.o
 .libs
 .deps

@@ -504,6 +504,7 @@ qgda_destroy_backend (QofBackend *be)
 	qgda_be = (QGdaBackend*)be;
 	if (qgda_be)
 	{
+		/* only remove data_source whilst debugging! */
 		PINFO ("removing %s", qgda_be->data_source_name);
 		gda_config_remove_data_source (qgda_be->data_source_name);
 		gda_client_close_all_connections (qgda_be->client_pool);
@@ -660,8 +661,6 @@ qgda_backend_new (void)
 	qgda_be->database_name = "DB_DIR=/home/neil/";
 	qgda_be->provider_name = "SQLite";
 	qgda_be->source_description = "QOF GDA debug data";
-	/** \todo Need a way to delete the apps/libgda/Datasources/$name key
-	  or remove it from libgda3 config. */
 /* end debug */
 	return be;
 }

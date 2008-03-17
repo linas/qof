@@ -200,7 +200,7 @@ void qof_class_register (QofIdTypeConst obj_name,
 						 const QofParam * params);
 
 /** An example:
- *
+ * \verbatim
  * #define MY_OBJ_MEMO     "memo"
  * #define MY_OBJ_VALUE    "value"
  * #define MY_OBJ_TIME     "time"
@@ -216,6 +216,7 @@ void qof_class_register (QofIdTypeConst obj_name,
  * NULL };
  *
  * qof_class_register ("myObjectName", myObjectCompare, &myParams);
+ * \endverbatim
  */
 
 /** Return true if the the indicated type is registered, 

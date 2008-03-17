@@ -1,3 +1,40 @@
+2008-03-17  Neil Williams  <linux@codehelp.co.uk>
+
+ * backend/file/qsf-backend.c (qsf_to_kvp_helper),
+  (kvp_value_to_qof_type_helper): Use the new KVP support functions.
+ * backend/sqlite/Makefile.am: Build with compiler warnings enabled.
+ * backend/sqlite/qof-sqlite.c (kvp_value_to_qof_type_helper),
+  (sql_to_kvp_helper), (create_event), (qsql_modify),
+  (update_param_foreach), (update_dirty), (qsql_create),
+  (check_state), (qsql_class_foreach), (qsql_backend_createdb),
+  (qof_sqlite_provider_init): Begin extensive modifications to use common
+  functions in all backends, especially sqlite and GDA. Utilise support
+  added to qofsql.c
+ * qof/Makefile.am: Remove kvputil-p.h from package, migrate existing
+  (public) functions to kvputil.h. Add private qofsql-p.h.
+ * qof/kvputil-p.h: Add new (private) KVP support especially for backends.
+ * qof/kvputil.c (qof_id_to_kvp_value_type),
+  (kvp_value_type_to_qof_id): New KVP support for backends.
+ * qof/kvputil.h: Include functions from old kvputil-p.h that were already
+  public.
+ * qof/qofclass.h: Doxygen tweak.
+ * qof/qofsql.c (handle_single_condition),
+  (qof_sql_entity_set_kvp_tablename), (create_sql_from_param),
+  (string_param_to_sql), (string_param_foreach), (create_param_list),
+  (kvpvalue_to_sql), (update_param_foreach),
+  (qof_sql_entity_create_table), (qof_sql_entity_insert),
+  (qof_sql_entity_update), (qof_sql_entity_update_list),
+  (qof_sql_entity_delete), (qof_sql_entity_drop_table): Add support for SQL
+  backends that need to generate SQL statements from QofEntity data. Currently
+  no support for parsing the statements back into QofEntity changes.
+ * qof/qofsql-p.h: New header for private SQL conversion routines for backends.
+ * qof/test/.cvsignore: Ignore new test executable.
+ * qof/test/Makefile.am: Build new test.
+ * qof/test/test-sql.c (dyn_create), (dyn_setAmount),
+  (dyn_getAmount), (test_dyn_printable), (dyn_objRegister),
+  (dyn_foreach), (dyn_foreach2), (test_sql), (main): New test for SQL conversion
+  routines.
+
 2008-03-16  Neil Williams  <linux@codehelp.co.uk>
 
  * backend/gda/qof-gda.c (qoftype_to_gdafield), (build_table),
@@ -24,7 +61,7 @@
  qof/qofevent-p.h, qof/qofinstance-p.h, qof/qofnumeric.c,
  qof/qofobject.h, qof/qofquery-p.h, qof/qofquery.c,
  qof/qofquerycore.c, qof/qofsession.c, qof/qofsql.c,
- qof/qoftime.h, qof/qofundo.c, qof/qofutil.c, 
+ qof/qoftime.h, qof/qofundo.c, qof/qofutil.c,
  qof/qofutil.h : Remove deprecated code.
  * doc/doxygen_main_page.c : Drop description of removed
  code.
