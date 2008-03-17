@@ -44,7 +44,6 @@ qofinclude_HEADERS = \
    guid.h \
    kvpframe.h \
    kvputil.h  \
-   kvputil-p.h \
    qof.h \
    qofbackend.h \
    qofbackend-p.h \
@@ -67,7 +66,7 @@ qofinclude_HEADERS = \
    qofreference.h \
    qofsession.h \
    qofla-dir.h \
-   qofsql.h	\
+   qofsql.h \
    qofutil.h \
    qofbookmerge.h \
    qofdate.h \
@@ -75,6 +74,7 @@ qofinclude_HEADERS = \
    qofundo.h
 
 noinst_HEADERS = \
+   kvputil-p.h \
    md5.h  \
    qofclass-p.h  \
    qofdate-p.h \
@@ -88,7 +88,8 @@ noinst_HEADERS = \
    qofobject-p.h  \
    qofsession-p.h \
    qofundo-p.h \
-   deprecated.h
+   deprecated.h \
+   qofsql-p.h
 
 AM_CFLAGS = -g \
   ${warnFLAGS} \
