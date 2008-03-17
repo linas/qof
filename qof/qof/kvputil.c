@@ -224,4 +224,69 @@ g_hash_table_kv_pair_free_gfunc (gpointer data, gpointer user_data
 	g_free (kvp);
 }
 
+KvpValueType
+qof_id_to_kvp_value_type (QofIdTypeConst type_string)
+{
+	if (0 == safe_strcmp (QOF_TYPE_INT64, type_string))
+		return KVP_TYPE_GINT64;
+	if (0 == safe_strcmp (QOF_TYPE_DOUBLE, type_string))
+		return KVP_TYPE_DOUBLE;
+	if (0 == safe_strcmp (QOF_TYPE_NUMERIC, type_string))
+		return KVP_TYPE_NUMERIC;
+	if (0 == safe_strcmp (QOF_TYPE_STRING, type_string))
+		return KVP_TYPE_STRING;
+	if (0 == safe_strcmp (QOF_TYPE_GUID, type_string))
+		return KVP_TYPE_GUID;
+	if (0 == safe_strcmp (QOF_TYPE_TIME, type_string))
+		return KVP_TYPE_TIME;
+	return 0;
+}
+
+QofIdTypeConst
+kvp_value_type_to_qof_id (KvpValueType n)
+{
+	switch (n)
+	{
+		case KVP_TYPE_GINT64:
+		{
+			return QOF_TYPE_INT64;
+			break;
+		}
+		case KVP_TYPE_DOUBLE:
+		{
+			return QOF_TYPE_DOUBLE;
+			break;
+		}
+		case KVP_TYPE_NUMERIC:
+		{
+			return QOF_TYPE_NUMERIC;
+			break;
+		}
+		case KVP_TYPE_STRING:
+		{
+			return QOF_TYPE_STRING;
+			break;
+		}
+		case KVP_TYPE_GUID:
+		{
+			return QOF_TYPE_GUID;
+			break;
+		}
+		case KVP_TYPE_BOOLEAN :
+		{
+			return QOF_TYPE_BOOLEAN;
+			break;
+		}
+		case KVP_TYPE_TIME :
+		{
+			return QOF_TYPE_TIME;
+			break;
+		}
+		default:
+		{
+			return NULL;
+		}
+	}
+}
+
 /*======================== END OF FILE =============================*/
