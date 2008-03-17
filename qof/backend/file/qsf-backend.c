@@ -669,18 +669,10 @@ qsf_supported_parameters (gpointer type, gpointer user_data)
 static KvpValueType
 qsf_to_kvp_helper (const char *type_string)
 {
-	if (0 == safe_strcmp (QOF_TYPE_INT64, type_string))
-		return KVP_TYPE_GINT64;
-	if (0 == safe_strcmp (QOF_TYPE_DOUBLE, type_string))
-		return KVP_TYPE_DOUBLE;
-	if (0 == safe_strcmp (QOF_TYPE_NUMERIC, type_string))
-		return KVP_TYPE_NUMERIC;
-	if (0 == safe_strcmp (QOF_TYPE_STRING, type_string))
-		return KVP_TYPE_STRING;
-	if (0 == safe_strcmp (QOF_TYPE_GUID, type_string))
-		return KVP_TYPE_GUID;
-	if (0 == safe_strcmp (QOF_TYPE_TIME, type_string))
-		return KVP_TYPE_TIME;
+	KvpValueType kvt;
+	kvt = qof_id_to_kvp_value_type (type_string);
+	if (kvt != 0)
+		return kvt;
 	if (0 == safe_strcmp (QSF_TYPE_BINARY, type_string))
 		return KVP_TYPE_BINARY;
 	if (0 == safe_strcmp (QSF_TYPE_GLIST, type_string))
@@ -693,43 +685,12 @@ qsf_to_kvp_helper (const char *type_string)
 static QofIdTypeConst
 kvp_value_to_qof_type_helper (KvpValueType n)
 {
+	QofIdTypeConst qtc;
+	qtc = kvp_value_type_to_qof_id (n);
+	if (qtc)
+		return qtc;
 	switch (n)
 	{
-		case KVP_TYPE_GINT64:
-		{
-			return QOF_TYPE_INT64;
-			break;
-		}
-		case KVP_TYPE_DOUBLE:
-		{
-			return QOF_TYPE_DOUBLE;
-			break;
-		}
-		case KVP_TYPE_NUMERIC:
-		{
-			return QOF_TYPE_NUMERIC;
-			break;
-		}
-		case KVP_TYPE_STRING:
-		{
-			return QOF_TYPE_STRING;
-			break;
-		}
-		case KVP_TYPE_GUID:
-		{
-			return QOF_TYPE_GUID;
-			break;
-		}
-		case KVP_TYPE_BOOLEAN :
-		{
-			return QOF_TYPE_BOOLEAN;
-			break;
-		}
-		case KVP_TYPE_TIME :
-		{
-			return QOF_TYPE_TIME;
-			break;
-		}
 		case KVP_TYPE_BINARY:
 		{
 			return QSF_TYPE_BINARY;
