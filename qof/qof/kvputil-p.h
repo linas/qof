@@ -30,83 +30,34 @@
     @{ 
 */
 /** @file kvputil-p.h
- * @brief misc odd-job kvp utils engine-private routines
- * @author Copyright (C) 2001, 2003 Linas Vepstas <linas@linas.org>
+  * @brief Private KVP utilities for backends etc.
+  * @author Copyright (C) 2001, 2003 Linas Vepstas <linas@linas.org>
+  * @author Copyright 2008 Neil Williams <linux@codehelp.co.uk>
 */
 
-/** @name KvpBag Bags of GUID Pointers 
- @{ 
+/** \brief Convert a QofIdType to a KvpValueType
+
+ Used by various backends to convert QofParam into SQL structures.
+
+ \note Not all KvpValueType types can be converted to QofIdTypeConst,
+ in particular ::KVP_TYPE_BINARY, ::KVP_TYPE_GLIST and ::KVP_TYPE_FRAME
+
+ \return The KvpValueType or zero if the type cannot be converted.
 */
+KvpValueType
+qof_id_to_kvp_value_type (QofIdTypeConst type_string);
 
-/** The qof_kvp_bag_add() routine is used to maintain a collection 
- *  of pointers in a kvp tree.
- *
- *  The thing being pointed at is uniquely identified by its GUID. 
- *  This routine is typically used to create a linked list, and/or
- *  a collection of pointers to objects that are 'related' to each 
- *  other in some way.
- *
- *  The var-args should be pairs of strings (const char *) followed by
- *  the corresponding GUID pointer (const GUID *).  Terminate the varargs
- *  with a NULL as the last string argument.
- *
- *  The actual 'pointer' is stored in a subdirectory in a bag located at
- *  the node directory 'path'.  A 'bag' is merely a collection of
- *  (unamed) values.  The name of our bag is 'path'. A bag can contain
- *  any kind of values, including frames.  This routine will create a
- *  frame, and put it in the bag.  The frame will contain named data
- *  from the subroutine arguments.  Thus, for example:
- *
- *  qof_kvp_array (kvp, "foo", secs, "acct_guid", aguid, 
- *                                   "book_guid", bguid, NULL);
- *
- *  will create a frame containing "/acct_guid" and "/book_guid", whose
- *  values are aguid and bguid respecitvely.  The frame will also
- *  contain "/date", whose value will be secs.  This frame will be
- *  placed into the bag located at "foo". 
- *
- *  This routine returns a pointer to the frame that was created, or 
- *  NULL if an error occured.
- 
+/** \brief Convert a KvpValueType to a  QofIdType
+
+ Used by various backends to convert QofParam into SQL structures.
+
+ \note Not all KvpValueType types can be converted to QofIdTypeConst,
+ in particular ::KVP_TYPE_BINARY, ::KVP_TYPE_GLIST and ::KVP_TYPE_FRAME
+
+ \return The QofIdTypeConst or NULL if the type cannot be converted.
 */
-
-KvpFrame *
-qof_kvp_bag_add (KvpFrame * kvp_root, const gchar *path, 
-				QofTime *qt, const gchar *first_name, ...);
-
-/** The qof_kvp_bag_merge() routine will move the bag contents from
- *    the 'kvp_from', to the 'into' bag.  It will then delete the 
- *    'from' bag from the kvp tree.
- 
- */
-void 
-qof_kvp_bag_merge (KvpFrame * kvp_into, const gchar *intopath,
-				   KvpFrame * kvp_from, const gchar *frompath);
-
-/** The qof_kvp_bag_find_by_guid() routine examines the bag pointed
- *    located at root.  It looks for a frame in that bag that has the
- *    guid value of "desired_guid" filed under the key name "guid_name".
- *    If it finds that matching guid, then it returns a pointer to 
- *    the KVP frame that contains it.  If it is not found, or if there
- *    is any other error, NULL is returned.
- 
- */
-
-KvpFrame *
-qof_kvp_bag_find_by_guid (KvpFrame * root, const gchar *path,
-						  const gchar *guid_name,
-						  GUID * desired_guid);
-
-/** Remove the given frame from the bag.  The frame is removed,
- *  however, it is not deleted.  Note that the frame pointer must
- *  be a pointer to the actual frame (for example, as returned by
- *  gnc_kvp_bag_find_by_guid() for by gnc_kvp_bag_add()), and not
- *  some copy of the frame.
- */
-
-void 
-qof_kvp_bag_remove_frame (KvpFrame * root, const gchar *path,
-						  KvpFrame * fr);
+QofIdTypeConst
+kvp_value_type_to_qof_id (KvpValueType n);
 
 /** @} */
 
