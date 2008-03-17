@@ -30,6 +30,8 @@
 #include <glib.h>
 #include <libintl.h>
 #include "qof.h"
+#include "qofsql-p.h"
+#include "qof-sqlite.h"
 
 #define _(String) dgettext (GETTEXT_PACKAGE, String)
 #define ACCESS_METHOD "sqlite"
@@ -48,30 +50,13 @@
 /** Indicate an error to sqlite */
 #define QSQL_ERROR          -1
 /** One KVP table per file for all instances.  */
+#undef QSQL_KVP_TABLE
 #define QSQL_KVP_TABLE "sqlite_kvp"
 
 #define END_DB_VERSION " dbversion int );"
 
 static QofLogModule log_module = QOF_MOD_SQLITE;
 static gboolean loading = FALSE;
-
-typedef enum
-{
-	/** no operation defined. init value. */
-	SQL_NONE = 0,
-	/** Create a new database */
-	SQL_CREATE,
-	/** Load all data from existing database. */
-	SQL_LOAD,
-	/** Write / sync all data to the database. */
-	SQL_WRITE,
-	/** Run a single INSERT statement. */
-	SQL_INSERT,
-	/** Run a single DELETE statement. */
-	SQL_DELETE,
-	/** Run a single UPDATE statement. */
-	SQL_UPDATE
-} QsqlStatementType;
 
 /** \brief Main context for sqlite backend
 
@@ -126,89 +111,29 @@ struct QsqlBuilder
 	const QofParam *dirty;
 };
 
-static inline gchar *
-add_to_sql (gchar * sql_str, const gchar * add)
-{
-	gchar *old;
-	old = g_strdup (sql_str);
-	g_free (sql_str);
-	sql_str = g_strconcat (old, add, NULL);
-	g_free (old);
-	return sql_str;
-}
-
 /** \brief Map a KvpValue to a QofIdType
 
- \todo reconcile the duplication with the QSF version
+ \todo remove kvp_value_to_qof_type_helper and use
+ ::kvp_value_type_to_qof_id instead.
 */
 static QofIdTypeConst
 kvp_value_to_qof_type_helper (KvpValueType n)
 {
-	switch (n)
-	{
-	case KVP_TYPE_GINT64:
-		{
-			return QOF_TYPE_INT64;
-			break;
-		}
-	case KVP_TYPE_DOUBLE:
-		{
-			return QOF_TYPE_DOUBLE;
-			break;
-		}
-	case KVP_TYPE_NUMERIC:
-		{
-			return QOF_TYPE_NUMERIC;
-			break;
-		}
-	case KVP_TYPE_STRING:
-		{
-			return QOF_TYPE_STRING;
-			break;
-		}
-	case KVP_TYPE_GUID:
-		{
-			return QOF_TYPE_GUID;
-			break;
-		}
-	case KVP_TYPE_BOOLEAN:
-		{
-			return QOF_TYPE_BOOLEAN;
-			break;
-		}
-	case KVP_TYPE_TIME:
-		{
-			return QOF_TYPE_TIME;
-			break;
-		}
-	default:
-		{
-			return NULL;
-		}
-	}
+	return kvp_value_type_to_qof_id (n);
 }
 
-/** \todo reconcile the duplication with the QSF version */
+/** \todo remove sql_to_kvp_helper and simply call 
+  ::qof_id_to_kvp_value_type instead. */
 static KvpValueType
 sql_to_kvp_helper (const gchar * type_string)
 {
-	if (0 == safe_strcmp (QOF_TYPE_INT64, type_string))
-		return KVP_TYPE_GINT64;
-	if (0 == safe_strcmp (QOF_TYPE_DOUBLE, type_string))
-		return KVP_TYPE_DOUBLE;
-	if (0 == safe_strcmp (QOF_TYPE_NUMERIC, type_string))
-		return KVP_TYPE_NUMERIC;
-	if (0 == safe_strcmp (QOF_TYPE_STRING, type_string))
-		return KVP_TYPE_STRING;
-	if (0 == safe_strcmp (QOF_TYPE_GUID, type_string))
-		return KVP_TYPE_GUID;
-	if (0 == safe_strcmp (QOF_TYPE_TIME, type_string))
-		return KVP_TYPE_TIME;
-	return 0;
+	KvpValueType kvp;
+	kvp = qof_id_to_kvp_value_type (type_string);
+	return kvp;
 }
 
-/** \todo reconcile the duplication with the QSF version */
-KvpValue *
+/** \todo reconcile the duplication with the QSF (and GDA) version */
+static KvpValue *
 string_to_kvp_value (const gchar * content, KvpValueType type)
 {
 	gchar *tail;
@@ -336,7 +261,7 @@ kvpvalue_to_sql (const gchar * key, KvpValue * val, gpointer builder)
 	LEAVE (" %s", qb->sql_str);
 }
 
-static gchar *
+static G_GNUC_UNUSED gchar *
 string_param_to_sql (QofParam * param)
 {
 	/* Handle the entity GUID. Ensure that reference GUIDs
@@ -380,18 +305,18 @@ string_param_to_sql (QofParam * param)
 
  \note Must match the number and order of the
 list of parameter values from ::create_each_param
-*/
+*//*
 static void
 create_param_list (QofParam * param, gpointer builder)
 {
 	struct QsqlBuilder *qb;
 	qb = (struct QsqlBuilder *) builder;
 
-	/* avoid creating database fields for calculated values */
+*/	/* avoid creating database fields for calculated values *//*
 	if (!param->param_setfcn)
 		return;
-	/* avoid setting KVP even if a param_setfcn has been set
-	   because a QofSetterFunc for KVP is quite pointless. */
+*/	/* avoid setting KVP even if a param_setfcn has been set
+	   because a QofSetterFunc for KVP is quite pointless. *//*
 	if (0 == safe_strcmp (param->param_type, QOF_TYPE_KVP))
 	{
 		PINFO (" kvp support tag");
@@ -406,56 +331,18 @@ create_param_list (QofParam * param, gpointer builder)
 	}
 	else
 		qb->sql_str = add_to_sql (qb->sql_str, param->param_name);
-}
+}*/
 
 /** create the sql for each parameter */
-static void
+/*static void
 create_each_param (QofParam * param, gpointer builder)
 {
-	gchar *value;
 	struct QsqlBuilder *qb;
 	qb = (struct QsqlBuilder *) builder;
-	GList *references;
 
-	/* avoid creating database fields for calculated values */
-	if (!param->param_setfcn)
-		return;
-	/* avoid setting KVP even if a param_setfcn has been set
-	   because a QofSetterFunc for KVP is quite pointless. */
-	if (0 == safe_strcmp (param->param_type, QOF_TYPE_KVP))
-		return;
-	references = qof_class_get_referenceList (qb->ent->e_type);
-	if (g_list_find (references, param))
-	{
-		/** \bug will need to use QofEntityReference here
-		if partial books are actually to be supported. */
-		QofEntity *e;
-		e = param->param_getfcn (qb->ent, param);
-		value = g_strnfill (GUID_ENCODING_LENGTH + 1, ' ');
-		guid_to_string_buff (qof_entity_get_guid (e), value);
-		PINFO (" ref=%p GUID=%s", e, value);
-	}
-	else
-		value = qof_util_param_to_string (qb->ent, param);
-	if (value)
-		g_strescape (value, NULL);
-	if (!value)
-		value = g_strdup ("");
-	if (!g_str_has_suffix (qb->sql_str, "("))
-	{
-		gchar *val;
-		val = g_strconcat (", \"", value, "\"", NULL);
-		qb->sql_str = add_to_sql (qb->sql_str, val);
-		g_free (val);
-	}
-	else
-	{
-		gchar *val;
-		val = g_strconcat ("\"", value, "\"", NULL);
-		qb->sql_str = add_to_sql (qb->sql_str, val);
-		g_free (val);
-	}
-}
+	g_return_if_fail (qb);
+	qb->sql_str = create_sql_from_param (param, qb->ent, qb->sql_str);
+}*/
 
 /** \brief use the new-style event handlers for insert and update
 insert runs after QOF_EVENT_CREATE
@@ -532,21 +419,21 @@ create_event (QofEntity * ent, QofEventId event_type,
 	{
 	case QOF_EVENT_CREATE:
 		{
-			gchar *tmp;
 			ENTER (" create:%s", ent->e_type);
 			gstr = g_strnfill (GUID_ENCODING_LENGTH + 1, ' ');
 			guid_to_string_buff (qof_instance_get_guid ((QofInstance *)
 					ent), gstr);
 			DEBUG (" guid=%s", gstr);
 			qb.ent = ent;
-			qb.sql_str =
-				g_strdup_printf ("INSERT into %s (guid ", ent->e_type);
-			qof_class_param_foreach (ent->e_type, create_param_list, &qb);
-			tmp = g_strconcat (") VALUES (\"", gstr, "\" ", NULL);
-			qb.sql_str = add_to_sql (qb.sql_str, tmp);
-			g_free (tmp);
+			qb.sql_str = qof_sql_entity_insert (ent);
+//				g_strdup_printf ("INSERT into %s (guid ", ent->e_type);
+			/** \bug create one func to create_param_list and create_each_param */
+/*			qof_class_param_foreach (ent->e_type, create_param_list, &qb);
+			tmp = g_strjoin ("", qb.sql_str, ") VALUES (\"", gstr, "\" ", NULL);
+			g_free (qb.sql_str);
+			qb.sql_str = tmp;
 			qof_class_param_foreach (ent->e_type, create_each_param, &qb);
-			qb.sql_str = add_to_sql (qb.sql_str, ");");
+			qb.sql_str = add_to_sql (qb.sql_str, ");");*/
 			DEBUG (" sql_str=%s", qb.sql_str);
 			if (sqlite_exec (qsql_be->sqliteh, qb.sql_str,
 					NULL, &qb, &qsql_be->err) != SQLITE_OK)
@@ -569,10 +456,11 @@ create_event (QofEntity * ent, QofEventId event_type,
 			if (slots)
 			{
 				/* id, guid, path, type, value */
-				qb.sql_str = g_strconcat ("INSERT into ", QSQL_KVP_TABLE,
+				qb.sql_str = qof_sql_entity_insert (ent);
+/*					g_strconcat ("INSERT into ", QSQL_KVP_TABLE,
 					"  (kvp_id \"", gstr, "\", ", NULL);
 				kvp_frame_for_each_slot (slots, kvpvalue_to_sql, &qb);
-				qb.sql_str = add_to_sql (qb.sql_str, END_DB_VERSION);
+				qb.sql_str = add_to_sql (qb.sql_str, END_DB_VERSION);*/
 				if (sqlite_exec (qsql_be->sqliteh, qb.sql_str,
 						NULL, &qb, &qsql_be->err) != SQLITE_OK)
 				{
@@ -605,8 +493,6 @@ qsql_modify (QofBackend * be, QofInstance * inst)
 {
 	struct QsqlBuilder qb;
 	QSQLiteBackend *qsql_be;
-	gchar *gstr, *param_str;
-	KvpFrame *slots;
 
 	qsql_be = (QSQLiteBackend *) be;
 	qb.qsql_be = qsql_be;
@@ -620,16 +506,18 @@ qsql_modify (QofBackend * be, QofInstance * inst)
 		return;
 	ENTER (" modified %s param:%s", ((QofEntity *) inst)->e_type,
 		inst->param->param_name);
-	gstr = g_strnfill (GUID_ENCODING_LENGTH + 1, ' ');
+/*	gstr = g_strnfill (GUID_ENCODING_LENGTH + 1, ' ');
 	guid_to_string_buff (qof_instance_get_guid (inst), gstr);
 	qb.ent = (QofEntity *) inst;
 	param_str = qof_util_param_to_string (qb.ent, inst->param);
 	if (param_str)
 		g_strescape (param_str, NULL);
-	qb.sql_str = g_strconcat ("UPDATE ", qb.ent->e_type, " SET ",
+*/
+	qb.sql_str = qof_sql_entity_update ((QofEntity*)inst);
+	/*g_strconcat ("UPDATE ", qb.ent->e_type, " SET ",
 		inst->param->param_name, " = \"", param_str,
-		"\" WHERE ", QOF_TYPE_GUID, "='", gstr, "';", NULL);
-	DEBUG (" sql_str=%s param_Str=%s", qb.sql_str, param_str);
+		"\" WHERE ", QOF_TYPE_GUID, "='", gstr, "';", NULL);*/
+	DEBUG (" sql_str=%s", qb.sql_str);
 	if (sqlite_exec (qsql_be->sqliteh, qb.sql_str,
 			NULL, &qb, &qsql_be->err) != SQLITE_OK)
 	{
@@ -641,18 +529,17 @@ qsql_modify (QofBackend * be, QofInstance * inst)
 	{
 		inst->dirty = FALSE;
 		g_free (qb.sql_str);
-		g_free (gstr);
-		qsql_be->error = FALSE;
+qsql_be->error = FALSE;
 		LEAVE (" ");
 		return;
 	}
 	/* modify slot data */
-	slots = qof_instance_get_slots (inst);
+/*	slots = qof_instance_get_slots (inst);
 	if (slots)
 	{
-		/* update and delete KVP data */
+*/		/* update and delete KVP data */
 		/* id, guid, path, type, value */
-		qb.sql_str = g_strconcat ("UPDATE ", QSQL_KVP_TABLE,
+/*		qb.sql_str = g_strconcat ("UPDATE ", QSQL_KVP_TABLE,
 			" SET  (kvp_id \"", gstr, "\", ", NULL);
 		kvp_frame_for_each_slot (slots, kvpvalue_to_sql, &qb);
 		qb.sql_str = add_to_sql (qb.sql_str, END_DB_VERSION);
@@ -669,8 +556,8 @@ qsql_modify (QofBackend * be, QofInstance * inst)
 			qsql_be->error = FALSE;
 			g_free (qb.sql_str);
 		}
-	}
-	g_free (gstr);
+	}*/
+/*	g_free (gstr);*/
 	LEAVE (" ");
 }
 
@@ -719,7 +606,7 @@ record_foreach (gpointer builder, gint col_num, gchar ** strings,
 }
 
 /* used by create/insert */
-static void
+/*static void
 string_param_foreach (QofParam * param, gpointer builder)
 {
 	struct QsqlBuilder *qb;
@@ -731,16 +618,16 @@ string_param_foreach (QofParam * param, gpointer builder)
 	if (0 == safe_strcmp (param->param_type, QOF_TYPE_KVP))
 		return;
 	p_str = string_param_to_sql (param);
-	/* skip empty values (no param_setfcn) */
+*/	/* skip empty values (no param_setfcn) *//*
 	if (!p_str)
 		return;
 	old = g_strconcat (p_str, ",", NULL);
 	qb->sql_str = add_to_sql (qb->sql_str, old);
 	g_free (old);
 	g_free (p_str);
-}
+}*/
 
-static void
+static G_GNUC_UNUSED void
 update_param_foreach (QofParam * param, gpointer builder)
 {
 	struct QsqlBuilder *qb;
@@ -757,16 +644,15 @@ update_param_foreach (QofParam * param, gpointer builder)
 		value = g_strdup ("");
 	if (g_str_has_suffix (qb->sql_str, " "))
 	{
-		add = g_strconcat (param->param_name, "=\"", value, "\"", NULL);
-		qb->sql_str = add_to_sql (qb->sql_str, add);
-		g_free (add);
+		add = g_strjoin ("", qb->sql_str, param->param_name, "='", value, "'", NULL);
+		g_free (qb->sql_str);
+		qb->sql_str = add;
 	}
 	else
 	{
-		add =
-			g_strconcat (",", param->param_name, "=\"", value, "\"", NULL);
-		qb->sql_str = add_to_sql (qb->sql_str, add);
-		g_free (add);
+		add = g_strjoin ("", qb->sql_str, ",", param->param_name, "='", value, "'", NULL);
+		g_free (qb->sql_str);
+		qb->sql_str = add;
 	}
 }
 
@@ -778,7 +664,7 @@ update_dirty (gpointer value, gpointer builder)
 	struct QsqlBuilder *qb;
 	QSQLiteBackend *qsql_be;
 	QofBackend *be;
-	gchar *gstr, *param_str;
+	gchar *gstr;
 
 	qb = (struct QsqlBuilder *) builder;
 	qsql_be = qb->qsql_be;
@@ -791,11 +677,12 @@ update_dirty (gpointer value, gpointer builder)
 	gstr = g_strnfill (GUID_ENCODING_LENGTH + 1, ' ');
 	guid_to_string_buff (qof_entity_get_guid (ent), gstr);
 	/* qof_class_param_foreach  */
-	qb->sql_str = g_strdup_printf ("UPDATE %s SET ", ent->e_type);
+	qb->sql_str = qof_sql_entity_update (ent);
+/*		g_strdup_printf ("UPDATE %s SET ", ent->e_type);
 	qof_class_param_foreach (ent->e_type, update_param_foreach, qb);
 	param_str = g_strdup_printf ("WHERE %s=\"%s\";", QOF_TYPE_GUID, gstr);
 	qb->sql_str = add_to_sql (qb->sql_str, param_str);
-	g_free (param_str);
+	g_free (param_str);*/
 	DEBUG (" update=%s", qb->sql_str);
 	if (sqlite_exec (qsql_be->sqliteh, qb->sql_str,
 			NULL, qb, &qsql_be->err) != SQLITE_OK)
@@ -861,7 +748,6 @@ qsql_create (QofBackend * be, QofInstance * inst)
 	QSQLiteBackend *qsql_be;
 	struct QsqlBuilder qb;
 	QofEntity *ent;
-	KvpFrame *slots;
 
 	qsql_be = (QSQLiteBackend *) be;
 	if (!inst)
@@ -890,16 +776,15 @@ qsql_create (QofBackend * be, QofInstance * inst)
 	}
 	if (!qb.exists)
 	{
-		gchar *add;
 		/* create new entity */
-		qb.sql_str =
-			g_strdup_printf ("INSERT into %s (guid ", ent->e_type);
+		qb.sql_str = qof_sql_entity_insert (ent);
+/*			g_strdup_printf ("INSERT into %s (guid ", ent->e_type);
 		qof_class_param_foreach (ent->e_type, create_param_list, &qb);
 		add = g_strconcat (") VALUES (\"", gstr, "\"", NULL);
 		qb.sql_str = add_to_sql (qb.sql_str, add);
 		g_free (add);
 		qof_class_param_foreach (ent->e_type, create_each_param, &qb);
-		qb.sql_str = add_to_sql (qb.sql_str, ");");
+		qb.sql_str = add_to_sql (qb.sql_str, ");");*/
 		DEBUG (" sql_str= %s", qb.sql_str);
 		if (sqlite_exec (qsql_be->sqliteh, qb.sql_str,
 				NULL, qsql_be, &qsql_be->err) != SQLITE_OK)
@@ -909,11 +794,11 @@ qsql_create (QofBackend * be, QofInstance * inst)
 			PERR (" error creating new entity:%s", qsql_be->err);
 		}
 		/* KVP here */
-		slots = qof_instance_get_slots ((QofInstance *) ent);
+/*		slots = qof_instance_get_slots ((QofInstance *) ent);
 		if (slots)
 		{
-			/* id, guid, path, type, value */
-			qb.sql_str = g_strconcat ("INSERT into ", QSQL_KVP_TABLE,
+*/			/* id, guid, path, type, value */
+/*			qb.sql_str = g_strconcat ("INSERT into ", QSQL_KVP_TABLE,
 				"  (kvp_id, \"", gstr, "\", ", NULL);
 			kvp_frame_for_each_slot (slots, kvpvalue_to_sql, &qb);
 			qb.sql_str = add_to_sql (qb.sql_str, ");");
@@ -933,7 +818,7 @@ qsql_create (QofBackend * be, QofInstance * inst)
 				((QofInstance *) ent)->dirty = FALSE;
 				qsql_be->error = FALSE;
 			}
-		}
+		}*/
 	}
 	g_free (qb.sql_str);
 	g_free (gstr);
@@ -949,7 +834,6 @@ check_state (QofEntity * ent, gpointer builder)
 	struct QsqlBuilder *qb;
 	QofBackend *be;
 	QofInstance *inst;
-	KvpFrame *slots;
 
 	qb = (struct QsqlBuilder *) builder;
 	qsql_be = qb->qsql_be;
@@ -982,16 +866,15 @@ check_state (QofEntity * ent, gpointer builder)
 	}
 	if (!qb->exists)
 	{
-		gchar *add;
 		/* create new entity */
-		qb->sql_str =
-			g_strdup_printf ("INSERT into %s (guid ", ent->e_type);
+		qb->sql_str = qof_sql_entity_insert (ent);
+/*			g_strdup_printf ("INSERT into %s (guid ", ent->e_type);
 		qof_class_param_foreach (ent->e_type, create_param_list, &qb);
 		add = g_strconcat (") VALUES (\"", gstr, "\" ", NULL);
 		qb->sql_str = add_to_sql (qb->sql_str, add);
 		g_free (add);
 		qof_class_param_foreach (ent->e_type, create_each_param, &qb);
-		qb->sql_str = add_to_sql (qb->sql_str, ");");
+		qb->sql_str = add_to_sql (qb->sql_str, ");");*/
 		DEBUG (" sql_str= %s", qb->sql_str);
 		if (sqlite_exec (qsql_be->sqliteh, qb->sql_str,
 				NULL, qb, &qsql_be->err) != SQLITE_OK)
@@ -1002,11 +885,11 @@ check_state (QofEntity * ent, gpointer builder)
 		}
 		g_free (qb->sql_str);
 		/* create KVP data too */
-		slots = qof_instance_get_slots ((QofInstance *) ent);
+/*		slots = qof_instance_get_slots ((QofInstance *) ent);
 		if (slots)
 		{
-			/* id, guid, path, type, value */
-			qb->sql_str = g_strconcat ("INSERT into ", QSQL_KVP_TABLE,
+*/			/* id, guid, path, type, value */
+/*			qb->sql_str = g_strconcat ("INSERT into ", QSQL_KVP_TABLE,
 				"  (kvp_id \"", gstr, "\", ", NULL);
 			kvp_frame_for_each_slot (slots, kvpvalue_to_sql, &qb);
 			qb->sql_str = add_to_sql (qb->sql_str, END_DB_VERSION);
@@ -1022,7 +905,7 @@ check_state (QofEntity * ent, gpointer builder)
 				((QofInstance *) ent)->dirty = FALSE;
 				qsql_be->error = FALSE;
 			}
-		}
+		}*/
 	}
 	/* update instead */
 	g_list_foreach (qb->dirty_list, update_dirty, &qb);
@@ -1154,11 +1037,11 @@ qsql_class_foreach (QofObject * obj, gpointer data)
 	case SQL_CREATE:
 		{
 			/* KVP is handled separately */
-			qb.sql_str =
-				g_strdup_printf ("CREATE TABLE %s (", obj->e_type);
+			qb.sql_str = qof_sql_entity_create_table (qb.ent);
+/*				g_strdup_printf ("CREATE TABLE %s (", obj->e_type);
 			qof_class_param_foreach (obj->e_type, string_param_foreach,
 				&qb);
-			qb.sql_str = add_to_sql (qb.sql_str, END_DB_VERSION);
+			qb.sql_str = add_to_sql (qb.sql_str, END_DB_VERSION);*/
 			if (sqlite_exec (qsql_be->sqliteh, qb.sql_str,
 					NULL, NULL, &qsql_be->err) != SQLITE_OK)
 			{
@@ -1233,7 +1116,7 @@ qsql_backend_createdb (QofBackend * be, QofSession * session)
 	/* create the KVP table here
 	   preset table name, internal_id, guid_as_string, path, type, value
 	 */
-	qb.sql_str =
+/*	qb.sql_str =
 		g_strdup_printf ("CREATE TABLE %s (%s, %s, %s, %s, %s, %s",
 		QSQL_KVP_TABLE, "kvp_id int primary key not null",
 		"guid char(32)", "path mediumtext", "type mediumtext",
@@ -1245,7 +1128,7 @@ qsql_backend_createdb (QofBackend * be, QofSession * session)
 		qsql_be->error = TRUE;
 		PERR (" unable to create kvp table:%s", qsql_be->err);
 	}
-	g_free (qb.sql_str);
+	g_free (qb.sql_str);*/
 	LEAVE (" ");
 }
 
@@ -1466,8 +1349,9 @@ qof_sqlite_provider_init (void)
 
 	ENTER (" ");
 	bindtextdomain (PACKAGE, LOCALE_DIR);
+	qof_sql_entity_set_kvp_tablename (QSQL_KVP_TABLE);
 	prov = g_new0 (QofBackendProvider, 1);
-	prov->provider_name = "QOF SQLite Backend Version 0.3";
+	prov->provider_name = "QOF SQLite Backend Version 0.4";
 	prov->access_method = ACCESS_METHOD;
 	prov->partial_book_supported = TRUE;
 	prov->backend_new = qsql_backend_new;
