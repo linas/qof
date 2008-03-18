@@ -1,3 +1,22 @@
+2008-03-18  Neil Williams  <linux@codehelp.co.uk>
+
+  * backend/gda/qof-gda.c (qgda_modify), (create_tables),
+  (create_data_source), (qgda_session_begin), (qgda_session_end),
+  (get_config), (qgda_backend_new): Continue migration to SQL
+  handling. Drop unused functions.
+  * backend/sqlite/qof-sqlite.c (kvpvalue_to_sql), (delete_event),
+  (create_event), (qsql_modify), (update_dirty), (qsql_create),
+  (check_state), (build_kvp_table), (qsql_class_foreach),
+  (qsql_backend_createdb): Remove unused code.
+  * qof/qofsql-p.h: Support creating tables from the QofObject
+  definition.
+  * qof/qofsql.c (string_param_to_sql), (string_param_foreach),
+  (qof_sql_object_create_table), (qof_sql_entity_create_table),
+  (qof_sql_entity_update), (qof_sql_entity_delete): Add preliminary
+  support for KVP storage - not working yet.
+  * qof/test/test-sql.c (test_sql): Temporarily disable one test until
+  the KVP update code is fixed.
+
 2008-03-17  Neil Williams  <linux@codehelp.co.uk>
 
  * backend/file/qsf-backend.c (qsf_to_kvp_helper),
