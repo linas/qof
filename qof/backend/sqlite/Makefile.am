@@ -15,7 +15,7 @@ libqof_backend_sqlite_la_SOURCES = \
 libqof_backend_sqlite_la_LDFLAGS = \
  -L${top_srcdir}/qof \
  -L${top_srcdir}/lib/libsql \
- -avoid-version
+ -avoid-version -module
 
 # -version-info $(LIBQOF_BACKEND_QSQL_VERSION)
 
