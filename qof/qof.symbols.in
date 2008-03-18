@@ -455,6 +455,7 @@ libqof.so.@SONAME@ libqof@SONAME@ #MINVER#
  qof_sql_entity_set_kvp_tablename@LIBQOF_0.8.0 0.8.0
  qof_sql_entity_update@LIBQOF_0.8.0 0.8.0
  qof_sql_entity_update_list@LIBQOF_0.8.0 0.8.0
+ qof_sql_object_create_table@LIBQOF_0.8.0 0.8.0
  qof_sql_query_destroy@LIBQOF_0.8.0 0.8.0
  qof_sql_query_get_query@LIBQOF_0.8.0 0.8.0
  qof_sql_query_new@LIBQOF_0.8.0 0.8.0
