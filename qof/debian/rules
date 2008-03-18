@@ -1,6 +1,6 @@
 #!/usr/bin/make -f
 # Copyright 2003 Goedson Teixeira Paixao <goedson@debian.org>
-# Copyright 2006 Neil Williams <linux@codehelp.co.uk>
+# Copyright 2006-2008 Neil Williams <linux@codehelp.co.uk>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
@@ -24,6 +24,7 @@ include /usr/share/cdbs/1/rules/simple-patchsys.mk
 # backends do not need ldconfig (anymore)
 DEB_DH_MAKESHLIBS_ARGS_libqof2-backend-qsf=-n
 DEB_DH_MAKESHLIBS_ARGS_libqof2-backend-sqlite=-n
+DEB_DH_MAKESHLIBS_ARGS_libqof2-backend-gda=-n
 
 ifneq ($(DEB_BUILD_GNU_TYPE),$(DEB_HOST_GNU_TYPE))
 # internal libraries need to be redirected to cross version
@@ -35,6 +36,7 @@ DEB_CONFIGURE_EXTRA_FLAGS += --disable-gdasql --disable-doxygen --disable-gdabac
 # enable dpkg-shlibdeps to find the internal libraries.
 DEB_SHLIBDEPS_INCLUDE_libqof1 = ./debian/tmp/usr/lib/
 else
+DEB_CONFIGURE_EXTRA_FLAGS += --enable-gdabackend
 DEB_MAKE_CHECK_TARGET = check
 endif
 

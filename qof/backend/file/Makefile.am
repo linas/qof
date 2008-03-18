@@ -19,8 +19,6 @@ libqof_backend_qsf_la_LDFLAGS = \
  -L${top_srcdir}/qof \
  -avoid-version -module
 
-# -version-info $(LIBQOF_BACKEND_QSF_LIBRARY_VERSION)
-
 libqof_backend_qsf_la_LIBADD = \
   ${QOF_LIBS} \
   ${LIBXML2_LIBS} \

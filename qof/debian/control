@@ -16,7 +16,7 @@ Priority: optional
 Section: libs
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
-Recommends: libqof2-backend-qsf | libqof2-backend-sqlite
+Recommends: libqof2-backend-qsf | libqof2-backend-sqlite | libqof2-backend-gda
 Replaces: libqof1
 Conflicts: pilot-qof (<< 0.1.1-2)
 Description: Query Object Framework
@@ -50,7 +50,7 @@ Description: Query Object Framework - XML backend module
  QOF is a framework to allow the execution of SQL-type 
  queries using collections of in-memory objects as 'tables'.
  .
- This module provides the default XML backend for libqof1
+ This module provides the default XML backend for libqof2
  using a generic XML format called QSF. Any QOF object can
  be written out or loaded from QSF XML. Data can be
  converted to other text-based formats using XSL.
@@ -68,7 +68,24 @@ Description: Query Object Framework - SQLite backend module
  .
  This module provides a SQLite backend intended for
  embedded systems. The package can also be installed 
- alongside the default QSF XML backend.
+ alongside other QOF backends, applications using QOF
+ can use whichever backend is available.
+
+Package: libqof2-backend-gda
+Priority: optional
+Section: libs
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, libqof2 (= ${binary:Version})
+Description: Query Object Framework - GDA backend module
+ QOF is a framework to allow the execution of SQL-type
+ queries using collections of in-memory objects as 'tables'.
+ .
+ This module provides a GNOME Data Access backend using
+ libgda3 and can be used with any gda3 plugin to provide
+ read and write access to data sources using XML, SQLite,
+ MySQL, FreeTDS, PostgreSQL or ODBC. The package can also
+ be installed alongside other QOF backends, applications
+ using QOF can use whichever backend is available.
 
 Package: libqof2-dbg
 Priority: extra

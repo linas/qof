@@ -3,7 +3,7 @@ AM_CFLAGS = \
   -I.. -I../.. \
   -I${top_srcdir}/qof/ \
   -DLOCALE_DIR=\""$(datadir)/locale"\" \
-  ${GLIB_CFLAGS}  \
+  ${GLIB_CFLAGS} \
   ${DEPS_CFLAGS} \
   ${SQLITE_CFLAGS}
 
@@ -16,8 +16,6 @@ libqof_backend_sqlite_la_LDFLAGS = \
  -L${top_srcdir}/qof \
  -L${top_srcdir}/lib/libsql \
  -avoid-version -module
-
-# -version-info $(LIBQOF_BACKEND_QSQL_VERSION)
 
 libqof_backend_sqlite_la_LIBADD = \
  ${QOF_LIBS} \
