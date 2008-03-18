@@ -28,6 +28,7 @@
 #include <libgda/libgda.h>
 #include "qof.h"
 #include "qof-gda.h"
+#include "qofsql-p.h"
 
 #define _(String) dgettext (GETTEXT_PACKAGE, String)
 #define ACCESS_METHOD  "gda"
@@ -50,19 +51,16 @@ typedef struct
 	GdaClient * client_pool;
 	GdaConnection * connection;
 	GdaCommand * command;
-	GdaDataModel * dm;
 	GValue * gda_value;
 	/* GdaTransaction is now just a string label */
 	gchar * undo_trans, * commit_trans;
 	GError * gda_err;
-	const GdaColumn *gda_param;
 	GList * entities;
 	gint dbversion;
 	gint create_handler;
 	gint delete_handler;
 	const gchar *fullpath;
 	const gchar * table_name;   /* revised each iteration. */
-	GSList * field_list;
 	/* QofBackendOption settings: */
 	gchar * data_source_name;
 	gchar * provider_name;
@@ -70,12 +68,14 @@ typedef struct
 	gchar * source_description;
 	gchar * username;
 	gchar * password;
+	gchar * gdahome;
 	/* end QofBackendOption */
 	gchar *err;
 	gchar *sql_str;
 	gboolean error;
 	QofIdType e_type;
 	QofBook * book;
+	QofErrorId err_delete, err_insert, err_update, err_create;
 } QGdaBackend;
 
 static gboolean
@@ -90,79 +90,47 @@ qgda_determine_file_type (const gchar * path)
 static void
 qgda_modify (QofBackend *be, QofInstance *inst)
 {
-
-}
-
-static GdaColumn *
-qoftype_to_gdafield (QofIdTypeConst qoftype)
-{
-	GdaColumn *p;
-
-	p = gda_column_new();
-	gda_column_set_allow_null (p, TRUE);
-	gda_column_set_g_type (p, G_TYPE_NONE);
-	if (0 == safe_strcasecmp (qoftype, QOF_TYPE_STRING))
-		gda_column_set_g_type (p, G_TYPE_STRING);
-	if (0 == safe_strcasecmp (qoftype, QOF_TYPE_GUID))
-	{
-		gda_column_set_g_type (p, G_TYPE_STRING);
-		gda_column_set_allow_null (p, FALSE);
-		gda_column_set_primary_key (p, TRUE);
-	}
-	if (0 == safe_strcasecmp (qoftype, QOF_TYPE_CHAR))
-		gda_column_set_g_type (p, G_TYPE_STRING);
-	if ((0 == safe_strcasecmp (qoftype, QOF_TYPE_DOUBLE)) ||
-		(0 == safe_strcasecmp (qoftype, QOF_TYPE_NUMERIC)) ||
-		(0 == safe_strcasecmp (qoftype, QOF_TYPE_DEBCRED)))
-		gda_column_set_g_type (p, G_TYPE_DOUBLE);
-	if (0 == safe_strcasecmp (qoftype, QOF_TYPE_TIME))
-		gda_column_set_g_type (p, G_TYPE_DATE);
-	if (0 == safe_strcasecmp (qoftype, QOF_TYPE_BOOLEAN))
-		gda_column_set_g_type (p, G_TYPE_BOOLEAN);
-	if (0 == safe_strcasecmp (qoftype, QOF_TYPE_INT32))
-		gda_column_set_g_type (p, G_TYPE_INT);
-	if (0 == safe_strcasecmp (qoftype, QOF_TYPE_INT64))
-		gda_column_set_g_type (p, G_TYPE_INT64);
-/*	if (0 == safe_strcasecmp (qoftype, QOF_TYPE_KVP))
-		gda_column_set_g_type (p, G_TYPE_); ??
-*/
-	return p;
-}
-
-static void
-convert_params (QofParam * param, gpointer user_data)
-{
-	GdaColumn * p;
-	QGdaBackend * qgda_be;
-
-	qgda_be = (QGdaBackend*)user_data;
-	if (!param)
-		return;
-	if (0 == safe_strcasecmp (param->param_type, QOF_ID_BOOK))
-		return;
-	p = qoftype_to_gdafield (param->param_type);
-	if (!p)
-	{
-		DEBUG (" unsupported QofParam: %s %s",
-			param->param_name, param->param_type);
-		return;
-	}
-	gda_column_set_name (p, param->param_name);
-	gda_column_set_table (p, qgda_be->table_name);
-	qgda_be->field_list = g_slist_append (qgda_be->field_list, p);
-	PINFO (" name=%s table=%s type=%s", param->param_name,
-		qgda_be->table_name, param->param_type);
-}
-
-static void
-build_table (gpointer value, gpointer user_data)
-{
-	QGdaBackend * qgda_be;
-	GdaParameterList * plist;
+	QGdaBackend *qgda_be;
 	GError * qgda_err;
-	gint c;
 
-	qgda_err = NULL;
+	qgda_be = (QGdaBackend *) be;
+	if (!inst)
+		return;
+	if (!inst->param)
+		return;
+//	if (loading)
+//		return;
+	if (!inst->param->param_setfcn)
+		return;
+	ENTER (" modified %s param:%s", ((QofEntity *) inst)->e_type, inst->param->param_name);
+	qgda_be->sql_str = qof_sql_entity_update ((QofEntity*)inst);
+	DEBUG (" sql_str=%s", qgda_be->sql_str);
+	qgda_be->command = gda_command_new (qgda_be->sql_str, GDA_COMMAND_TYPE_SQL, 
+		GDA_COMMAND_OPTION_STOP_ON_ERRORS);
+	gda_connection_execute_non_select_command (qgda_be->connection, 
+		qgda_be->command, NULL, &qgda_err);
+	if (qgda_err)
+	{
+		qof_error_set_be (be, qgda_be->err_update);
+		qgda_be->error = TRUE;
+		PERR (" error on modify:%s", qgda_be->err);
+		LEAVE (" ");
+		return;
+	}
+	inst->dirty = FALSE;
+	g_free (qgda_be->sql_str);
+	qgda_be->error = FALSE;
+	LEAVE (" ");
+}
+
+static void
+create_tables (QofObject * obj, gpointer user_data)
+{
+	QGdaBackend * qgda_be;
+//	GdaParameterList * plist;
+	GError * qgda_err;
+	gchar * str;
+
 	qgda_be = (QGdaBackend*)user_data;
 	if (!gda_connection_is_opened (qgda_be->connection))
 	{
@@ -170,66 +138,25 @@ build_table (gpointer value, gpointer user_data)
 		PERR (" no connection to gda available");
 		return;
 	}
-	PINFO (" length=%d", g_slist_length(qgda_be->field_list));
-	c = g_slist_length(qgda_be->field_list);
-	if (c > 0)
+	str = qof_sql_object_create_table (obj);
+	qgda_be->command = gda_command_new (str, GDA_COMMAND_TYPE_SQL, 
+		GDA_COMMAND_OPTION_STOP_ON_ERRORS);
+	gda_connection_execute_non_select_command (qgda_be->connection, 
+		qgda_be->command, NULL, &qgda_err);
+	if (qgda_err)
 	{
-		gchar * text;
-
-		/* need a plain text SQL statement for the table. 
-		(meaning that this will end up looking a lot like
-		QSQLiteBackend).
-		*/
-/*		while (qgda_be->field_list)
-		{
-			if (qgda_be->field_list->data)
-			{
-				g_message("field_type:%s", g_type_name 
-					(gda_column_get_g_type (qgda_be->field_list->data)));
-				qgda_be->field_list = qgda_be->field_list->next;
-			}
-			return;
-		}*/
-		text = g_strdup ("create table dump (id int, name varchar(25));");
-		plist = NULL;
-		qgda_be->command = gda_command_new (text, GDA_COMMAND_TYPE_SQL, 
-			GDA_COMMAND_OPTION_STOP_ON_ERRORS);
-		gda_connection_execute_non_select_command (qgda_be->connection, 
-			qgda_be->command, plist, &qgda_err);
-		if (! qgda_be->command)
-		{
-			g_message ("gda_command_new - expected stop reached.");
-		}
-		/* plist contains a GdaParameterList of results - probably ignore. */
-		if (qgda_err)
-		{
-			/* handle the error here */
-			g_message ("GDA: %s", qgda_err->message);
-			g_clear_error (&qgda_err);
-		}
-		gda_command_free (qgda_be->command);
+		/* handle the error here */
+		g_message ("GDA: %s", qgda_err->message);
+		g_clear_error (&qgda_err);
 	}
-}
-
-static void
-create_tables (QofObject * obj, gpointer user_data)
-{
-	QGdaBackend * qgda_be;
-
-	qgda_be = (QGdaBackend*)user_data;
-	if (qgda_be->field_list)
-		g_slist_free (qgda_be->field_list);
-	qgda_be->field_list = NULL;
-	qgda_be->table_name = obj->e_type;
-	qof_class_param_foreach (obj->e_type, convert_params,
-		qgda_be);
-	g_slist_foreach (qgda_be->field_list, build_table, qgda_be);
+//	g_free (plist);
+	gda_command_free (qgda_be->command);
 }
 
 static gboolean
 create_data_source (QGdaBackend * qgda_be)
 {
-	gchar * cnc_string;
+	gchar * cnc_string, * msg;
 	QofBackend * be;
 	GdaProviderInfo * prov;
 	GError * qgda_err;
@@ -247,8 +174,6 @@ create_data_source (QGdaBackend * qgda_be)
 	prov = gda_config_get_provider_by_name (qgda_be->provider_name);
 	if (!prov)
 	{
-		gchar * msg;
-
 		msg = g_strdup_printf (_("GDA Provider '%s' could not be found"),
 			qgda_be->provider_name);
 		qof_error_set_be (be, qof_error_register(msg, FALSE));
@@ -256,9 +181,8 @@ create_data_source (QGdaBackend * qgda_be)
 		LEAVE (" provider '%s' not found", qgda_be->provider_name);
 		return FALSE;
 	}
-/*	cnc_string = g_strconcat ("DATABASE=", qgda_be->database_name,
-		NULL);*/
-	cnc_string = g_strdup ("DB_DIR=/home/neil/;DB_NAME=gda-test");
+	cnc_string = g_strconcat ("DB_DIR=", qgda_be->gdahome, ";DB_NAME=", 
+		qgda_be->database_name, NULL);
 	/* creates db within source if db does not exist */
 	{
 		GdaServerOperation * prepare;
@@ -309,7 +233,8 @@ qgda_session_begin(QofBackend *be, QofSession *session, const
 {
 	QGdaBackend *qgda_be;
 	GError * qgda_err;
-//	GList * connection_errors, *node;
+	GdaDataSourceInfo * source;
+	gboolean created;
 
 	qgda_err = NULL;
 	/* cannot use ignore_lock */
@@ -326,7 +251,6 @@ qgda_session_begin(QofBackend *be, QofSession *session, const
 	}
 	/* check/create the ~/.libgda location. */
 	{
-		gchar * gdahome;
 		struct stat lg;
 		gint ret;
 
@@ -340,27 +264,23 @@ qgda_session_begin(QofBackend *be, QofSession *session, const
 			LEAVE (" unable to use stat on home_dir.");
 			return;
 		}
-		gdahome = g_strconcat (g_get_home_dir(),
-			"/", LIBGDA_DIR, NULL);
+		qgda_be->gdahome = g_strconcat (g_get_home_dir(), "/", LIBGDA_DIR, NULL);
 		if (!S_ISDIR (lg.st_mode) || lg.st_size == 0)
-			ret = g_mkdir_with_parents (gdahome, 0700);
+			ret = g_mkdir_with_parents (qgda_be->gdahome, 0700);
 		if (ret)
 		{
 			qof_error_set_be (be, qof_error_register
 				(_("GDA: Unable to create a .libgda directory "
 				"within your home directory."), FALSE));
 			qgda_be->error = TRUE;
-			LEAVE (" unable to create '%s' 0700", gdahome);
+			LEAVE (" unable to create '%s' 0700", qgda_be->gdahome);
 			return;
 		}
-		g_free (gdahome);
 	}
 	if (qgda_be->data_source_name)
 	{
 		/* check data source */
-		GdaDataSourceInfo * source;
-		gboolean created;
-
+		qgda_be->book = qof_session_get_book (session);
 		PINFO ("name=%s", qgda_be->data_source_name);
 		PINFO ("provider=%s", qgda_be->provider_name);
 		created = FALSE;
@@ -406,6 +326,7 @@ qgda_session_begin(QofBackend *be, QofSession *session, const
 		qgda_be->error = TRUE;
 		g_message (msg);
 		g_free (msg);
+		/// \bug we probably don't want to remove once out of debug. :-)
 		PERR ("connect request failed, removing %s", qgda_be->data_source_name);
 		g_message ("connect request failed, removing %s", qgda_be->data_source_name);
 		gda_config_remove_data_source (qgda_be->data_source_name);
@@ -489,11 +410,11 @@ qgda_write_db (QofBackend *be, QofBook *book)
 static void
 qgda_session_end (QofBackend *be)
 {
-	QGdaBackend *qgda_be;
+//	QGdaBackend *qgda_be;
 
-	qgda_be = (QGdaBackend*)be;
-	if (qgda_be->dm)
-		g_object_unref(G_OBJECT(qgda_be->dm));
+//	qgda_be = (QGdaBackend*)be;
+//	if (qgda_be->dm)
+//		g_object_unref(G_OBJECT(qgda_be->dm));
 }
 
 static void
@@ -563,9 +484,7 @@ get_config (QofBackend * be)
 	QGdaBackend *qgda_be;
 
 	if (!be)
-	{
 		return NULL;
-	}
 	ENTER (" ");
 	qgda_be = (QGdaBackend *) be;
 	g_return_val_if_fail (qgda_be, NULL);
@@ -631,6 +550,14 @@ qgda_backend_new (void)
 	gda_init (PACKAGE, "0.1", 0, NULL);
 	qgda_be->client_pool = gda_client_new ();
 	qgda_be->dbversion = QOF_OBJECT_VERSION;
+	qgda_be->err_delete =
+		qof_error_register (_("Unable to delete record."), FALSE);
+	qgda_be->err_create =
+		qof_error_register (_("Unable to create record."), FALSE);
+	qgda_be->err_insert =
+		qof_error_register (_("Unable to insert a new record."), FALSE);
+	qgda_be->err_update =
+		qof_error_register (_("Unable to update existing record."), FALSE);
 	be->session_begin = qgda_session_begin;
 
 	be->session_end = qgda_session_end;
