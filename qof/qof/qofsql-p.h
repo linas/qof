@@ -1,8 +1,8 @@
 /****************************************************************
  *            qofsql-p.h
  *
- *  Sun Jan 15 12:52:46 2006
- *  Copyright  2006-2008  Neil Williams
+ *  Mon Mar 17 11:26:49 GMT 2008
+ *  Copyright  2008  Neil Williams
  *  linux@codehelp.co.uk
  ****************************************************************/
 /*
@@ -82,8 +82,6 @@ void qof_sql_entity_set_kvp_tablename (const gchar * name);
 
   Prepares a SQL statement that will create a table for this
   entity.
-
-  \note KVP tables are handled separately.
 */
 gchar *
 qof_sql_entity_create_table (QofEntity * ent);
@@ -141,6 +139,16 @@ qof_sql_entity_delete (QofEntity * ent);
 */
 gchar *
 qof_sql_entity_drop_table (QofEntity * ent);
+
+/** \brief Build a SQL 'CREATE' statement for this object
+ @internal
+
+  Prepares a SQL statement that will create a table for this
+  object for those times when an entity does not yet exist.
+
+*/
+gchar *
+qof_sql_object_create_table (QofObject * obj);
 
 G_END_DECLS
 
