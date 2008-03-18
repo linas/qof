@@ -118,7 +118,7 @@ libqof.so.@SONAME@ libqof@SONAME@ #MINVER#
  kvp_value_replace_glist_nc@LIBQOF_0.8.0 0.8.0
  kvp_value_to_bare_string@LIBQOF_0.8.0 0.8.0
  kvp_value_to_string@LIBQOF_0.8.0 0.8.0
- kvp_value_type_to_qof_id@LIBQOF_0.8.0 0.8.0-1
+ kvp_value_type_to_qof_id@LIBQOF_0.8.0 0.8.0
  lcm128@LIBQOF_0.8.0 0.8.0
  md5_buffer@LIBQOF_0.8.0 0.8.0
  md5_finish_ctx@LIBQOF_0.8.0 0.8.0
@@ -281,7 +281,7 @@ libqof.so.@SONAME@ libqof@SONAME@ #MINVER#
  qof_gobject_register@LIBQOF_0.8.0 0.8.0
  qof_gobject_register_instance@LIBQOF_0.8.0 0.8.0
  qof_gobject_shutdown@LIBQOF_0.8.0 0.8.0
- qof_id_to_kvp_value_type@LIBQOF_0.8.0 0.8.0-1
+ qof_id_to_kvp_value_type@LIBQOF_0.8.0 0.8.0
  qof_init@LIBQOF_0.8.0 0.8.0
  qof_instance_check_edit@LIBQOF_0.8.0 0.8.0
  qof_instance_create@LIBQOF_0.8.0 0.8.0
@@ -448,13 +448,13 @@ libqof.so.@SONAME@ libqof@SONAME@ #MINVER#
  qof_session_save_may_clobber_data@LIBQOF_0.8.0 0.8.0
  qof_session_swap_data@LIBQOF_0.8.0 0.8.0
  qof_session_update_reference_list@LIBQOF_0.8.0 0.8.0
- qof_sql_entity_create_table@LIBQOF_0.8.0 0.8.0-1
- qof_sql_entity_delete@LIBQOF_0.8.0 0.8.0-1
- qof_sql_entity_drop_table@LIBQOF_0.8.0 0.8.0-1
- qof_sql_entity_insert@LIBQOF_0.8.0 0.8.0-1
- qof_sql_entity_set_kvp_tablename@LIBQOF_0.8.0 0.8.0-1
- qof_sql_entity_update@LIBQOF_0.8.0 0.8.0-1
- qof_sql_entity_update_list@LIBQOF_0.8.0 0.8.0-1
+ qof_sql_entity_create_table@LIBQOF_0.8.0 0.8.0
+ qof_sql_entity_delete@LIBQOF_0.8.0 0.8.0
+ qof_sql_entity_drop_table@LIBQOF_0.8.0 0.8.0
+ qof_sql_entity_insert@LIBQOF_0.8.0 0.8.0
+ qof_sql_entity_set_kvp_tablename@LIBQOF_0.8.0 0.8.0
+ qof_sql_entity_update@LIBQOF_0.8.0 0.8.0
+ qof_sql_entity_update_list@LIBQOF_0.8.0 0.8.0
  qof_sql_query_destroy@LIBQOF_0.8.0 0.8.0
  qof_sql_query_get_query@LIBQOF_0.8.0 0.8.0
  qof_sql_query_new@LIBQOF_0.8.0 0.8.0
