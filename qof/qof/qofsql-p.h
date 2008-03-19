@@ -39,13 +39,13 @@
 /** @addtogroup SQL
  @{
 
- These functions are private - only accessible to QOF backends. The purpose
-is to make it easier for SQL-based backends to pass SQL commands to the
-relevant backend. There is currently no QOF support for reading the entities
-back from the backend as each backend has specialized methods for data
-retrieval (GDA has GdaDataModel, sqlite uses **columnNames etc.) Actually, it
-is generally easier to read data from a SQL based backend than it is to create,
-update or delete data.
+ The qof_sql_entity* functions are private - only accessible to QOF backends.
+ The purpose is to make it easier for SQL-based backends to pass SQL commands to the
+ relevant database. There is currently no QOF support for reading the entities
+ back from the backend as each backend has specialized methods for data
+ retrieval (GDA has GdaDataModel, sqlite uses **columnNames etc.) Actually, it
+ is generally easier to read data from a SQL based backend than it is to create,
+ update or delete data.
 
  \note qof_sql_entity_update relies on qof_util_param_edit and 
  qof_util_param_commit which identify the particular parameter to be committed.
