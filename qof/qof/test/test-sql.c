@@ -131,33 +131,31 @@ dyn_foreach2 (QofEntity * ent, gpointer user_data)
 }
 
 static void
-test_sql (void)
+test_sql (QofBook * book)
 {
-	QofBook *book;
 	KvpFrame * slots;
 	const QofParam * param;
 	QofEntity * ent;
 	QofInstance * inst;
+	gdouble rand_dbl;
+	QofNumeric rand_num;
 	QofCollection * col;
-	gchar * sql_str, * gstr, * test, * err;
+	gchar * sql_str, * gstr, * test, * err, *rand_str;
+	gchar * num_str;
+	gulong kvp_id;
 
 	sql_str = NULL;
-	book = qof_book_new ();
-	do_test ((NULL != book), "book null");
-	do_test (dyn_objRegister() == TRUE, "register test object");
-	do_test (qof_object_lookup (TEST_MODULE_NAME) == &bus_obj,
-				"lookup our installed object");
-	do_test (qof_class_is_registered(TEST_MODULE_NAME) == TRUE, "class registration");
 	inst = qof_object_new_instance (TEST_MODULE_NAME, book);
 	do_test (inst != NULL, "object new instance");
 	g_return_if_fail (inst);
 	/* create some slots */
+	rand_str = g_strescape (get_random_string (), NULL);
 	slots = qof_instance_get_slots (inst);
 	do_test (slots != NULL, "creating some slots");
-	kvp_frame_set_string (qof_instance_get_slots (inst), "debug/test/string", "sdgsrsafsg");
-	test = kvp_frame_get_string (qof_instance_get_slots (inst), "debug/test/string");
+	kvp_frame_set_string (qof_instance_get_slots (inst), "debug/test/string", rand_str);
+	test = g_strdup(kvp_frame_get_string (qof_instance_get_slots (inst), "debug/test/string"));
 	err = g_strdup_printf ("compare slots: %s", test);
-	do_test (0 == safe_strcasecmp (test, "sdgsrsafsg"), err);
+	do_test (0 == safe_strcasecmp (test, rand_str), err);
 	g_free (test);
 	g_free (err);
 	ent = (QofEntity*)inst;
@@ -166,21 +164,28 @@ test_sql (void)
 	col = qof_book_get_collection (book, ent->e_type);
 	qof_collection_foreach (col, dyn_foreach2, NULL);
 	/* test CREATE TABLE */
+	rand_dbl = get_random_double ();
+	rand_num = qof_numeric_from_double (rand_dbl, QOF_DENOM_AUTO, QOF_HOW_RND_ROUND);
+	num_str = qof_numeric_to_string (rand_num);
 	sql_str = qof_sql_entity_create_table (ent);
-	do_test (0 == safe_strcasecmp (sql_str, 
-		"CREATE TABLE object_test ( guid char(32) primary key not null, "
+	test = g_strdup ("CREATE TABLE object_test ( guid char(32) primary key not null, "
 		"anamount text, dbversion int ); CREATE TABLE sql_kvp (kvp_id int "
 		"primary key not null, guid char(32), path mediumtext, type mediumtext, "
-		"value text,  dbversion int );"),
-			 g_strdup_printf ("Create table SQL statement:%s:%s", sql_str, test));
+		"value text,  dbversion int );");
+	do_test (0 == safe_strcasecmp (sql_str, test), 
+		g_strdup_printf ("Create table SQL statement:%s:%s", sql_str, test));
+	g_free (test);
 	g_free (sql_str);
+	qof_sql_entity_set_kvp_exists (TRUE);
 	/* test INSERT */
+	kvp_id = qof_sql_entity_get_kvp_id ();
 	sql_str = qof_sql_entity_insert (ent);
 	gstr = g_strnfill (GUID_ENCODING_LENGTH + 1, ' ');
 	guid_to_string_buff (qof_instance_get_guid (inst), gstr);
 	test = g_strdup_printf ("INSERT into object_test (guid , anamount) VALUES "
-		"('%s' , '0/0'); INSERT into sql_kvp  (kvp_id '%s',  dbversion int );"
-		, gstr, gstr);
+		"('%s' , '%s'); INSERT into sql_kvp  (kvp_id, guid, type, path, value) "
+		"VALUES ('%ld', '%s', 'string', '/debug/test/string', '%s');", 
+		gstr, num_str, kvp_id, gstr, rand_str);
 	err = g_strdup_printf ("Insert entity SQL statement:%s:%s", sql_str, test);
 	do_test (0 == safe_strcasecmp (sql_str, test),err);
 	g_free (test);
@@ -193,17 +198,19 @@ test_sql (void)
 	do_test (param != NULL, "no OBJ_AMOUNT parameter");
 	sql_str = qof_sql_entity_update (ent);
 	do_test (sql_str != NULL, "failed to mark instance as dirty");
-	test = g_strdup_printf ("UPDATE object_test SET anamount = '0/0' WHERE "
-		"guid='%s'; UPDATE sql_kvp SET (kvp_id '%s',  kvp key=string "
-		"val=sql_kvp type=string dbversion int );", gstr, gstr);
-/*
-UPDATE object_test SET anamount = '0/0' WHERE guid=
-'0cd45423bb4b819fb3041b9ca86f73f3'; UPDATE sql_kvp 
-SET ( kvp key=string val=sql_kvp type=string) 
-WHERE kvp_id='0cd45423bb4b819fb3041b9ca86f73f3';
-*/
+	test = g_strdup_printf ("UPDATE object_test SET anamount = '%s' WHERE "
+		"guid='%s';", num_str, gstr);
 	err = g_strdup_printf ("Update entity SQL statement: %s", sql_str);
-//	do_test (0 == safe_strcasecmp (sql_str, test), err);
+	do_test (0 == safe_strcasecmp (sql_str, test), err);
+	g_free (test);
+	g_free (err);
+	g_free (sql_str);
+	/* test update KVP */
+	sql_str = qof_sql_entity_update_kvp (ent);
+	test = g_strdup_printf ("UPDATE sql_kvp SET type='string', value='%s' "
+		"WHERE path='/debug/test/string' and  guid='%s';", rand_str, gstr);
+	err = g_strdup_printf ("Update entity SQL statement: %s", sql_str);
+	do_test (0 == safe_strcasecmp (sql_str, test), err);
 	g_free (test);
 	g_free (err);
 	g_free (sql_str);
@@ -224,13 +231,25 @@ WHERE kvp_id='0cd45423bb4b819fb3041b9ca86f73f3';
 	do_test (0 == safe_strcasecmp (sql_str, "DROP TABLE object_test;"), err);
 	g_free (err);
 	g_free (sql_str);
+	qof_sql_entity_set_kvp_exists (FALSE);
 }
 
 int
 main (void)
 {
+	QofBook *book;
+	gint c;
 	qof_init ();
-	test_sql ();
+	book = qof_book_new ();
+	do_test ((NULL != book), "book null");
+	do_test (dyn_objRegister() == TRUE, "register test object");
+	do_test (qof_object_lookup (TEST_MODULE_NAME) == &bus_obj,
+				"lookup our installed object");
+	do_test (qof_class_is_registered(TEST_MODULE_NAME) == TRUE, "class registration");
+	for (c=0;c<10;c++)
+	{
+		test_sql (book);
+	}
 	print_test_results ();
 	qof_close ();
 	return get_rv ();
