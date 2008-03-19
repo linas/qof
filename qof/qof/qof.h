@@ -43,6 +43,8 @@
 	@ingroup QOF
     @addtogroup Query Query:      Querying for Objects
     @ingroup QOF
+    @addtogroup SQL SQL Interface to Query
+    @ingroup QOF
 	@addtogroup Error Error: Extensible error handling.
 	@ingroup QOF
     @addtogroup Trace Trace:      Debugging support

@@ -1,3 +1,18 @@
+2008-03-19  Neil Williams  <linux@codehelp.co.uk>
+
+	* qof.symbols.in: Add qof_sql_entity_set_kvp_exists
+	* qof/qofsql-p.h: New function, qof_sql_entity_set_kvp_exists
+	* qof/qofsql.c (create_sql_from_param_cb), (string_param_to_sql),
+	(string_param_foreach), (kvpvalue_to_sql_insert),
+	(kvpvalue_to_sql_update), (qof_sql_entity_insert),
+	(qof_sql_entity_update), (qof_sql_entity_update_kvp),
+	(qof_sql_entity_set_kvp_tablename), (qof_sql_entity_set_kvp_id),
+	(qof_sql_entity_get_kvp_id), (qof_sql_entity_set_kvp_exists):
+	Fixing update mechanisms and separating KVP management into
+	new functions so that parameters can be updated individually.
+	* qof/test/test-sql.c (test_sql), (main): Adapt to improved
+	UPDATE support. Add some randomization.
+
 2008-03-18  Neil Williams  <linux@codehelp.co.uk>
 
   * backend/gda/qof-gda.c (qgda_modify), (create_tables),

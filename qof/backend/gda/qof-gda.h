@@ -41,7 +41,7 @@ KVP is an anomaly, it may or may not work.
 
 Note that QOF_TYPE_GUID is stored as a string.
 
-@{
+ @{
 */
 /** @file  qof-gda.h
 	@brief Public interface of qof-backend-gda
@@ -71,4 +71,6 @@ and therefore no strings that are translatable.
 
 void qof_gda_provider_init(void);
 
+/** @} */
+/** @} */
 #endif /* _QOF_GDA_H */

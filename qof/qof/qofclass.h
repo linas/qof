@@ -90,7 +90,7 @@ single reference between two known objects.
 #define QOF_TYPE_BOOLEAN   "boolean"
 #define QOF_TYPE_KVP       "kvp"
 #define QOF_TYPE_CHAR      "character"
-#define QOF_TYPE_COLLECT   "collection"	/**< secondary collections
+/** \brief secondary collections
 are used for one-to-many references between entities and are
 implemented using ::QofCollection.
 These are \b NOT the same as the main collections in the QofBook.
@@ -118,6 +118,8 @@ n.b. Always subject to each collection holding only one type at runtime.
 (otherwise use books).
 
 */
+#define QOF_TYPE_COLLECT   "collection"
+
 /** @} */
 /** Type of Paramters (String, Date, Numeric, GUID, etc.) */
 typedef const gchar *QofType;
@@ -200,24 +202,24 @@ void qof_class_register (QofIdTypeConst obj_name,
 						 const QofParam * params);
 
 /** An example:
- * \verbatim
- * #define MY_OBJ_MEMO     "memo"
- * #define MY_OBJ_VALUE    "value"
- * #define MY_OBJ_TIME     "time"
- * #define MY_OBJ_ACCOUNT  "account"
- * #define MY_OBJ_TRANS    "trans"
- *
- * static QofParam myParams[] = {
- * { MY_OBJ_MEMO, QOF_TYPE_STRING, myMemoGetter, NULL },
- * { MY_OBJ_VALUE, QOF_TYPE_NUMERIC, myValueGetter, NULL },
- * { MY_OBJ_TIME, QOF_TYPE_TIME, myTimeGetter, NULL },
- * { MY_OBJ_ACCOUNT, GNC_ID_ACCOUNT, myAccountGetter, NULL },
- * { MY_OBJ_TRANS, GNC_ID_TRANS, myTransactionGetter, NULL },
- * NULL };
- *
- * qof_class_register ("myObjectName", myObjectCompare, &myParams);
- * \endverbatim
- */
+ \verbatim
+ #define MY_OBJ_MEMO     "memo"
+ #define MY_OBJ_VALUE    "value"
+ #define MY_OBJ_TIME     "time"
+ #define MY_OBJ_ACCOUNT  "account"
+ #define MY_OBJ_TRANS    "trans"
+
+ static QofParam myParams[] = {
+ { MY_OBJ_MEMO, QOF_TYPE_STRING, myMemoGetter, NULL },
+ { MY_OBJ_VALUE, QOF_TYPE_NUMERIC, myValueGetter, NULL },
+ { MY_OBJ_TIME, QOF_TYPE_TIME, myTimeGetter, NULL },
+ { MY_OBJ_ACCOUNT, GNC_ID_ACCOUNT, myAccountGetter, NULL },
+ { MY_OBJ_TRANS, GNC_ID_TRANS, myTransactionGetter, NULL },
+ NULL };
+
+ qof_class_register ("myObjectName", myObjectCompare, &myParams);
+ \endverbatim
+*/
 
 /** Return true if the the indicated type is registered, 
  *  else return FALSE.
