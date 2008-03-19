@@ -25,6 +25,10 @@
     @brief QOF client-side SQL parser - interfaces with libgda.
     @author Copyright (C) 2004 Linas Vepstas <linas@linas.org>
     @author Copyright 2008 Neil Williams <linux@codehelp.co.uk>
+
+ Intended to parse incoming SQL into QOF queries (SELECT or INSERT)
+ and prepare SQL commands from QOF entities (CREATE, UPDATE, INSERT,
+ DELETE and DROP) for use in SQL-based backends.
 */
 
 #include "config.h"
@@ -43,7 +47,7 @@
 #include "qofquery-p.h"
 
 #define _(String) dgettext (GETTEXT_PACKAGE, String)
-/** One KVP table per file for all instances. */
+/* One KVP table per file for all instances. */
 static gchar * kvp_table_name = NULL;
 
 #define QSQL_KVP_TABLE "sql_kvp"
@@ -1060,21 +1064,20 @@ qof_sql_query_rerun (QofSqlQuery * query)
 	return results;
 }
 
+/* simple helper struct for passing between SQL-generating functions */
 typedef struct ent_and_string
 {
 	QofEntity * ent;
 	gchar * str;
 	gchar * kvp_str;
+	gchar * full_kvp_path;
 }eas;
 
-void qof_sql_entity_set_kvp_tablename (const gchar * name)
-{
-	g_return_if_fail (name);
-	kvp_table_name = g_strdup(name);
-}
+static gulong kvp_id = 0;
+static gboolean kvp_table_exists = FALSE;
 
 static void
-create_sql_from_param (QofParam * param, gpointer user_data)
+create_sql_from_param_cb (QofParam * param, gpointer user_data)
 {
 	eas * data;
 	gchar * value;
@@ -1096,7 +1099,7 @@ create_sql_from_param (QofParam * param, gpointer user_data)
 	references = qof_class_get_referenceList (data->ent->e_type);
 	if (g_list_find (references, param))
 	{
-		/** \bug will need to use QofEntityReference here
+		/* \bug will need to use QofEntityReference here
 		if partial books are actually to be supported. */
 		QofEntity *e;
 		e = param->param_getfcn (data->ent, param);
@@ -1130,7 +1133,12 @@ create_sql_from_param (QofParam * param, gpointer user_data)
 static gchar *
 string_param_to_sql (QofParam * param)
 {
-	/** \bug these are sqlite strings! */
+	/* \note These strings are fairly standard SQL
+	  but SQL means different things to different programs.
+	  Keep these strings as simple and plain as possible.
+	  Hopefully, what works in SQLite0 will work in most
+	  other SQL based programs.
+	  */
 	/* Handle the entity GUID. Ensure that reference GUIDs
 	   must not also try to be primary keys and can be NULL. */
 	if ((0 == safe_strcmp (param->param_type, QOF_TYPE_GUID)) &&
@@ -1168,8 +1176,6 @@ string_param_to_sql (QofParam * param)
 	return g_strdup_printf (" %s char(32)", param->param_name);
 }
 
-static gboolean kvp_table_exists = FALSE;
-
 /* used by create/insert */
 static void
 string_param_foreach (QofParam * param, gpointer user_data)
@@ -1188,8 +1194,6 @@ string_param_foreach (QofParam * param, gpointer user_data)
 			kvp_table_name, "kvp_id int primary key not null",
 			"guid char(32)", "path mediumtext", "type mediumtext",
 			"value text", END_DB_VERSION);
-		/// \bug only create the KVP once per session, not once per run.
-		kvp_table_exists = TRUE;
 		return;
 	}
 	p_str = string_param_to_sql (param);
@@ -1204,7 +1208,7 @@ string_param_foreach (QofParam * param, gpointer user_data)
 	g_free (p_str);
 }
 
-/** \brief list just the parameter names
+/* \brief list just the parameter names
 
  \note Must match the number and order of the
 list of parameter values from ::create_each_param
@@ -1240,15 +1244,15 @@ create_param_list (QofParam * param, gpointer user_data)
 	}
 }
 
-/** returns the VALUES for INSERT in pre-defined order */
+/* returns the VALUES for INSERT in pre-defined order */
 static void
-kvpvalue_to_sql (const gchar * key, KvpValue * val, gpointer user_data)
+kvpvalue_to_sql_insert (const gchar * key, KvpValue * val, gpointer user_data)
 {
 	eas * data;
 	KvpValueType n;
-	gchar *full_path;
+	gchar * path;
 
-	full_path = NULL;
+	path = g_strdup("");
 	ENTER (" ");
 	data = (eas*)user_data;
 	g_return_if_fail (key && val && data);
@@ -1263,20 +1267,67 @@ kvpvalue_to_sql (const gchar * key, KvpValue * val, gpointer user_data)
 	case KVP_TYPE_TIME:
 	case KVP_TYPE_BOOLEAN:
 		{
-			/* ("kvp_id int primary key not null", "guid char(32)", "path mediumtext",
-			   "type mediumtext", "value text", */
-
+			path = g_strjoin ("/", data->full_kvp_path, key, NULL);
 			data->str =
-				g_strdup_printf (" kvp key=%s val=%s type=%s", key,
-				kvp_value_to_bare_string (val),
-				kvp_value_type_to_qof_id (n));
+				g_strdup_printf ("'%s', '%s', '%s'", key, path,
+				kvp_value_to_bare_string (val));
 			DEBUG (" %s", data->str);
 			break;
 		}
 	case KVP_TYPE_FRAME:
 		{
+			path = g_strjoin ("/", data->full_kvp_path, key, NULL);
+			g_free (data->full_kvp_path);
+			data->full_kvp_path = path;
 			kvp_frame_for_each_slot (kvp_value_get_frame (val),
-				kvpvalue_to_sql, data);
+				kvpvalue_to_sql_insert, data);
+			break;
+		}
+	default:
+		{
+			PERR (" unsupported value = %d", kvp_value_get_type (val));
+			break;
+		}
+	}
+	LEAVE (" %s", data->str);
+}
+
+/* returns the VALUES for UPDATE in pre-defined order */
+static void
+kvpvalue_to_sql_update (const gchar * key, KvpValue * val, gpointer user_data)
+{
+	eas * data;
+	KvpValueType n;
+	gchar * path;
+
+	ENTER (" key=%s", key);
+	data = (eas*)user_data;
+	g_return_if_fail (key && val && data);
+	n = kvp_value_get_type (val);
+	switch (n)
+	{
+	case KVP_TYPE_GINT64:
+	case KVP_TYPE_DOUBLE:
+	case KVP_TYPE_NUMERIC:
+	case KVP_TYPE_STRING:
+	case KVP_TYPE_GUID:
+	case KVP_TYPE_TIME:
+	case KVP_TYPE_BOOLEAN:
+		{
+			path = g_strjoin ("/", data->full_kvp_path, key, NULL);
+			data->str =
+				g_strdup_printf ("type='%s', value='%s' WHERE path='%s' and ", 
+					key, kvp_value_to_bare_string (val), path);
+			DEBUG (" %s", data->str);
+			break;
+		}
+	case KVP_TYPE_FRAME:
+		{
+			path = g_strjoin ("/", data->full_kvp_path, key, NULL);
+			g_free (data->full_kvp_path);
+			data->full_kvp_path = path;
+			kvp_frame_for_each_slot (kvp_value_get_frame (val),
+				kvpvalue_to_sql_update, data);
 			break;
 		}
 	default:
@@ -1335,7 +1386,7 @@ qof_sql_entity_insert (QofEntity * ent)
 {
 	KvpFrame * slots;
 	eas data;
-	gchar * command, * fields, * values, *gstr, *sql_str, *kvp;
+	gchar * command, * fields, * values, *id, *gstr, *sql_str, *kvp;
 
 	data.ent = ent;
 	data.str = g_strdup("");
@@ -1352,24 +1403,31 @@ qof_sql_entity_insert (QofEntity * ent)
 	// store param values in values
 	g_free (data.str);
 	data.str = g_strdup("");
-	qof_class_param_foreach (ent->e_type, create_sql_from_param, &data);
+	data.full_kvp_path = g_strdup("");
+	qof_class_param_foreach (ent->e_type, create_sql_from_param_cb, &data);
 	values = data.str;
 	/* handle KVP */
 	kvp = g_strdup("");
 	slots = qof_instance_get_slots ((QofInstance *) ent);
-	if (slots)
+	if (!kvp_frame_is_empty(slots))
 	{
+		id = g_strdup_printf ("%lu", kvp_id);
 		g_free (kvp);
+		kvp_frame_for_each_slot (slots, kvpvalue_to_sql_insert, &data);
 		kvp = g_strconcat (" INSERT into ", kvp_table_name,
-			"  (kvp_id '", gstr, "', ", NULL);
-		kvp_frame_for_each_slot (slots, kvpvalue_to_sql, &data);
+			"  (kvp_id, guid, type, path, value) VALUES ('", id, "', '", 
+			gstr, "', ", data.str, ");", NULL);
+		/* increment the index value of the KVP table */
+		kvp_id++;
 	}
 	sql_str = g_strjoin ("", command, fields, ") VALUES ('", gstr, "' ", 
-		values, ");", kvp, END_DB_VERSION, NULL);
+		values, ");", kvp, NULL);
 	g_free (command);
 	g_free (fields);
 	g_free (gstr);
 	g_free (values);
+	g_free (data.full_kvp_path);
+	g_free (data.str);
 	LEAVE ("sql_str=%s", sql_str);
 	return sql_str;
 }
@@ -1377,8 +1435,7 @@ qof_sql_entity_insert (QofEntity * ent)
 gchar *
 qof_sql_entity_update (QofEntity * ent)
 {
-	eas data;
-	gchar *gstr, * sql_str, * param_str, *kvp;
+	gchar *gstr, * sql_str, * param_str;
 	QofInstance * inst;
 	inst = (QofInstance*)ent;
 
@@ -1387,30 +1444,46 @@ qof_sql_entity_update (QofEntity * ent)
 	ENTER (" modified %s param:%s", ent->e_type, inst->param->param_name);
 	gstr = g_strnfill (GUID_ENCODING_LENGTH + 1, ' ');
 	guid_to_string_buff (qof_instance_get_guid (inst), gstr);
-	if (qof_instance_get_slots ((QofInstance*)ent))
-	{
-		gchar * start;
-		KvpFrame * slots;
-
-		/// \bug the kvp update syntax is borked.
-		slots = qof_instance_get_slots ((QofInstance*)ent);
-		start = g_strjoin ("", " UPDATE ", kvp_table_name,
-			" SET ( ", NULL);
-		// need (kvp_id int primary key not null, guid char(32), path mediumtext, type mediumtext, value text,  dbversion int
-		/// \bug retrieve kvp_id as more than one row can have the same GUID!
-		kvp_frame_for_each_slot (slots, kvpvalue_to_sql, &data);
-		kvp = g_strjoin ("", start, data.str, ") WHERE kvp_id='",
-			gstr, "';", NULL);
-		g_free (start);
-	}
-	else
-		kvp = g_strdup("");
 	param_str = qof_util_param_to_string (ent, inst->param);
 	if (param_str)
 		g_strescape (param_str, NULL);
 	sql_str = g_strconcat ("UPDATE ", ent->e_type, " SET ",
 		inst->param->param_name, " = '", param_str,
-		"' WHERE ", QOF_TYPE_GUID, "='", gstr, "';", kvp, NULL);
+		"' WHERE ", QOF_TYPE_GUID, "='", gstr, "';", NULL);
+	LEAVE ("sql_str=%s", sql_str);
+	return sql_str;
+}
+
+gchar *
+qof_sql_entity_update_kvp (QofEntity * ent)
+{
+	eas data;
+	gchar *gstr, * sql_str;
+	QofInstance * inst;
+	gchar * start;
+	KvpFrame * slots;
+	inst = (QofInstance*)ent;
+
+	if (!inst->param)
+		return NULL;
+	sql_str = NULL;
+	if (kvp_frame_is_empty (qof_instance_get_slots ((QofInstance*)ent)))
+		return NULL;
+
+	ENTER (" modified %s param:%s", ent->e_type, inst->param->param_name);
+	gstr = g_strnfill (GUID_ENCODING_LENGTH + 1, ' ');
+	guid_to_string_buff (qof_instance_get_guid (inst), gstr);
+	data.str = g_strdup("");
+	data.full_kvp_path = g_strdup("");
+	slots = qof_instance_get_slots ((QofInstance*)ent);
+	start = g_strjoin ("", "UPDATE ", kvp_table_name, " SET ", NULL);
+	/* \note the WHERE condition tests the path and the GUID
+	as each entity (one GUID) can have more than one KVP. */
+	kvp_frame_for_each_slot (slots, kvpvalue_to_sql_update, &data);
+	sql_str = g_strjoin ("", start, data.str, " guid='", gstr, "';", NULL);
+	g_free (start);
+	g_free (data.full_kvp_path);
+	g_free (data.str);
 	LEAVE ("sql_str=%s", sql_str);
 	return sql_str;
 }
@@ -1443,6 +1516,27 @@ qof_sql_entity_drop_table (QofEntity * ent)
 	sql_str = g_strdup_printf ("DROP TABLE %s;", ent->e_type);
 	LEAVE ("sql_str=%s", sql_str);
 	return sql_str;
+}
+
+void qof_sql_entity_set_kvp_tablename (const gchar * name)
+{
+	g_return_if_fail (name);
+	kvp_table_name = g_strdup(name);
+}
+
+void qof_sql_entity_set_kvp_id (gulong id)
+{
+	kvp_id = id;
+}
+
+gulong qof_sql_entity_get_kvp_id (void)
+{
+	return kvp_id;
+}
+
+void qof_sql_entity_set_kvp_exists (gboolean exist)
+{
+	kvp_table_exists = exist;
 }
 
 /* ========================== END OF FILE =================== */
