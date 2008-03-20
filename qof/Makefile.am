@@ -8,6 +8,7 @@ pkgconfig_DATA = qof.pc
 EXTRA_DIST = config.rpath \
   po/POTFILES.skip \
   qof.pc.in \
+  qofsql.symbols \
   website/gobj-example.c.html \
   website/my-obj-example.c.html \
   website/sflogosm.png \
