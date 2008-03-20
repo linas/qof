@@ -20,7 +20,8 @@ libqof_backend_sqlite_la_LDFLAGS = \
 libqof_backend_sqlite_la_LIBADD = \
  ${QOF_LIBS} \
  ${GLIB_LIBS} \
- ${SQLITE_LIBS}
+ ${SQLITE_LIBS} \
+ ${SQL_PKG_LIB}
 
 EXTRA_DIST = \
  qof-sqlite.h

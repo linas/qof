@@ -35,10 +35,13 @@ DEB_CONFIGURE_SCRIPT_ENV =
 DEB_CONFIGURE_EXTRA_FLAGS += --disable-gdasql --disable-doxygen --disable-gdabackend
 # enable dpkg-shlibdeps to find the internal libraries.
 DEB_SHLIBDEPS_INCLUDE_libqof1 = ./debian/tmp/usr/lib/
+build/libqof2::
+	cp qof.symbols debian/libqof2.symbols
+	cat qofsql.symbols >> debian/libqof2.symbols
 else
 DEB_CONFIGURE_EXTRA_FLAGS += --enable-gdabackend
 DEB_MAKE_CHECK_TARGET = check
-endif
-
 build/libqof2::
 	cp qof.symbols debian/libqof2.symbols
+endif
+
