@@ -1,3 +1,20 @@
+2008-03-20  Neil Williams  <linux@codehelp.co.uk>
+
+	* backend/file/qsf-backend.c: Add include for
+	the now private kvputil-p.h header.
+	* backend/sqlite/qof-sqlite.c (build_kvp_table),
+	(qsql_class_foreach): Switch to qof_sql_object_create_table
+	because no entity exists when the tables need to be created.
+	Allow more room for indices by using a gulong instead of glong.
+	* qof/qof.h: Remove the private header kvputil-p.h
+	(public functions already moved to kvputil.h)
+	* qof/qofsql.c (string_param_to_sql),
+	(qof_sql_entity_insert), (qof_sql_entity_update_kvp): Doxygen
+	tweaks.
+	qof/qofsql.c (qof_sql_entity_create_table) : Add assertion
+	if a NULL entity is passed. Prevent double free by only
+	freeing data.str if KVP slots exist.
+
 2008-03-19  Neil Williams  <linux@codehelp.co.uk>
 
 	* qof.symbols.in: Add qof_sql_entity_set_kvp_exists
