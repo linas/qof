@@ -32,6 +32,7 @@
 #include "qof.h"
 #include "qofsql-p.h"
 #include "qof-sqlite.h"
+#include "kvputil-p.h"
 
 #define _(String) dgettext (GETTEXT_PACKAGE, String)
 #define ACCESS_METHOD "sqlite"
@@ -80,7 +81,7 @@ typedef struct
 	/* hashtable relating the GUID to the kvp_id */
 	GHashTable *kvp_id;
 	/* highest kvp_id in the table */
-	glong index;
+	gulong index;
 	QofBook *book;
 	QofErrorId err_delete, err_insert, err_update, err_create;
 } QSQLiteBackend;
@@ -659,7 +660,7 @@ build_kvp_table (gpointer builder, gint col_num, gchar ** strings,
 	KvpFrame *frame;
 	KvpValueType type;
 	KvpValue *value;
-	glong max;
+	gulong max;
 	gchar *tail;
 
 	g_return_val_if_fail (builder, QSQL_ERROR);
@@ -766,7 +767,7 @@ qsql_class_foreach (QofObject * obj, gpointer data)
 	case SQL_CREATE:
 		{
 			/* KVP is handled separately */
-			qb.sql_str = qof_sql_entity_create_table (qb.ent);
+			qb.sql_str = qof_sql_object_create_table (obj);
 			if (sqlite_exec (qsql_be->sqliteh, qb.sql_str,
 					NULL, NULL, &qsql_be->err) != SQLITE_OK)
 			{
