@@ -15,6 +15,12 @@
 	if a NULL entity is passed. Prevent double free by only
 	freeing data.str if KVP slots exist.
 
+	* backend/gda/qof-gda.c: (create_tables), (create_data_source),
+	(qgda_session_begin), (qgda_class_foreach), (qgda_check_entity),
+	(qgda_write_foreach), (qgda_write_db), (qgda_session_end),
+	(qgda_destroy_backend), (qgda_backend_new): Add prototype
+	data write handlers.
+
 2008-03-19  Neil Williams  <linux@codehelp.co.uk>
 
 	* qof.symbols.in: Add qof_sql_entity_set_kvp_exists

@@ -27,7 +27,7 @@
 /** @addtogroup Backend
 @{
 */
-/**	@addtogroup LibGda qof-backend-gda outline
+/**	@addtogroup LibGda QOF GDA backend outline
 
 This is a prototype only, it is not yet fully functional. This
 backend is to complement the libxml2 backend and provide full
@@ -36,8 +36,6 @@ permanent connection to a real database. A QofBook can be stored
 in a GDA plugin (mysql, sqlite, postgres or odbc) when available,
 or XML if not. Data can be queried independently of which backend
 is in use via QofQuery.
-
-KVP is an anomaly, it may or may not work.
 
 Note that QOF_TYPE_GUID is stored as a string.
 

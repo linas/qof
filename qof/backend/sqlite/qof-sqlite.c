@@ -941,7 +941,6 @@ qsqlite_write_db (QofBackend * be, QofBook * book)
 	qsql_be->book = book;
 	/* update each record with current state */
 	qof_object_foreach_type (qsql_class_foreach, qsql_be);
-	/* update KVP */
 }
 
 static gboolean
