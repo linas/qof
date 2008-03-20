@@ -91,7 +91,6 @@ static void
 qgda_modify (QofBackend *be, QofInstance *inst)
 {
 	QGdaBackend *qgda_be;
-	GError * qgda_err;
 
 	qgda_be = (QGdaBackend *) be;
 	if (!inst)
@@ -102,19 +101,22 @@ qgda_modify (QofBackend *be, QofInstance *inst)
 //		return;
 	if (!inst->param->param_setfcn)
 		return;
+	qgda_be->gda_err = NULL;
 	ENTER (" modified %s param:%s", ((QofEntity *) inst)->e_type, inst->param->param_name);
 	qgda_be->sql_str = qof_sql_entity_update ((QofEntity*)inst);
 	DEBUG (" sql_str=%s", qgda_be->sql_str);
 	qgda_be->command = gda_command_new (qgda_be->sql_str, GDA_COMMAND_TYPE_SQL, 
 		GDA_COMMAND_OPTION_STOP_ON_ERRORS);
 	gda_connection_execute_non_select_command (qgda_be->connection, 
-		qgda_be->command, NULL, &qgda_err);
-	if (qgda_err)
+		qgda_be->command, NULL, &qgda_be->gda_err);
+	if (qgda_be->gda_err)
 	{
 		qof_error_set_be (be, qgda_be->err_update);
 		qgda_be->error = TRUE;
 		PERR (" error on modify:%s", qgda_be->err);
 		LEAVE (" ");
+		g_error_free (qgda_be->gda_err);
+		qgda_be->gda_err = NULL;
 		return;
 	}
 	inst->dirty = FALSE;
@@ -128,7 +130,6 @@ create_tables (QofObject * obj, gpointer user_data)
 {
 	QGdaBackend * qgda_be;
 //	GdaParameterList * plist;
-	GError * qgda_err;
 	gchar * str;
 
 	qgda_be = (QGdaBackend*)user_data;
@@ -138,17 +139,19 @@ create_tables (QofObject * obj, gpointer user_data)
 		PERR (" no connection to gda available");
 		return;
 	}
+	qgda_be->gda_err = NULL;
 	str = qof_sql_object_create_table (obj);
 	qgda_be->command = gda_command_new (str, GDA_COMMAND_TYPE_SQL, 
 		GDA_COMMAND_OPTION_STOP_ON_ERRORS);
 	gda_connection_execute_non_select_command (qgda_be->connection, 
-		qgda_be->command, NULL, &qgda_err);
-	if (qgda_err)
+		qgda_be->command, NULL, &qgda_be->gda_err);
+	if (qgda_be->gda_err)
 	{
 		/* handle the error here */
-		g_message ("GDA: %s", qgda_err->message);
-		g_clear_error (&qgda_err);
+		g_message ("GDA: %s", qgda_be->gda_err->message);
+		g_clear_error (&qgda_be->gda_err);
 	}
+	qof_sql_entity_set_kvp_exists (TRUE);
 //	g_free (plist);
 	gda_command_free (qgda_be->command);
 }
@@ -159,10 +162,8 @@ create_data_source (QGdaBackend * qgda_be)
 	gchar * cnc_string, * msg;
 	QofBackend * be;
 	GdaProviderInfo * prov;
-	GError * qgda_err;
 
 	ENTER (" ");
-	qgda_err = NULL;
 	be = (QofBackend*)qgda_be;
 	if (!qgda_be->data_source_name)
 	{
@@ -171,6 +172,7 @@ create_data_source (QGdaBackend * qgda_be)
 		LEAVE (" empty data source name");
 		return FALSE;
 	}
+	qgda_be->gda_err = NULL;
 	prov = gda_config_get_provider_by_name (qgda_be->provider_name);
 	if (!prov)
 	{
@@ -206,14 +208,15 @@ create_data_source (QGdaBackend * qgda_be)
 	}
 	qgda_be->connection = gda_client_open_connection
 		(qgda_be->client_pool, qgda_be->data_source_name,
-		NULL, NULL, GDA_CONNECTION_OPTIONS_NONE, &qgda_err);
+		NULL, NULL, GDA_CONNECTION_OPTIONS_NONE, &qgda_be->gda_err);
 	if (!qgda_be->connection)
 	{
 		/** \bug make this a user error */
-		g_message ("FAIL:%s", qgda_err->message);
+		g_message ("FAIL:%s", qgda_be->gda_err->message);
 		PERR ("connect request failed, removing %s", qgda_be->data_source_name);
 		g_message ("connect request failed, removing %s", qgda_be->data_source_name);
 		gda_config_remove_data_source (qgda_be->data_source_name);
+		g_error_free (qgda_be->gda_err);
 		return FALSE;
 	}
 	/* create tables per QofObject */
@@ -232,15 +235,14 @@ qgda_session_begin(QofBackend *be, QofSession *session, const
 				   gboolean create_if_nonexistent)
 {
 	QGdaBackend *qgda_be;
-	GError * qgda_err;
 	GdaDataSourceInfo * source;
 	gboolean created;
 
-	qgda_err = NULL;
 	/* cannot use ignore_lock */
 	PINFO (" gda session start");
 	qgda_be = (QGdaBackend*)be;
 	be->fullpath = g_strdup (book_path);
+	qgda_be->gda_err = NULL;
 	if(book_path == NULL)
 	{
 		qof_error_set_be (be, qof_error_register
@@ -307,7 +309,7 @@ qgda_session_begin(QofBackend *be, QofSession *session, const
 	/* use the username and password that created the source */
 	qgda_be->connection = gda_client_open_connection
 		(qgda_be->client_pool, qgda_be->data_source_name,
-		NULL, NULL, GDA_CONNECTION_OPTIONS_DONT_SHARE, &qgda_err);
+		NULL, NULL, GDA_CONNECTION_OPTIONS_DONT_SHARE, &qgda_be->gda_err);
 	if (qgda_be->connection)
 	{
 		PINFO (" appear to be connected.");
@@ -320,12 +322,13 @@ qgda_session_begin(QofBackend *be, QofSession *session, const
 
 		msg = g_strdup_printf (
 			_("GDA encountered an error '%s' using data source '%s'."),
-				qgda_err->message, qgda_be->data_source_name);
+				qgda_be->gda_err->message, qgda_be->data_source_name);
 		qof_error_set_be (be, qof_error_register (msg, FALSE));
 		PERR (" failed to connect to GDA: '%s'", msg);
 		qgda_be->error = TRUE;
 		g_message (msg);
 		g_free (msg);
+		g_error_free (qgda_be->gda_err);
 		/// \bug we probably don't want to remove once out of debug. :-)
 		PERR ("connect request failed, removing %s", qgda_be->data_source_name);
 		g_message ("connect request failed, removing %s", qgda_be->data_source_name);
@@ -373,17 +376,20 @@ static void
 qgda_class_foreach (QofObject * obj, gpointer data)
 {
 	QGdaBackend *qgda_be;
-	GError * qgda_err;
 
-	qgda_err = NULL;
 	qgda_be = (QGdaBackend*)data;
+	qgda_be->gda_err = NULL;
 	qgda_be->sql_str = g_strdup_printf(
 		"SELECT * FROM %s;", obj->e_type);
 	PINFO (" sql=%s", qgda_be->sql_str);
 	qgda_be->command = gda_command_new (qgda_be->sql_str,
 		GDA_COMMAND_TYPE_SQL, GDA_COMMAND_OPTION_STOP_ON_ERRORS);
 	qgda_be->entities = gda_connection_execute_command (qgda_be->connection,
-		qgda_be->command, NULL, &qgda_err);
+		qgda_be->command, NULL, &qgda_be->gda_err);
+	if (qgda_be->gda_err)
+	{
+		g_error_free (qgda_be->gda_err);
+	}
 	g_list_foreach (qgda_be->entities, load_entities, qgda_be);
 	gda_command_free (qgda_be->command);
 }
