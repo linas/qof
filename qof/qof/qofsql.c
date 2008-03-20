@@ -47,7 +47,7 @@
 #include "qofquery-p.h"
 
 #define _(String) dgettext (GETTEXT_PACKAGE, String)
-/* One KVP table per file for all instances. */
+/** One KVP table per file for all instances. */
 static gchar * kvp_table_name = NULL;
 
 #define QSQL_KVP_TABLE "sql_kvp"
@@ -1064,7 +1064,7 @@ qof_sql_query_rerun (QofSqlQuery * query)
 	return results;
 }
 
-/* simple helper struct for passing between SQL-generating functions */
+/** simple helper struct for passing between SQL-generating functions */
 typedef struct ent_and_string
 {
 	QofEntity * ent;
@@ -1133,7 +1133,7 @@ create_sql_from_param_cb (QofParam * param, gpointer user_data)
 static gchar *
 string_param_to_sql (QofParam * param)
 {
-	/* \note These strings are fairly standard SQL
+	/** \note These strings are fairly standard SQL
 	  but SQL means different things to different programs.
 	  Keep these strings as simple and plain as possible.
 	  Hopefully, what works in SQLite0 will work in most
@@ -1208,7 +1208,7 @@ string_param_foreach (QofParam * param, gpointer user_data)
 	g_free (p_str);
 }
 
-/* \brief list just the parameter names
+/** \brief list just the parameter names
 
  \note Must match the number and order of the
 list of parameter values from ::create_each_param
@@ -1244,7 +1244,7 @@ create_param_list (QofParam * param, gpointer user_data)
 	}
 }
 
-/* returns the VALUES for INSERT in pre-defined order */
+/** returns the VALUES for INSERT in pre-defined order */
 static void
 kvpvalue_to_sql_insert (const gchar * key, KvpValue * val, gpointer user_data)
 {
@@ -1292,7 +1292,7 @@ kvpvalue_to_sql_insert (const gchar * key, KvpValue * val, gpointer user_data)
 	LEAVE (" %s", data->str);
 }
 
-/* returns the VALUES for UPDATE in pre-defined order */
+/** returns the VALUES for UPDATE in pre-defined order */
 static void
 kvpvalue_to_sql_update (const gchar * key, KvpValue * val, gpointer user_data)
 {
@@ -1367,6 +1367,7 @@ qof_sql_entity_create_table (QofEntity * ent)
 	gchar * sql_str, * start;
 	eas data;
 
+	g_return_val_if_fail (ent, NULL);
 	if (!kvp_table_name)
 		kvp_table_name = g_strdup(QSQL_KVP_TABLE);
 	ENTER ("create table for %s", ent->e_type);
@@ -1419,6 +1420,7 @@ qof_sql_entity_insert (QofEntity * ent)
 			gstr, "', ", data.str, ");", NULL);
 		/* increment the index value of the KVP table */
 		kvp_id++;
+		g_free (data.str);
 	}
 	sql_str = g_strjoin ("", command, fields, ") VALUES ('", gstr, "' ", 
 		values, ");", kvp, NULL);
@@ -1427,7 +1429,6 @@ qof_sql_entity_insert (QofEntity * ent)
 	g_free (gstr);
 	g_free (values);
 	g_free (data.full_kvp_path);
-	g_free (data.str);
 	LEAVE ("sql_str=%s", sql_str);
 	return sql_str;
 }
@@ -1477,7 +1478,7 @@ qof_sql_entity_update_kvp (QofEntity * ent)
 	data.full_kvp_path = g_strdup("");
 	slots = qof_instance_get_slots ((QofInstance*)ent);
 	start = g_strjoin ("", "UPDATE ", kvp_table_name, " SET ", NULL);
-	/* \note the WHERE condition tests the path and the GUID
+	/** \note the WHERE condition tests the path and the GUID
 	as each entity (one GUID) can have more than one KVP. */
 	kvp_frame_for_each_slot (slots, kvpvalue_to_sql_update, &data);
 	sql_str = g_strjoin ("", start, data.str, " guid='", gstr, "';", NULL);
