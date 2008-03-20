@@ -451,8 +451,10 @@ libqof.so.@SONAME@ libqof@SONAME@ #MINVER#
  qof_sql_entity_create_table@LIBQOF_0.8.0 0.8.0
  qof_sql_entity_delete@LIBQOF_0.8.0 0.8.0
  qof_sql_entity_drop_table@LIBQOF_0.8.0 0.8.0
+ qof_sql_entity_get_kvp_id@LIBQOF_0.8.0 0.8.0
  qof_sql_entity_insert@LIBQOF_0.8.0 0.8.0
  qof_sql_entity_set_kvp_exists@LIBQOF_0.8.0 0.8.0
+ qof_sql_entity_set_kvp_id@LIBQOF_0.8.0 0.8.0
  qof_sql_entity_set_kvp_tablename@LIBQOF_0.8.0 0.8.0
  qof_sql_entity_update@LIBQOF_0.8.0 0.8.0
  qof_sql_entity_update_kvp@LIBQOF_0.8.0 0.8.0
