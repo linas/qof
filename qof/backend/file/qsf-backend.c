@@ -34,6 +34,7 @@
 #include "qof-backend-qsf.h"
 #include "qsf-xml.h"
 #include "qsf-dir.h"
+#include "kvputil-p.h"
 
 #define QSF_TYPE_BINARY "binary"
 #define QSF_TYPE_GLIST  "glist"
