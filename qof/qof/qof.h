@@ -74,7 +74,6 @@
 #include "guid.h"
 #include "kvpframe.h"
 #include "kvputil.h"
-#include "kvputil-p.h"
 #include "qofbackend.h"
 #include "qofid-p.h"
 #include "qofinstance-p.h"
