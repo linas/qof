@@ -18,6 +18,7 @@ EXTRA_DIST = config.rpath \
   website/why-qof.html \
   website/favicon.png \
   website/index.html \
+  website/start.html \
   website/qof-logo.jpg
 
 ACLOCAL_AMFLAGS = -I m4

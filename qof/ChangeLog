@@ -1,3 +1,8 @@
+2008-03-25  Neil Williams  <linux@codehelp.co.uk>
+
+ * website/index.html, website/start.html, Makefile.am :
+ Add a guide to starting with QOF.
+
 2008-03-20  Neil Williams  <linux@codehelp.co.uk>
 
 	* backend/file/qsf-backend.c: Add include for
