@@ -144,7 +144,7 @@ static QofParam params[] = {
 <li><b>No book can contain more than one object with the same <tt>e_type</tt>.</b></li>
 </ol>
 <p>As a regular expression, any string used for an <tt>e_type</tt> must match:</p>
-<tt>/^[a-z]_[0-9]+$/</tt>. This is because the <tt>e_type</tt> is used in various
+<tt>/^([a-z_0-9])+$/)</tt>. <p>This is because the <tt>e_type</tt> is used in various
 SQL operations. Parameter descriptions can contain any valid gchar and do not even
 need to be unique.</p>
 </div>
