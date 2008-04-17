@@ -384,42 +384,10 @@ but with a reduced release cycle. No large changes are anticipated in
 libqof2, the aim is to get all those done in libqof1.</p>
 </div>
 
-<h3 id="docs">Packaging documentation</h3>
-<div>
-The <i>doxy</i> symlink in the website directory is provided for CVS users and
-the main SourceForge site. When packaging the website HTML alongside
-the Doxygen output, ignore the symlink and just package the Doxygen output:
-
-<ul>
-<li><code>doc/html/*</code> <b>=&gt;</b> <code>/usr/share/doc/libqof-doc/html/doxy/</code></li>
-</ul>
-and the website content:
-<ul>
-<li><code>website/*.html</code> <b>=&gt;</b> <code>/usr/share/doc/libqof-doc/html/</code></li>
-<li><code>website/*.css</code> <b>=&gt;</b> <code>/usr/share/doc/libqof-doc/html/</code></li>
-<li><code>website/*.png</code> <b>=&gt;</b> <code>/usr/share/doc/libqof-doc/html/</code></li>
-<li><code>website/*.jpg</code> <b>=&gt;</b> <code>/usr/share/doc/libqof-doc/html/</code></li>
-<ul>
-
-</div>
-
 <hr>
 <div><p>Written by Neil Williams &lt;linux@codehelp.co.uk&gt; December 2005.
 </p><p>Last updated by Neil Williams &lt;linux@codehelp.co.uk&gt; December 2007.
 </p></div>
-<hr>
-<div><a href="http://sourceforge.net/projects/qof/">
-<img src="../sflogolg.png" id="sflogo" alt="SourceForge Logo"></a></div>
-<div id="licence">
-<p>The copyright licensing notice below applies to this text.</p>
-<p>Copyright &copy; 2005-2007 Neil Williams</p>
-<p>Permission is granted to copy, distribute, and/or modify this document under
-the terms of the GNU Free Documentation License, Version 1.2 or any later
-version published by the Free Software Foundation; with no Invariant Sections,
-with no Front-Cover Texts, and with no Back-Cover Texts.
-In installed versions, the licence can be found in the
-<a href="../copyright">copyright</a> file.</p>
-</div>
 
 ----
 

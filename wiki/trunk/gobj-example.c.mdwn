@@ -1,13 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
-<html lang="en_gb">
-<head>
-<title>QOF GObject Usage Example</title>
-<link rel="shortcut icon" href="favicon.png">
-<link rel="stylesheet" type="text/css" href="qof.css">
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-</head>
-<body>
-<h1>Query Over a Collection of GObjects</h1>
+
 <div id="resource">
 <ul>
 <li><a href="index.html">Home</a></li>
@@ -106,6 +97,3 @@ main(int argc, char *argv[])
 
 /* =================== END OF FILE ===================== */
 </pre>
-
-</body>
-</html>

@@ -432,20 +432,4 @@ someday.</p>
 <p>Updated: Neil Williams &lt;linux@codehelp.co.uk&gt; May 2005.
 </p>
 </div>
-<hr>
-<div><a href="http://sourceforge.net/projects/qof/">
-<img src="../sflogolg.png" id="sflogo" alt="SourceForge Logo"></a></div>
-<div id="licence">
-<p>The copyright licensing notice below applies to this text.</p>
-<p>Copyright &copy; 2003,2004 Linas Vepstas</p>
-<p>Copyright &copy; 2005, 2006 Neil Williams</p>
-<p>Permission is granted to copy, distribute, and/or modify this document under
-the terms of the GNU Free Documentation License, Version 1.2 or any later
-version published by the Free Software Foundation; with no Invariant Sections,
-with no Front-Cover Texts, and with no Back-Cover Texts. 
-In installed versions, the licence can be found in the 
-<a href="../copyright">copyright</a> file.</p>
-</div>
-</body>
-</html>
 
