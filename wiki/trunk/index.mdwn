@@ -60,7 +60,7 @@ Writing new QOF objects and examples can be a tad repetitive so
 [QOF generator](http://qof-gen.sourceforge.net/)
 automates the process using HTML forms and PHP. The generator is still new but
 it does create usable C code and an example program that can be compiled against
-current QOF CVS.
+current QOF SVN.
 
 #### Using qof-generator with common front-end code
 
