@@ -46,6 +46,17 @@ Normally, this is possible only if you use a database that supports SQL, and
 then only if you deeply embed the database into your application. QOF provides
 simpler, more natural way to work with objects.
 
+## Subversion access
+
+svn co svn+ssh://username@svn.debian.org/svn/qof/ qof
+
+svn co svn://svn.debian.org/svn/qof/ qof
+
+To just check out the debian source:
+
+svn co svn://svn.debian.org/svn/qof/trunk/debian qof
+
+
 ----
 
 ## <span id="example">Examples</span>
