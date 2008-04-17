@@ -1,8 +1,7 @@
-# <span id="top">Why QOF?</span>
 <div><a href="http://qof.sourceforge.net">
 <img src="../qof-logo.jpg" id="qoflogo" alt="image based on the hebrew symbol"></a>
 </div>
-<div id="resource">
+<div id="actions">
 <ul>
 <li><a href="/">Home</a></li>
 <li><a href="#summary">Summary</a></li>
