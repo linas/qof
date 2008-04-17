@@ -1,0 +1,5 @@
+[[!meta title="RecentChanges"]]
+Recent changes to this QOF wiki:
+
+[[!inline pages="internal(recentchanges/change_*) and !*/Discussion" 
+template=recentchanges show=0]]
