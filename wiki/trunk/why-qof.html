@@ -1,0 +1,461 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html lang="en_gb">
+<head>
+<link rel="stylesheet" type="text/css" href="qof.css">
+<link rel="shortcut icon" href="favicon.png">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Why QOF?</title>
+</head>
+<body>
+<h1 id="top">Why QOF?</h1>
+<div><a href="http://qof.sourceforge.net">
+<img src="qof-logo.jpg" id="qoflogo" alt="image based on the hebrew symbol"></a>
+</div>
+<div id="resource">
+<ul>
+<li><a href="index.html">Home</a></li>
+<li><a href="#summary">Summary</a></li>
+<li><a href="#sharing">Data sharing</a></li>
+<li><a href="#query">Data queries</a></li>
+<li><a href="#future">Future direction</a></li>
+<li><a href="#filesystem">Shared filesystems</a></li>
+<li><a href="#movement">Moving objects</a></li>
+<li><a href="#p2p">Example of P2P</a></li>
+<li><a href="#objects">Object-oriented SQL</a></li>
+<li><a href="#architecture">Application architecture</a></li>
+<li><a href="#control">Object/View/Controller</a></li>
+<li><a href="#core">Core Assumptions</a></li>
+</ul>
+</div>
+<h2 id="summary">Summary:</h2>
+<div>
+<p>Desktop application development is not particularly easy and desktop
+application development for multi-user, client-server apps is so hard that
+almost no one attempts these. In fact, this is the primary reason for the
+explosion of web applications: If you need to develop a multi-user, SQL-backed
+application, you can develop it orders of magnitude more quickly by using Apache
+and PHP (or Java) than you can by using Gnome or KDE. This is great for the
+web, but terrible for anyone wanting to develop distributed, multi-user desktop
+applications.</p>
+</div>
+<div class="clear">&nbsp;</div>
+<div>
+<p>There are many reasons why this is so and there are many ways in
+which one can attempt to change this situation. One can boil the ocean with
+this type of discussion; I won't attempt to do that here. Instead, lets try to
+justify an approach like QOF in a broader Free Software framework.</p>
+</div>
+<h3 id="sharing">Data sharing</h3>
+<div>
+<p>A number of applications become much more interesting to their users when
+they have access to large quantities of data, or are hooked into databases on the net
+in some way, or are multi-user or collaborative in some way. In fact, any
+large-data application is going to be multi-user, since having that much data is
+valuable and leads to a tremendous pressure to share. There's a huge number of
+apps that fit this profile: everything from shopping catalogs, where the store
+'shares' the product data with the customer, to Bugzilla, where the bug status
+is 'shared' between developers and users, to p2p networks for sharing mp3/ogg
+files. Today, certain types of 'basic' sharing are still incredibly hard: for example,
+syncing the address book on my cell phone with the address book on my home
+computer with the address book on my work computer(s). Never mind sharing parts
+of my address book with friends. (See <a
+href="http://pilot-qof.sourceforge.net/">
+Pilot-QOF</a> for an example of how QOF enables users to select parts of a Palm
+address book (amongst other databases) for export and sharing.)</p>
+</div>
+<h3 id="query">Data queries</h3>
+<div>
+<p>What does one need to build that kind of application? Well, one needs at a
+minimum a query mechanism, so that the user can query, sort, report on and
+manipulate the data. Even good single-user apps need this ability: personal
+photo and music organizers will have this kind of interface, as well as
+address-books, <abbr title="etcetera">etc</abbr>. Blogging tools could
+benefit from a generalized query mechanism. P2P already has query built-in,
+although its of a rather poor sort. Indeed, these types of find &amp; query
+considerations are driving the
+<a href="http://www.gnome.org/~seth/storage/">Gnome Storage</a> project
+(with whom we'd like to collaborate). They also show up as ideas in Microsoft's
+next-generation Longhorn operating system (patent encumbered; however, this
+project, QOF and the <a href="http://dwi.sourceforge.net">DWI project</a> are
+prior art.)</p>
+<p>QOF also has support for <code>INSERT</code> SQL commands to populate the
+data set (a QofBook).</p>
+</div>
+<div><span class="back"><a href="#top">Top</a></span></div>
+<hr>
+<h2 id="future">Sharing Technologies, Querying and the Future of
+Programming</h2>
+<h3 id="filesystem">Shared or global filesystem</h3>
+<div>
+<p>One traditional solution to the sharing problem has been the idea of a shared
+or even global filesystem. This was the original vision behind
+<abbr title="network file system">NFS</abbr> and
+Microsoft Windows Workgroups (SMB/Samba file shares). Global filesystem
+attempts include AFS (the Andrew File System, from the early 90's), DFS (from
+the late 90's) and Coda (a free/open solution). The local solutions, NFS and
+Samba, don't / can't scale to a global level. The global filesystems haven't
+really worked out either, with one grand exception: the web itself (
+<abbr title="in other words">i.e.</abbr> HTTP) is in many ways filesystem-like.
+But the success of the web is not due to its filesystem-like aspects, but rather
+due to the existence of a common document viewer: the web browser. Shared file
+systems, though better than nothing, have one major pitfall: they still don't
+make writing multi-user apps easy. Two users updating the same file at the same
+time is a recipe for disaster. The two apps that are updating the same file at
+the same time don't know about each other and there is no native or built-in
+default that would let them find out.</p>
+</div>
+<h3 id="movement">Physical movement of objects</h3>
+<div><p>
+Another older solution to the sharing problem is the idea behind RPC, CORBA,
+SOM/DSOM, COM/DCOM and more recently, SOAP and the Microsoft .net frameworks.
+Here, the focus of sharing is actually about the physical movement of objects
+(OOP objects) from one system to another. Each of these technologies in some
+way enable the programmer to touch or work with objects on some other, remote
+system. However, as most programmers eventually seem to figure out, its
+bitchingly hard to use CORBA (or its cousins) and there seems to be relatively
+little payoff for the effort. Great: now one has distributed, networked
+objects, but so what? One still doesn't have persistence (which is the strength
+of file systems) and one doesn't have searchability (which is what databases
+offer) and one doesn't have much in the way of security (witness Microsoft's
+Virus Apocalypse).</p>
+</div>
+<h3 id="p2p">P2P file sharing</h3>
+<div><p>
+The latest file-sharing technology is 'P2P', the peer-to-peer networks.
+Unfortunately, MP3 trading has given them a bad name. The other problem is that
+P2P doesn't really provide security (would you use P2P to share your financial
+information with your bank? How about medical records? Didn't think so). P2P
+networks are also terrible at sharing 'objects' in the sense of OOP objects,
+they're useless for that. They have no built-in versioning for the files they do
+share: you can't do SCCS/CVS/Subversion/BitKeeper on top of P2P, even though
+that would be useful. Curiously, though, P2P networks do have the one true
+important feature that makes them popular: P2P query. You can <b>issue a query
+to find the one thing that you really wanted and P2P will run that query in a
+distributed, decentralized way</b>, across a panalopy of servers. How else can
+you find that rare MP3 that you wanted? Unfortunately, <b>none of the P2P
+query protocols are as rich or as powerful as SQL</b>.
+</p>
+</div>
+<div>
+<p>As P2P illustrates, what's old is new: querying is central to sharing and to
+multi-user applications. In fact, most true multi-user apps are (and have been,
+from the start, for many decades) based on database technology if not SQL
+proper. This is because <b>SQL can scale to extremely large datasets without
+loosing the ability for a user to focus in on one or two records</b>. SQL came
+with a kind-of browser: the SQL command line. Though pale in comparison to the
+web browser, it did allow you to look where you wanted, to find the needle in
+the haystack. SQL is scalable and it can be browsed: these are the same
+strengths that made the web possible.</p>
+</div>
+<div>
+<p>Thus it is natural to <b>think of querying and databases when thinking of the
+future of multi-user applications</b>. What hasn't yet been done or fully
+explored is the possibility of a global database: a database that is accessibly
+from everywhere in the world (much as http is), but is decentralized, searchable
+and managed by the users who use it, much as P2P is. There are many people,
+ideas and technology trends that are pushing towards a global database, but it
+hasn't happened yet. The convergence between computers, phones and TV's is
+pushing in this direction, but the games have only begun.</p>
+</div>
+<h3 id="objects">Object oriented SQL</h3>
+<div>
+<p>SQL, however, has its drawbacks. Most programmers don't know SQL and a large
+portion of them blanch and run in the opposite direction when they hear those
+three letters. Actually, writing applications that mix SQL into the program
+logic is not that hard ... at first. In fact, its quite easy. The problem
+arises when one has to port to a different database and one discovers that SQL
+is not terribly well standardized. The next problem comes when one wants to add
+or change tables. Programmers typically discover that the SQL code they are
+maintaining is not modular and sometimes very poorly structured. Object
+oriented programming and SQL weren't really made for each other, although object
+oriented databases do help.</p>
+</div>
+<div><p>
+In summary, <b>the future of desktop programming lies with a broadly powerful
+query engine, coupled to persistent OOP-style objects that are distributed,
+decentralized, secure, protectable and versionable</b>. This is the true
+'convergence': not that of TV's, phones and computers, but the convergence of
+the best features of P2P, SQL, file systems, version control and the web, which,
+to the programmer, looks like nothing more than 'persistent objects', <b>and is
+no harder to 'use' than garbage collection</b> is for a Java programmer. This is
+the grand vision of what desktop programming should be.</p>
+</div>
+<div><span class="back"><a href="#top">Top</a></span></div>
+<hr>
+<h2 id="architecture">Application Architecture</h2>
+<div><p>The QOF architecture, as it currently stands, is taken from the vantage
+point of Free Software development and explicitly ignores commercial/proprietary
+technologies. It is also somewhat focused on the specific case study of the
+applications that currently benefit most from QOF:
+<a href="http://www.gnucash.org">GnuCash</a>,
+<a href="http://gttr.sourceforge.net">GnoTime</a> and
+<a href="http://pilot-qof.sourceforge.net">Pilot-QOF</a>.
+But this is the good news: QOF has evolved through trial-by-fire, in the forge
+of real-world application development, rather than through the the over-arching,
+abstract principles discussed above.</p>
+</div>
+<h3 id="control">Object/View/Controller</h3>
+<div>
+<p>The starting point for the architecture is a modified "Object/View/Controller"
+paradigm. The GUI acts as a controller, controlling and manipulating a set of
+objects in local system memory. The objects in system memory are a cache, or
+mirror, or local copy of data in a (remote) database. Two technical problems
+immediately present themselves. One is how to connect the GUI to the objects in
+an easy-to-develop, easy-to-maintain style. The second is how to do the same in
+keeping the local copy of the objects in sync with the database. In particular,
+how keep them in sync with the data in other (remote) objects that other users
+might be manipulating. One possible answer and that is the answer used today by
+GnuCash, is to design the GUI with the
+<a href="http://glade.gnome.org">Glade</a> graphical GUI designer and hook it up
+to some C (could have been C++, or even other language) objects. The objects
+are in turn loaded from either a file, or fetched from an SQL database.</p>
+</div>
+<div><p>
+I (would) like to have my apps be natively multi-user. This means dealing with
+all of the locking and caching problems that multi-user presents. Multi-user
+also means that one needs to have a centralized data storage location: a
+database and by presumption, an SQL database. Thus, if one wants to have C
+objects, one needs to shim them onto SQL somehow. Today, for me, this is a
+labor-intensive, manual process. In the commercial software world, there are
+tools and companies that have systems that make this a lot easier and even
+automatic; but there aren't any in the Free Software world.</p>
+</div>
+<div>
+<p>After writing the shims between the first half-dozen objects and their
+equivalent SQL tables, it becomes painfully apparent that the process can be
+mostly automated, as the shims consist of mostly common code. Unfortunately, the
+automation of this process is easier said than done. At first, it seems that all
+one needs is to specify a mapping or 'dictionary' from an SQL table field to an
+object setter/getter. In practice, its more subtle than that. Nonetheless one
+of the goals of QOF is to provide a fairly generic dictionary or mapping
+mechanism. To the best of my knowledge, in the Free Software/Open
+Source world, there is only one system that maps databases to objects and back:
+<a href="http://dwi.sourceforge.net">DWI/DUI</a>. However, that system is still
+rather primitive. At least one goal is to have QOF integrate with and expand on
+that function.</p>
+</div>
+<hr>
+<h2 id="core">Core Assumptions</h2>
+<div>The QOF project and the above comments, make some core assumptions
+that are questionable and need to be addressed. These are discussed
+below.
+<ul>
+<li><a href="#lambda">Why C? The problem of lambda.</a></li>
+<li><a href="#whyc">Why C (or C++)? Why not a better language,
+without lambda?</a></li>
+<li><a href="#garbage">Why C (or C++)? What about garbage
+collection?</a></li>
+<li><a href="#models">Why not go directly from GUI to SQL and back?</a></li>
+<li><a href="#glib">Why not use GLib GObjects?</a></li>
+</ul>
+</div>
+<div>
+<ul>
+<li><h3 id="lambda">Why C? The problem of lambda.</h3>
+<div>
+<p>The C language has many problems, the most serious of which is the lack of
+<b><i>lambda</i></b>. I know you're thinking "What in the world is lambda? I've
+been programming for years, I've never needed one." Well, the joke's on you.
+<b><i>Lambda</i></b> is a way of declaring a function by binding some (but not
+all) arguments to a different function. Lambda allows you to pass functions as
+if they were arguments, without having to fix the type. The lack of lambda in C
+deeply affects how people program and design in C. One can sort-of work around
+the missing lambda, but not very well. One stunt is to code in an
+object-oriented fashion. This helps because an object method implicitly drags
+along its "missing arguments" in the form of a reference to the instance (the
+'this' or 'self' pointer). Unfortunately, this makes object-oriented languages
+strongly typed (C++ and Java are both strongly typed). Strong typing makes it
+hard to work with "generic", unknown types. The work-around for this is the
+"Master Base Class" design pattern: One creates a master base class and then
+every other object must inherit from it. For example, in GTK, the master base
+class is GObject. In Motif, it was Widget. The selection of candidate bases
+classes for Java and C++ is dizzying.</p>
+<p>By having a master base class, one can write quasi-generic algorithms because
+one is guaranteed that everything that inherited from the base class can be
+treated as if it were really the base class itself. So, for example,
+<b><tt>some_func (Base *b);</tt></b> can be applied to any derived object and
+so <tt>some_func</tt> is more-or-less generic: it can act on <i>any</i> type (as
+long as that type inherits from <tt>Base</tt>). Of course, this falls apart if
+one has multiple base classes (multiple inheritance), or if ints, floats are
+your base type. The object-orientation of Java and C++ does not go down that
+deep.</p>
+<p>So the other way to work around a missing lambda and write generic
+algorithms, is to introduce the idea of "type templates". Templates are now a
+part of C++. By using templates in C++, one can write generic, type-independent
+algorithms. Unfortunately, templates are hard to use, template code is hard to
+read and write and, worst of all, templates "bubble" through. In other words,
+if <tt>func_a()</tt> calls <tt>func_b()</tt> which calls <tt>func_c()</tt> and
+<tt>func_c()</tt> can handle generic types (because it is a template), the only
+way to expose this is to also make <tt>func_a()</tt> and <tt>func_b()</tt> also
+be templates. So even if <tt>func_a()</tt> and <tt>func_b()</tt> had no reason
+to be templates, they were forced to become so. This is "bubbling" and bubbling
+is the Achilles heel of templates; its what makes C++ templates so darned hard
+to use. The "bubbling" happens all because C++ doesn't support
+<b><i>lambda</i></b>. Oh well.</p>
+<p>The way C avoids the missing-lambda problem is by being weakly-typed. One
+casts things to <tt>(void *)</tt> and passes those around. Take a look at
+typical GTK/Gnome code: <tt>gpointer</tt> is everywhere. Its in the arguments
+for signals. Its what glib <tt>GList</tt>'s and <tt>GArray</tt>'s store and on
+and on ... of course, you can imagine the kind of type-casting trouble this can
+get you into, which is why GTK has this incredible run-time dynamic type-casting
+system built into it.</p>
+<p>So, to answer the question "Why C? Why not a Better Language?" Because C++,
+Java, Python, Eiffel, C# still don't have a lambda. One <i>still</i> has to use
+the "master base class design pattern", or bubbling templates, or <tt>(void
+*)</tt> pointers and run-time type-checking/type-casting. These other languages
+still don't rescue you, they don't offer any advantage over C in regard to this
+deep, fundamental issue.</p>
+<p> (Off-topic: try googling for the words "lambda" and your favorite
+programming language. You will be surprised and intrigued by the results.)
+Addendum: at least one pop lanaguage, perl, does have lambda. All I can say is
+that lambda in perl is currently not central to perl or to the style of perl
+programming. </p>
+</div>
+<li><h3 id="whyc">Why C (or C++)? Why not a better language, without lambda?</h3>
+<div>
+<p>Lets try again. The C/C++ language has many problems. One of the most serious
+of these problems is the lack of "object introspection". Without object
+introspection, it makes it hard to make objects persistent; it also makes it
+hard to send objects over the net, because "marshaling/unmarshaling" needed to
+do the RPC (or XML-RPC) gets hard. When a system has "object introspection",
+you can ask some unknown, type-any object a question about what its made of. It
+can then respond: "Gee, well, I'm made of three floats, two ints and some
+character strings". You can then ask it for all of its pieces and jam them into
+a file for safe-keeping, or "marshal" them into a socket to ship it over the
+net. (You "unmarshal" them at the other end of the socket, thus creating a copy
+of the object in some far away place). With introspection, you can make and copy
+objects without having to know in advance (at compile time) what they are. Note
+that GLib GObjects have introspection built in: its done with
+<tt>g_object_class_list_properties()</tt>.
+</p>
+<p>So, why not use another language, one that can do introspection and has
+object factories built into it? For example, Java, python, C#? The answer is
+that introspection, while useful, is far too inflexible to use for object
+persistence and for RPC-type work. The deep problem is that introspection
+doesn't deal with the problem of versioning. Say I have object version 1.0. It
+consisted of three floats and two ints. I stuck it into a file and forgot about
+it. Years later, I try to open that file with the new improved version 2.0
+software: but object version 2.0 has five floats and six ints. Whoops. Ka-boom.
+In order to be backwards-compatible, or forwards-compatible, you need to deal
+with the versioning problem in some flexible way. Introspection, by itself, is
+not flexible enough.
+</p>
+<p>The XML world tries to deal with this by using schema's/DTD's. It is
+understood that the DTD describes what to expect in your object; thus, by
+knowing the DTD, you know how to parse the XML file. However, when you are
+writing your application in Java, Python, C# (or C or C++), I can guarantee you
+that your internal objects are at best a weak mirror of what's in the DTD. Your
+objects might be similar to the XML input, but hardly the same. If your app is
+a web app, with an SQL backend, are your objects identical to the SQL tables? I
+doubt it. In other words, here you are, coding in this great language with
+object factories and type-any and object introspection, but you aren't actually
+using these amazing whiz-bang features when you interface to your SQL or XML or
+XML-RPC.
+</p>
+<p>To summarize: the mapping between the run-time objects and the
+network/file/storage objects is not one-to-one. A language with introspection
+doesn't save your bottom: its not enough: one really does need to specify how to
+map object fields to database fields because the mapping is never 1-to-1. This
+remains a difficult and tedious task for the programmer. These other languages
+don't offer an improvement over C. One of the stated design goals of <a
+href="http://dwi.sourceforge.net">DWI</a> is to provide an explicit but
+easy-to-use, flexible way of mapping network object or database objects to the
+run-time objects that applications use and those, in turn to the GUI dialogs
+and panels that the application presents to the user.</p>
+<p>(P.S. Totally off-topic, but I sometimes get the feeling that
+the XML standards people are trying to reinvent scheme/lisp
+without being consciously aware that this is what they are
+doing. Yet the signs are clear.)
+</p>
+</div>
+<li><h3 id="garbage">Why C (or C++)? What about garbage collection?</h3>
+<div>
+<p>OK, I cave. Yes, it sure would be nice to have garbage
+collection built into the language.
+</p>
+</div>
+<li><h3 id="models">Why not go directly from GUI to SQL and back?</h3>
+<div>
+<p><a href="http://www.data-freedom.org/explain.html">Data-Freedom.org</a>
+covers the basics of
+<a href="http://www.data-freedom.org/explain.html#database">
+"database-driven"</a>,
+<a href="http://www.data-freedom.org/explain.html#program">"program-driven"</a>
+and
+<a href="http://www.data-freedom.org/explain.html#data-centric">"data-centric"</a>
+programming, together with an
+<a href="http://www.data-freedom.org/explain.html#example">example</a>
+model.
+</p>
+<p>Designing a GUI directly on top of SQL is the 'database-driven' programming
+style. It has short-comings, the most notable of which is the inability (or
+difficulty of) implementing application behavior. One can all too easily get
+sucked into writing SQL triggers and stored procedures. That's bad. Note,
+however, that much of what a typical GUI application does can, in fact, be
+specified by a declarative language; an algorithmic, procedural language, such
+as C, really is not required for the vast majority of the application guts. The
+realization that most of what a real-world application does can be accomplished
+declaratively is the driving force behind <a
+href="http://dwi.sourceforge.net">DWI</a>.</p>
+</div>
+<li><h3 id="glib">Why not use GLib GObjects?</h3>
+<div>
+<p>Well, in the narrowest sense, QOF already does: there is a QOF to GObject
+glue layer and GLib GObjects (including GTK objects) are searchable with QOF.
+More broadly, the problem with GObjects is that they don't support unique object
+id's and they don't support versioning. Now, I suppose we could build those on
+top of GObjects ... and maybe we will someday. But QOF evolved in parallel,
+independently from GObjects and thus there's overlap of ideas. Parts of QOF
+date back to 1997 and thus the parallel evolution is in part because GObjects
+didn't exist back then. Maybe there might be some convergence, maybe,
+someday.</p>
+</div>
+<li><p>Why not UML? What's UML got to do with it?
+ </p>
+ <br>
+<li><p>Why not XUL? What's XUL got to do with it?
+ </p>
+ <br>
+</ul>
+</div>
+<div><span class="back"><a href="#top">Top</a></span></div>
+<p>... Unfinished ... Draft ...
+</p>
+<hr>
+<div>See also:
+<ul>
+<li><a href="http://ometer.com/desktop-language.html">Java, Mono, or
+ C++? Thoughts on the future of open source desktop development</a>
+ by Havoc Pennington.
+<li><a href="http://www.gnome.org/~seth/storage/">Gnome Storage</a>
+ is a project that looks at the query problem for desktop
+ applications.
+<li><a href="http://www.linas.org/theory/eternity.html">The Next
+ Few Decades of Computing</a> takes a similarly broad view of
+ programming interfaces.
+</ul>
+
+</div>
+<hr>
+<div><p>Linas Vepstas &lt;linas@linas.org&gt; July 2003, April, June 2004
+</p>
+<p>Updated: Neil Williams &lt;linux@codehelp.co.uk&gt; May 2005.
+</p>
+</div>
+<hr>
+<div><a href="http://sourceforge.net/projects/qof/">
+<img src="sflogolg.png" id="sflogo" alt="SourceForge Logo"></a></div>
+<div id="licence">
+<p>The copyright licensing notice below applies to this text.</p>
+<p>Copyright &copy; 2003,2004 Linas Vepstas</p>
+<p>Copyright &copy; 2005, 2006 Neil Williams</p>
+<p>Permission is granted to copy, distribute, and/or modify this document under
+the terms of the GNU Free Documentation License, Version 1.2 or any later
+version published by the Free Software Foundation; with no Invariant Sections,
+with no Front-Cover Texts, and with no Back-Cover Texts. 
+In installed versions, the licence can be found in the 
+<a href="../copyright">copyright</a> file.</p>
+</div>
+</body>
+</html>
+

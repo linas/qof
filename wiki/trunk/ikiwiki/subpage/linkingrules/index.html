@@ -1,0 +1,121 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>linkingrules</title>
+
+<link rel="stylesheet" href="../../../style.css" type="text/css" />
+<link rel="stylesheet" href="../../../local.css" type="text/css" />
+
+<meta name="robots" content="noindex, follow" />
+</head>
+<body>
+
+<div class="header">
+<span>
+
+<a href="../../../">Query Object Framework</a>/ 
+
+<a href="../../">ikiwiki</a>/ 
+
+<a href="../">subpage</a>/ 
+
+linkingrules
+</span>
+
+</div>
+
+
+<div class="actions">
+<ul>
+
+<li><a href="http://qof.alioth.debian.org/cgi-bin/ikiwiki.cgi?page=ikiwiki%2Fsubpage%2Flinkingrules&amp;do=edit">Edit</a></li>
+
+
+<li><a href="../../../recentchanges/">RecentChanges</a></li>
+
+
+<li><a href="http://svn.debian.org/viewsvn/qof/trunk/qof/website/ikiwiki/subpage/linkingrules.mdwn">History</a></li>
+
+
+<li><a href="http://qof.alioth.debian.org/cgi-bin/ikiwiki.cgi?do=prefs">Preferences</a></li>
+
+
+<li><span class="createlink"><a href="http://qof.alioth.debian.org/cgi-bin/ikiwiki.cgi?page=discussion&amp;from=ikiwiki%2Fsubpage%2Flinkingrules&amp;do=create">?</a>Discussion</span><br /></li>
+
+</ul>
+</div>
+
+
+
+
+<div id="content">
+<p>To link to or from a <a href="../">SubPage</a>, you can normally use a regular
+<a href="../../wikilink/">WikiLink</a> that does not contain the name of the parent directory of
+the <a href="../">SubPage</a>. Ikiwiki descends the directory hierarchy looking for a
+page that matches your link.</p>
+
+<p>For example, if <span class="createlink"><a href="http://qof.alioth.debian.org/cgi-bin/ikiwiki.cgi?page=foobar&amp;from=ikiwiki%2Fsubpage%2Flinkingrules&amp;do=create">?</a>FooBar</span>/SubPage links to "OtherPage", ikiwiki will first 
+prefer pointing the link to <span class="createlink"><a href="http://qof.alioth.debian.org/cgi-bin/ikiwiki.cgi?page=foobar&amp;from=ikiwiki%2Fsubpage%2Flinkingrules&amp;do=create">?</a>FooBar</span>/SubPage/OtherPage if it exists, next
+to <span class="createlink"><a href="http://qof.alioth.debian.org/cgi-bin/ikiwiki.cgi?page=foobar&amp;from=ikiwiki%2Fsubpage%2Flinkingrules&amp;do=create">?</a>FooBar</span>/OtherPage and finally to <span class="createlink"><a href="http://qof.alioth.debian.org/cgi-bin/ikiwiki.cgi?page=otherpage&amp;from=ikiwiki%2Fsubpage%2Flinkingrules&amp;do=create">?</a>OtherPage</span> in the root of the wiki.</p>
+
+<p>Note that this means that if a link on <span class="createlink"><a href="http://qof.alioth.debian.org/cgi-bin/ikiwiki.cgi?page=foobar&amp;from=ikiwiki%2Fsubpage%2Flinkingrules&amp;do=create">?</a>FooBar</span>/SomePage to "OtherPage"
+currently links to <span class="createlink"><a href="http://qof.alioth.debian.org/cgi-bin/ikiwiki.cgi?page=otherpage&amp;from=ikiwiki%2Fsubpage%2Flinkingrules&amp;do=create">?</a>OtherPage</span>, in the root of the wiki, and <span class="createlink"><a href="http://qof.alioth.debian.org/cgi-bin/ikiwiki.cgi?page=foobar&amp;from=ikiwiki%2Fsubpage%2Flinkingrules&amp;do=create">?</a>FooBar</span>/OtherPage
+is created, the link will <em>change</em> to point to <span class="createlink"><a href="http://qof.alioth.debian.org/cgi-bin/ikiwiki.cgi?page=foobar&amp;from=ikiwiki%2Fsubpage%2Flinkingrules&amp;do=create">?</a>FooBar</span>/OtherPage. On the
+other hand, a link from <span class="createlink"><a href="http://qof.alioth.debian.org/cgi-bin/ikiwiki.cgi?page=bazbar&amp;from=ikiwiki%2Fsubpage%2Flinkingrules&amp;do=create">?</a>BazBar</span> to "OtherPage" would be unchanged by this
+creation of a <a href="../">SubPage</a> of <span class="createlink"><a href="http://qof.alioth.debian.org/cgi-bin/ikiwiki.cgi?page=foobar&amp;from=ikiwiki%2Fsubpage%2Flinkingrules&amp;do=create">?</a>FooBar</span>.</p>
+
+<p>You can also specify a link that contains a directory name, like
+"FooBar/OtherPage" to more exactly specify what page to link to. This is
+the only way to link to an unrelated <a href="../">SubPage</a>.</p>
+
+<p>You can use this to, for example, to link from <span class="createlink"><a href="http://qof.alioth.debian.org/cgi-bin/ikiwiki.cgi?page=bazbar&amp;from=ikiwiki%2Fsubpage%2Flinkingrules&amp;do=create">?</a>BazBar</span> to "FooBar/SubPage",
+or from <span class="createlink"><a href="http://qof.alioth.debian.org/cgi-bin/ikiwiki.cgi?page=bazbar&amp;from=ikiwiki%2Fsubpage%2Flinkingrules&amp;do=create">?</a>BazBar</span>/SubPage to "FooBar/SubPage".</p>
+
+<p>You can also use "/" at the start of a link, to specify exactly which page
+to link to, when there are multiple pages with similar names and the link
+goes to the wrong page by default. For example, linking from
+"FooBar/SubPage" to  "/OtherPage" will link to the "OtherPage" in the root
+of the wiki, even if there is a "FooBar/OtherPage".</p>
+
+<p>Also, if the wiki is configured with a userdir, you can link to pages
+within the userdir without specifying a path to them. This is to allow for
+easy linking to a user's page in the userdir, to sign a comment. These
+links are checked for last of all.</p>
+
+</div>
+
+<div id="footer">
+<div id="pageinfo">
+
+
+
+
+<div id="backlinks">
+Links:
+
+<a href="../">subpage</a>
+
+<a href="../../wikilink/">wikilink</a>
+
+
+</div>
+
+
+
+
+
+
+<div class="pagedate">
+Last edited Sat 12 Apr 2008 05:42:50 PM UTC
+<!-- Created Sat 12 Apr 2008 05:42:50 PM UTC -->
+</div>
+
+</div>
+
+<!-- from Query Object Framework -->
+</div>
+
+</body>
+</html>
