@@ -1,8 +1,7 @@
-
 <div><a href="http://qof.alioth.debian.org/">
 <img src="../qof-logo.jpg" id="qoflogo" alt="image based on the hebrew symbol"></a>
 </div>
-<div id="resource">
+<div id="actions">
 <ul>
 <li><a href="/">Home.</a></li>
 <li><a href="#introduction">Introduction.</a></li>
