@@ -1,6 +1,8 @@
 <img src="qof-logo.jpg" id="qoflogo" alt="image based on the hebrew
 symbol of the same name">
 
+test.
+
 <div id="actions">
 <ul>
 <li><a href="#intro">Introduction</a></li>
