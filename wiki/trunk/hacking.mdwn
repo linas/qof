@@ -1,6 +1,6 @@
 # Packaging and building against <acronym title="Query Object Framework">QOF</acronym>
 
-<div id="resource">
+<div id="actions">
 <ul>
 <li><a href="../#intro">Introduction</a></li>
 <li><a href="#libsql">QOF and libgda</a></li>
@@ -23,7 +23,7 @@
 symbol of the same name"></div>
 
 <h2>Advice for packagers / maintainers</h2>
-<h3>Updated December 2007 for QOF 0.7.4</h3>
+<h3>Updated April 2008 for QOF 0.7.5</h3>
 
 <ul>
 <li>Building against QOF
@@ -63,7 +63,7 @@ dnl *************************************
 dnl QOF
 dnl *************************************
 
-QOF_REQUIRED=0.7.4
+QOF_REQUIRED=0.7.5
 PKG_CHECK_MODULES([QOF], [qof >= ${QOF_REQUIRED}])
 AC_SUBST(QOF_CFLAGS)
 AC_SUBST(QOF_LIBS)
@@ -96,7 +96,7 @@ dnl *************************************
 dnl QOF
 dnl *************************************
 
-QOF_REQUIRED=0.7.4
+QOF_REQUIRED=0.7.5
 AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
 if test pkg-config = no; then
 	AC_MSG_ERROR([Please install pkgconfig])
