@@ -16,19 +16,12 @@ EXTRA_DIST = \
   qofdatelocale.txt \
   map-plan.txt
 
-# The doxy symlink is provided for CVS users and the SF site.
-# Ignore the symlink when packaging website HTML alongside
-# the Doxygen output.
-
 if ENABLE_DOXYGEN
 doc: doxygen.cfg Makefile
 	${RM} html/*.html
 	${DOXYGEN} doxygen.cfg
-	if test ! -d ../website; then mkdir ../website; fi
-	if test -h ../website/doxy; then rm ../website/doxy; fi	
-	ln -s ../doc/html/ ../website/doxy
 
-qofdocdir = ${datadir}/doc/qof/html/doxy
+qofdocdir = ${datadir}/doc/qof/html/
 qofdoc_DATA = html/*
 qofdoc: doc
 install-data-hook:
@@ -49,4 +42,3 @@ endif
 clean-local:
 	${RM} doxygen.log
 	if test -h ../website/doxy; then rm ../website/doxy; fi
-
