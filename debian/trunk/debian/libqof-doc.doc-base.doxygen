@@ -11,10 +11,10 @@ Abstract: Query Object Framework Developer Reference
   into an SQL Database.
  .
   This manual describes the full QOF API to develop applications
-  using libqof1.
+  using libqof2.
 Section: Programming/C
 
 Format: HTML
-Index: /usr/share/doc/libqof-doc/html/doxy/index.html
-Files: /usr/share/doc/libqof-doc/html/doxy/*
+Index: /usr/share/doc/libqof-doc/html/index.html
+Files: /usr/share/doc/libqof-doc/html/*
 
