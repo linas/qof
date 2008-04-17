@@ -84,7 +84,7 @@ The API documentation is embedded in the header files and
 ## <span id="support">Support</span>
 
 Support should be obtained by subscribing to the mailing list:
-[http://lists.alioth.debian.org/mailman/listinfo/qof-devel](http://lists.alioth.debian.org/mailman/listinfo/qof-devel)
+[http://lists.alioth.debian.org/mailman/listinfo/qof-devel](http://lists.alioth.debian.org/mailman/listinfo/qof-devel).
 
 ----
 
