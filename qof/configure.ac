@@ -286,10 +286,46 @@ AC_SUBST(GDA_PKG_LIB)
 AC_SUBST(SQL_PKG_LIB)
 
 dnl # **************************************************************
-dnl # DWI is now unsupported.
+dnl # DWI is not fully supported.
 dnl # The DWI code is still packaged for now
-dnl # but will be removed in libqof2.
 dnl # **************************************************************
+
+dwi="no"
+AC_ARG_ENABLE(dwibackend,
+  [  --enable-dwibackend     Enable the DWI backend module. (off)],
+  [case "${enableval}" in
+  		no) dwi="no" ;;
+		yes) dwi="yes" ;;
+		*) AC_MSG_ERROR(bad value ${enableval} for --enable-dwibackend) ;;
+		esac])
+
+AC_ARG_WITH(dwi,
+   [  --with-dwi=path         prefix for Data With Integration - DWI (off)])
+
+DWI_QUIET="--silence-errors"
+DWI_PC_PATH="lib/pkgconfig/dwi-0.pc"
+AC_MSG_CHECKING([for DWI - version >= $DWI_REQUIRED])
+if test x"$withval" != x; then
+	if test "$dwi" = "yes"; then
+		DWI=`$PKG_CONFIG $DWI_QUIET --exists '$withval/$DWI_PC_PATH >= $DWI_REQUIRED'`
+		DWI_LIBS=`$PKG_CONFIG $DWI_QUIET --libs $withval/$DWI_PC_PATH`
+		DWI_CFLAGS=`$PKG_CONFIG $DWI_QUIET --cflags $withval/$DWI_PC_PATH`
+		DWI_VERSION=`$PKG_CONFIG $DWI_QUIET --modversion $withval/$DWI_PC_PATH`
+		DWI_PREFIX=`$PKG_CONFIG $DWI_QUIET --variable=prefix $withval/$DWI_PC_PATH`
+		DWI_LIB_DIR=`$PKG_CONFIG $DWI_QUIET --variable=libdir $withval/$DWI_PC_PATH`
+	fi
+fi
+if test x"$withval" = x; then
+	if test "$dwi" = "yes"; then
+		DWI_REQUIRED=0.6.2
+		PKG_CHECK_MODULES(DWI, dwi >= $DWI_REQUIRED)
+		AC_SUBST(DWI_LIBS)
+		AC_SUBST(DWI_CFLAGS)
+		backend3="dwi"
+	fi
+fi
+
+AM_CONDITIONAL(USE_DWI, [test "$dwi" = "yes"])
 
 dnl # =========================
 dnl # Perl - no longer needed
@@ -412,12 +448,12 @@ AC_SUBST(QSF_LIB_DIR)
 AC_SUBST(QOF_LIBS)
 
 dnl # ******************************
-dnl # Check if this was CVS source
+dnl # Check if this was SVN source
 dnl # ******************************
-if test -f "${srcdir}/README.cvs" ; then
+if test -f "${srcdir}/README.svn" ; then
 	AC_DEFINE([TEST_DEBUG],1,
 		[Run test code in debug mode])
-	QOF_FROM_CVS=yes
+	QOF_FROM_SVN=yes
 fi
 
 AC_CONFIG_FILES([ po/Makefile.in
@@ -425,6 +461,7 @@ Makefile
 backend/Makefile
 backend/file/Makefile
 backend/gda/Makefile
+backend/dwi/Makefile
 backend/file/qsf-dir.h
 backend/sqlite/Makefile
 doc/Makefile
@@ -468,15 +505,15 @@ echo ""
 echo ""
 dnl # <= End of configuration summary =>
 
-if [[ x"$QOF_FROM_CVS" = xyes ]]; then
+if [[ x"$QOF_FROM_SVN" = xyes ]]; then
   echo " .----- NOTICE ------------------------------------------------."
-  echo " |         You are using QOF from CVS source.                  |"
+  echo " |         You are using QOF from SVN source.                  |"
   echo " |                                                             |"
   echo " | This is likely to be unstable, or contain some incomplete   |"
   echo " | features, or just plain not work at all. Use it at your own |"
   echo " | risk. Please help me to fix any bugs you find, by reporting |"
   echo " | them back to me via the QOF-devel mailing list.             |"
-  echo " | http://lists.sourceforge.net/lists/listinfo/qof-devel       |"
+  echo " | http://lists.alioth.debian.org/mailman/listinfo/qof-devel   |"
   echo " \`-------------------------------------------------------------'"
   echo ""
 fi

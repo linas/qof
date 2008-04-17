@@ -11,12 +11,18 @@ endif
 XML=file
 endif
 
+if USE_DWI
+DWI=dwi
+else
+DWI=
+endif
+
 if USE_GDABACKEND
 GDA=gda
 else
 GDA=
 endif
 
-SUBDIRS = $(XML) $(SQLITE) $(GDA)
+SUBDIRS = $(XML) $(SQLITE) $(GDA) $(DWI)
 
-DIST_SUBDIRS = file sqlite gda
+DIST_SUBDIRS = file sqlite gda dwi
