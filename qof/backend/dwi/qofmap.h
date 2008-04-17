@@ -1,6 +1,7 @@
 /********************************************************************\
  * qofmap.h -- Map QOF object to SQL tables, and back.              *
  * Copyright (C) 2004 Linas Vepstas <linas@linas.org>               *
+ * Copyright (C) 2008 Neil Williams <linux@codehelp.co.uk>          *
  * http://dwi.sourceforge.net                                       *
  *                                                                  *
  * This library is free software; you can redistribute it and/or    *
@@ -17,8 +18,8 @@
  * License along with this program; if not, contact:                *
  *                                                                  *
  * Free Software Foundation           Voice:  +1-617-542-5942       *
- * 59 Temple Place - Suite 330        Fax:    +1-617-542-2652       *
- * Boston, MA  02111-1307,  USA       gnu@gnu.org                   *
+ * 51 Franklin Street, Fifth Floor    Fax:    +1-617-542-2652       *
+ * Boston, MA  02110-1301,  USA       gnu@gnu.org                   *
 \********************************************************************/
 /**
  *  @file qofmap.h
@@ -35,10 +36,10 @@
 #ifndef QOF_MAP_H_
 #define QOF_MAP_H_
 
-#include <qof/qofbook.h>
-#include <qof/qofinstance.h>
-#include <qof/guid.h>
+#include <qof.h>
 #include <dwi/database.h>
+
+#define DWI_BACKEND "dwi-backend-module"
 
 typedef struct QofMap_s QofMap;
 

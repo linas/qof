@@ -1,3 +1,15 @@
+2008-04-17  Neil Williams  <linux@codehelp.co.uk>
+
+	* README.cvs, README.svn: Add content for debian builds.
+	Renamed to reflect change to SVN.
+	* configure.ac, backend/Makefile.am: Implement conditional
+	support for DWI.
+	* backend/dwi/Makefile.am: Correct LIBS handling and remove
+	version info to create a normal QOF backend module.
+	* backend/dwi/qofmap.c (qof_map_write_to_db), backend/dwi/qofmap.h,
+	* backend/dwi/dwi-backend.c (dwiend_compile_query), (dwiend_new):
+	Fix typo and bring debugging support into line with QOF >= 0.7
+
 2008-03-25  Neil Williams  <linux@codehelp.co.uk>
 
  * website/index.html, website/start.html, Makefile.am :

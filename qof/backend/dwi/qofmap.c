@@ -1,6 +1,7 @@
 /********************************************************************\
  * qofmap.c -- Map QOF object to SQL tables, and back.              *
  * Copyright (C) 2004 Linas Vepstas <linas@linas.org>               *
+ * Copyright (C) 2008 Neil Williams <linux@codehelp.co.uk>          *
  * http://dwi.sourceforge.net                                       *
  *                                                                  *
  * This library is free software; you can redistribute it and/or    *
@@ -17,8 +18,8 @@
  * License along with this program; if not, contact:                *
  *                                                                  *
  * Free Software Foundation           Voice:  +1-617-542-5942       *
- * 59 Temple Place - Suite 330        Fax:    +1-617-542-2652       *
- * Boston, MA  02111-1307,  USA       gnu@gnu.org                   *
+ * 51 Franklin Street, Fifth Floor    Fax:    +1-617-542-2652       *
+ * Boston, MA  02110-1301,  USA       gnu@gnu.org                   *
 \********************************************************************/
 /*
  *  @file qofmap.c
@@ -27,8 +28,7 @@
  * Basic parsing works basic, copyin, copyout works.
  */
 
-#include <qof/qofinstance-p.h>
-#include <qof/gnc-trace.h>
+#include <qof.h>
 #include "qofmap.h"
 
 #include <dwi/database.h>
@@ -39,7 +39,7 @@
 #include <dwi/duitxnquery.h>
 #include <dwi/duitxnreport.h>
 
-static short module = MOD_BACKEND;
+static QofLogModule log_module = DWI_BACKEND;
 
 /* ============================================================== */
 
@@ -399,11 +399,11 @@ qof_map_write_to_db (QofMap *qm, QofInstance *inst)
 	/* If its not already in the database, then insert it in */
 	if (NULL == db_ent)
 	{
-		struct timespec ts = dui_connection_get_now(qm->db_conn);
+/*		struct timespec ts = dui_connection_get_now (qm->db_conn);
 		Timespec qts;
 		qts.tv_sec = ts.tv_sec;
-		qts.tv_nsec = ts.tv_nsec;
-		qof_instance_set_last_update (inst, qts);
+		qts.tv_nsec = ts.tv_nsec;*/
+//		qof_instance_set_last_update (inst, qt);
 		qof_map_copy_to_db (qm, guid, "insert");
 	}
 	else
@@ -412,11 +412,11 @@ qof_map_write_to_db (QofMap *qm, QofInstance *inst)
  		int cmp = qof_instance_version_cmp (db_inst, inst);
 		if (0 >= cmp)
 		{
-			struct timespec ts = dui_connection_get_now(qm->db_conn);
+/*			struct timespec ts = dui_connection_get_now(qm->db_conn);
 			Timespec qts;
 			qts.tv_sec = ts.tv_sec;
 			qts.tv_nsec = ts.tv_nsec;
-			qof_instance_set_last_update (inst, qts);
+			qof_instance_set_last_update (inst, qts);*/
 			qof_map_copy_to_db (qm, guid, "update");
 		}
 		else
