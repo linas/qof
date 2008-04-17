@@ -1,4 +1,3 @@
-# Packaging and building against <acronym title="Query Object Framework">QOF</acronym>
 
 <div id="actions">
 <ul>
@@ -421,5 +420,7 @@ with no Front-Cover Texts, and with no Back-Cover Texts.
 In installed versions, the licence can be found in the
 <a href="../copyright">copyright</a> file.</p>
 </div>
-</body>
-</html>
+
+----
+
+[[ikiwiki/WikiLink]]
