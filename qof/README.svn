@@ -1,12 +1,12 @@
-Building QOF from CVS.
+Building QOF from SVN.
 ======================
 
  + You need to run the autogen.sh command to generate a configure script.
    autogen.sh accepts no options.
 
    Autogen will automatically generate the configure script and indicate
-   which SPECIAL ARGUMENTS you should pass to ./configure to enable certain 
-   files to be built with error checking. If you run "configure" without these 
+   which SPECIAL ARGUMENTS you should pass to ./configure to enable certain
+   files to be built with error checking. If you run "configure" without these
    special arguments, make install will try to use privileged directories
    and certain error conditions will not be checked.
 
@@ -18,13 +18,18 @@ Building QOF from CVS.
    If in doubt, you can run autogen.sh, run ./configure --help,
    then re-run autogen.sh with your options.
 
-   To build a distribution tarball from QOF CVS using 'make dist', ensure
+   To build a distribution tarball from QOF SVN using 'make dist', ensure
    you have 'bison' and 'flex' installed.
 
  + The indent style used by QOF is:
- $ indent -gnu -i4 -ut -ts4 -nsc -bli0 -nlp -l75 -lc75 
+ $ indent -gnu -i4 -ut -ts4 -nsc -bli0 -nlp -l75 -lc75
 
+Debian support
+==============
+
+0. Check out the debian data: svn co svn://svn.debian.org/svn/qof/trunk/debian/
+1. Create ../tarballs/ and copy the result of 'make dist' into ../tarballs
+2. svn-buildpackage -uc -us -rfakeroot -D --svn-noautodch --svn-builder debuild
 
 re-written by Neil Williams
-June 2006
-
+April 2008
