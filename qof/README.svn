@@ -28,8 +28,28 @@ Debian support
 ==============
 
 0. Check out the debian data: svn co svn://svn.debian.org/svn/qof/trunk/debian/
-1. Create ../tarballs/ and copy the result of 'make dist' into ../tarballs
-2. svn-buildpackage -uc -us -rfakeroot -D --svn-prebuild='ln -stf ../tarballs/ ../qof/*.tar.gz'
+	(This contains the marked debian directory, a tarballs dir and the build-area)
+1. Copy the result of 'make dist' into ../tarballs as qof_${version}.orig.tar.gz
+2. svn-buildpackage -uc -us -rfakeroot
+
+OR:
+svn co svn://svn.debian.org/svn/qof/trunk/debian/
+cd trunk
+svn-buildpackage -rfakeroot -D --svn-builder debuild --svn-prebuild='cp ../../${package}/${package}-${upstream_version}.tar.gz ../tarballs/${package}_${upstream_version}.orig.tar.gz'
+
+I use an alias:
+alias svn-upstream="svn-buildpackage -rfakeroot -D --svn-noautodch --svn-builder debuild --svn-prebuild='cp ../../${package}/${package}-${upstream_version}.tar.gz ../tarballs/${package}_${upstream_version}.orig.tar.gz'"
+
+SVN layout:
+qof/trunk/debian/trunk/debian/rules
+qof/trunk/debian/trunk/build-area/
+qof/trunk/configure
+
+The extra trunk/debian/ isolates the mergewithUpstream behaviour of
+svn-buildpackage from the upstream source - otherwise, the build fails
+because the upstream source is copied over the unpacked .orig.tar.gz
+
+Hopefully, debcheckout will sort all that out.
 
 re-written by Neil Williams
 April 2008
