@@ -29,7 +29,7 @@ Debian support
 
 0. Check out the debian data: svn co svn://svn.debian.org/svn/qof/trunk/debian/
 1. Create ../tarballs/ and copy the result of 'make dist' into ../tarballs
-2. svn-buildpackage -uc -us -rfakeroot -D --svn-noautodch --svn-builder debuild
+2. svn-buildpackage -uc -us -rfakeroot -D --svn-prebuild='ln -stf ../tarballs/ ../qof/*.tar.gz'
 
 re-written by Neil Williams
 April 2008
