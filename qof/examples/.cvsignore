@@ -1,8 +1,0 @@
-.deps
-.libs
-Makefile
-Makefile.in
-query-example
-sql-example
-test-qsf
-test-book-merge
