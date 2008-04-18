@@ -21,17 +21,24 @@
  * 51 Franklin Street, Fifth Floor    Fax:    +1-617-542-2652       *
  * Boston, MA  02110-1301,  USA       gnu@gnu.org                   *
 \********************************************************************/
+/** @addtogroup Backend
+    @{ */
+/** @addtogroup DWI Data with Integration backend support.
+
+  A QofMap defines how the properties of a QOF Object are mapped
+ to an SQL table.  The QofMap is used store specific Qof Instances
+ as SQL records, and vice-versa: create Qof Instances from SQL
+ records.  The QofMap API consists of two parts: a set of routines
+ used to define the map itself, and a second set of routines to 
+ use that map in various ways.
+
+	@{ */
 /**
- *  @file qofmap.h
- *  Prototype for a new QOF DWI backend .... under development.
- *
- * A QofMap defines how the properties of a QOF Object are mapped
- * to an SQL table.  The QofMap is used store specific Qof Instances
- * as SQL records, and vice-versa: create Qof Instances from SQL
- * records.  The QofMap API consists of two parts: a set of routines
- * used to define the map itself, and a second set of routines to 
- * use that map in various ways.
- */
+	@file qofmap.h
+	@brief  Prototype for a new QOF DWI backend .... under development.
+	@author Copyright 2004 Linas Vepstas <linas@linas.org>
+	@author Copyright 2006 Neil Williams <linux@codehelp.co.uk>
+*/
 
 #ifndef QOF_MAP_H_
 #define QOF_MAP_H_
@@ -44,7 +51,7 @@
 typedef struct QofMap_s QofMap;
 
 /** Arguments: name of entity (entity type) and SQL table name */
-QofMap * qof_map_new (const char *etype, const char *tabname);
+QofMap * qof_map_new (const gchar *etype, const gchar *tabname);
 
 /** @{
  *  Routines to define a QofMap
@@ -53,19 +60,22 @@ QofMap * qof_map_new (const char *etype, const char *tabname);
     name. These will be linked so that the one is stored into the other
     when the object is sync to the database.
  */
-void qof_map_add_field (QofMap *qm, const char *fieldname, const char * property);
+void
+qof_map_add_field (QofMap *qm, const gchar *fieldname, const gchar * property);
 
 /** Add a term that uniquely identifies the QOF Object & SQL record.
  * This will be the GUID (that is all that is supported at this time).
  */
-void qof_map_add_match (QofMap *qm, const char *fieldname, const char * property);
+void
+qof_map_add_match (QofMap *qm, const gchar *fieldname, const gchar * property);
 
 /** Add a term that indicates the version of the QOF Object/SQL record.
  *  This is used to determine whether the object in local memory is newer
  *  or older than the corresponding record in the database.  Currently,
  *  the only supported type of the version field is a date-time stamp.
  */
-void qof_map_add_version_cmp (QofMap *qm, const char *fieldname, const char * property);
+void
+qof_map_add_version_cmp (QofMap *qm, const gchar *fieldname, const gchar * property);
 
 /** @} */
 
@@ -85,7 +95,7 @@ void qof_map_copy_from_db (QofMap *qm, const GUID *guid);
  *  or more records holding QOF objects.  Find or create the 
  *  the corresponding QOF objects.
  */
-void qof_map_copy_multiple_from_db (QofMap *qm, const char * sql_stmt);
+void qof_map_copy_multiple_from_db (QofMap *qm, const gchar * sql_stmt);
 
 /** 'Copy' a QOF Entity from local memory to the SQL database.
  *  Pass in the Guid of the entity that is to be saved to SQL.
@@ -94,7 +104,7 @@ void qof_map_copy_multiple_from_db (QofMap *qm, const char * sql_stmt);
  *  perform any table locking or version checking, and is thus
  *  rather 'raw' and unsafe to use without the proper locking.
  */
-void qof_map_copy_to_db(QofMap *qm, const GUID *guid, const char * how);
+void qof_map_copy_to_db(QofMap *qm, const GUID *guid, const gchar * how);
 
 /** 'Copy' a QOF Instance from local memory to the SQL database.
  *  The routine will insert or update the indicated instance in the
@@ -116,6 +126,9 @@ void qof_map_copy_to_db(QofMap *qm, const GUID *guid, const char * how);
  *     unlock table;
  */
                                                                                    
-int qof_map_write_to_db (QofMap *qm, QofInstance *inst);
+gint qof_map_write_to_db (QofMap *qm, QofInstance *inst);
+
+/** @} */
+/** @} */
 
 #endif /* QOF_MAP_H_ */

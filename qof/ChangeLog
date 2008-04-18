@@ -1,3 +1,16 @@
+2008-04-18  Neil Williams  <linux@codehelp.co.uk>
+
+	* backend/dwi/dwi-backend.c (dwiend_load_foundation),
+	(dwiend_run_query), (dwiend_compile_query), (dwiend_session_begin):
+	* backend/dwi/qofmap.c (qof_map_new), (qof_map_destroy),
+	(qof_map_add_field), (qof_map_add_match),
+	(qof_map_add_version_cmp), (qof_map_copy_multiple_from_db),
+	(qof_map_copy_from_db), (qof_map_copy_to_db),
+	(qof_map_write_to_db):
+	* backend/dwi/qofmap.h: Add doxygen support.
+	Standardise on GLib data types like the rest of QOF.
+	* doc/doxygen.cfg.in: Add DWI to the Doxygen output.
+
 2008-04-17  Neil Williams  <linux@codehelp.co.uk>
 
 	* README.cvs, README.svn: Add content for debian builds.

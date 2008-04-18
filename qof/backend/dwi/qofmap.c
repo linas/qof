@@ -21,9 +21,9 @@
  * 51 Franklin Street, Fifth Floor    Fax:    +1-617-542-2652       *
  * Boston, MA  02110-1301,  USA       gnu@gnu.org                   *
 \********************************************************************/
-/*
+/**
  *  @file qofmap.c
- *  Prototype for a new QOF DWI backend .... under development.
+ *  @brief Prototype for a new QOF DWI backend .... under development.
  *
  * Basic parsing works basic, copyin, copyout works.
  */
@@ -45,8 +45,8 @@ static QofLogModule log_module = DWI_BACKEND;
 
 struct QofMap_s
 {
-	char   *entity_type;        /**< instance type */
-	char   *table_name;         /**< SQL table name */
+	gchar   *entity_type;        /**< instance type */
+	gchar   *table_name;         /**< SQL table name */
 
 	/** The 'txnquery' will be used when writing to the database,
 	 * we use it to construct the SQL for us, such as INSERT INTO 
@@ -64,8 +64,8 @@ struct QofMap_s
 	 * These will always be GUID's on the object side.  We use
 	 * the match_fieldname to store teh name of the SQL field that
 	 * holds the GUID. */
-	char   *match_fieldname;
-	char   *match_property;
+	gchar   *match_fieldname;
+	gchar   *match_property;
 	DuiFieldMap  *goto_db_sqlmatch;
 	DuiFieldMap  *goto_db_qofmatch;
 	DuiFieldMap  *from_db_qofmatch;
@@ -84,11 +84,11 @@ struct QofMap_s
 /* ============================================================== */
 
 QofMap *
-qof_map_new (const char *etype, const char *tabname)
+qof_map_new (const gchar *etype, const gchar *tabname)
 {
 	QofMap *qm;
 
-	if (!etype || !tabname) return NULL;
+	g_return_val_if_fail (etype && tabname, NULL);
 
 	qm = g_new0 (QofMap, 1);
 	qm->entity_type = g_strdup (etype);
@@ -118,7 +118,7 @@ qof_map_new (const char *etype, const char *tabname)
 void 
 qof_map_destroy (QofMap *qm)
 {
-	if (!qm) return;
+	g_return_if_fail (qm);
 
 	if (qm->entity_type) g_free (qm->entity_type);
 	if (qm->table_name) g_free (qm->table_name);
@@ -142,7 +142,7 @@ qof_map_destroy (QofMap *qm)
 /* ============================================================== */
 
 void
-qof_map_add_field (QofMap *qm, const char *fieldname, const char * property)
+qof_map_add_field (QofMap *qm, const gchar *fieldname, const gchar * property)
 {
 	/* Create bi-drectional set of maps */
 	DuiFieldMap *from_db_fm = dui_field_map_new();
@@ -161,9 +161,9 @@ qof_map_add_field (QofMap *qm, const char *fieldname, const char * property)
 /* ============================================================== */
 
 void
-qof_map_add_match (QofMap *qm, const char *fieldname, const char * property)
+qof_map_add_match (QofMap *qm, const gchar *fieldname, const gchar * property)
 {
-	if (!qm || !fieldname) return;
+	g_return_if_fail (qm && fieldname);
 
 	if (NULL != qm->goto_db_sqlmatch)
 	{
@@ -199,9 +199,9 @@ qof_map_add_match (QofMap *qm, const char *fieldname, const char * property)
 /* ============================================================== */
 
 void
-qof_map_add_version_cmp (QofMap *qm, const char *fieldname, const char * property)
+qof_map_add_version_cmp (QofMap *qm, const gchar *fieldname, const gchar * property)
 {
-	if (!qm || !fieldname) return;
+	g_return_if_fail (qm && fieldname);
 
 	/* XXX At this time, this behaves just like an ordinary field ... */
 	qof_map_add_field (qm, fieldname, property);
@@ -243,7 +243,7 @@ qof_map_set_database (QofMap *qm, DuiDatabase *db)
  * matching QOF objects. */
 
 void
-qof_map_copy_multiple_from_db (QofMap *qmap, const char * sql_stmt)
+qof_map_copy_multiple_from_db (QofMap *qmap, const gchar * sql_stmt)
 {
 	if (!qmap || !sql_stmt || 0==sql_stmt[0]) return;
 
@@ -281,18 +281,18 @@ qof_map_copy_multiple_from_db (QofMap *qmap, const char * sql_stmt)
 void
 qof_map_copy_from_db (QofMap *qmap, const GUID *guid)
 {
-	if (!qmap || !guid) return;
+	g_return_if_fail (qmap && guid);
 
 	if (NULL == qmap->from_db_qofmatch)
 	{
 		PERR ("No match term specified, can't copy");
 		return;
 	}
-
-	char guidstr[GUID_ENCODING_LENGTH+1];
+	/** \bug Replace this static GUID buffer! */
+	gchar guidstr[GUID_ENCODING_LENGTH+1];
 	guid_to_string_buff (guid, guidstr);
 
-	char * query = g_strdup_printf (
+	gchar * query = g_strdup_printf (
 	                    "SELECT * FROM %s WHERE %s=\'%s\';",
 	                    qmap->table_name, 
 	                    qmap->match_fieldname, 
@@ -326,9 +326,9 @@ qof_map_copy_from_db (QofMap *qmap, const GUID *guid)
  * Pass in the Guid of the entity that is to be saved to SQL.
  */
 void 
-qof_map_copy_to_db(QofMap *qmap, const GUID *guid, const char *how)
+qof_map_copy_to_db(QofMap *qmap, const GUID *guid, const gchar *how)
 {
-	if (!qmap || !guid) return;
+	g_return_if_fail (qmap && guid);
 
 	if (NULL == qmap->goto_db_qofmatch)
 	{
@@ -337,8 +337,8 @@ qof_map_copy_to_db(QofMap *qmap, const GUID *guid, const char *how)
 	}
 	/* 'how' should be either "insert" or "update" */
 	dui_txnquery_set_querytype (qmap->goto_db, how);
-
-	char buff[GUID_ENCODING_LENGTH+1];
+	/** \bug Replace this static GUID buffer! */
+	gchar buff[GUID_ENCODING_LENGTH+1];
 	guid_to_string_buff (guid, buff);
 
 	/* We use the GUID as our primary key for all lookups/matches */
@@ -369,11 +369,11 @@ else
 unlock table
 */
 
-int
+gint
 qof_map_write_to_db (QofMap *qm, QofInstance *inst)
 {
-	int retval = 0;
-	if (!inst) return 0;
+	gint retval = 0;
+	g_return_val_if_fail (inst, 0);
 
 	GUID *guid = &QOF_ENTITY(inst)->guid;
 
@@ -421,7 +421,7 @@ qof_map_write_to_db (QofMap *qm, QofInstance *inst)
 		}
 		else
 		{
-printf ("duude rollback\n");
+			PINFO ("duude rollback\n");
 			retval = 1;
 		}
 	}

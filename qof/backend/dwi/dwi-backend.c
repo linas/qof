@@ -42,21 +42,21 @@ static void
 dwiend_load_foundation (QofBackend *qbe,  QofBook *book)
 {
 	DwiBackend *be = (DwiBackend *) qbe;
-	printf ("load foundation %p\n", be);
+	PINFO ("load foundation %p\n", be);
 }
 
 static void
 dwiend_run_query (QofBackend *qbe, gpointer qry)
 {
 	DwiBackend *be = (DwiBackend *) qbe;
-	printf ("giddy yap %p run query %p\n", be, qry);
+	PINFO ("giddy yap %p run query %p\n", be, qry);
 }
 
 gpointer 
 dwiend_compile_query (QofBackend *qbe, QofQuery *qry)
 {
 	DwiBackend *be = (DwiBackend *) qbe;
-	printf ("howdy partner %p compile query\n", be);
+	PINFO ("howdy partner %p compile query\n", be);
 	return (gpointer)0x1234;
 }
 
@@ -65,13 +65,13 @@ dwiend_compile_query (QofBackend *qbe, QofQuery *qry)
 static void
 dwiend_session_begin (QofBackend *qbe,
                       QofSession *session,
-                      const char *book_id,
+                      const gchar *book_id,
                       gboolean ignore_lock,
                       gboolean create_if_nonexistent)
 {
 	DwiBackend *be = (DwiBackend *) qbe;
 
-	printf ("duude ses start wi/ id=%s\n", book_id);
+	PINFO ("duude ses start wi/ id=%s\n", book_id);
 
 	be->db = dui_database_new ("my db object",
 	                          // "libdbi", "my-qof-db",

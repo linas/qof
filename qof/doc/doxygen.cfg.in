@@ -464,9 +464,7 @@ WARN_LOGFILE           = doxygen.log
 
 INPUT                  = . \
                          ../qof \
-                         ../backend/file \
-                         ../backend/gda \
-                         ../backend/sqlite
+                         ../backend/
 
 # This tag can be used to specify the character encoding of the source files that 
 # doxygen parses. Internally doxygen uses the UTF-8 encoding, which is also the default 
