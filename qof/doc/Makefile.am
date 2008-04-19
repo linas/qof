@@ -41,4 +41,4 @@ endif
 
 clean-local:
 	${RM} doxygen.log
-	if test -h ../website/doxy; then rm ../website/doxy; fi
+

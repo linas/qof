@@ -63,7 +63,7 @@ Version 1.2 or any later version published by the Free Software
 Foundation; with no Invariant Sections, with no Front-Cover Texts,
 and with no Back-Cover Texts.
 A copy of this license is available at
-http://qof.sourceforge.net/copying.txt or installed alongside
+http://qof.alioth.debian.org/copying.txt or installed alongside
 this documentation in the &quot;copyright&quot; file.
 
 */
