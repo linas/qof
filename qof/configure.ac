@@ -286,46 +286,46 @@ AC_SUBST(GDA_PKG_LIB)
 AC_SUBST(SQL_PKG_LIB)
 
 dnl # **************************************************************
-dnl # DWI is not fully supported.
-dnl # The DWI code is still packaged for now
+dnl # DWI is now 'estron'
 dnl # **************************************************************
 
-dwi="no"
-AC_ARG_ENABLE(dwibackend,
-  [  --enable-dwibackend     Enable the DWI backend module. (off)],
+estron="no"
+AC_ARG_ENABLE(estron,
+  [  --enable-estron         Enable the Estron support. (off)],
   [case "${enableval}" in
-  		no) dwi="no" ;;
-		yes) dwi="yes" ;;
-		*) AC_MSG_ERROR(bad value ${enableval} for --enable-dwibackend) ;;
+  		no) estron="no" ;;
+		yes) estron="yes" ;;
+		*) AC_MSG_ERROR(bad value ${enableval} for --enable-estron) ;;
 		esac])
 
-AC_ARG_WITH(dwi,
-   [  --with-dwi=path         prefix for Data With Integration - DWI (off)])
-
-DWI_QUIET="--silence-errors"
-DWI_PC_PATH="lib/pkgconfig/dwi-0.pc"
-AC_MSG_CHECKING([for DWI - version >= $DWI_REQUIRED])
+AC_ARG_WITH(estron,
+   [  --with-estron=path      prefix for Data With Integration - Estron (off)])
+ESTRON_REQ=0.6.2
+ESTRON_Q="--silence-errors"
+ESTRON_PC_PATH="lib/pkgconfig/estron.pc"
+AC_MSG_CHECKING([for estron >= $ESTRON_REQ])
 if test x"$withval" != x; then
-	if test "$dwi" = "yes"; then
-		DWI=`$PKG_CONFIG $DWI_QUIET --exists '$withval/$DWI_PC_PATH >= $DWI_REQUIRED'`
-		DWI_LIBS=`$PKG_CONFIG $DWI_QUIET --libs $withval/$DWI_PC_PATH`
-		DWI_CFLAGS=`$PKG_CONFIG $DWI_QUIET --cflags $withval/$DWI_PC_PATH`
-		DWI_VERSION=`$PKG_CONFIG $DWI_QUIET --modversion $withval/$DWI_PC_PATH`
-		DWI_PREFIX=`$PKG_CONFIG $DWI_QUIET --variable=prefix $withval/$DWI_PC_PATH`
-		DWI_LIB_DIR=`$PKG_CONFIG $DWI_QUIET --variable=libdir $withval/$DWI_PC_PATH`
+	if test "$estron" = "yes"; then
+		ESTRON=`$PKG_CONFIG $ESTRON_Q --exists '$withval/$ESTRON_PC_PATH >= $ESTRON_REQ'`
+		ESTRON_LIBS=`$PKG_CONFIG $ESTRON_Q --libs $withval/$ESTRON_PC_PATH`
+		ESTRON_CFLAGS=`$PKG_CONFIG $ESTRON_Q --cflags $withval/$ESTRON_PC_PATH`
+		ESTRON_VERSION=`$PKG_CONFIG $ESTRON_Q --modversion $withval/$ESTRON_PC_PATH`
+		AC_MSG_RESULT([yes, using estron: ${ESTRON_VERSION}])
 	fi
 fi
 if test x"$withval" = x; then
-	if test "$dwi" = "yes"; then
-		DWI_REQUIRED=0.6.2
-		PKG_CHECK_MODULES(DWI, dwi >= $DWI_REQUIRED)
-		AC_SUBST(DWI_LIBS)
-		AC_SUBST(DWI_CFLAGS)
-		backend3="dwi"
+	if test "$estron" = "yes"; then
+		PKG_CHECK_MODULES(ESTRON, estron >= $ESTRON_REQ)
+		AC_SUBST(ESTRON_LIBS)
+		AC_SUBST(ESTRON_CFLAGS)
+		ESTRON_VERSION=`$PKG_CONFIG --modversion estron`
+		AC_SUBST(ESTRON_VERSION)
+		AC_MSG_RESULT([yes, using estron: ${ESTRON_VERSION}])
+		backend3="estron"
 	fi
 fi
 
-AM_CONDITIONAL(USE_DWI, [test "$dwi" = "yes"])
+AM_CONDITIONAL(USE_ESTRON, [test "$estron" = "yes"])
 
 dnl # =========================
 dnl # Perl - no longer needed
@@ -461,7 +461,7 @@ Makefile
 backend/Makefile
 backend/file/Makefile
 backend/gda/Makefile
-backend/dwi/Makefile
+backend/estron/Makefile
 backend/file/qsf-dir.h
 backend/sqlite/Makefile
 doc/Makefile
@@ -489,7 +489,7 @@ echo "CFLAGS      :   $warnFLAGS"
 echo "LDFLAGS     :   $LDFLAGS"
 echo "QOF_CFLAGS  :   "`eval echo $QOF_CFLAGS`
 echo "QOF_LIBS    :   $QOF_LIBS"
-echo "DWI_LIBS    :   $DWI_LIBS"
+echo "ESTRON_LIBS :   $ESTRON_LIBS"
 echo "1st backend :   $backend"
 echo "2nd backend :   $backend2"
 echo "GDA backend :   $backend3"
