@@ -22,7 +22,7 @@
  * Boston, MA  02110-1301,  USA       gnu@gnu.org                   *
 \********************************************************************/
 
-#include <dwi/database.h>
+#include <estron.h>
 #include <qof.h>
 #include "qofmap.h"
 

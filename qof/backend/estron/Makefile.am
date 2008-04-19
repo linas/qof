@@ -6,7 +6,7 @@ libqof_backend_dwi_la_LDFLAGS= \
  -avoid-version -module
 
 libqof_backend_dwi_la_LIBADD= \
-  $(DWI_LIBS) \
+  $(ESTRON_LIBS) \
   ${QOF_LIBS} \
   ${GLIB_LIBS}
 
@@ -26,4 +26,4 @@ AM_CFLAGS =  \
  -I${top_srcdir}/qof/ \
  -DLOCALE_DIR=\""$(datadir)/locale"\" \
  ${GLIB_CFLAGS} \
- ${DWI_CFLAGS}
+ ${ESTRON_CFLAGS}

@@ -37,7 +37,7 @@
 #define QOF_MAP_H_
 
 #include <qof.h>
-#include <dwi/database.h>
+#include <estron.h>
 
 #define DWI_BACKEND "dwi-backend-module"
 
