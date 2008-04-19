@@ -353,7 +353,7 @@ qof_entity_foreach_copy (gpointer data, gpointer user_data)
 		void (*time_setter) (QofEntity *, QofTime *);
 
 		qt = cm_param->param_getfcn (importEnt, cm_param);
-		time_setter = 
+		time_setter =
 			(void (*)(QofEntity *, QofTime*))cm_param->param_setfcn;
 		if (time_setter != NULL)
 		{
@@ -931,8 +931,8 @@ struct backend_providers backend_list[] = {
 #ifdef HAVE_GDA
 	{QOF_LIB_DIR, "libqof-backend-gda", "qof_gda_provider_init"},
 #endif
-#ifdef HAVE_DWI
-	{QOF_LIB_DIR, "libqof_backend_dwi", "dwiend_provider_init"},
+#ifdef HAVE_ESTRON
+	{QOF_LIB_DIR, "libqof_backend_estron", "dwiend_provider_init"},
 #endif
 	{NULL, NULL, NULL}
 };
@@ -1064,8 +1064,8 @@ qof_session_begin (QofSession * session, const gchar *book_id,
 	/* destroy the old backend */
 	qof_session_destroy_backend (session);
 
-	/* Look for something of the form of "file:/", "http://" or 
-	 * "postgres://". Everything before the colon is the access 
+	/* Look for something of the form of "file:/", "http://" or
+	 * "postgres://". Everything before the colon is the access
 	 * method.  Load the first backend found for that access method.
 	 */
 	p = strchr (book_id, ':');
@@ -1137,13 +1137,13 @@ qof_session_load (QofSession * session, QofPercentageFunc percentage_func)
 	ENTER (" sess=%p book_id=%s", session, session->book_id
 		? session->book_id : "(null)");
 
-	/* At this point, we should are supposed to have a valid book 
+	/* At this point, we should are supposed to have a valid book
 	 * id and a lock on the file. */
 
 	oldbooks = session->books;
 
 	/* XXX why are we creating a book here? I think the books
-	 * need to be handled by the backend ... especially since 
+	 * need to be handled by the backend ... especially since
 	 * the backend may need to load multiple books ... XXX. FIXME.
 	 */
 	newbook = qof_book_new ();
@@ -1217,7 +1217,7 @@ qof_session_save_may_clobber_data (QofSession * session)
 }
 
 void
-qof_session_save (QofSession * session, 
+qof_session_save (QofSession * session,
 				  QofPercentageFunc percentage_func)
 {
 	GList *node;
@@ -1281,7 +1281,7 @@ qof_session_save (QofSession * session,
 			if (TRUE == prov->partial_book_supported)
 			{
 			/** \todo check the access_method too, not in scope here, yet. */
-				/*  if((TRUE == prov->partial_book_supported) && 
+				/*  if((TRUE == prov->partial_book_supported) &&
 				   (0 == strcasecmp (access_method, prov->access_method)))
 				   { */
 				if (NULL == prov->backend_new)
@@ -1325,16 +1325,16 @@ qof_session_save (QofSession * session,
 		{
 			msg = g_strdup_printf (" failed to load backend");
 			qof_error_set (session, qof_error_register
-			(_("Failed to load backend, no suitable handler."), 
+			(_("Failed to load backend, no suitable handler."),
 			FALSE));
 			return;
 		}
 	}
 	/* If there is a backend, and the backend is reachable
-	 * (i.e. we can communicate with it), then synchronize with 
+	 * (i.e. we can communicate with it), then synchronize with
 	 * the backend.  If we cannot contact the backend (e.g.
 	 * because we've gone offline, the network has crashed, etc.)
-	 * then give the user the option to save to the local disk. 
+	 * then give the user the option to save to the local disk.
 	 *
 	 * hack alert -- FIXME -- XXX the code below no longer
 	 * does what the words above say.  This needs fixing.
@@ -1351,7 +1351,7 @@ qof_session_save (QofSession * session,
 			if (be->sync)
 				(be->sync) (be, abook);
 		}
-		/* If we got to here, then the backend saved everything 
+		/* If we got to here, then the backend saved everything
 		 * just fine, and we are done. So return. */
 		/* Return the book_id to previous value. */
 		qof_error_clear (session);
@@ -1362,7 +1362,7 @@ qof_session_save (QofSession * session,
 	{
 		msg = g_strdup_printf (" failed to load backend");
 		qof_error_set (session, qof_error_register
-			(_("Failed to load backend, no suitable handler."), 
+			(_("Failed to load backend, no suitable handler."),
 			FALSE));
 	}
 	LEAVE (" error -- No backend!");
