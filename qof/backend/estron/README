@@ -1,0 +1,4 @@
+DWI is now unsupported in QOF. Development of DWI
+stalled some time ago and it has not been tested
+with any release of libqof1. DWI code in QOF will
+be removed from CVS in time for libqof2.
