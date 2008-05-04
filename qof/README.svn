@@ -41,10 +41,6 @@ OR:
 
 2. svn-buildpackage -rfakeroot -D --svn-builder debuild
 
-OR, if you checkout the entire tree and build QOF yourself,
-use an alias:
-alias svn-upstream="svn-buildpackage -rfakeroot -D --svn-noautodch --svn-builder debuild --svn-prebuild='cp ../../${package}/${package}-${upstream_version}.tar.gz ../tarballs/${package}_${upstream_version}.orig.tar.gz'"
-
 svn co svn://svn.debian.org/svn/qof/trunk/
 cd trunk/qof/
 ./autogen.sh
@@ -53,7 +49,6 @@ make
 make check
 make dist
 cd ../debian/trunk/
-svn-upstream
 
 SVN layout:
 qof/trunk/debian/trunk/debian/rules
