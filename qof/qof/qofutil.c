@@ -508,6 +508,12 @@ qof_util_param_to_string (QofEntity * ent, const QofParam * param)
 			param_string = g_strdup_printf ("%s(%d)", QOF_TYPE_KVP,
 				g_hash_table_size (hash));
 		}
+		/* ensure a newly allocated string is returned, even
+		if the frame is empty. */
+		else
+		{
+			param_string = g_strdup("");
+		}
 		return param_string;
 	}
 	if (safe_strcmp (paramType, QOF_TYPE_CHAR) == 0)
