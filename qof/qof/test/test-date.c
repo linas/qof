@@ -933,13 +933,75 @@ run_print_scan_tests (void)
 	scan_and_stamp ("0043-05-20 14:00:00 +0000", df, 
 		G_GINT64_CONSTANT (-60798160800));
 	{
-		QofDate *qd;
-		QofTime *qt;
+		QofDate *qd, *qd1, *qd2;
+		QofTime *qt, *copy;
 		gint64 secs;
+		gchar * str1, * str2;
 
 		qt = qof_time_new ();
 		/* Tue May  9 14:50:10 UTC 2006 */
 		qof_time_set_secs (qt, 1147186210);
+		copy = qof_time_copy (qt);
+		do_test ((copy != NULL), "copy time NULL");
+		qd1 = qof_date_from_qtime(qt);
+		qd2 = qof_date_from_qtime(copy);
+		str1 = g_strdup_printf ("%s\n", qof_date_print(qd1, QOF_DATE_FORMAT_CUSTOM));
+		str2 = g_strdup_printf ("%s\n", qof_date_print(qd2, QOF_DATE_FORMAT_CUSTOM));
+		do_test ((safe_strcmp(str1, str2) == 0), "copied time fails to match original");
+		g_free (str1);
+		g_free (str2);
+		do_test ((qof_time_is_valid(qt) == TRUE), "qt time invalid");
+		do_test ((qof_time_is_valid(copy) == TRUE), "copy time invalid");
+		do_test ((qof_time_equal(qt, copy) == TRUE), "copy time not equal");
+
+		/* test %s and %N as well as %s.%N */
+		{
+			gint id, id1, id2;
+			gchar * str;
+			QofDate * qd_s, * qd_a;
+			QofTime * qt_s;
+			gint64 secs = qof_time_get_secs (qt);
+			gint64 nsecs = qof_time_get_nanosecs (qt) + 
+				get_random_int_in_range(0, 999999);
+
+			qt_s = qof_time_copy (qt);
+			qd_s = qof_date_from_qtime (qt_s);
+			qof_date_format_add ("%s", &id);
+			id1 = id;
+			do_test ((id > 0), "add seconds only custom format");
+			qd_s = qof_date_from_qtime(qt_s);
+			str = qof_date_print (qd_s, id);
+			qd_a = qof_date_parse (str, id);
+			str = qof_date_print (qd_a, QOF_DATE_FORMAT_UTC);
+			str = qof_date_print (qd_a, id);
+			qt_s = qof_date_to_qtime (qd_a);
+			do_test (secs == qof_time_get_secs (qt_s), "second parsing failed");
+			
+			qt_s = qof_time_copy (qt);
+			qof_time_set_nanosecs (qt_s, nsecs);
+			qd_s = qof_date_from_qtime (qt_s);
+			qof_date_format_add ("%N", &id);
+			id2 = id;
+			do_test ((id > id1), "add nanoseconds only custom format");
+			qd_s = qof_date_from_qtime(qt_s);
+			str = qof_date_print (qd_s, id);
+			qd_s = qof_date_parse (str, id);
+			qt_s = qof_date_to_qtime (qd_s);
+			do_test (nsecs == qof_time_get_nanosecs (qt_s), "nanosecond parsing failed");
+	
+			qof_date_format_add ("%s.%N", &id);
+			do_test ((id > id2), "add sec+nanosec custom format");
+			qof_time_free (qt_s);
+			qt_s = qof_time_new ();
+			qof_time_set_secs (qt_s, secs);
+			qof_time_set_nanosecs (qt_s, nsecs);
+			qd_s = qof_date_from_qtime(qt_s);
+			str = qof_date_print (qd_s, id);
+			qd_s = qof_date_parse (str, id);
+			qt_s = qof_date_to_qtime (qd_s);
+			do_test (nsecs == qof_time_get_nanosecs (qt_s), "s.N - nanosecs failed");
+			do_test (secs == qof_time_get_secs (qt_s), "s.N - seconds failed");
+		}
 		qd = qof_date_from_qtime (qt);
 		do_test ((qof_date_adddays (qd, 45) == TRUE),
 				 "add_days failed");
@@ -1024,7 +1086,7 @@ run_qofdate_test (void)
 		date->qd_year = 2000;
 		do_test ((qof_date_valid (date) == TRUE), "date 1 was invalid");
 		do_test ((date->qd_sec == 30), "normalised seconds incorrect - 1");
-		do_test ((date->qd_mday == 2), "normalised day incorrect - 1");
+		do_test ((date->qd_mday == 3), "normalised day incorrect - 1");
 		date->qd_mday = 54;
 		do_test ((qof_date_valid (date) == TRUE), "date 2 was invalid");
 		do_test ((date->qd_sec == 30), "normalised seconds incorrect - 2");

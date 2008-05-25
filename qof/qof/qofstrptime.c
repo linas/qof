@@ -368,12 +368,10 @@ strptime_internal (const gchar * rp, const gchar * fmt,
 				{
 					secs *= 10;
 					secs += *rp++ - '0';
-				}
-				while (*rp >= '0' && *rp <= '9');
-				/** \todo implement a test for %s */
+				} while (*rp >= '0' && *rp <= '9');
 				qd->qd_sec = secs;
-				if (!qof_date_valid (qd))
-					return NULL;
+				/* 's' is an epoch format */
+				qd->qd_year = 1970;
 			}
 			break;
 		case 'S':

@@ -411,9 +411,10 @@ qof_date_format_from_name (const gchar * name)
 static QofDate*
 date_normalise (QofDate * date)
 {
-	gint days;
+	gint days, leap;
 
 	g_return_val_if_fail (date, NULL);
+
 	date->qd_sec -= date->qd_gmt_off;
 	/* if value is negative, just add */
 	if ((date->qd_nanosecs >= QOF_NSECS) || 
@@ -447,6 +448,15 @@ date_normalise (QofDate * date)
 			date->qd_hour--;
 		}
 	}
+	/* Year Zero does not exist, 1BC is immediately followed by 1AD. */
+	if (date->qd_year == 0)
+		date->qd_year = -1;
+	/* qd_mon starts at 1, not zero */
+	if (date->qd_mon == 0)
+		date->qd_mon = 1;
+	/* qd_mday starts at 1, not zero */
+	if (date->qd_mday == 0)
+		date->qd_mday = 1;
 	if ((date->qd_hour >= 24) || (date->qd_hour <= -24))
 	{
 		date->qd_mday += date->qd_hour / 24;
@@ -457,10 +467,29 @@ date_normalise (QofDate * date)
 			date->qd_mday--;
 		}
 	}
+	/* yes, [13] is correct == total at end of month_12 */
+	leap = days_in_year[qof_date_isleap(date->qd_year)][13];
+	while (date->qd_mday > leap)
+	{
+		date->qd_year++;
+		leap = days_in_year[qof_date_isleap(date->qd_year)][13];
+		date->qd_mday -= leap;
+	}
+	while (date->qd_mday < (leap*-1))
+	{
+		date->qd_year--;
+		leap = days_in_year[qof_date_isleap(date->qd_year)][13];
+		date->qd_mday += leap;
+	}
 	if ((date->qd_mon > 12) || (date->qd_mon < -12))
 	{
+		gint leap =  days_in_year[qof_date_isleap(date->qd_year)][13];
 		date->qd_year += date->qd_mon / 12;
 		date->qd_mon   = date->qd_mon % 12;
+		if (date->qd_mday > leap)
+			date->qd_mday -= leap;
+		if (date->qd_mday < (leap*-1))
+			date->qd_mday += leap;
 		if (date->qd_mon < 0)
 		{
 			/* -1 == Dec, -4 == Sep */
@@ -469,12 +498,6 @@ date_normalise (QofDate * date)
 				date->qd_year++ : date->qd_year--;
 		}
 	}
-	/* qd_mon starts at 1, not zero */
-	if (date->qd_mon == 0)
-		date->qd_mon = 1;
-	/* Year Zero does not exist, 1BC is immediately followed by 1AD. */
-	if (date->qd_year == 0)
-		date->qd_year = -1;
 	days = days_in_months[qof_date_isleap(date->qd_year)][date->qd_mon];
 	while (date->qd_mday < 0)
 	{
@@ -494,7 +517,7 @@ date_normalise (QofDate * date)
 	{
 		date->qd_mday -= days;
 		date->qd_mon++;
-		if (date->qd_mon > 12)
+		if (date->qd_mon > 11)
 		{
 			date->qd_year += date->qd_mon / 12;
 			date->qd_mon   = date->qd_mon % 12;
@@ -513,6 +536,7 @@ date_normalise (QofDate * date)
 	date->qd_yday = (date->qd_mday - 1) + 
 		days_in_year[qof_date_isleap(date->qd_year)][date->qd_mon];
 	set_day_of_the_week (date);
+
 	/* qd_year has no realistic limits */
 	date->qd_valid = TRUE;
 	date->qd_zone = "GMT";
@@ -539,6 +563,7 @@ qof_date_parse (const gchar * str, QofDateFormat df)
 		qof_date_free (date);
 		return NULL;
 	}
+
 	date = date_normalise (date);
 	return date;
 }
