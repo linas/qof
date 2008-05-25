@@ -286,46 +286,45 @@ AC_SUBST(GDA_PKG_LIB)
 AC_SUBST(SQL_PKG_LIB)
 
 dnl # **************************************************************
-dnl # DWI is now 'estron'
+dnl # DWI is now 'estron' - a dedicated backend
 dnl # **************************************************************
 
-estron="no"
-AC_ARG_ENABLE(estron,
-  [  --enable-estron         Enable the Estron support. (off)],
-  [case "${enableval}" in
-  		no) estron="no" ;;
-		yes) estron="yes" ;;
-		*) AC_MSG_ERROR(bad value ${enableval} for --enable-estron) ;;
-		esac])
+#estron="no"
+#AC_ARG_ENABLE(estron,
+#  [  --enable-estron         Enable the Estron support. (off)],
+#  [case "${enableval}" in
+#  		no) estron="no" ;;
+#		yes) estron="yes" ;;
+#		*) AC_MSG_ERROR(bad value ${enableval} for --enable-estron) ;;
+#		esac])
 
-AC_ARG_WITH(estron,
-   [  --with-estron=path      prefix for Data With Integration - Estron (off)])
-ESTRON_REQ=0.6.2
-ESTRON_Q="--silence-errors"
-ESTRON_PC_PATH="lib/pkgconfig/estron.pc"
-AC_MSG_CHECKING([for estron >= $ESTRON_REQ])
-if test x"$withval" != x; then
-	if test "$estron" = "yes"; then
-		ESTRON=`$PKG_CONFIG $ESTRON_Q --exists '$withval/$ESTRON_PC_PATH >= $ESTRON_REQ'`
-		ESTRON_LIBS=`$PKG_CONFIG $ESTRON_Q --libs $withval/$ESTRON_PC_PATH`
-		ESTRON_CFLAGS=`$PKG_CONFIG $ESTRON_Q --cflags $withval/$ESTRON_PC_PATH`
-		ESTRON_VERSION=`$PKG_CONFIG $ESTRON_Q --modversion $withval/$ESTRON_PC_PATH`
-		AC_MSG_RESULT([yes, using estron: ${ESTRON_VERSION}])
-	fi
-fi
-if test x"$withval" = x; then
-	if test "$estron" = "yes"; then
-		PKG_CHECK_MODULES(ESTRON, estron >= $ESTRON_REQ)
-		AC_SUBST(ESTRON_LIBS)
-		AC_SUBST(ESTRON_CFLAGS)
-		ESTRON_VERSION=`$PKG_CONFIG --modversion estron`
-		AC_SUBST(ESTRON_VERSION)
-		AC_MSG_RESULT([yes, using estron: ${ESTRON_VERSION}])
-		backend3="estron"
-	fi
-fi
-
-AM_CONDITIONAL(USE_ESTRON, [test "$estron" = "yes"])
+#AC_ARG_WITH(estron,
+#   [  --with-estron=path      prefix for Data With Integration - Estron (off)])
+#ESTRON_REQ=0.7.0
+#ESTRON_Q="--silence-errors"
+#ESTRON_PC_PATH="lib/pkgconfig/estron.pc"
+#AC_MSG_CHECKING([for estron >= $ESTRON_REQ])
+#if test x"$withval" != x; then
+#	if test "$estron" = "yes"; then
+#		ESTRON=`$PKG_CONFIG $ESTRON_Q --exists '$withval/$ESTRON_PC_PATH >= $ESTRON_REQ'`
+#		ESTRON_LIBS=`$PKG_CONFIG $ESTRON_Q --libs $withval/$ESTRON_PC_PATH`
+#		ESTRON_CFLAGS=`$PKG_CONFIG $ESTRON_Q --cflags $withval/$ESTRON_PC_PATH`
+#		ESTRON_VERSION=`$PKG_CONFIG $ESTRON_Q --modversion $withval/$ESTRON_PC_PATH`
+#		AC_MSG_RESULT([yes, using estron: ${ESTRON_VERSION}])
+#	fi
+#else
+#	if test "$estron" = "yes"; then
+#		PKG_CHECK_MODULES(ESTRON, estron >= $ESTRON_REQ)
+#		AC_SUBST(ESTRON_LIBS)
+#		AC_SUBST(ESTRON_CFLAGS)
+#		ESTRON_VERSION=`$PKG_CONFIG --modversion estron`
+#		AC_SUBST(ESTRON_VERSION)
+#		AC_MSG_RESULT([yes, using estron: ${ESTRON_VERSION}])
+#		backend3="estron"
+#	fi
+#fi
+#
+#AM_CONDITIONAL(USE_ESTRON, [test "$estron" = "yes"])
 
 dnl # =========================
 dnl # Perl - no longer needed
