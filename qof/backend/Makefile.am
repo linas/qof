@@ -11,11 +11,11 @@ endif
 XML=file
 endif
 
-if USE_ESTRON
-ESTRON=estron
-else
+#if USE_ESTRON
+#ESTRON=estron
+#else
 ESTRON=
-endif
+#endif
 
 if USE_GDABACKEND
 GDA=gda
@@ -25,4 +25,4 @@ endif
 
 SUBDIRS = $(XML) $(SQLITE) $(GDA) $(ESTRON)
 
-DIST_SUBDIRS = file sqlite gda estron
+DIST_SUBDIRS = file sqlite gda $(ESTRON)
