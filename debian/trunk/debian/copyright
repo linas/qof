@@ -54,7 +54,7 @@ Copyright: 2004   Linas Vepstas <linas@linas.org>
     51 Franklin Street, Fifth Floor    Fax:    +1-617-542-2652
     Boston, MA  02110-1301,  USA       gnu@gnu.org
 
-Files: *
+Files: doc/html/Makefile*, *
 Licence: GPL-2+
 Copyright: 1997-2004   Linas Vepstas  <linas@linas.org>
            1997        Robin D. Clark <rclark@cs.hmc.edu>
