@@ -4,10 +4,11 @@
 	better to package that from within estron itself.
 	* configure.ac: Skip estron detection - let estron depend
 	on QOF instead of both on each other.
-	* qof/qofdate.c (date_normalise), (qof_date_parse):
-	* qof/qofstrptime.c (strptime_internal):
-	* qof/test/test-date.c (run_print_scan_tests), (run_qofdate_test):
-	* qof/test/test-stuff.c (get_random_string_without):
+	* qof/qofdate.c (date_normalise), (qof_date_parse),
+	qof/qofstrptime.c (strptime_internal), qof/test/test-date.c 
+	(run_print_scan_tests), (run_qofdate_test) : Implement test
+	for date formats based on "%s" and fix resolution of epoch-seconds
+	into QofDate.
 
 2008-05-04  Neil Williams  <linux@codehelp.co.uk>
 
