@@ -460,7 +460,6 @@ Makefile
 backend/Makefile
 backend/file/Makefile
 backend/gda/Makefile
-backend/estron/Makefile
 backend/file/qsf-dir.h
 backend/sqlite/Makefile
 doc/Makefile
