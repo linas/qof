@@ -5,9 +5,10 @@ Maintainer: Neil Williams <codehelp@debian.org>
 Uploaders: Goedson Teixeira Paixao <goedson@debian.org>
 Build-Depends: autotools-dev, cdbs, debhelper (>= 5), dpkg-dev (>= 1.14),
  gettext, pkg-config,
- libglib2.0-dev (>= 2.6.0), libxml2-dev (>= 2.5.10), libgda3-dev, libsqlite0-dev
+ libglib2.0-dev (>= 2.6.0), libxml2-dev (>= 2.5.10), libgda3-dev, 
+ libsqlite0-dev
 Build-Depends-Indep: doxygen
-Standards-Version: 3.7.3
+Standards-Version: 3.8.0
 Homepage: http://alioth.debian.org/projects/qof/
 Vcs-Browser: http://svn.debian.org/viewsvn/qof/trunk/qof/
 Vcs-Svn: svn://svn.debian.org/svn/qof/trunk/debian/
@@ -32,7 +33,8 @@ Priority: optional
 Section: libdevel
 Architecture: any
 Recommends: libqof-doc
-Depends: libgda3-dev, libglib2.0-dev, libqof2 (= ${binary:Version}), ${misc:Depends}
+Depends: libgda3-dev, libglib2.0-dev, libqof2 (= ${binary:Version}),
+ ${misc:Depends}
 Description: Query Object Framework - Development Headers
  A framework to allow the execution of SQL-type queries
  using collections of in-memory objects as 'tables'.
@@ -113,3 +115,4 @@ Description: Query Object Framework - API Documentation
  This package provides the documentation of the QOF
  API produced using Doxygen in
  /usr/share/doc/libqof-doc/html/
+
