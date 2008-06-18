@@ -191,7 +191,7 @@ string_to_kvp_value (const gchar * content, KvpValueType type)
 }
 
 /** returns the VALUES for INSERT in pre-defined order */
-static void
+static G_GNUC_UNUSED void
 kvpvalue_to_sql (const gchar * key, KvpValue * val, gpointer builder)
 {
 	QSQLiteBackend *qsql_be;
