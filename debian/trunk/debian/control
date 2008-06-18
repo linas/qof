@@ -17,9 +17,8 @@ Package: libqof2
 Priority: optional
 Section: libs
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
+Depends: ${shlibs:Depends}, ${misc:Depends}, libqof-data
 Recommends: libqof2-backend-qsf | libqof2-backend-sqlite | libqof2-backend-gda
-Replaces: libqof1
 Conflicts: pilot-qof (<< 0.1.1-2)
 Description: Query Object Framework
  A framework to allow the execution of SQL-type queries
@@ -41,6 +40,16 @@ Description: Query Object Framework - Development Headers
  .
  This package provides the files needed to develop
  applications using QOF.
+
+Package: libqof-data
+Priority: optional
+Section: utils
+Architecture: any
+Description: Query Object Framework - translations
+ QOF is a framework to allow the exection of SQL-type
+ queries using collections of in-memory objects as 'tables'.
+ .
+ This package contains the translations of QOF messages.
 
 Package: libqof2-backend-qsf
 Priority: optional
