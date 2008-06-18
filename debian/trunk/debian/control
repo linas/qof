@@ -45,6 +45,7 @@ Package: libqof-data
 Priority: optional
 Section: utils
 Architecture: any
+Replaces: libqof1
 Description: Query Object Framework - translations
  QOF is a framework to allow the exection of SQL-type
  queries using collections of in-memory objects as 'tables'.

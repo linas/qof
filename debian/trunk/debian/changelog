@@ -19,8 +19,9 @@ qof (0.8.0-1) unstable; urgency=low
     Replaces: line in libqof2. (Policy 8.2). Brings QOF up to date with
     Standards Version 3.8.0. (libqof-data will disappear once TDebs are
     available in Debian.)
+  * libqof-data still needs Replaces: libqof1 anyway.
 
- -- Neil Williams <codehelp@debian.org>  Wed, 18 Jun 2008 14:34:48 +0100
+ -- Neil Williams <codehelp@debian.org>  Wed, 18 Jun 2008 15:21:22 +0100
 
 qof (0.7.5-1) unstable; urgency=low
 
