@@ -1,3 +1,12 @@
+2008-06-18  Neil Williams  <linux@codehelp.co.uk>
+
+	* backend/sqlite/qof-sqlite.c: Mark an unused function
+	whilst development continues to find a general solution.
+	* qof/kvpframe.c, qof/qofmath128.c, qof/qofmath128.h,
+	* qof/qofnumeric.c: Remove 'inline' declarations that
+	gcc-4.3 considers as unwarranted or which would increase
+	code size.
+
 2008-05-25  Neil Williams  <linux@codehelp.co.uk>
 
 	* backend/Makefile.am: Comment out estron backend - may be

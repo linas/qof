@@ -238,7 +238,7 @@ get_or_make (KvpFrame * fr, const gchar *key)
  * it is created.  The string stored in keypath will be hopelessly 
  * mangled .
  */
-static inline KvpFrame *
+static KvpFrame *
 kvp_frame_get_frame_slash_trash (KvpFrame * frame, gchar *key_path)
 {
 	gchar *key, *next;

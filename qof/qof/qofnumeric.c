@@ -57,7 +57,7 @@ qof_numeric_check (QofNumeric in)
  *  Find the least common multiple of the denominators of a and b.
  */
 
-static inline gint64
+static gint64
 qof_numeric_lcd (QofNumeric a, QofNumeric b)
 {
 	QofInt128 lcm;
@@ -77,7 +77,7 @@ qof_numeric_lcd (QofNumeric a, QofNumeric b)
 }
 
 /* Return the ratio n/d reduced so that there are no common factors. */
-static inline QofNumeric
+static QofNumeric
 reduce128 (QofInt128 n, gint64 d)
 {
 	gint64 t;

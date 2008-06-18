@@ -37,7 +37,7 @@
 /** Multiply a pair of signed 64-bit numbers, 
  *  returning a signed 128-bit number.
  */
-inline QofInt128
+QofInt128
 mult128 (gint64 a, gint64 b)
 {
 	QofInt128 prod;
@@ -176,7 +176,7 @@ inc128 (QofInt128 a)
 /** Divide a signed 128-bit number by a signed 64-bit,
  *  returning a signed 128-bit number.
  */
-inline QofInt128
+QofInt128
 div128 (QofInt128 n, gint64 d)
 {
 	QofInt128 quotient;
@@ -216,7 +216,7 @@ div128 (QofInt128 n, gint64 d)
  *  I beleive that ths algo is overflow-free, but should be 
  *  audited some more ... 
  */
-inline gint64
+gint64
 rem128 (QofInt128 n, gint64 d)
 {
 	QofInt128 quotient = div128 (n, d);
@@ -229,7 +229,7 @@ rem128 (QofInt128 n, gint64 d)
 }
 
 /** Return true of two numbers are equal */
-inline gboolean
+gboolean
 equal128 (QofInt128 a, QofInt128 b)
 {
 	if (a.lo != b.lo)
@@ -242,7 +242,7 @@ equal128 (QofInt128 a, QofInt128 b)
 }
 
 /** Return returns 1 if a>b, -1 if b>a, 0 if a == b */
-inline int
+gint
 cmp128 (QofInt128 a, QofInt128 b)
 {
 	if ((0 == a.isneg) && b.isneg)
@@ -274,7 +274,7 @@ cmp128 (QofInt128 a, QofInt128 b)
 }
 
 /** Return the greatest common factor of two 64-bit numbers */
-inline guint64
+guint64
 gcf64 (guint64 num, guint64 denom)
 {
 	guint64 t;
@@ -295,7 +295,7 @@ gcf64 (guint64 num, guint64 denom)
 }
 
 /** Return the least common multiple of two 64-bit numbers. */
-inline QofInt128
+QofInt128
 lcm128 (guint64 a, guint64 b)
 {
 	guint64 gcf = gcf64 (a, b);
@@ -304,7 +304,7 @@ lcm128 (guint64 a, guint64 b)
 }
 
 /** Add a pair of 128-bit numbers, returning a 128-bit number */
-inline QofInt128
+QofInt128
 add128 (QofInt128 a, QofInt128 b)
 {
 	QofInt128 sum;
