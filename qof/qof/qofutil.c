@@ -420,9 +420,7 @@ qof_util_param_to_string (QofEntity * ent, const QofParam * param)
 	{
 		param_string = g_strdup (param->param_getfcn (ent, param));
 		if (param_string == NULL)
-		{
-			param_string = "";
-		}
+			param_string = g_strup("");
 		known_type = TRUE;
 		return param_string;
 	}
