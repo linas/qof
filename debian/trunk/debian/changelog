@@ -6,20 +6,21 @@ qof (0.8.0-1) unstable; urgency=low
     (NEW package names)
   * migrate doc-base sections
   * Drop .la files from plugin packages
-  * Make -dev package depend on libgda3-dev and drop outdated Replaces:
-    flags
+  * Make -dev package depend on libgda3-dev and drop outdated
+    Replaces: flags
   * Add the GDA backend package by default
-  * drop Debian QOF packaging team, migrate homepage and VCS fields to
-    new Alioth home for upstream and Debian
-  * copyright: Add LGPL details for DWI backend
+  * drop Debian QOF packaging team, migrate homepage and VCS
+    fields to new Alioth home for upstream and Debian
   * Add debian/xcontrol support
   * Remove website from -doc package now that it is a wiki.
-  * [gpe-expenses] gpe-expenses crash (Closes: #479374)
-  * Split translations into libqof-data to remove the need for a
+  * qofutil.c: ensure newly allocated string is always returned
+    when converting empty KvpFrame to string and checking a NULL
+    string. (Closes: #479374)
+  * Split translations into qof-data to remove the need for a
     Replaces: line in libqof2. (Policy 8.2). Brings QOF up to date with
-    Standards Version 3.8.0. (libqof-data will disappear once TDebs are
+    Standards Version 3.8.0. (qof-data will disappear once TDebs are
     available in Debian.)
-  * libqof-data still needs Replaces: libqof1 anyway.
+  * qof-data still needs Replaces: libqof1 anyway.
 
  -- Neil Williams <codehelp@debian.org>  Wed, 18 Jun 2008 15:21:22 +0100
 

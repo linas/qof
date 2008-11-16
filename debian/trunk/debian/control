@@ -3,8 +3,8 @@ Section: libs
 Priority: optional
 Maintainer: Neil Williams <codehelp@debian.org>
 Uploaders: Goedson Teixeira Paixao <goedson@debian.org>
-Build-Depends: autotools-dev, cdbs, debhelper (>= 5), dpkg-dev (>= 1.14),
- gettext, pkg-config,
+Build-Depends: autotools-dev, bison, cdbs, debhelper (>= 5),
+ dpkg-dev (>= 1.14), flex, gettext, pkg-config,
  libglib2.0-dev (>= 2.6.0), libxml2-dev (>= 2.5.10), libgda3-dev, 
  libsqlite0-dev
 Build-Depends-Indep: doxygen
@@ -17,7 +17,7 @@ Package: libqof2
 Priority: optional
 Section: libs
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, libqof-data
+Depends: ${shlibs:Depends}, ${misc:Depends}, qof-data
 Recommends: libqof2-backend-qsf | libqof2-backend-sqlite | libqof2-backend-gda
 Conflicts: pilot-qof (<< 0.1.1-2)
 Description: Query Object Framework
@@ -40,17 +40,6 @@ Description: Query Object Framework - Development Headers
  .
  This package provides the files needed to develop
  applications using QOF.
-
-Package: libqof-data
-Priority: optional
-Section: utils
-Architecture: any
-Replaces: libqof1
-Description: Query Object Framework - translations
- QOF is a framework to allow the exection of SQL-type
- queries using collections of in-memory objects as 'tables'.
- .
- This package contains the translations of QOF messages.
 
 Package: libqof2-backend-qsf
 Priority: optional
@@ -126,3 +115,14 @@ Description: Query Object Framework - API Documentation
  API produced using Doxygen in
  /usr/share/doc/libqof-doc/html/
 
+Package: qof-data
+Priority: optional
+Section: utils
+Architecture: all
+Replaces: libqof1
+Description: Query Object Framework - translations
+ QOF is a framework to allow the exection of SQL-type
+ queries using collections of in-memory objects as 'tables'.
+ .
+ This package contains the translations of QOF messages, a
+ precursor of the eventual TDeb.
