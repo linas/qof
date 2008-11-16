@@ -1,0 +1,327 @@
+# Chinese translations for qof package.
+# Copyright (C) 2008 Free Software Foundation, Inc.
+# Copyright (C) 2008 THE qof'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the qof package.
+# Ji ZhengYu <zhengyuji@gmail.com>, 2008.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: qof 0.7.2\n"
+"Report-Msgid-Bugs-To: qof-devel@lists.alioth.debian.org\n"
+"POT-Creation-Date: 2008-07-22 22:49+0100\n"
+"PO-Revision-Date: 2008-05-29 14:03+0800\n"
+"Last-Translator: Ji ZhengYu <zhengyuji@gmail.com>\n"
+"Language-Team: Chinese (simplified) <translation-team-zh-cn@lists."
+"sourceforge.net>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: backend/file/qsf-xml-map.c:253 backend/file/qsf-xml-map.c:334
+#: backend/file/qsf-xml.c:255 backend/file/qsf-xml.c:311
+#, c-format
+msgid "The QSF XML file '%s' could not be found."
+msgstr "QSF XML 文件‘%s’无法找到。"
+
+#: backend/file/qsf-xml-map.c:260 backend/file/qsf-xml-map.c:282
+#: backend/file/qsf-xml-map.c:341 backend/file/qsf-xml.c:266
+#: backend/file/qsf-xml.c:325 backend/file/qsf-backend.c:527
+#: backend/file/qsf-backend.c:570
+#, c-format
+msgid "There was an error parsing the file '%s'."
+msgstr "解析文件‘%s’发生错误。"
+
+#: backend/file/qsf-xml-map.c:266 backend/file/qsf-xml.c:272
+#: backend/file/qsf-xml.c:331
+#, c-format
+msgid ""
+"Invalid QSF Object file! The QSF object file '%s'  failed to validate  "
+"against the QSF object schema. The XML structure of the file is either not "
+"well-formed or the file contains illegal data."
+msgstr ""
+"无效的 QSF 对象文件！QSF 对象文件‘%s’无法根据 QSF 对象模板进行验证。此文件的 "
+"XML 结构要么未很好地组织，要么就是此文件包含非法数据。"
+
+#: backend/file/qsf-xml-map.c:275
+#, c-format
+msgid "The QSF map file '%s' could not be found."
+msgstr "QSF map 文件‘%s’无法找到。"
+
+#: backend/file/qsf-xml-map.c:348
+msgid ""
+"Invalid QSF Map file! The QSF map file failed to validate against the QSF "
+"map schema. The XML structure of the file is either not well-formed or the "
+"file contains illegal data."
+msgstr ""
+"无效的 QSF map 文件！QSF map 文件‘%s’无法根据 QSF map 文件模板进行验证。此文"
+"件的 XML 结构要么未很好地组织，要么就是此文件包含非法数据。"
+
+#: backend/file/qsf-xml-map.c:420
+#, c-format
+msgid ""
+"The selected QSF map '%s' contains unusable or missing data. This is usually "
+"because not all the required parameters for the defined objects have "
+"calculations described in the map."
+msgstr ""
+"选中的 QSF map 文件‘%s’包含未用的或缺失的数据。这通常是由于并非所有已定义对象"
+"的所需参数都如 map 文件所描述的那么计算。"
+
+#: backend/file/qsf-xml-map.c:514
+#, c-format
+msgid ""
+"The QSF Map file '%s' was written for a different version of QOF. It may "
+"need to be modified to work with your current QOF installation."
+msgstr ""
+"QSF map 文件‘%s’ 是为另一版本的 QOF 而写的。您可能需要修改它以适合您目前安装"
+"的 QOF。"
+
+#: backend/file/qsf-backend.c:119
+msgid "Level of compression to use: 0 for none, 9 for highest."
+msgstr "所用的压缩级别: 0 不压缩，9 完全压缩。"
+
+#: backend/file/qsf-backend.c:121
+msgid ""
+"QOF can compress QSF XML files using gzip. Note that compression is not used "
+"when outputting to STDOUT."
+msgstr "QOF 可用 gzip 压缩 QSF XML 文件。注意: 当输出至标准输出时不使用压缩。"
+
+#: backend/file/qsf-backend.c:131
+msgid "List of QSF map files to use for this session."
+msgstr "此会话所用的 QSF map 文件列表。"
+
+#: backend/file/qsf-backend.c:133
+msgid ""
+"QOF can convert objects within QSF XML files using a map of the changes "
+"required."
+msgstr "QOF 可利用写好的更改请求来转换 QSF XML 文件中的对象。"
+
+#: backend/file/qsf-backend.c:142
+msgid "Encoding string to use when writing the XML file."
+msgstr "写入 XML 文件时所用的编码字符串。"
+
+#: backend/file/qsf-backend.c:144
+msgid ""
+"QSF defaults to UTF-8. Other encodings are supported by passing the encoding "
+"string in this option."
+msgstr "QSF 默认使用 UTF-8。支持在此选项中指定编码，从而使用其它编码。"
+
+#: backend/file/qsf-backend.c:153
+msgid "Convert deprecated date values to time values."
+msgstr "把不赞成使用的日期值转换成时间值。"
+
+#: backend/file/qsf-backend.c:155
+msgid ""
+"Applications that support the new QOF time format need to enable this option "
+"to convert older date values into time. Applications that still use date "
+"should not set this option until time values are supported."
+msgstr ""
+"支持新的 QOF 时间格式的程序需要开启此选项，以将旧的日期值转换成时间值。仍然使"
+"用日期值的程序不能设置此选项，直到它支持时间值。"
+
+#: backend/file/qsf-backend.c:247
+#, c-format
+msgid ""
+"The selected QSF Object file '%s' requires a map but it was not provided."
+msgstr "选中的 QSF 对象文件‘%s’需要一个 map 文件，但未提供。"
+
+#: backend/file/qsf-backend.c:250
+#, c-format
+msgid ""
+"When converting XML strings into numbers, an overflow has been detected. The "
+"QSF object file '%s' contains invalid data in a field that is meant to hold "
+"a number."
+msgstr ""
+"将 XML 字符串转换至数字时，探测到溢出。QSF 对象文件‘%s’保存数字的域中包含无效"
+"数据。"
+
+#: backend/file/qsf-backend.c:334
+#, c-format
+msgid ""
+"could not write to '%s'. That database may be on a read-only file system, or "
+"you may not have write permission for the directory.\n"
+msgstr ""
+"无法写入‘%s’。那个数据库可能在只读文件系统中，或者您可能没有那个目录的写权"
+"限。\n"
+
+#: backend/file/qsf-backend.c:492
+#, c-format
+msgid "There was an error parsing the file '%s'.\n"
+msgstr "解析文件‘%s’时发生错误。\n"
+
+#: backend/file/qsf-backend.c:578
+#, c-format
+msgid "There was an error reading the file '%s'."
+msgstr "读取文件‘%s’时发生错误。"
+
+#: backend/file/qsf-backend.c:611
+#, c-format
+msgid ""
+"The selected file '%s' is a QSF map and cannot be opened as a QSF object."
+msgstr "选中的文件‘%s’是个 QSF map 文件且无法作为 QSF 对象打开。"
+
+#: backend/file/qsf-backend.c:1121
+#, c-format
+msgid ""
+"Could not write to '%s'. Check that you have permission to write to this "
+"file and that there is sufficient space to create it."
+msgstr "无法写入‘%s’。请检查您是否有写入此文件的权限且有足够的空间创建它。"
+
+#: backend/file/qsf-backend.c:1357
+#, c-format
+msgid ""
+"The selected QSF object file '%s' contains one or more invalid GUIDs. The "
+"file cannot be processed - please check the source of the file and try again."
+msgstr ""
+"选中的 QSF 对象文件‘%s’包含一个或更多的无效 GUIDs。无法处理此文件 - 请检查文"
+"件源然后再试一次。"
+
+#: backend/file/qsf-backend.c:1479
+#, c-format
+msgid ""
+"The selected QSF object file '%s' contains one or more invalid 'collect' "
+"values. The file cannot be processed - please check the source of the file "
+"and try again."
+msgstr ""
+"选中的 QSF 对象文件‘%s’包含一个或更多无效的‘collect’值。无法处理此文件 - 请检"
+"查文件源然后再试一次。"
+
+#: backend/gda/qof-gda.c:148
+msgid "GDA: No connection available."
+msgstr ""
+
+#: backend/gda/qof-gda.c:164
+#, c-format
+msgid "GDA: Error: %s"
+msgstr ""
+
+#: backend/gda/qof-gda.c:187
+msgid "GDA: Missing data source name."
+msgstr ""
+
+#: backend/gda/qof-gda.c:196
+#, fuzzy, c-format
+msgid "GDA Provider '%s' could not be found"
+msgstr "QSF XML 文件‘%s’无法找到。"
+
+#: backend/gda/qof-gda.c:235
+#, c-format
+msgid "GDA: Failed to connect to the data source '%s'. The GDA error was '%s'."
+msgstr ""
+
+#: backend/gda/qof-gda.c:276
+msgid "GDA: No data source path specified."
+msgstr ""
+
+#: backend/gda/qof-gda.c:290
+#, fuzzy
+msgid "GDA: Unable to locate your home directory."
+msgstr "无法创建记录。"
+
+#: backend/gda/qof-gda.c:302
+msgid "GDA: Unable to create a .libgda directory within your home directory."
+msgstr ""
+
+#: backend/gda/qof-gda.c:326
+#, c-format
+msgid ""
+"GDA: No data source found at '%s' - Try loading data from another file and "
+"write to gda: again to create the GDA data source."
+msgstr ""
+
+#: backend/gda/qof-gda.c:350
+#, c-format
+msgid "GDA encountered an error '%s' using data source '%s'."
+msgstr ""
+
+#: backend/gda/qof-gda.c:564
+msgid "Name of the database to use."
+msgstr ""
+
+#: backend/gda/qof-gda.c:566
+msgid "Override the default database name with a name of your own choice."
+msgstr ""
+
+#: backend/gda/qof-gda.c:575
+msgid "The username to use to access this data source."
+msgstr ""
+
+#: backend/gda/qof-gda.c:577
+msgid ""
+"The username specified in the configuration of this data source that "
+"provides write access to the data."
+msgstr ""
+
+#: backend/gda/qof-gda.c:586
+msgid "Password to use with the username."
+msgstr ""
+
+#: backend/gda/qof-gda.c:588
+msgid "The password that is to be used with the specified username."
+msgstr ""
+
+#: backend/gda/qof-gda.c:597
+msgid "Name of this data source."
+msgstr ""
+
+#: backend/gda/qof-gda.c:599
+msgid "The name of this data source as specified in the GDA configuration."
+msgstr ""
+
+#: backend/gda/qof-gda.c:623 backend/sqlite/qof-sqlite.c:1018
+msgid "Unable to delete record."
+msgstr "无法删除记录。"
+
+#: backend/gda/qof-gda.c:625 backend/sqlite/qof-sqlite.c:1020
+msgid "Unable to create record."
+msgstr "无法创建记录。"
+
+#: backend/gda/qof-gda.c:627 backend/sqlite/qof-sqlite.c:1022
+msgid "Unable to insert a new record."
+msgstr "无法插入一条新的记录。"
+
+#: backend/gda/qof-gda.c:629 backend/sqlite/qof-sqlite.c:1024
+msgid "Unable to update existing record."
+msgstr "无法更新存在的记录。"
+
+#: backend/sqlite/qof-sqlite.c:826
+#, c-format
+msgid ""
+"Unable to open the output file '%s' - do you have permission to create this "
+"file?"
+msgstr "无法打开输出文件‘%s’ - 您确定有创建此文件的权限？"
+
+#: backend/sqlite/qof-sqlite.c:858
+#, c-format
+msgid "Unable to open the sqlite database '%s'."
+msgstr "无法打开 sqlite 数据库‘%s’。"
+
+#: backend/sqlite/qof-sqlite.c:882
+msgid "Please provide a filename for sqlite."
+msgstr "请为 sqlite 提供一个文件名。"
+
+#: qof/qofsession.c:1050
+msgid "This book appears to be open already."
+msgstr "此工作薄好像以打开了。"
+
+#: qof/qofsession.c:1091
+#, c-format
+msgid ""
+"Unable to locate a suitable backend for '%s' - please check you have "
+"specified an access method like file: or sqlite:"
+msgstr ""
+"无法为‘%s’找到一个合适的后端程序 - 请检查您确实已指定一种访问方式，如 file: "
+"或是 sqlite:"
+
+#: qof/qofsession.c:1328 qof/qofsession.c:1365
+msgid "Failed to load backend, no suitable handler."
+msgstr "无法载入后端程序，没有合适的处理程序。"
+
+#: qof/qofsql.c:724 qof/qofsql.c:751
+#, c-format
+msgid ""
+"When converting SQLite strings into numbers, an overflow has been detected. "
+"The SQLite database '%s' contains invalid data in a field that is meant to "
+"hold a number."
+msgstr ""
+"将 SQLite 字符串转换至数字时，探测到溢出。SQLite 数据库‘%s’保存数字的域中包含"
+"无效数据。"
