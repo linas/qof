@@ -35,10 +35,7 @@
 #include "qofmath128.c"
 
 /* =============================================================== */
-/* This function is small, simple, and used everywhere below, 
- * lets try to inline it.
- */
-inline QofNumericErrorCode
+QofNumericErrorCode
 qof_numeric_check (QofNumeric in)
 {
 	if (in.denom != 0)

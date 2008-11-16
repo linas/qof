@@ -44,19 +44,19 @@ typedef struct
 } QofInt128;
 
 /** Return true of two numbers are equal */
-inline gboolean equal128 (QofInt128 a, QofInt128 b);
+gboolean equal128 (QofInt128 a, QofInt128 b);
 
 /** Return returns 1 if a>b, -1 if b>a, 0 if a == b */
 gint cmp128 (QofInt128 a, QofInt128 b);
 
 /** Shift right by one bit (i.e. divide by two) */
-inline QofInt128 shift128 (QofInt128 x);
+QofInt128 shift128 (QofInt128 x);
 
 /** Shift left by one bit (i.e. multiply by two) */
-inline QofInt128 shiftleft128 (QofInt128 x);
+QofInt128 shiftleft128 (QofInt128 x);
 
 /** Increment by one */
-inline QofInt128 inc128 (QofInt128 a);
+QofInt128 inc128 (QofInt128 a);
 
 /** Add a pair of 128-bit numbers, returning a 128-bit number */
 QofInt128 add128 (QofInt128 a, QofInt128 b);

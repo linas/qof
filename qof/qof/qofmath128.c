@@ -106,7 +106,7 @@ mult128 (gint64 a, gint64 b)
 }
 
 /** Shift right by one bit (i.e. divide by two) */
-inline QofInt128
+QofInt128
 shift128 (QofInt128 x)
 {
 	guint64 sbit = x.hi & 0x1;
@@ -127,7 +127,7 @@ shift128 (QofInt128 x)
 }
 
 /** Shift leftt by one bit (i.e. multiply by two) */
-inline QofInt128
+QofInt128
 shiftleft128 (QofInt128 x)
 {
 	guint64 sbit;
@@ -149,7 +149,7 @@ shiftleft128 (QofInt128 x)
 }
 
 /** increment a 128-bit number by one */
-inline QofInt128
+QofInt128
 inc128 (QofInt128 a)
 {
 	if (0 == a.isneg)
