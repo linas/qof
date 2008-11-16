@@ -1,3 +1,14 @@
+2008-11-16  Neil Williams  <linux@codehelp.co.uk>
+
+	* backend/sqlite/qof-sqlite.c: mark kvpvalue_to_sql 
+	as unused.
+	* qof/kvpframe.c, qof/qofmath128.c, qof/qofmath128.h,
+	qof/qofnumeric.c : Remove inline functions to make a
+	better fit with gcc -Winline.
+	* qof/qofutil.c (qof_util_param_to_string): Ensure
+	qof_util_param_to_string always returns a newly allocated
+	string, even for NULL values.
+
 2008-06-18  Neil Williams  <linux@codehelp.co.uk>
 
 	* backend/sqlite/qof-sqlite.c: Mark an unused function
