@@ -1,3 +1,10 @@
+2008-11-24  Neil Williams  <linux@codehelp.co.uk>
+
+	* backend/gda/qof-gda.c (qgda_modify), backend/sqlite/qof-sqlite.c
+	(qsql_modify), (update_dirty), qof/qofsql.c (string_param_to_sql),
+	(collect_kvp),(qof_sql_entity_update): Implement support for
+	QOF_TYPE_COLLECT for SQL using KVP slots.
+
 2008-11-16  Neil Williams  <linux@codehelp.co.uk>
 
 	* backend/sqlite/qof-sqlite.c: mark kvpvalue_to_sql 

@@ -111,6 +111,11 @@ qgda_modify (QofBackend *be, QofInstance *inst)
 	qgda_be->gda_err = NULL;
 	ENTER (" modified %s param:%s", ((QofEntity *) inst)->e_type, inst->param->param_name);
 	qgda_be->sql_str = qof_sql_entity_update ((QofEntity*)inst);
+	if (!qgda_be->sql_str)
+	{
+		LEAVE (" null string");
+		return;
+	}
 	DEBUG (" sql_str=%s", qgda_be->sql_str);
 	qgda_be->command = gda_command_new (qgda_be->sql_str, GDA_COMMAND_TYPE_SQL, 
 		GDA_COMMAND_OPTION_STOP_ON_ERRORS);

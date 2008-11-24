@@ -390,6 +390,11 @@ qsql_modify (QofBackend * be, QofInstance * inst)
 	ENTER (" modified %s param:%s", ((QofEntity *) inst)->e_type,
 		inst->param->param_name);
 	qb.sql_str = qof_sql_entity_update ((QofEntity*)inst);
+	if (!qb.sql_str)
+	{
+		LEAVE (" null string");
+		return;
+	}
 	DEBUG (" sql_str=%s", qb.sql_str);
 	if (sqlite_exec (qsql_be->sqliteh, qb.sql_str,
 			NULL, &qb, &qsql_be->err) != SQLITE_OK)
@@ -475,6 +480,11 @@ update_dirty (gpointer value, gpointer builder)
 	guid_to_string_buff (qof_entity_get_guid (ent), gstr);
 	/* qof_class_param_foreach  */
 	qb->sql_str = qof_sql_entity_update (ent);
+	if (!qb->sql_str)
+	{
+		LEAVE (" null string");
+		return;
+	}
 	DEBUG (" update=%s", qb->sql_str);
 	if (sqlite_exec (qsql_be->sqliteh, qb->sql_str,
 			NULL, qb, &qsql_be->err) != SQLITE_OK)

@@ -1170,8 +1170,11 @@ string_param_to_sql (QofParam * param)
 	   a no-op because entities do not need a param_setfcn for kvp data. */
 	if (0 == safe_strcmp (param->param_type, QOF_TYPE_KVP))
 		return g_strdup ("");
+/**  \bug This won't work - collect types can vary unpredictably - need
+	a KVP implementation. */
 	if (0 == safe_strcmp (param->param_type, QOF_TYPE_COLLECT))
-		return g_strdup_printf (" %s char(32)", param->param_name);
+		return g_strdup ("");
+//		return g_strdup_printf (" %s char(32)", param->param_name);
 	/* catch references */
 	return g_strdup_printf (" %s char(32)", param->param_name);
 }
@@ -1433,11 +1436,32 @@ qof_sql_entity_insert (QofEntity * ent)
 	return sql_str;
 }
 
+static void
+collect_kvp (QofEntity * ent, gpointer user_data)
+{
+	KvpFrame * slots;
+	KvpValue * collguid;
+	gchar * gstr, * name, * key;
+	const QofParam * param;
+
+	name = (gchar *) user_data;
+	param = qof_class_get_parameter (ent->e_type, name);
+	key = g_strconcat ("collection/", name, "/guid/", NULL);
+	gstr = g_strnfill (GUID_ENCODING_LENGTH + 1, ' ');
+	guid_to_string_buff (qof_instance_get_guid ((QofInstance*)ent), gstr);
+	collguid = kvp_value_new_string(gstr);
+	slots = qof_instance_get_slots((QofInstance*)ent);
+	kvp_frame_set_value (slots, key, collguid);
+	g_free (key);
+	g_free (gstr);
+}
+
 gchar *
 qof_sql_entity_update (QofEntity * ent)
 {
 	gchar *gstr, * sql_str, * param_str;
 	QofInstance * inst;
+	const QofParam * param;
 	inst = (QofInstance*)ent;
 
 	if (!inst->param)
@@ -1445,6 +1469,18 @@ qof_sql_entity_update (QofEntity * ent)
 	ENTER (" modified %s param:%s", ent->e_type, inst->param->param_name);
 	gstr = g_strnfill (GUID_ENCODING_LENGTH + 1, ' ');
 	guid_to_string_buff (qof_instance_get_guid (inst), gstr);
+	param = inst->param;
+	if (0 == safe_strcmp (param->param_type, QOF_TYPE_COLLECT))
+	{
+		gchar * name;
+		QofCollection * coll;
+
+		coll = param->param_getfcn (ent, param);
+		name = g_strdup (param->param_name);
+		qof_collection_foreach (coll, collect_kvp, name);
+		g_free (name);
+		return NULL;
+	}
 	param_str = qof_util_param_to_string (ent, inst->param);
 	if (param_str)
 		g_strescape (param_str, NULL);
