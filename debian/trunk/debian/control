@@ -94,7 +94,7 @@ Priority: extra
 Section: libs
 Architecture: any
 Recommends: libqof-doc
-Depends: libqof2 (= ${binary:Version})
+Depends: libqof2 (= ${binary:Version}), ${misc:Depends}
 Description: Query Object Framework - Debug Symbols
  A framework to allow the execution of SQL-type queries
  using collections of in-memory objects as 'tables'.
@@ -106,7 +106,7 @@ Package: libqof-doc
 Priority: optional
 Section: doc
 Architecture: all
-Recommends: www-browser, dwww
+Recommends: www-browser, dwww, ${misc:Depends}
 Description: Query Object Framework - API Documentation
  A framework to allow the execution of SQL-type queries
  using collections of in-memory objects as tables.
@@ -120,6 +120,7 @@ Priority: optional
 Section: utils
 Architecture: all
 Replaces: libqof1
+Depends: ${misc:Depends}
 Description: Query Object Framework - translations
  QOF is a framework to allow the exection of SQL-type
  queries using collections of in-memory objects as 'tables'.
