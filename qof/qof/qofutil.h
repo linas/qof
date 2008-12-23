@@ -191,7 +191,9 @@ gint null_strcmp (const gchar * da, const gchar * db);
 extern gchar *strncasestr (const guchar * str1, const guchar * str2,
 						   size_t len);
 
+#ifndef _STRING_H
 extern gchar *strcasestr (const gchar * str1, const gchar * str2);
+#endif
 
 /** The ultostr() subroutine is the inverse of strtoul(). It accepts a
  * number and prints it in the indicated base.  The returned string
