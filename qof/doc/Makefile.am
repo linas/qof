@@ -8,7 +8,9 @@ SUBDIRS = html
 
 EXTRA_DIST = \
   README \
+  qof.devhelp2 \
   doxygen_main_page.c \
+  doxygen_to_devhelp.xsl \
   doxygen.cfg.in \
   backend-api.txt \
   backend-errors.txt \
@@ -18,11 +20,14 @@ EXTRA_DIST = \
 
 if ENABLE_DOXYGEN
 doc: doxygen.cfg Makefile
-	${RM} html/*.html
-	${DOXYGEN} doxygen.cfg
+	$(RM) html/*.html
+	$(DOXYGEN) doxygen.cfg
+	xsltproc -o qof.devhelp2 $(top_srcdir)/doc/doxygen_to_devhelp.xsl xml/index.xml
 
 qofdocdir = ${datadir}/doc/qof/html/
-qofdoc_DATA = html/*
+qofdoc_DATA = html/* \
+  qof.devhelp2
+
 qofdoc: doc
 install-data-hook:
 	if test -f ${DESTDIR}${qofdocdir}/Makefile; then \
@@ -40,5 +45,6 @@ install-data-hook:
 endif
 
 clean-local:
-	${RM} doxygen.log
-
+	$(RM) doxygen.log
+	$(RM) -r xml/
+	$(RM) qof.devhelp2

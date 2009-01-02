@@ -1,3 +1,8 @@
+2009-01-02  Neil Williams  <linux@codehelp.co.uk>
+
+	Add devhelp support by using the examples from
+	DBus to create a suitable XML index from doxygen content.
+
 2008-11-24  Neil Williams  <linux@codehelp.co.uk>
 
 	* backend/gda/qof-gda.c (qgda_modify), backend/sqlite/qof-sqlite.c
