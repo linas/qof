@@ -68,6 +68,7 @@ strcasestr (const gchar * str1, const gchar * str2)
 }
 #endif
 
+/** \todo replace with g_strcmp0 from glib 2.16 */
 gint
 safe_strcmp (const gchar * da, const gchar * db)
 {

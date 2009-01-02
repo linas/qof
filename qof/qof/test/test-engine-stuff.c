@@ -20,6 +20,7 @@
  *
  * Created by Linux Developers Group, 2001
  * Updates Linas Vepstas July 2004
+\todo replace with g_test routines from 2.16
  */
 
 #include <sys/types.h>

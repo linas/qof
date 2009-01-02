@@ -20,6 +20,8 @@
 
 /* Written by Ulrich Drepper <drepper@gnu.ai.mit.edu>, 1995.  */
 
+/** \todo replace with g_compute_checksum_for_data () */
+
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
