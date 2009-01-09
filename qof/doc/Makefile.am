@@ -19,9 +19,13 @@ EXTRA_DIST = \
   map-plan.txt
 
 if ENABLE_DOXYGEN
-doc: doxygen.cfg Makefile
+doc: doxygen.cfg Makefile qof.devhelp2 xml/index.xml
+
+xml/index.xml:
 	$(RM) html/*.html
 	$(DOXYGEN) doxygen.cfg
+
+qof.devhelp2: xml/index.xml
 	xsltproc -o qof.devhelp2 $(top_srcdir)/doc/doxygen_to_devhelp.xsl xml/index.xml
 
 qofdocdir = ${datadir}/doc/qof/html/

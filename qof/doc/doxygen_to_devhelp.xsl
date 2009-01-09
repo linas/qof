@@ -11,7 +11,7 @@
   <chapters>
      <sub name="Modules" link="{$prefix}modules.html"/>
      <sub name="Data Structures" link="{$prefix}classes.html"/>
-     <sub name="Fiels" link="{$prefix}files.html"/>
+     <sub name="Files" link="{$prefix}files.html"/>
      <sub name="Related Pages" link="{$prefix}pages.html"/>
   </chapters>
   <functions>
