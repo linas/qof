@@ -61,8 +61,6 @@ Copyright: 1997-2004   Linas Vepstas  <linas@linas.org>
    MA 02110-1301, USA.
 
 On Debian systems, the complete text of the GNU General
-Public License can be found in '/usr/share/common-licenses/GPL', the
-complete text of the GNU Lesser General Public Licence can be found in
-'/usr/share/common-licenses/LGPL-2.1' and the complete text of the GNU
-Free Documentation License can be found in
-'/usr/share/common-licenses/GFDL-1.2'.
+Public License can be found in '/usr/share/common-licenses/GPL-2'
+and the complete text of the GNU Free Documentation License can be
+found in '/usr/share/common-licenses/GFDL-1.2'.

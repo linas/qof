@@ -16,14 +16,15 @@ qof (0.8.0-1) unstable; urgency=low
   * qofutil.c: ensure newly allocated string is always returned
     when converting empty KvpFrame to string and checking a NULL
     string. (Closes: #479374)
-  * Split translations into qof-data to remove the need for a
-    Replaces: line in libqof2. (Policy 8.2). Brings QOF up to date with
-    Standards Version 3.8.0. (qof-data will disappear once TDebs are
-    available in Debian.)
+  * Split translations and XML schema into qof-data to migrate shared
+    files out of the library package. (Policy 8.2). Brings QOF up to
+    date with Standards Version 3.8.0.
   * qof-data still needs Replaces: libqof1 anyway.
   * Add symlink to make devhelp support accessible.
+  * implement nocheck DEB_BUILD_OPTION
+  * omit backend plugins from dh_makeshlibs - not public anymore.
 
- -- Neil Williams <codehelp@debian.org>  Fri, 02 Jan 2009 20:26:05 +0000
+ -- Neil Williams <codehelp@debian.org>  Wed, 18 Mar 2009 11:54:22 +0000
 
 qof (0.7.5-1) unstable; urgency=low
 
