@@ -1,3 +1,12 @@
+2009-03-18  Neil Williams  <linux@codehelp.co.uk>
+
+	* backend/file/Makefile.am, backend/file/qsf-backend.c,
+	* backend/file/qsf-xml-map.c, backend/file/qsf-xml.c,
+	* backend/gda/Makefile.am, backend/sqlite/Makefile.am,
+	* qof/Makefile.am, qof/qof.h, configure.ac: Replace 
+	the directory headers with defined variables in the Makefile.
+	* doc/doxygen.cfg.in: Update doxygen configuration.
+
 2009-01-02  Neil Williams  <linux@codehelp.co.uk>
 
 	Add devhelp support by using the examples from

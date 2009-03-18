@@ -65,7 +65,6 @@ qofinclude_HEADERS = \
    qofquerycore-p.h \
    qofreference.h \
    qofsession.h \
-   qofla-dir.h \
    qofsql.h \
    qofutil.h \
    qofbookmerge.h \
@@ -92,6 +91,7 @@ noinst_HEADERS = \
    qofsql-p.h
 
 AM_CFLAGS = -g \
+  -DQOF_LIB_DIR=\"${QOF_LIB_DIR}\" \
   ${warnFLAGS} \
   ${LIBGDA_CFLAGS} \
   ${GLIB_CFLAGS}
@@ -117,5 +117,4 @@ libqof_la_LIBADD = \
 
 EXTRA_DIST = \
   libqof.ver \
-  qofla-dir.h.in \
   qofmath128.c

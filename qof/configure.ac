@@ -440,10 +440,9 @@ QOF_CFLAGS="-I$includedir/qof"
 QOF_LIBS="-lqof"
 QOF_LIBDEPS="$LDFLAGS"
 QOF_VERSION="$VERSION"
-
-QSF_LIB_DIR=`eval echo $libdir | sed "s%^NONE%$prefix%"`
-QSF_LIB_DIR=`eval echo $QSF_LIB_DIR/qof/ | sed "s%^NONE%$prefix%"`
-AC_SUBST(QSF_LIB_DIR)
+QOF_LIB_DIR=$libdir/${PACKAGE}${SONAME}
+AC_SUBST(QOF_LIB_DIR)
+QLD_PRINT=`eval echo $QOF_LIB_DIR | sed "s%^NONE%$prefix%"`
 AC_SUBST(QOF_LIBS)
 
 dnl # ******************************
@@ -460,7 +459,6 @@ Makefile
 backend/Makefile
 backend/file/Makefile
 backend/gda/Makefile
-backend/file/qsf-dir.h
 backend/sqlite/Makefile
 doc/Makefile
 doc/html/Makefile
@@ -468,7 +466,6 @@ doc/doxygen.cfg
 lib/Makefile
 lib/libsql/Makefile
 qof/Makefile
-qof/qofla-dir.h
 qof/test/Makefile
 qof.pc
 qof.symbols
@@ -498,7 +495,7 @@ echo "prefix      :   $prefix"
 echo "data dir    :   "`eval echo $DATADIR`
 echo "XML dir     :   "`eval echo $QSF_SCHEMA_DIR`
 echo "include dir :   "`eval echo $includedir`
-echo "lib dir     :   "`eval echo $QSF_LIB_DIR`
+echo "lib dir     :   "`eval echo $QLD_PRINT`
 echo ""
 echo ""
 dnl # <= End of configuration summary =>

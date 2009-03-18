@@ -31,7 +31,6 @@
 #include "qof.h"
 #include "qof-backend-qsf.h"
 #include "qsf-xml.h"
-#include "qsf-dir.h"
 
 static QofLogModule log_module = QOF_MOD_QSF;
 

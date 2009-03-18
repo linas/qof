@@ -7,7 +7,9 @@ AM_CFLAGS = \
   ${GOBJECT_CFLAGS} \
   ${LIBGDA_CFLAGS}
 
-pkglib_LTLIBRARIES=libqof-backend-gda.la
+qof_LTLIBRARIES=libqof-backend-gda.la
+
+qofdir=$(libdir)/qof${SONAME}
 
 libqof_backend_gda_la_SOURCES = \
  qof-gda.c

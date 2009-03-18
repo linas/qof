@@ -1,12 +1,15 @@
 SUBDIRS = .
 
-pkglib_LTLIBRARIES=libqof-backend-qsf.la
+qof_LTLIBRARIES=libqof-backend-qsf.la
+
+qofdir=$(libdir)/qof${SONAME}
 
 AM_CFLAGS = \
   ${warnFLAGS} \
   -I.. -I../.. \
   -I${top_srcdir}/qof \
   -DLOCALE_DIR=\""$(datadir)/locale"\" \
+  -DQSF_SCHEMA_DIR=\"$(QSF_SCHEMA_DIR)\" \
   ${LIBXML2_CFLAGS} \
   ${GLIB_CFLAGS}
 
@@ -38,5 +41,4 @@ qsfschema_DATA = \
 
 EXTRA_DIST = \
   $(qsfschema_DATA) \
-  qsf-dir.h.in    \
   qsf-xml.h

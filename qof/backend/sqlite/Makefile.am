@@ -7,7 +7,9 @@ AM_CFLAGS = \
   ${DEPS_CFLAGS} \
   ${SQLITE_CFLAGS}
 
-pkglib_LTLIBRARIES=libqof-backend-sqlite.la
+qof_LTLIBRARIES=libqof-backend-sqlite.la
+
+qofdir=$(libdir)/qof${SONAME}
 
 libqof_backend_sqlite_la_SOURCES = \
  qof-sqlite.c

@@ -89,7 +89,6 @@
 #include "qofchoice.h"
 #include "qofbookmerge.h"
 #include "qofreference.h"
-#include "qofla-dir.h"
 #include "qofundo.h"
 //#include "deprecated.h"
 

@@ -33,7 +33,6 @@
 #include "qofobject-p.h"
 #include "qof-backend-qsf.h"
 #include "qsf-xml.h"
-#include "qsf-dir.h"
 #include "kvputil-p.h"
 
 #define QSF_TYPE_BINARY "binary"
