@@ -40,6 +40,9 @@ build/libqof2::
 	cp qof.symbols debian/libqof2.symbols
 	cat qofsql.symbols >> debian/libqof2.symbols
 
+clean/libqof2::
+	$(RM) debian/libqof2.symbols
+
 else
 
 DEB_CONFIGURE_EXTRA_FLAGS += --enable-gdabackend
@@ -48,6 +51,9 @@ DEB_MAKE_CHECK_TARGET = check
 endif
 build/libqof2::
 	cp qof.symbols debian/libqof2.symbols
+
+clean/libqof2::
+	$(RM) debian/libqof2.symbols
 
 endif
 

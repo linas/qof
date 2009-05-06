@@ -24,8 +24,9 @@ qof (0.8.0-1) unstable; urgency=low
   * implement nocheck DEB_BUILD_OPTION
   * omit backend plugins from dh_makeshlibs - not public anymore.
   * Provide: virtual packages for each backend for easier transitions.
+  * clean up the copied symbols file (easier cross-building)
 
- -- Neil Williams <codehelp@debian.org>  Sun, 03 May 2009 17:32:48 +0100
+ -- Neil Williams <codehelp@debian.org>  Wed, 06 May 2009 14:45:32 +0100
 
 qof (0.7.5-1) unstable; urgency=low
 
