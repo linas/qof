@@ -8,6 +8,7 @@ Build-Depends-Tools: autotools-dev, cdbs, debhelper (>= 5), dpkg-dev (>= 1.14),
 Build-Depends: libglib2.0-dev (>= 2.6.0), libxml2-dev (>= 2.5.10),
  libgda3-dev, libsqlite0-dev
 Build-Depends-Indep: doxygen
+Cross-Compiling: yes
 Standards-Version: 3.7.3
 Homepage: http://alioth.debian.org/projects/qof/
 Vcs-Browser: http://svn.debian.org/viewsvn/qof/trunk/qof/
