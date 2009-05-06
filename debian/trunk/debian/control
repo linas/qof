@@ -82,6 +82,7 @@ Description: Query Object Framework - GDA backend module
  using QOF can use whichever backend is available.
 
 Package: libqof2-dbg
+Section: debug
 Priority: extra
 Architecture: any
 Recommends: libqof-doc
