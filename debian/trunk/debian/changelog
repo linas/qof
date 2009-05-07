@@ -26,8 +26,10 @@ qof (0.8.0-1) unstable; urgency=low
   * Provide: virtual packages for each backend for easier transitions.
   * clean up the copied symbols file (easier cross-building)
   * Use debug section for dbg package.
+  * Downgrade Recommends: libqof-doc to a Suggests for those who still
+    use Recommends-Important. Remove some unnecessary build-dependencies.
 
- -- Neil Williams <codehelp@debian.org>  Wed, 06 May 2009 15:03:54 +0100
+ -- Neil Williams <codehelp@debian.org>  Thu, 07 May 2009 21:08:01 +0100
 
 qof (0.7.5-1) unstable; urgency=low
 

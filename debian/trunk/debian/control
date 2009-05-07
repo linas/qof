@@ -3,8 +3,7 @@ Section: libs
 Priority: optional
 Maintainer: Neil Williams <codehelp@debian.org>
 Uploaders: Goedson Teixeira Paixao <goedson@debian.org>
-Build-Depends: autotools-dev, bison, cdbs, debhelper (>= 5),
- dpkg-dev (>= 1.14), flex, gettext, pkg-config,
+Build-Depends: cdbs, debhelper (>= 5), xsltproc,
  libglib2.0-dev (>= 2.6.0), libxml2-dev (>= 2.5.10), libgda3-dev, 
  libsqlite0-dev
 Build-Depends-Indep: doxygen
@@ -28,9 +27,9 @@ Description: Query Object Framework
 Package: libqof-dev
 Section: libdevel
 Architecture: any
-Recommends: libqof-doc
-Depends: libgda3-dev, libglib2.0-dev, libqof2 (= ${binary:Version}),
- ${misc:Depends}
+Depends: libgda3-dev, libglib2.0-dev, libqof2 (= ${binary:Version}), 
+ ${misc:Depends}, pkg-config
+Suggests: libqof-doc
 Description: Query Object Framework - Development Headers
  A framework to allow the execution of SQL-type queries
  using collections of in-memory objects as 'tables'.
@@ -85,8 +84,8 @@ Package: libqof2-dbg
 Section: debug
 Priority: extra
 Architecture: any
-Recommends: libqof-doc
 Depends: libqof2 (= ${binary:Version}), ${misc:Depends}
+Suggests: libqof-doc
 Description: Query Object Framework - Debug Symbols
  A framework to allow the execution of SQL-type queries
  using collections of in-memory objects as 'tables'.
@@ -109,8 +108,8 @@ Description: Query Object Framework - API Documentation
 
 Package: qof-data
 Architecture: all
-Replaces: libqof1 (<< 0.7.5)
 Depends: ${misc:Depends}
+Replaces: libqof1 (<< 0.7.5)
 Description: Query Object Framework - common files
  QOF is a framework to allow the exection of SQL-type
  queries using collections of in-memory objects as 'tables'.
