@@ -45,7 +45,8 @@ clean/libqof2::
 
 else
 
-DEB_CONFIGURE_EXTRA_FLAGS += --enable-gdabackend
+# GDA backend isn't ready.
+#DEB_CONFIGURE_EXTRA_FLAGS += --enable-gdabackend
 ifeq (,$(findstring nocheck,$(DEB_BUILD_OPTIONS)))
 DEB_MAKE_CHECK_TARGET = check
 endif

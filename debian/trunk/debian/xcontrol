@@ -63,22 +63,6 @@ Description: Query Object Framework - SQLite backend module
  alongside other QOF backends, applications using QOF
  can use whichever backend is available.
 
-Package: libqof2-backend-gda
-Architecture: any
-Optional: yes
-Depends: ${shlibs:Depends}, ${misc:Depends}, libqof2 (= ${binary:Version})
-Provides: qof-backend-gda
-Description: Query Object Framework - GDA backend module
- QOF is a framework to allow the execution of SQL-type
- queries using collections of in-memory objects as 'tables'.
- .
- This module provides a GNOME Data Access backend using
- libgda3 and can be used with any gda3 plugin to provide
- read and write access to data sources using XML, SQLite,
- MySQL, FreeTDS, PostgreSQL or ODBC. The package can also
- be installed alongside other QOF backends, applications
- using QOF can use whichever backend is available.
-
 Package: libqof2-dbg
 Section: debug
 Architecture: any
