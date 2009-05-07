@@ -2,25 +2,17 @@ Source: qof
 Section: libs
 Priority: optional
 Maintainer: Neil Williams <codehelp@debian.org>
-Uploaders: Goedson Teixeira Paixao <goedson@debian.org>
-Build-Depends-Tools: autotools-dev, cdbs, debhelper (>= 5), dpkg-dev (>= 1.14),
- gettext, pkg-config
+Build-Depends-Tools: cdbs, debhelper (>= 5), xsltproc
 Build-Depends: libglib2.0-dev (>= 2.6.0), libxml2-dev (>= 2.5.10),
  libgda3-dev, libsqlite0-dev
 Build-Depends-Indep: doxygen
 Cross-Compiling: yes
-Standards-Version: 3.7.3
-Homepage: http://alioth.debian.org/projects/qof/
-Vcs-Browser: http://svn.debian.org/viewsvn/qof/trunk/qof/
-Vcs-Svn: svn://svn.debian.org/svn/qof/trunk/debian/
+Standards-Version: 3.8.1
 
 Package: libqof2
-Priority: optional
-Section: libs
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
+Depends: ${shlibs:Depends}, ${misc:Depends}, qof-data
 Recommends: libqof2-backend-qsf | libqof2-backend-sqlite | libqof2-backend-gda
-Replaces: libqof1
 Conflicts: pilot-qof (<< 0.1.1-2)
 Description: Query Object Framework
  A framework to allow the execution of SQL-type queries
@@ -30,11 +22,11 @@ Description: Query Object Framework
  to run programs developed using QOF.
 
 Package: libqof-dev
-Priority: optional
 Section: libdevel
 Architecture: any
-Recommends: libqof-doc
-Depends: libgda3-dev, libglib2.0-dev, libqof2 (= ${binary:Version}), ${misc:Depends}
+Depends: libgda3-dev, libglib2.0-dev, libqof2 (= ${binary:Version}), 
+ ${misc:Depends}, pkg-config
+Suggests: libqof-doc
 Description: Query Object Framework - Development Headers
  A framework to allow the execution of SQL-type queries
  using collections of in-memory objects as 'tables'.
@@ -43,12 +35,12 @@ Description: Query Object Framework - Development Headers
  applications using QOF.
 
 Package: libqof2-backend-qsf
-Priority: optional
-Section: libs
 Architecture: any
 Depends: ${shlibs:Depends}, libqof2 (= ${binary:Version}), ${misc:Depends}
 Recommends: xsltproc, xml-core
 Replaces: libqof-backend-qsf0
+Provides: qof-backend-qsf
+Optional: yes
 Description: Query Object Framework - XML backend module
  QOF is a framework to allow the execution of SQL-type
  queries using collections of in-memory objects as 'tables'.
@@ -57,14 +49,11 @@ Description: Query Object Framework - XML backend module
  using a generic XML format called QSF. Any QOF object can
  be written out or loaded from QSF XML. Data can be
  converted to other text-based formats using XSL.
- This package provides the XML schemas to validate files
- and the QSF XML backend module.
 
 Package: libqof2-backend-sqlite
-Priority: optional
-Section: libs
 Architecture: any
 Depends: ${shlibs:Depends}, libqof2 (= ${binary:Version}), ${misc:Depends}
+Provides: qof-backend-sqlite
 Description: Query Object Framework - SQLite backend module
  QOF is a framework to allow the execution of SQL-type
  queries using collections of in-memory objects as 'tables'.
@@ -75,10 +64,10 @@ Description: Query Object Framework - SQLite backend module
  can use whichever backend is available.
 
 Package: libqof2-backend-gda
-Priority: optional
-Section: libs
 Architecture: any
+Optional: yes
 Depends: ${shlibs:Depends}, ${misc:Depends}, libqof2 (= ${binary:Version})
+Provides: qof-backend-gda
 Description: Query Object Framework - GDA backend module
  QOF is a framework to allow the execution of SQL-type
  queries using collections of in-memory objects as 'tables'.
@@ -91,11 +80,10 @@ Description: Query Object Framework - GDA backend module
  using QOF can use whichever backend is available.
 
 Package: libqof2-dbg
-Priority: extra
-Section: libs
+Section: debug
 Architecture: any
-Recommends: libqof-doc
-Depends: libqof2 (= ${binary:Version})
+Depends: libqof2 (= ${binary:Version}), ${misc:Depends}
+Suggests: libqof-doc
 Description: Query Object Framework - Debug Symbols
  A framework to allow the execution of SQL-type queries
  using collections of in-memory objects as 'tables'.
@@ -104,17 +92,27 @@ Description: Query Object Framework - Debug Symbols
  useful when developing applications using QOF.
 
 Package: libqof-doc
-Priority: optional
 Section: doc
 Architecture: all
+Depends: ${misc:Depends}
 Recommends: www-browser, dwww
 Description: Query Object Framework - API Documentation
  A framework to allow the execution of SQL-type queries
  using collections of in-memory objects as tables.
  .
- This package provides the HTML content of the QOF
- homepage in
+ This package provides the documentation of the QOF
+ API produced using Doxygen in
  /usr/share/doc/libqof-doc/html/
- and the documentation of the QOF API produced using
- Doxygen in
- /usr/share/doc/libqof-doc/html/doxy/
+
+Package: qof-data
+Architecture: all
+Depends: ${misc:Depends}
+Replaces: libqof1 (<< 0.7.5)
+Description: Query Object Framework - common files
+ QOF is a framework to allow the exection of SQL-type
+ queries using collections of in-memory objects as 'tables'.
+ .
+ This package contains the translations of QOF messages,
+ XML schemas to validate files from the QSF XML backend
+ module and other architecture-independent support files
+ for QOF.
