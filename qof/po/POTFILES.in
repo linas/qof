@@ -3,7 +3,6 @@
 backend/file/qsf-xml-map.c
 backend/file/qsf-xml.c
 backend/file/qsf-backend.c
-backend/gda/qof-gda.c
 backend/sqlite/qof-sqlite.c
 qof/test/test-book-merge.c
 qof/test/test-date.c

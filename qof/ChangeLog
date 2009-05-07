@@ -1,3 +1,9 @@
+2009-05-07  Neil Williams  <linux@codehelp.co.uk>
+
+	* po/POTFILES.in: Move GDA backend out the
+	translation support as that backend is not really
+	ready.
+
 2009-03-18  Neil Williams  <linux@codehelp.co.uk>
 
 	* backend/file/Makefile.am, backend/file/qsf-backend.c,
