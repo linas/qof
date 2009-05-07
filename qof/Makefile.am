@@ -11,6 +11,9 @@ all-local: Makefile
 clean-local:
 	find . -name '*~'|xargs rm -f
 
+distclean-local:
+	$(RM) $(PACKAGE)_$(VERSION).orig.tar.gz
+
 EXTRA_DIST = config.rpath \
   po/POTFILES.skip \
   qof.pc.in \
