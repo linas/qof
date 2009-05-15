@@ -1,3 +1,7 @@
+2009-05-15  Julien Patriarca <patriarcaj@gmail.com>
+
+	* po/fr.po: New French translation.
+
 2007-11-15  gettextize  <bug-gnu-gettext@gnu.org>
 
 	* Makefile.in.in: Upgrade to gettext-0.16.1.
