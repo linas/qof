@@ -278,7 +278,6 @@ else
 	save_LIBS="$LIBS"
 	AC_CHECK_LIB(gda-3.0, gda_client_open_connection, ,
 		[AC_MSG_ERROR([libgda3-3 found but missing gda_client_open_connection])])
-	AC_MSG_CHECKING(for libgdasql-3.0 support)
 	AC_CHECK_LIB(gdasql-3.0, sql_parse, , [AC_MSG_ERROR([libgda3-3 found but missing libgdasql-3.0])])
 	AC_DEFINE(HAVE_GDA,,[We have found GDA])
 	GDA_PKG_LIB="-lgdasql-3.0"
