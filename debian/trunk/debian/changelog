@@ -31,8 +31,9 @@ qof (0.8.0-1) unstable; urgency=low
     use Recommends-Important. Remove some unnecessary build-dependencies.
   * [L10n] Add French program translation   (Closes: #528756)
   * [l10n] Add Czech translation of qof (Closes: #528979)
+  * [INTL:ru] Add Russian translation of qof (Closes: #529037)
 
- -- Neil Williams <codehelp@debian.org>  Sun, 17 May 2009 11:36:42 +0100
+ -- Neil Williams <codehelp@debian.org>  Sun, 17 May 2009 13:47:19 +0100
 
 qof (0.7.5-1) unstable; urgency=low
 
