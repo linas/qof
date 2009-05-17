@@ -1,7 +1,7 @@
-# SOME DESCRIPTIVE TITLE.
+# Czech translation of qof.
 # Copyright (C) YEAR Neil Williams linux@codehelp.co.uk
 # This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# Tomas Fidler <tomas.fidler@tiscali.cz>, 2009.
 #
 #
 msgid ""
@@ -20,7 +20,7 @@ msgstr ""
 #: backend/file/qsf-xml.c:254 backend/file/qsf-xml.c:310
 #, c-format
 msgid "The QSF XML file '%s' could not be found."
-msgstr "Soubor QSF XML '%s' nebyl nalezen."
+msgstr "Soubor QSF XML „%s“ nebyl nalezen."
 
 #: backend/file/qsf-xml-map.c:259 backend/file/qsf-xml-map.c:281
 #: backend/file/qsf-xml-map.c:340 backend/file/qsf-xml.c:265
@@ -28,7 +28,7 @@ msgstr "Soubor QSF XML '%s' nebyl nalezen."
 #: backend/file/qsf-backend.c:569
 #, c-format
 msgid "There was an error parsing the file '%s'."
-msgstr "Byla nalezena syntaktická chyba v souboru '%s'."
+msgstr "Byla nalezena syntaktická chyba v souboru „%s“."
 
 #: backend/file/qsf-xml-map.c:265 backend/file/qsf-xml.c:271
 #: backend/file/qsf-xml.c:330
@@ -38,14 +38,14 @@ msgid ""
 "against the QSF object schema. The XML structure of the file is either not "
 "well-formed or the file contains illegal data."
 msgstr ""
-"Neplatný soubor objektu QSF! Soubor objektu QSF '%s' nelze ověřit vůči "
+"Neplatný soubor objektu QSF! Soubor objektu QSF „%s“ nelze ověřit vůči "
 "schématu objektu QSF. Struktura XML souboru není správně utvořená nebo "
 "soubor obsahuje nepřípustná data."
 
 #: backend/file/qsf-xml-map.c:274
 #, c-format
 msgid "The QSF map file '%s' could not be found."
-msgstr "Soubor mapy QSF '%s' nelze najít"
+msgstr "Soubor mapy QSF „%s“ nelze najít"
 
 #: backend/file/qsf-xml-map.c:347
 msgid ""
@@ -64,7 +64,7 @@ msgid ""
 "because not all the required parameters for the defined objects have "
 "calculations described in the map."
 msgstr ""
-"Vybraná QSF mapa '%s' obsahuje nepoužitelná nebo chybějící data. To je "
+"Vybraná QSF mapa „%s“ obsahuje nepoužitelná nebo chybějící data. To je "
 "obvykle protože ne všechny požadované parametry definovaných objektů mají v "
 "mapě popsané výpočty."
 
@@ -74,19 +74,19 @@ msgid ""
 "The QSF Map file '%s' was written for a different version of QOF. It may "
 "need to be modified to work with your current QOF installation."
 msgstr ""
-"Soubor QSF map '%s' byl napsán pro jinou verzy QOF. Možná bude potřeba jej "
+"Soubor QSF map „%s“ byl napsán pro jinou verzi QOF. Možná bude potřeba jej "
 "upravit, aby fungoval s vaší instalací QOF."
 
 #: backend/file/qsf-backend.c:118
 msgid "Level of compression to use: 0 for none, 9 for highest."
-msgstr "Úroveň komprese: 0 pro žádnou, í pro nejvyšší."
+msgstr "Úroveň komprese: 0 pro žádnou, 9 pro nejvyšší."
 
 #: backend/file/qsf-backend.c:120
 msgid ""
 "QOF can compress QSF XML files using gzip. Note that compression is not used "
 "when outputting to STDOUT."
 msgstr ""
-"QOF může komprimovat XML soubory QSF pomocí gzip. Koḿprese se nepoužívá při "
+"QOF může komprimovat XML soubory QSF pomocí gzip. Komprese se nepoužívá při "
 "výstupu na STDOUT."
 
 #: backend/file/qsf-backend.c:130
@@ -132,7 +132,7 @@ msgstr ""
 msgid ""
 "The selected QSF Object file '%s' requires a map but it was not provided."
 msgstr ""
-"Vybraný soubor objektu QSF '%s' vyžaduje mapu, ale ta nebyla poskytnuta."
+"Vybraný soubor objektu QSF „%s“ vyžaduje mapu, ale ta nebyla poskytnuta."
 
 #: backend/file/qsf-backend.c:249
 #, c-format
@@ -141,8 +141,8 @@ msgid ""
 "QSF object file '%s' contains invalid data in a field that is meant to hold "
 "a number."
 msgstr ""
-"Při převodu retězců XML na čísla bylo detekováno přetečení. Soubor objektu "
-"QSF '%s' obsahuje neplatná data v poli, které má obsahovat číslo."
+"Při převodu řetězců XML na čísla bylo detekováno přetečení. Soubor objektu "
+"QSF „%s“ obsahuje neplatná data v poli, které má obsahovat číslo."
 
 #: backend/file/qsf-backend.c:333
 #, c-format
@@ -150,24 +150,24 @@ msgid ""
 "could not write to '%s'. That database may be on a read-only file system, or "
 "you may not have write permission for the directory.\n"
 msgstr ""
-"Nelze zapisovat do '%s'. Tato databáze je možná na souborovém systému pouze "
+"Nelze zapisovat do „%s“. Tato databáze je možná na souborovém systému pouze "
 "pro čtení, nebo chybí práva zápisu do adresáře.\n"
 
 #: backend/file/qsf-backend.c:491
 #, c-format
 msgid "There was an error parsing the file '%s'.\n"
-msgstr "Při zpracovávání souboru '%s' došlo k chybě.\n"
+msgstr "Při zpracovávání souboru „%s“ došlo k chybě.\n"
 
 #: backend/file/qsf-backend.c:577
 #, c-format
 msgid "There was an error reading the file '%s'."
-msgstr "Při čtení souboru '%s' došlo k chybě."
+msgstr "Při čtení souboru „%s“ došlo k chybě."
 
 #: backend/file/qsf-backend.c:610
 #, c-format
 msgid ""
 "The selected file '%s' is a QSF map and cannot be opened as a QSF object."
-msgstr "Vybraný soubor '%s' je mapa QSF a nelze jej otevřít jako QSF objekt."
+msgstr "Vybraný soubor „%s“ je mapa QSF a nelze jej otevřít jako QSF objekt."
 
 #: backend/file/qsf-backend.c:1120
 #, c-format
@@ -175,7 +175,7 @@ msgid ""
 "Could not write to '%s'. Check that you have permission to write to this "
 "file and that there is sufficient space to create it."
 msgstr ""
-"Nelze zapisovat do '%s'. Zkontrolujte jestli máte oprávnění pro zápis do "
+"Nelze zapisovat do „%s“. Zkontrolujte jestli máte oprávnění pro zápis do "
 "tohoto souboru a že na disku je dost místa."
 
 #: backend/file/qsf-backend.c:1356
@@ -184,7 +184,7 @@ msgid ""
 "The selected QSF object file '%s' contains one or more invalid GUIDs. The "
 "file cannot be processed - please check the source of the file and try again."
 msgstr ""
-"Vybraný soubor objektu QSF '%s' obsahuje jeden nebo více neplatných GUID. "
+"Vybraný soubor objektu QSF „%s“ obsahuje jeden nebo více neplatných GUID. "
 "Soubor nemůže být zpracován - zkontrolujte prosím zdroj souboru a zkuste to "
 "znovu."
 
@@ -195,8 +195,8 @@ msgid ""
 "values. The file cannot be processed - please check the source of the file "
 "and try again."
 msgstr ""
-"Vybraný soubor objektu QSF '%s' obsahuje jeden nebo více neplatných "
-"'collect' hodnot. Soubor nemůže být zpracován - prosím zkontrolujte zdroj "
+"Vybraný soubor objektu QSF „%s“ obsahuje jeden nebo více neplatných "
+"„collect“ hodnot. Soubor nemůže být zpracován - prosím zkontrolujte zdroj "
 "souboru a zkuste to znovu."
 
 #: backend/sqlite/qof-sqlite.c:836
@@ -205,16 +205,16 @@ msgid ""
 "Unable to open the output file '%s' - do you have permission to create this "
 "file?"
 msgstr ""
-"Nelze otevřít výstupní soubor '%s' - máte oprávnění vytvořit tento soubor?"
+"Nelze otevřít výstupní soubor „%s“ - máte oprávnění vytvořit tento soubor?"
 
 #: backend/sqlite/qof-sqlite.c:868
 #, c-format
 msgid "Unable to open the sqlite database '%s'."
-msgstr "Nelze otevřít sqlite databázi '%s'."
+msgstr "Nelze otevřít sqlite databázi „%s“."
 
 #: backend/sqlite/qof-sqlite.c:892
 msgid "Please provide a filename for sqlite."
-msgstr "Poskytněnte prosím soubor pro sqlite."
+msgstr "Poskytněte prosím soubor pro sqlite."
 
 #: backend/sqlite/qof-sqlite.c:1028
 msgid "Unable to delete record."
@@ -242,7 +242,7 @@ msgid ""
 "Unable to locate a suitable backend for '%s' - please check you have "
 "specified an access method like file: or sqlite:"
 msgstr ""
-"Nelze najít odpovídající backend pro '%s' - Zkontrolujte prosím jestli jste "
+"Nelze najít odpovídající backend pro „%s“ - Zkontrolujte prosím jestli jste "
 "specifikoval přístupovou metodu jako file: nebo sqlite:"
 
 #: qof/qofsession.c:1328 qof/qofsession.c:1365
@@ -257,4 +257,4 @@ msgid ""
 "hold a number."
 msgstr ""
 "Při konverzi SQLite řetězců na čísla bylo detekováno přetečení. Databáze "
-"SQLite '%s' obsahuje neplatná data v poli, které má obsahovat číslo."
+"SQLite „%s“ obsahuje neplatná data v poli, které má obsahovat číslo."
