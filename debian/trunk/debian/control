@@ -94,7 +94,7 @@ Description: Query Object Framework - API Documentation
 Package: qof-data
 Architecture: all
 Depends: ${misc:Depends}
-Replaces: libqof1 (<< 0.7.5)
+Replaces: libqof1, libqof-backend-qsf0
 Description: Query Object Framework - common files
  QOF is a framework to allow the exection of SQL-type
  queries using collections of in-memory objects as 'tables'.
