@@ -249,14 +249,14 @@ storage backend.
 
 ### SourceForge
 
-The source code release for v0.7.5 is available from <a title="qof-0.7.5.tar.gz"
-href="http://prdownloads.sourceforge.net/qof/qof-0.7.5.tar.gz?download">
-SourceForge</a>. The next release will be made from Alioth.
+The source code release for v0.8.0 is available from <a title="qof-0.8.0.tar.gz"
+href="https://alioth.debian.org/frs/download.php/3029/qof-0.8.0.tar.gz">
+Alioth</a>. Future releases will be made from Alioth.
 
 ### Debian
 
 Packages are available in
-<a href="http://packages.debian.org/unstable/libs/libqof1">unstable</a>,
+<a href="http://packages.debian.org/unstable/libs/libqof2">unstable</a>,
 <a href="http://packages.debian.org/testing/libs/libqof1">testing</a>
 and <a href="http://packages.debian.org/stable/libs/libqof1">stable</a>.
 
@@ -304,7 +304,7 @@ Some projects currently using QOF are:
 
 Written by Linas Vepstas &lt;linas@linas.org&gt; April 2004
 
-Last updated by Neil Williams &lt;linux@codehelp.co.uk&gt; December 2007.
+Last updated by Neil Williams &lt;linux@codehelp.co.uk&gt; May 2009.
 
 ----
 
