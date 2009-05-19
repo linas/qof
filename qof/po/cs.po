@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: qof 0.8.0\n"
 "Report-Msgid-Bugs-To: qof-devel@lists.alioth.debian.org\n"
-"POT-Creation-Date: 2009-05-07 22:44+0100\n"
+"POT-Creation-Date: 2009-05-19 14:02+0100\n"
 "PO-Revision-Date: 2009-05-16 22:40+0200\n"
 "Last-Translator: Tomas Fidler <tomas.fidler@tiscali.cz>\n"
 "Language-Team: Czech <debian-l10n-czech@lists.debian.org>\n"
@@ -16,22 +16,22 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: backend/file/qsf-xml-map.c:252 backend/file/qsf-xml-map.c:333
-#: backend/file/qsf-xml.c:254 backend/file/qsf-xml.c:310
+#: ../backend/file/qsf-xml-map.c:252 ../backend/file/qsf-xml-map.c:333
+#: ../backend/file/qsf-xml.c:254 ../backend/file/qsf-xml.c:310
 #, c-format
 msgid "The QSF XML file '%s' could not be found."
 msgstr "Soubor QSF XML „%s“ nebyl nalezen."
 
-#: backend/file/qsf-xml-map.c:259 backend/file/qsf-xml-map.c:281
-#: backend/file/qsf-xml-map.c:340 backend/file/qsf-xml.c:265
-#: backend/file/qsf-xml.c:324 backend/file/qsf-backend.c:526
-#: backend/file/qsf-backend.c:569
+#: ../backend/file/qsf-xml-map.c:259 ../backend/file/qsf-xml-map.c:281
+#: ../backend/file/qsf-xml-map.c:340 ../backend/file/qsf-xml.c:265
+#: ../backend/file/qsf-xml.c:324 ../backend/file/qsf-backend.c:526
+#: ../backend/file/qsf-backend.c:569
 #, c-format
 msgid "There was an error parsing the file '%s'."
 msgstr "Byla nalezena syntaktická chyba v souboru „%s“."
 
-#: backend/file/qsf-xml-map.c:265 backend/file/qsf-xml.c:271
-#: backend/file/qsf-xml.c:330
+#: ../backend/file/qsf-xml-map.c:265 ../backend/file/qsf-xml.c:271
+#: ../backend/file/qsf-xml.c:330
 #, c-format
 msgid ""
 "Invalid QSF Object file! The QSF object file '%s'  failed to validate  "
@@ -42,12 +42,12 @@ msgstr ""
 "schématu objektu QSF. Struktura XML souboru není správně utvořená nebo "
 "soubor obsahuje nepřípustná data."
 
-#: backend/file/qsf-xml-map.c:274
+#: ../backend/file/qsf-xml-map.c:274
 #, c-format
 msgid "The QSF map file '%s' could not be found."
 msgstr "Soubor mapy QSF „%s“ nelze najít"
 
-#: backend/file/qsf-xml-map.c:347
+#: ../backend/file/qsf-xml-map.c:347
 msgid ""
 "Invalid QSF Map file! The QSF map file failed to validate against the QSF "
 "map schema. The XML structure of the file is either not well-formed or the "
@@ -57,7 +57,7 @@ msgstr ""
 "QSF. Struktura XML souboru není správně utvořená nebo soubor obsahuje "
 "nepřípustná data."
 
-#: backend/file/qsf-xml-map.c:419
+#: ../backend/file/qsf-xml-map.c:419
 #, c-format
 msgid ""
 "The selected QSF map '%s' contains unusable or missing data. This is usually "
@@ -68,7 +68,7 @@ msgstr ""
 "obvykle protože ne všechny požadované parametry definovaných objektů mají v "
 "mapě popsané výpočty."
 
-#: backend/file/qsf-xml-map.c:513
+#: ../backend/file/qsf-xml-map.c:513
 #, c-format
 msgid ""
 "The QSF Map file '%s' was written for a different version of QOF. It may "
@@ -77,11 +77,11 @@ msgstr ""
 "Soubor QSF map „%s“ byl napsán pro jinou verzi QOF. Možná bude potřeba jej "
 "upravit, aby fungoval s vaší instalací QOF."
 
-#: backend/file/qsf-backend.c:118
+#: ../backend/file/qsf-backend.c:118
 msgid "Level of compression to use: 0 for none, 9 for highest."
 msgstr "Úroveň komprese: 0 pro žádnou, 9 pro nejvyšší."
 
-#: backend/file/qsf-backend.c:120
+#: ../backend/file/qsf-backend.c:120
 msgid ""
 "QOF can compress QSF XML files using gzip. Note that compression is not used "
 "when outputting to STDOUT."
@@ -89,22 +89,22 @@ msgstr ""
 "QOF může komprimovat XML soubory QSF pomocí gzip. Komprese se nepoužívá při "
 "výstupu na STDOUT."
 
-#: backend/file/qsf-backend.c:130
+#: ../backend/file/qsf-backend.c:130
 msgid "List of QSF map files to use for this session."
 msgstr "Seznam souborů map QSF, které používat pro toto sezení."
 
-#: backend/file/qsf-backend.c:132
+#: ../backend/file/qsf-backend.c:132
 msgid ""
 "QOF can convert objects within QSF XML files using a map of the changes "
 "required."
 msgstr ""
 "QOF může převádět objekty v XML souborech QSF pomocí mapy požadovaných změn."
 
-#: backend/file/qsf-backend.c:141
+#: ../backend/file/qsf-backend.c:141
 msgid "Encoding string to use when writing the XML file."
 msgstr "Kódování řetězců, které používat při zápisu souboru XML."
 
-#: backend/file/qsf-backend.c:143
+#: ../backend/file/qsf-backend.c:143
 msgid ""
 "QSF defaults to UTF-8. Other encodings are supported by passing the encoding "
 "string in this option."
@@ -112,11 +112,11 @@ msgstr ""
 "QSF implicitně používá UTF-8. Jiná kódování jsou podporována předáním "
 "kódovacího řetězce v této volbě."
 
-#: backend/file/qsf-backend.c:152
+#: ../backend/file/qsf-backend.c:152
 msgid "Convert deprecated date values to time values."
 msgstr "Převést zavrhnuté datumové hodnoty na časové hodnoty."
 
-#: backend/file/qsf-backend.c:154
+#: ../backend/file/qsf-backend.c:154
 msgid ""
 "Applications that support the new QOF time format need to enable this option "
 "to convert older date values into time. Applications that still use date "
@@ -127,14 +127,14 @@ msgstr ""
 "používají datum by neměli nastavit tuto volbu dokud nebudou podporovat "
 "časové hodnoty."
 
-#: backend/file/qsf-backend.c:246
+#: ../backend/file/qsf-backend.c:246
 #, c-format
 msgid ""
 "The selected QSF Object file '%s' requires a map but it was not provided."
 msgstr ""
 "Vybraný soubor objektu QSF „%s“ vyžaduje mapu, ale ta nebyla poskytnuta."
 
-#: backend/file/qsf-backend.c:249
+#: ../backend/file/qsf-backend.c:249
 #, c-format
 msgid ""
 "When converting XML strings into numbers, an overflow has been detected. The "
@@ -144,7 +144,7 @@ msgstr ""
 "Při převodu řetězců XML na čísla bylo detekováno přetečení. Soubor objektu "
 "QSF „%s“ obsahuje neplatná data v poli, které má obsahovat číslo."
 
-#: backend/file/qsf-backend.c:333
+#: ../backend/file/qsf-backend.c:333
 #, c-format
 msgid ""
 "could not write to '%s'. That database may be on a read-only file system, or "
@@ -153,23 +153,23 @@ msgstr ""
 "Nelze zapisovat do „%s“. Tato databáze je možná na souborovém systému pouze "
 "pro čtení, nebo chybí práva zápisu do adresáře.\n"
 
-#: backend/file/qsf-backend.c:491
+#: ../backend/file/qsf-backend.c:491
 #, c-format
 msgid "There was an error parsing the file '%s'.\n"
 msgstr "Při zpracovávání souboru „%s“ došlo k chybě.\n"
 
-#: backend/file/qsf-backend.c:577
+#: ../backend/file/qsf-backend.c:577
 #, c-format
 msgid "There was an error reading the file '%s'."
 msgstr "Při čtení souboru „%s“ došlo k chybě."
 
-#: backend/file/qsf-backend.c:610
+#: ../backend/file/qsf-backend.c:610
 #, c-format
 msgid ""
 "The selected file '%s' is a QSF map and cannot be opened as a QSF object."
 msgstr "Vybraný soubor „%s“ je mapa QSF a nelze jej otevřít jako QSF objekt."
 
-#: backend/file/qsf-backend.c:1120
+#: ../backend/file/qsf-backend.c:1120
 #, c-format
 msgid ""
 "Could not write to '%s'. Check that you have permission to write to this "
@@ -178,7 +178,7 @@ msgstr ""
 "Nelze zapisovat do „%s“. Zkontrolujte jestli máte oprávnění pro zápis do "
 "tohoto souboru a že na disku je dost místa."
 
-#: backend/file/qsf-backend.c:1356
+#: ../backend/file/qsf-backend.c:1356
 #, c-format
 msgid ""
 "The selected QSF object file '%s' contains one or more invalid GUIDs. The "
@@ -188,7 +188,7 @@ msgstr ""
 "Soubor nemůže být zpracován - zkontrolujte prosím zdroj souboru a zkuste to "
 "znovu."
 
-#: backend/file/qsf-backend.c:1478
+#: ../backend/file/qsf-backend.c:1478
 #, c-format
 msgid ""
 "The selected QSF object file '%s' contains one or more invalid 'collect' "
@@ -199,7 +199,7 @@ msgstr ""
 "„collect“ hodnot. Soubor nemůže být zpracován - prosím zkontrolujte zdroj "
 "souboru a zkuste to znovu."
 
-#: backend/sqlite/qof-sqlite.c:836
+#: ../backend/sqlite/qof-sqlite.c:836
 #, c-format
 msgid ""
 "Unable to open the output file '%s' - do you have permission to create this "
@@ -207,36 +207,36 @@ msgid ""
 msgstr ""
 "Nelze otevřít výstupní soubor „%s“ - máte oprávnění vytvořit tento soubor?"
 
-#: backend/sqlite/qof-sqlite.c:868
+#: ../backend/sqlite/qof-sqlite.c:868
 #, c-format
 msgid "Unable to open the sqlite database '%s'."
 msgstr "Nelze otevřít sqlite databázi „%s“."
 
-#: backend/sqlite/qof-sqlite.c:892
+#: ../backend/sqlite/qof-sqlite.c:892
 msgid "Please provide a filename for sqlite."
 msgstr "Poskytněte prosím soubor pro sqlite."
 
-#: backend/sqlite/qof-sqlite.c:1028
+#: ../backend/sqlite/qof-sqlite.c:1028
 msgid "Unable to delete record."
 msgstr "Nelze smazat záznam."
 
-#: backend/sqlite/qof-sqlite.c:1030
+#: ../backend/sqlite/qof-sqlite.c:1030
 msgid "Unable to create record."
 msgstr "Nelze vytvořit záznam."
 
-#: backend/sqlite/qof-sqlite.c:1032
+#: ../backend/sqlite/qof-sqlite.c:1032
 msgid "Unable to insert a new record."
 msgstr "Nelze vložit nový záznam."
 
-#: backend/sqlite/qof-sqlite.c:1034
+#: ../backend/sqlite/qof-sqlite.c:1034
 msgid "Unable to update existing record."
 msgstr "Nelze aktualizovat existující záznam."
 
-#: qof/qofsession.c:1050
+#: ../qof/qofsession.c:1050
 msgid "This book appears to be open already."
 msgstr "Tato kniha je zřejmě již otevřena."
 
-#: qof/qofsession.c:1091
+#: ../qof/qofsession.c:1091
 #, c-format
 msgid ""
 "Unable to locate a suitable backend for '%s' - please check you have "
@@ -245,11 +245,11 @@ msgstr ""
 "Nelze najít odpovídající backend pro „%s“ - Zkontrolujte prosím jestli jste "
 "specifikoval přístupovou metodu jako file: nebo sqlite:"
 
-#: qof/qofsession.c:1328 qof/qofsession.c:1365
+#: ../qof/qofsession.c:1328 ../qof/qofsession.c:1365
 msgid "Failed to load backend, no suitable handler."
 msgstr "Selhalo nahrání backend, nepoužitelný handler."
 
-#: qof/qofsql.c:724 qof/qofsql.c:751
+#: ../qof/qofsql.c:724 ../qof/qofsql.c:751
 #, c-format
 msgid ""
 "When converting SQLite strings into numbers, an overflow has been detected. "
