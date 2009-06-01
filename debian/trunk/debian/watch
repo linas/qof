@@ -1,6 +1,5 @@
 #format
 version=3
 # watch control file for uscan
-http://alioth.debian.org/project/showfiles.php?group_id=100136 \
-/download.php/.*/qof_(.*)\.tar\.gz
-
+http://alioth.debian.org/frs/?group_id=100136 \
+ https://alioth.debian.org/frs/download.php/3029/qof-(.*).tar.gz

@@ -1,3 +1,9 @@
+qof (0.8.0-2) unstable; urgency=low
+
+  * Fix watch file for alioth.
+
+ -- Neil Williams <codehelp@debian.org>  Mon, 01 Jun 2009 18:20:28 +0100
+
 qof (0.8.0-1) unstable; urgency=low
 
   * New upstream version of libqof2.
