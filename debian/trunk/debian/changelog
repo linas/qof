@@ -1,8 +1,14 @@
-qof (0.8.0-2) unstable; urgency=low
+qof (0.8.1-1) unstable; urgency=low
 
+  * New upstream release.
   * Fix watch file for alioth.
+  * [INTL:pt] Update Portuguese translation (Closes: #529529)
+  * Fixes build errors with gcc-4.4 (Closes: #530525)
+  * Update standards version. (no changes)
+  * Repeat the same prefix in each description. (Closes: #532863)
+  * update debian/xcontrol with emxcontrol.
 
- -- Neil Williams <codehelp@debian.org>  Mon, 01 Jun 2009 18:20:28 +0100
+ -- Neil Williams <codehelp@debian.org>  Sun, 05 Jul 2009 13:11:35 +0100
 
 qof (0.8.0-1) unstable; urgency=low
 
