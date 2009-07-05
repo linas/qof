@@ -1,3 +1,9 @@
+2009-07-05  Neil Williams  <linux@codehelp.co.uk>
+
+	* configure.ac: Prepare new release, dump libglib2.0 dependency
+	to at least 2.9.0.
+	* qof/guid.c: Remove old conditionals for glib2.0 older than 2.9.0
+
 2009-05-07  Neil Williams  <linux@codehelp.co.uk>
 
 	* po/POTFILES.in: Move GDA backend out the

@@ -7,14 +7,14 @@ dnl # ******************************
 
 AC_DEFUN([MAJOR], [0])
 AC_DEFUN([MINOR], [8])
-AC_DEFUN([MICRO], [0])
+AC_DEFUN([MICRO], [1])
 AC_DEFUN([MY_VERSION], [MAJOR.MINOR.MICRO])
 AC_INIT([qof], [MY_VERSION],
   [http://lists.sourceforge.net/lists/listinfo/qof-devel])
 AC_PREREQ(2.61)
 AC_GNU_SOURCE
 AC_DEFUN([QOFCURRENT], [2])
-AC_DEFUN([QOFREVISION], [0])
+AC_DEFUN([QOFREVISION], [1])
 AC_DEFUN([QOFAGE], [0])
 AC_DEFUN([LIBQOFVERS], [QOFCURRENT:QOFREVISION:QOFAGE])
 LIBQOF_LIBRARY_VERSION=LIBQOFVERS
@@ -56,7 +56,7 @@ dnl # *****************************************
 dnl # pkg-config check time
 dnl # *****************************************
 
-AM_PATH_GLIB_2_0("2.6.0", , ,gobject)
+AM_PATH_GLIB_2_0("2.9.0", , ,gobject)
 
 AC_PATH_PROG(PKG_CONFIG,pkg-config)
 if test "x$PKG_CONFIG" != x; then
@@ -69,16 +69,6 @@ AC_SUBST(GLIB_CFLAGS)
 AC_SUBST(GLIB_LIBS)
 AC_SUBST(GOBJECT_LIBS)
 AC_SUBST(GMODULE_LIBS)
-
-AC_MSG_CHECKING(for GLIB - version >= 2.9.0)
-if $PKG_CONFIG 'glib-2.0 >= 2.9.0'
-then
-	AC_MSG_RESULT(yes)
-	AC_DEFINE(HAVE_GLIB29,1,[System has glib 2.9.0 or better])
-	HAVE_GLIB29=yes
-else
-	AC_MSG_RESULT(no)
-fi
 
 dnl # ********************************
 dnl # Symbol versioning support
