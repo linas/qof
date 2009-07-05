@@ -48,7 +48,9 @@ strncasestr (const guchar * str1, const guchar * str2, size_t len)
 	{
 		if (toupper (*str1) == toupper (*str2))
 		{
-			if (strncasecmp (str1, str2, strlen (str2)) == 0)
+			size_t l;
+			l = strlen ((gchar*)str2);
+			if (strncasecmp ((gchar*)str1, (gchar*)str2, l) == 0)
 				return (gchar *) str1;
 		}
 		str1++;

@@ -111,35 +111,6 @@ qof_entity_get_guid (QofEntity * ent)
 
 /* =============================================================== */
 
-static guint
-id_hash (gconstpointer key)
-{
-	const GUID *guid = key;
-
-	if (key == NULL)
-		return 0;
-
-	/* Compiler should optimize this all away! */
-	if (sizeof (guint) <= 16)
-		return *((guint *) guid->data);
-	else
-	{
-		guint hash = 0;
-		guint i, j;
-
-		for (i = 0, j = 0; i < sizeof (guint); i++, j++)
-		{
-			if (j == 16)
-				j = 0;
-
-			hash <<= 4;
-			hash |= guid->data[j];
-		}
-
-		return hash;
-	}
-}
-
 static gboolean
 id_compare (gconstpointer key_1, gconstpointer key_2)
 {
@@ -152,7 +123,7 @@ qof_collection_new (QofIdType type)
 	QofCollection *col;
 	col = g_new0 (QofCollection, 1);
 	col->e_type = CACHE_INSERT (type);
-	col->hash_of_entities = g_hash_table_new (id_hash, id_compare);
+	col->hash_of_entities = g_hash_table_new (guid_hash_to_guint, id_compare);
 	col->data = NULL;
 	return col;
 }

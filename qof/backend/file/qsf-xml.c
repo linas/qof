@@ -149,7 +149,7 @@ qsf_object_validation_handler (xmlNodePtr child, xmlNsPtr ns,
 		{
 			object_declaration =
 				xmlGetProp (cur_node, BAD_CAST QSF_OBJECT_TYPE);
-			is_registered = qof_class_is_registered (object_declaration);
+			is_registered = qof_class_is_registered ((gchar*)object_declaration);
 			if (is_registered)
 			{
 				type = QSF_REGISTERED_OBJECT;
@@ -448,7 +448,7 @@ qsf_book_node_handler (xmlNodePtr child, xmlNsPtr ns, QsfParam * params)
 		if (qsf_is_element (child_node, ns, QSF_BOOK_GUID))
 		{
 			DEBUG (" trying to set book GUID");
-			buffer = BAD_CAST xmlNodeGetContent (child_node);
+			buffer = (gchar*) xmlNodeGetContent (child_node);
 			g_return_if_fail (TRUE == string_to_guid (buffer, &book_guid));
 			qof_entity_set_guid ((QofEntity *) params->book, &book_guid);
 			xmlNewChild (params->output_node, params->qsf_ns,

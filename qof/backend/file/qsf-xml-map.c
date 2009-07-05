@@ -104,9 +104,9 @@ qsf_map_validation_handler (xmlNodePtr child, xmlNsPtr ns,
 		{
 			if (qsf_is_element (child_node, ns, MAP_DEFINE_TAG))
 			{
-				obj_type = xmlGetProp (child_node, MAP_E_TYPE);
+				obj_type = xmlGetProp (child_node, BAD_CAST MAP_E_TYPE);
 				type = QSF_DEFINED_OBJECT;
-				is_registered = qof_class_is_registered (obj_type);
+				is_registered = qof_class_is_registered ((gchar*)obj_type);
 				if (is_registered)
 				{
 					type = QSF_REGISTERED_OBJECT;
@@ -422,12 +422,12 @@ qsf_map_default_handler (xmlNodePtr child, xmlNsPtr ns, QsfParam * params)
 			 "calculations described in the map."), TRUE);
 	if (qsf_is_element (child, ns, MAP_DEFINE_TAG))
 	{
-		iterate = xmlGetProp (child, MAP_ITERATE_ATTR);
+		iterate = (gchar*) xmlGetProp (child, BAD_CAST MAP_ITERATE_ATTR);
 		if ((qof_util_bool_to_int (iterate) == 1) &&
 			(qof_class_is_registered
-				(xmlGetProp (child, BAD_CAST MAP_E_TYPE))))
+				((gchar*) xmlGetProp (child, BAD_CAST MAP_E_TYPE))))
 		{
-			params->qof_foreach = xmlGetProp (child, BAD_CAST MAP_E_TYPE);
+			params->qof_foreach = (gchar*) xmlGetProp (child, BAD_CAST MAP_E_TYPE);
 			PINFO (" iterating over '%s' objects", params->qof_foreach);
 		}
 		if (NULL == g_hash_table_lookup (params->qsf_define_hash,
@@ -835,9 +835,9 @@ qsf_map_calculate_output (xmlNodePtr param_node, xmlNodePtr child,
 	/* source refers to the source object that provides the data */
 	source = g_list_find_custom (params->qsf_object_list,
 		BAD_CAST xmlGetProp (param_node,
-			MAP_OBJECT_ATTR), identify_source_func);
+			BAD_CAST MAP_OBJECT_ATTR), identify_source_func);
 	PINFO (" checking %s", BAD_CAST xmlGetProp (param_node,
-			MAP_OBJECT_ATTR));
+			BAD_CAST MAP_OBJECT_ATTR));
 	if (!source)
 	{
 		DEBUG (" no source found in list.");
@@ -941,7 +941,7 @@ iterator_cb (xmlNodePtr child, xmlNsPtr ns, QsfParam * params)
 	/* count the number of iterators in the QSF file */
 	if (qsf_is_element (child, ns, QSF_OBJECT_TAG))
 	{
-		object_name = xmlGetProp (child, QSF_OBJECT_TYPE);
+		object_name = (gchar*) xmlGetProp (child, BAD_CAST QSF_OBJECT_TYPE);
 		if (0 == safe_strcmp (object_name, params->qof_foreach))
 		{
 			params->foreach_limit++;
@@ -997,8 +997,8 @@ qsf_object_convert (xmlDocPtr mapDoc, xmlNodePtr qsf_root,
 			params->lister = NULL;
 			PINFO (" found an object tag. starting calculation");
 			/* cur_node describes the target object */
-			if (!qof_class_is_registered (BAD_CAST
-					xmlGetProp (cur_node, MAP_TYPE_ATTR)))
+			if (!qof_class_is_registered ((gchar*)
+					xmlGetProp (cur_node, BAD_CAST MAP_TYPE_ATTR)))
 			{
 				continue;
 			}

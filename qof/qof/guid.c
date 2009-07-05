@@ -602,7 +602,7 @@ guid_to_string_buff (const GUID * guid, char *string)
 gboolean
 string_to_guid (const char *string, GUID * guid)
 {
-	return decode_md5_string (string, (guid != NULL) ? guid->data : NULL);
+	return decode_md5_string ((const guchar *)string, (guid != NULL) ? guid->data : NULL);
 }
 
 gboolean
@@ -634,6 +634,8 @@ guint
 guid_hash_to_guint (gconstpointer ptr)
 {
 	const GUID *guid = ptr;
+	guint hash = 0;
+	unsigned int i, j;
 
 	if (!guid)
 	{
@@ -641,26 +643,16 @@ guid_hash_to_guint (gconstpointer ptr)
 		return 0;
 	}
 
-	if (sizeof (guint) <= sizeof (guid->data))
+	for (i = 0, j = 0; i < sizeof (guint); i++, j++)
 	{
-		return (*((guint *) guid->data));
+		if (j == GUID_DATA_SIZE)
+			j = 0;
+		
+		hash <<= 4;
+		hash |= guid->data[j];
 	}
-	else
-	{
-		guint hash = 0;
-		unsigned int i, j;
-
-		for (i = 0, j = 0; i < sizeof (guint); i++, j++)
-		{
-			if (j == GUID_DATA_SIZE)
-				j = 0;
-
-			hash <<= 4;
-			hash |= guid->data[j];
-		}
-
-		return hash;
-	}
+	
+	return hash;
 }
 
 static gint

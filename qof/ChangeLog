@@ -1,5 +1,12 @@
 2009-07-05  Neil Williams  <linux@codehelp.co.uk>
 
+	* backend/file/qsf-xml-map.c:
+	* backend/file/qsf-xml.c:
+	* qof/guid.c:
+	* qof/qofid.c:
+	* qof/qofutil.c: Fix build errors with gcc-4.4 by
+	expanding some casts and simplifying guid_hash_to_guint.
+
 	* configure.ac: Prepare new release, bump libglib2.0 dependency
 	to at least 2.9.0.
 	* qof/guid.c: Remove old conditionals for glib2.0 older than 2.9.0
