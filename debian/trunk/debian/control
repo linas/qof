@@ -4,8 +4,7 @@ Priority: optional
 Maintainer: Neil Williams <codehelp@debian.org>
 Uploaders: Goedson Teixeira Paixao <goedson@debian.org>
 Build-Depends: cdbs, debhelper (>= 5), xsltproc,
- libglib2.0-dev (>= 2.9.0), libxml2-dev (>= 2.5.10), libgda3-dev, 
- libsqlite0-dev
+ libglib2.0-dev (>= 2.9.0), libxml2-dev (>= 2.5.10), libsqlite0-dev
 Build-Depends-Indep: doxygen
 Standards-Version: 3.8.2
 Homepage: http://alioth.debian.org/projects/qof/
@@ -15,7 +14,7 @@ Vcs-Svn: svn://svn.debian.org/svn/qof/trunk/debian/
 Package: libqof2
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, qof-data
-Recommends: libqof2-backend-qsf | libqof2-backend-sqlite | libqof2-backend-gda
+Recommends: libqof2-backend-qsf | libqof2-backend-sqlite
 Conflicts: pilot-qof (<< 0.1.1-2)
 Description: Query Object Framework
  QOF is a framework to allow the execution of SQL-type queries
@@ -27,7 +26,7 @@ Description: Query Object Framework
 Package: libqof-dev
 Section: libdevel
 Architecture: any
-Depends: libgda3-dev, libglib2.0-dev, libqof2 (= ${binary:Version}), 
+Depends: libglib2.0-dev, libqof2 (= ${binary:Version}), 
  ${misc:Depends}, pkg-config
 Suggests: libqof-doc
 Description: Query Object Framework - Development Headers

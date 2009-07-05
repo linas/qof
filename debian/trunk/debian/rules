@@ -47,11 +47,13 @@ else
 
 # GDA backend isn't ready.
 #DEB_CONFIGURE_EXTRA_FLAGS += --enable-gdabackend
+DEB_CONFIGURE_EXTRA_FLAGS += --disable-gdasql
 ifeq (,$(findstring nocheck,$(DEB_BUILD_OPTIONS)))
 DEB_MAKE_CHECK_TARGET = check
 endif
 build/libqof2::
 	cp qof.symbols debian/libqof2.symbols
+	cat qofsql.symbols >> debian/libqof2.symbols
 
 clean/libqof2::
 	$(RM) debian/libqof2.symbols
