@@ -10,8 +10,9 @@ qof (0.8.1-1) unstable; urgency=low
   * Drop libgda3 from dependencies - gda-backend is still broken and
     libgda4 is pending which does not include the libsql code or symbols
     anymore. Use internal qofsql support.
+  * package libqofsql.la in -dev for internal qofsql support.
 
- -- Neil Williams <codehelp@debian.org>  Sun, 05 Jul 2009 17:18:40 +0100
+ -- Neil Williams <codehelp@debian.org>  Mon, 06 Jul 2009 21:29:10 +0100
 
 qof (0.8.0-1) unstable; urgency=low
 
