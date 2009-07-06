@@ -2,8 +2,7 @@ SUBDIRS = . test
 
 lib_LTLIBRARIES = libqof.la
 
-libqof_la_LDFLAGS= -version-info $(LIBQOF_LIBRARY_VERSION) \
-  $(LINKER_SCRIPT) -L${top_builddir}/lib/libsql
+libqof_la_LDFLAGS= -version-info $(LIBQOF_LIBRARY_VERSION) $(LINKER_SCRIPT)
 
 libqof_la_SOURCES =  \
    qoflog.c \
@@ -107,13 +106,22 @@ INCLUDES = \
   -DDATADIR=\""$(datadir)"\"
 endif
 
+if USE_LIBGDA
 libqof_la_LIBADD = \
   ${GMODULE_LIBS} \
   ${GOBJECT_LIBS} \
   ${GLIB_LIBS} \
   ${GDA_PKG_LIB} \
-  ${SQL_PKG_LIB} \
   -lm
+else
+libqof_la_LIBADD = \
+ -L${top_builddir}/lib/libsql ${SQL_PKG_LIB} \
+  ${GMODULE_LIBS} \
+  ${GOBJECT_LIBS} \
+  ${GLIB_LIBS} \
+  ${GDA_PKG_LIB} \
+  -lm
+endif
 
 EXTRA_DIST = \
   libqof.ver \

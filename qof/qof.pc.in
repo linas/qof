@@ -11,6 +11,6 @@ Name: QOF
 Description: QOF Query Object Framework Library.
 Version: @VERSION@
 Requires: glib-2.0
-Libs: -L${libdir} -lqof ${qof_sql_libs}
-Libs.private: -lm ${gda_libs}
+Libs: -L${libdir} -lqof
+Libs.private: -lm ${gda_libs} ${qof_sql_libs}
 Cflags: -I${includedir}/qof
