@@ -7,7 +7,7 @@ dnl # ******************************
 
 AC_DEFUN([MAJOR], [0])
 AC_DEFUN([MINOR], [8])
-AC_DEFUN([MICRO], [1])
+AC_DEFUN([MICRO], [2])
 AC_DEFUN([MY_VERSION], [MAJOR.MINOR.MICRO])
 AC_INIT([qof], [MY_VERSION],
   [http://lists.sourceforge.net/lists/listinfo/qof-devel])
