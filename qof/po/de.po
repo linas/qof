@@ -1,0 +1,273 @@
+# Translation of qof to German
+# Copyright (C) 2003 Neil Williams linux@codehelp.co.uk
+# This file is distributed under the same license as the qof package.
+# Chris Leick <c.leick@vollbio.de>, 2009.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: qof 0.8.0\n"
+"Report-Msgid-Bugs-To: qof-devel@lists.alioth.debian.org\n"
+"POT-Creation-Date: 2009-07-06 23:41+0100\n"
+"PO-Revision-Date: 2009-07-03 18:09+0100\n"
+"Last-Translator: Chris Leick <c.leick@vollbio.de>\n"
+"Language-Team: German <debian-l10n-german@lists.debian.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: backend/file/qsf-xml-map.c:252 backend/file/qsf-xml-map.c:333
+#: backend/file/qsf-xml.c:254 backend/file/qsf-xml.c:310
+#, c-format
+msgid "The QSF XML file '%s' could not be found."
+msgstr "Die QSF-XML-Datei »%s« konnte nicht gefunden werden."
+
+#: backend/file/qsf-xml-map.c:259 backend/file/qsf-xml-map.c:281
+#: backend/file/qsf-xml-map.c:340 backend/file/qsf-xml.c:265
+#: backend/file/qsf-xml.c:324 backend/file/qsf-backend.c:526
+#: backend/file/qsf-backend.c:569
+#, c-format
+msgid "There was an error parsing the file '%s'."
+msgstr "Beim Auswerten der Datei »%s« trat ein Fehler auf."
+
+#: backend/file/qsf-xml-map.c:265 backend/file/qsf-xml.c:271
+#: backend/file/qsf-xml.c:330
+#, c-format
+msgid ""
+"Invalid QSF Object file! The QSF object file '%s'  failed to validate  "
+"against the QSF object schema. The XML structure of the file is either not "
+"well-formed or the file contains illegal data."
+msgstr ""
+"Ungültige QSF-Objektdatei. Die QSF-Objektdatei »%s« anhand des QSF-"
+"Objektschemas zu prüfen ist fehlgeschlagen. Die XML-Struktur der Datei hat "
+"entweder nicht die richtige Form oder die Datei enthält unzulässige Daten."
+
+#: backend/file/qsf-xml-map.c:274
+#, c-format
+msgid "The QSF map file '%s' could not be found."
+msgstr "Die QSF-Kartendatei »%s« konnte nicht gefunden werden."
+
+#: backend/file/qsf-xml-map.c:347
+msgid ""
+"Invalid QSF Map file! The QSF map file failed to validate against the QSF "
+"map schema. The XML structure of the file is either not well-formed or the "
+"file contains illegal data."
+msgstr ""
+"Ungültige QSF-Kartendatei. Die QSF-Kartendatei »%s« anhand des QSF-"
+"Kartenschemas zu prüfen ist fehlgeschlagen. Die XML-Struktur der Datei hat "
+"entweder nicht die richtige Form oder die Datei enthält unzulässige Daten."
+
+#: backend/file/qsf-xml-map.c:419
+#, c-format
+msgid ""
+"The selected QSF map '%s' contains unusable or missing data. This is usually "
+"because not all the required parameters for the defined objects have "
+"calculations described in the map."
+msgstr ""
+"Die ausgewählte QSF-Kartendatei »%s« enthält unbenutzbare oder fehlende "
+"Daten. Der Grund dafür ist üblicherweise, dass nicht alle erforderlichen "
+"Parameter für die definierten Objekte auf der Karte beschriebene "
+"Berechnungen haben."
+
+#: backend/file/qsf-xml-map.c:513
+#, c-format
+msgid ""
+"The QSF Map file '%s' was written for a different version of QOF. It may "
+"need to be modified to work with your current QOF installation."
+msgstr ""
+"Die QSF-Kartendatei »%s« wurde für eine andere Version von QOF geschrieben. "
+"Es könnte erforderlich sein, sie zu ändern, damit sie mit der aktuellen QOF-"
+"Installation funktioniert."
+
+#: backend/file/qsf-backend.c:118
+msgid "Level of compression to use: 0 for none, 9 for highest."
+msgstr "Zu benutzende Kompressionsstufe: 0 für keine, 9 für die höchste."
+
+#: backend/file/qsf-backend.c:120
+msgid ""
+"QOF can compress QSF XML files using gzip. Note that compression is not used "
+"when outputting to STDOUT."
+msgstr ""
+"QOF kann QSF-XML-Dateien mit gzip komprimieren. Beachten Sie, dass bei der "
+"Ausgabe auf STDOUT keine Komprimierung benutzt wird."
+
+#: backend/file/qsf-backend.c:130
+msgid "List of QSF map files to use for this session."
+msgstr "Liste der QSF-Kartendateien zum Benutzen in dieser Sitzung."
+
+#: backend/file/qsf-backend.c:132
+msgid ""
+"QOF can convert objects within QSF XML files using a map of the changes "
+"required."
+msgstr ""
+"QOF kann Objekte innerhalb von QSF-XML-Dateien unter Benutzung einer Karte "
+"der benötigten Änderungen konvertieren."
+
+#: backend/file/qsf-backend.c:141
+msgid "Encoding string to use when writing the XML file."
+msgstr ""
+"Entschlüsselungszeichenkette zum Benutzen, wenn die XML-Datei geschrieben "
+"wird."
+
+#: backend/file/qsf-backend.c:143
+msgid ""
+"QSF defaults to UTF-8. Other encodings are supported by passing the encoding "
+"string in this option."
+msgstr ""
+"QSF-Vorgaben für UTF-8. Andere Verschlüsselungen werden durch Übergabe der "
+"Verschlüsselungszeichenkette an diese Option unterstützt."
+
+#: backend/file/qsf-backend.c:152
+msgid "Convert deprecated date values to time values."
+msgstr "Missbilligte Datenwerte zu Zeitwerten konvertieren."
+
+#: backend/file/qsf-backend.c:154
+msgid ""
+"Applications that support the new QOF time format need to enable this option "
+"to convert older date values into time. Applications that still use date "
+"should not set this option until time values are supported."
+msgstr ""
+"Anwendungen, die das neue QOF-Zeitformat unterstützen, müssen diese Option "
+"einschalten, um ältere Datumswerte zu Zeitwerten zu konvertieren. "
+"Anwendungen, die immer noch das Datum benutzen, sollten diese Option nicht "
+"setzen, bis Zeitwerte unterstützt werden."
+
+#: backend/file/qsf-backend.c:246
+#, c-format
+msgid ""
+"The selected QSF Object file '%s' requires a map but it was not provided."
+msgstr ""
+"Die ausgewählte QSF-Objektdatei »%s« benötigt eine Karte, aber diese wurde "
+"nicht bereitgestellt."
+
+#: backend/file/qsf-backend.c:249
+#, c-format
+msgid ""
+"When converting XML strings into numbers, an overflow has been detected. The "
+"QSF object file '%s' contains invalid data in a field that is meant to hold "
+"a number."
+msgstr ""
+"Bei der Konvertierung von XML-Zeichenketten in Zahlen wurde ein Überlauf "
+"bemerkt. Die QSF-Objektdatei »%s« enthält ungültige Daten in einem Feld, das "
+"dazu gedacht ist, Nummern zu enthalten."
+
+#: backend/file/qsf-backend.c:333
+#, c-format
+msgid ""
+"could not write to '%s'. That database may be on a read-only file system, or "
+"you may not have write permission for the directory.\n"
+msgstr ""
+"auf »%s« kann nicht geschrieben werden. Die Datenbank könnte auf einem "
+"Dateisystem mit ausschließlichem Lesezugriff liegen oder Sie könnten keine "
+"Schreibrechte für dieses Verzeichnis haben.\n"
+
+#: backend/file/qsf-backend.c:491
+#, c-format
+msgid "There was an error parsing the file '%s'.\n"
+msgstr "Beim Auswerten der Datei »%s« ist ein Fehler aufgetreten.\n"
+
+#: backend/file/qsf-backend.c:577
+#, c-format
+msgid "There was an error reading the file '%s'."
+msgstr "Beim Lesen der Datei »%s« ist ein Fehler aufgetreten."
+
+#: backend/file/qsf-backend.c:610
+#, c-format
+msgid ""
+"The selected file '%s' is a QSF map and cannot be opened as a QSF object."
+msgstr ""
+"Die ausgewählte Datei »%s« ist eine QSF-Karte und kann nicht als ein QSF-"
+"Objekt geöffnet werden."
+
+#: backend/file/qsf-backend.c:1120
+#, c-format
+msgid ""
+"Could not write to '%s'. Check that you have permission to write to this "
+"file and that there is sufficient space to create it."
+msgstr ""
+"Auf »%s« kann nicht geschrieben werden. Prüfen Sie, ob Sie die Rechte haben, "
+"diese Datei zu schreiben und ob ausreichend Platz vorhanden ist, um sie zu "
+"erstellen."
+
+#: backend/file/qsf-backend.c:1356
+#, c-format
+msgid ""
+"The selected QSF object file '%s' contains one or more invalid GUIDs. The "
+"file cannot be processed - please check the source of the file and try again."
+msgstr ""
+"Die ausgewählte QSF-Objektdatei »%s« enthält eine oder mehrere ungültige "
+"GUIDs. Die Datei kann nicht verarbeitet werden - bitte prüfen Sie die Quelle "
+"der Datei und versuchen Sie es erneut."
+
+#: backend/file/qsf-backend.c:1478
+#, c-format
+msgid ""
+"The selected QSF object file '%s' contains one or more invalid 'collect' "
+"values. The file cannot be processed - please check the source of the file "
+"and try again."
+msgstr ""
+"Die ausgewählte QSF-Objektdatei »%s« enthält eine oder mehrere ungültige "
+"»collect«-Werte. Die Datei kann nicht verarbeitet werden - bitte prüfen Sie "
+"die Quelle der Datei und versuchen Sie es erneut."
+
+#: backend/sqlite/qof-sqlite.c:836
+#, c-format
+msgid ""
+"Unable to open the output file '%s' - do you have permission to create this "
+"file?"
+msgstr ""
+"Es ist nicht möglich, die Ausgabedatei »%s« zu öffnen - haben Sie die Rechte, "
+"diese Datei zu erstellen?"
+
+#: backend/sqlite/qof-sqlite.c:868
+#, c-format
+msgid "Unable to open the sqlite database '%s'."
+msgstr "Es ist nicht möglich, die sqlite-Datenbank »%s« zu öffnen."
+
+#: backend/sqlite/qof-sqlite.c:892
+msgid "Please provide a filename for sqlite."
+msgstr "Bitte geben Sie einen Dateinamen für sqlite an."
+
+#: backend/sqlite/qof-sqlite.c:1028
+msgid "Unable to delete record."
+msgstr "Der Datensatz kann nicht gelöscht werden."
+
+#: backend/sqlite/qof-sqlite.c:1030
+msgid "Unable to create record."
+msgstr "Der Datensatz kann nicht erstellt werden."
+
+#: backend/sqlite/qof-sqlite.c:1032
+msgid "Unable to insert a new record."
+msgstr "Es kann kein neuer Datensatz eingefügt werden."
+
+#: backend/sqlite/qof-sqlite.c:1034
+msgid "Unable to update existing record."
+msgstr "Bestehender Datensatz kann nicht aktualisiert werden."
+
+#: qof/qofsession.c:1050
+msgid "This book appears to be open already."
+msgstr "Dieses Buch scheint bereits geöffnet zu sein."
+
+#: qof/qofsession.c:1091
+#, c-format
+msgid ""
+"Unable to locate a suitable backend for '%s' - please check you have "
+"specified an access method like file: or sqlite:"
+msgstr ""
+"Es konnte kein passendes Backend für »%s« gefunden werden - bitte prüfen Sie, "
+"ob Sie eine Zugriffsmethode wie file: oder sqlite: angegeben haben"
+
+#: qof/qofsession.c:1328 qof/qofsession.c:1365
+msgid "Failed to load backend, no suitable handler."
+msgstr "Laden des Backends fehlgeschlagen, keine passender Handler"
+
+#: qof/qofsql.c:724 qof/qofsql.c:751
+#, c-format
+msgid ""
+"When converting SQLite strings into numbers, an overflow has been detected. "
+"The SQLite database '%s' contains invalid data in a field that is meant to "
+"hold a number."
+msgstr ""
+"Beim Konvertieren von SQLite-Zeichenketten in Zahlen wurde ein Überlauf "
+"festgestellt. Die SQLite-Datenbank »%s« enthält ungültige Daten in einem "
+"Feld, das dazu gedacht ist, eine Zahl zu enthalten."

@@ -1,3 +1,10 @@
+2009-08-05  Neil Williams,,,  <linux@codehelp.co.uk>
+
+	patch by: Chris Leick <c.leick@vollbio.de>
+
+	* po/LINGUAS:
+	* po/de.po (added): Add German translation.
+
 2009-07-06  Neil Williams  <linux@codehelp.co.uk>
 
 	* qof.pc.in: Migrate -lqofsql to Libs.private
