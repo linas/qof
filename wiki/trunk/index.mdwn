@@ -296,6 +296,7 @@ Some projects currently using QOF are:
 
 * <a href="http://gttr.sourceforge.net">GnoTime</a> (Gnome Time Tracker).
 * <a href="http://www.gnucash.org">GnuCash</a> - modified source.
+* <a href="http://www.globalofw.com">Ofw</a> - online source.
 * <a href="http://pilot-qof.sourceforge.net/">pilot-qof</a> (Query Palm databases).
 * <a href="http://dwi.sourceforge.net/">DWI</a> (Data With Interaction).
 * <a href="http://cashutil.sourceforge.net/">CashUtil</a> (the gnucash command line interface).
