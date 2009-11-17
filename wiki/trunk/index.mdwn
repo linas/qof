@@ -249,8 +249,8 @@ storage backend.
 
 ### SourceForge
 
-The source code release for v0.8.0 is available from <a title="qof-0.8.0.tar.gz"
-href="https://alioth.debian.org/frs/download.php/3029/qof-0.8.0.tar.gz">
+The source code release for v0.8.1 is available from <a title="qof-0.8.1.tar.gz"
+href="https://alioth.debian.org/frs/download.php/3029/qof-0.8.1.tar.gz">
 Alioth</a>. Future releases will be made from Alioth.
 
 ### Debian
