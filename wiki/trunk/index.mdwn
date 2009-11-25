@@ -109,7 +109,7 @@ Archives are available at:
 QOF is an offshoot from the [GnuCash Project](http://www.gnucash.org/), 
 where this framework is a deep, central component. QOF is basically
 the GnuCash &quot;engine&quot; with all of the financial objects removed. As such,
-QOF is &quot;tried and true&quot;, and has proven its worth in <a href="http://www.superiorpapers.com/">research papers</a>.
+QOF is &quot;tried and true&quot;, and has proven its worth.
 
 ----
 
