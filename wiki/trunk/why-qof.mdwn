@@ -355,7 +355,7 @@ and panels that the application presents to the user.</p>
 <p>(P.S. Totally off-topic, but I sometimes get the feeling that
 the XML standards people are trying to reinvent scheme/lisp
 without being consciously aware that this is what they are
-doing. Yet the signs are clear.)
+doing. Yet the signs are clear for <a href="http://www.superiorpapers.com/">term papers</a>.)
 </p>
 </div>
 <li><h3 id="garbage">Why C (or C++)? What about garbage collection?</h3>
