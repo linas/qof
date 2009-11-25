@@ -201,7 +201,7 @@ all of the data have terrible startup times, since they need to load either a
 huge file or make a huge database query. They also use a huge amount of memory.
 Applications that pull in none of their data, and instead issue SQL queries as
 needed, tend to have terrible performance profiles, since the user must wait for
-the query to complete and return data in <span class="black"><a href="http://www.superiorpapers.com/">term papers</a></span>. In other words, QOF provides
+the query to complete and return data in papers. In other words, QOF provides
 scalability: instead of the all-or-nothing approach, it provides a middle
 ground, allowing small fast apps to access huge databases.
 
