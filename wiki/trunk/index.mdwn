@@ -271,7 +271,7 @@ QOF 0.7.4 is available in the official repository of Gentoo Linux.
 
 ### RPM packages
 
-There is an <a href="http://uk.bestessays.com">essay</a>
+There is an <a href="http://www.eluneart.com">website design</a>
 sample .spec file available in QOF CVS, available via
 <a href="http://cvs.sourceforge.net/viewcvs.py/qof/qof/rpm/">SourceForge</a>.
 <a href="http://rpmfind.net/linux/rpm2html/search.php?query=qof">RPM packages</a>
