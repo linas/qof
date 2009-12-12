@@ -120,7 +120,8 @@ base functions from GnuCash and a few extensions of its own:
 
 * **Universally-Unique 128-bit identifiers** These can be used to reference an 
 object without having to have a pointer to it: references can be stored in files, 
-passed over the net, etc.
+passed over the net, etc.<a href="http://www.mustuniversity.com/">Online degree</a>
+
 
 * **Persistent-Storage backend** A collection of objects can be 
 associated with a particular data store. Besides
@@ -163,7 +164,8 @@ intervention.
 * **Undo support** Allows parameter level undo and redo support with programmable begin and
 end points. Each begin and end marks a single undo operation which can
 contain multiple parameter changes, entity creations or deletions according
-to the needs of the user. Undo currently supports up to 300 operations.
+to the needs of the user. Undo currently supports up to 300 operations.<a href="http://www.mustuniversity.com/schools-majors/">online degree school </a>
+
 
 * **SQLite backend** Intended for embedded usage only but 
 relatively stable. Non-embedded systems
@@ -273,8 +275,8 @@ QOF 0.7.4 is available in the official repository of Gentoo Linux.
 
 There is an <a href="http://www.eluneart.com">website design</a>
 sample .spec file available in QOF CVS, available via
-<a href="http://cvs.sourceforge.net/viewcvs.py/qof/qof/rpm/">SourceForge</a>.
-<a href="http://rpmfind.net/linux/rpm2html/search.php?query=qof">RPM packages</a>
+<a href="http://cvs.sourceforge.net/viewcvs.py/qof/qof/rpm/">SourceForge</a>.<a href="http://www.mustuniversity.com/programs/degree/bachelors-degree.html">Bachelors degrees</a>
+<a href="http://rpmfind.net/linux/rpm2html/search.php?query=qof">RPM packages</a><a href="http://www.mustuniversity.com/programs/degree/masters-degree.html">Masters degrees</a>
 have been prepared for v0.6.4 in Fedora 4 and 5 as well as OpenSuSE Factory.
 
 ### Mac OSX &amp; Fink
@@ -302,6 +304,8 @@ Some projects currently using QOF are:
 * <a href="http://dwi.sourceforge.net/">DWI</a> (Data With Interaction).
 * <a href="http://cashutil.sourceforge.net/">CashUtil</a> (the gnucash command line interface).
 * <a href="http://gpe-expenses.sourceforge.net/">gpe-expenses</a> for embedded devices like iPAQs.
+* <a href="http://www.mustuniversity.com/programs/degree/associate-degree.html">online associate Degree</a>
+
 
 ----
 
