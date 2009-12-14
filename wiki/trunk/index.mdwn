@@ -320,4 +320,4 @@ Last updated by Neil Williams &lt;linux@codehelp.co.uk&gt; May 2009.
 
 [[ikiwiki/WikiLink]]
 
-[Web Hosting] Services.(http://webspacehosting.com) This site is powered by [ikiwiki](http://ikiwiki.info).
+[Web Hosting](http://webspacehosting.com) Services. This site is powered by [ikiwiki](http://ikiwiki.info).
