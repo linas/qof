@@ -26,7 +26,7 @@ explosion of web applications: If you need to develop a multi-user, SQL-backed
 application, you can develop it orders of magnitude more quickly by using Apache
 and PHP (or Java) than you can by using Gnome or KDE. This is great for the
 web, but terrible for anyone wanting to develop distributed, multi-user desktop
-applications.</p>
+applications.<a href="http://www.nationhighschool.com/">Online High School Diploma</a></p>
 </div>
 <div class="clear">&nbsp;</div>
 <div>
@@ -48,7 +48,7 @@ is 'shared' between developers and users, to p2p networks for sharing mp3/ogg
 files. Today, certain types of 'basic' sharing are still incredibly hard: for example,
 syncing the address book on my cell phone with the address book on my home
 computer with the address book on my work computer(s). Never mind sharing parts
-of my address book with friends. (See <a
+of my address book with friends.<a href="http://www.nationhighschool.com/ged.asp">GED</a> (See <a
 href="http://pilot-qof.sourceforge.net/">
 Pilot-QOF</a> for an example of how QOF enables users to select parts of a Palm
 address book (amongst other databases) for export and sharing.)</p>
@@ -59,7 +59,7 @@ address book (amongst other databases) for export and sharing.)</p>
 minimum a query mechanism, so that the user can query, sort, report on and
 manipulate the data. Even good single-user apps need this ability: personal
 photo and music organizers will have this kind of interface, as well as
-address-books, <abbr title="etcetera">etc</abbr>. Blogging tools could
+address-books, <abbr title="etcetera">etc</abbr>. <a href="http://www.nationhighschool.com/home-schooling.asp">Homeschool diploma</a>Blogging tools could
 benefit from a generalized query mechanism. P2P already has query built-in,
 although its of a rather poor sort. Indeed, these types of find &amp; query
 considerations are driving the
@@ -92,7 +92,7 @@ systems, though better than nothing, have one major pitfall: they still don't
 make writing multi-user apps easy. Two users updating the same file at the same
 time is a recipe for disaster. The two apps that are updating the same file at
 the same time don't know about each other and there is no native or built-in
-default that would let them find out.</p>
+default that would let them find out.<a href="http://www.nationhighschool.com/eligibility/index.asp">Earn Diploma</a></p>
 </div>
 <h3 id="movement">Physical movement of objects</h3>
 <div><p>
@@ -107,7 +107,7 @@ little payoff for the effort. Great: now one has distributed, networked
 objects, but so what? One still doesn't have persistence (which is the strength
 of file systems) and one doesn't have searchability (which is what databases
 offer) and one doesn't have much in the way of security (witness Microsoft's
-Virus Apocalypse).</p>
+Virus Apocalypse).<a href="http://www.nhscampus.com/">Nation High School</a></p>
 </div>
 <h3 id="p2p">P2P file sharing</h3>
 <div><p>
