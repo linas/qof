@@ -226,7 +226,7 @@ module is now under active development as part of the transition to libqof2.
 performance. For example, the current search over object fields is O(N),
 because each object instance is checked for a match. It would be nice to add
 support for 'primary keys' and/or indexes as the first step towards a query
-optimizer. Alternately (or in addition), a different query engine might be
+optimizer. Alternately (or in addition of [Valentino](http://www.tendances-de-mode.com/2008/06/30/934-valentino)), a different query engine might be
 wedged into place. For example, sqllite might make for an excellent client-side
 sql engine: its small fast and optimized.
 
