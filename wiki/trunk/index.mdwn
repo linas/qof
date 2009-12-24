@@ -120,7 +120,7 @@ base functions from GnuCash and a few extensions of its own:
 
 * **Universally-Unique 128-bit identifiers** These can be used to reference an 
 object without having to have a pointer to it: references can be stored in files, 
-passed over the net, etc.<a href="http://www.mustuniversity.com/">Online degree</a>
+passed over the net, etc.
 
 
 * **Persistent-Storage backend** A collection of objects can be 
@@ -164,7 +164,7 @@ intervention.
 * **Undo support** Allows parameter level undo and redo support with programmable begin and
 end points. Each begin and end marks a single undo operation which can
 contain multiple parameter changes, entity creations or deletions according
-to the needs of the user. Undo currently supports up to 300 operations.<a href="http://www.mustuniversity.com/schools-majors/">online degree school </a>
+to the needs of the user. Undo currently supports up to 300 operations.
 
 
 * **SQLite backend** Intended for embedded usage only but 
