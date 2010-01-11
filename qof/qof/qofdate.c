@@ -494,8 +494,16 @@ date_normalise (QofDate * date)
 		{
 			/* -1 == Dec, -4 == Sep */
 			date->qd_mon += 12 + 1;
-			date->qd_year = (date->qd_year < 0) ? 
-				date->qd_year++ : date->qd_year--;
+			if (date->qd_year < 0)
+			{
+				date->qd_year++;
+			}
+			else
+			{
+				date->qd_year--;
+			}
+			/*date->qd_year = (date->qd_year < 0) ? 
+				date->qd_year++ : date->qd_year--;*/
 		}
 	}
 	days = days_in_months[qof_date_isleap(date->qd_year)][date->qd_mon];
