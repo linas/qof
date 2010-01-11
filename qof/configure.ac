@@ -9,8 +9,7 @@ AC_DEFUN([MAJOR], [0])
 AC_DEFUN([MINOR], [8])
 AC_DEFUN([MICRO], [2])
 AC_DEFUN([MY_VERSION], [MAJOR.MINOR.MICRO])
-AC_INIT([qof], [MY_VERSION],
-  [http://lists.sourceforge.net/lists/listinfo/qof-devel])
+AC_INIT([qof], [0.8.2], [http://lists.sourceforge.net/lists/listinfo/qof-devel])
 AC_PREREQ(2.61)
 AC_GNU_SOURCE
 AC_DEFUN([QOFCURRENT], [2])
