@@ -42,7 +42,7 @@ they have access to large quantities of data, or are hooked into databases on th
 in some way, or are multi-user or collaborative in some way. In fact, any
 large-data application is going to be multi-user, since having that much data is
 valuable and leads to a tremendous pressure to share. There's a huge number of
-apps that fit this profile: everything from shopping catalogs, where the store
+apps that fit this profile: everything from shopping, <a href="http://webspacehosting.com" style="color: #6666; text-decoration: none" rel="dofollow">Web hosting</a> catalogs, where the store
 'shares' the product data with the customer, to Bugzilla, where the bug status
 is 'shared' between developers and users, to p2p networks for sharing mp3/ogg
 files. Today, certain types of 'basic' sharing are still incredibly hard: for example,
