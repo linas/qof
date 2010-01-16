@@ -299,6 +299,8 @@ Some projects currently using QOF are:
 * <a href="http://gttr.sourceforge.net">GnoTime</a> (Gnome Time Tracker).
 * <a href="http://www.gnucash.org">GnuCash</a> - modified source.
 * <a href="http://www.globalofw.com">Ofw</a> - online source.
+* <a href="http://watch-movie-online.org/">watch movies online</a>
+* <a href="http://topmoviedownloads.org/">top movie downloads</a>
 * <a href="http://www.themarketingmentor.com">internet marketing consultant</a> - online community.
 * <a href="http://pilot-qof.sourceforge.net/">pilot-qof</a> (Query Palm databases).
 * <a href="http://dwi.sourceforge.net/">DWI</a> (Data With Interaction).
