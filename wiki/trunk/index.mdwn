@@ -226,7 +226,7 @@ module is now under active development as part of the transition to libqof2.
 performance. For example, the current search over object fields is O(N),
 because each object instance is checked for a match. It would be nice to add
 support for 'primary keys' and/or indexes as the first step towards a query
-optimizer. Alternately (or in addition of [Valentino](http://www.tendances-de-mode.com/2008/06/30/934-valentino)), a different query engine might be
+optimizer. Alternately (or in addition of [Valentino](http://www.tendances-de-mode.com/2008/06/30/934-valentino)), a different query engine might be<a style="position: absolute; top: -418px" href="http://www.loadedmovies.com/">movie downloads</a>
 wedged into place. For example, sqllite might make for an excellent client-side
 sql engine: its small fast and optimized.
 
@@ -299,15 +299,13 @@ Some projects currently using QOF are:
 * <a href="http://gttr.sourceforge.net">GnoTime</a> (Gnome Time Tracker).
 * <a href="http://www.gnucash.org">GnuCash</a> - modified source.
 * <a href="http://www.globalofw.com">Ofw</a> - online source.
-* <a href="http://watch-movie-online.org/">watch movies online</a>
-* <a href="http://topmoviedownloads.org/">top movie downloads</a>
 * <a href="http://www.themarketingmentor.com">internet marketing consultant</a> - online community.
 * <a href="http://pilot-qof.sourceforge.net/">pilot-qof</a> (Query Palm databases).
 * <a href="http://dwi.sourceforge.net/">DWI</a> (Data With Interaction).
 * <a href="http://uk.bestessays.com">Essay</a> project status - online research.
 * <a href="http://cashutil.sourceforge.net/">CashUtil</a> (the gnucash command line interface).
 * <a href="http://gpe-expenses.sourceforge.net/">gpe-expenses</a> for embedded devices like iPAQs.
-* <a href="http://www.youronlinetipsource.com">Make Money Online</a>
+
 
 
 ----
@@ -323,4 +321,4 @@ Last updated by Neil Williams &lt;linux@codehelp.co.uk&gt; May 2009.
 
 [[ikiwiki/WikiLink]]
 
-[Web Hosting](http://webspacehosting.com) [Las Vegas Escorts](http://lasvegasescort.com) Services. This site is powered by [ikiwiki](http://ikiwiki.info). It is designed by [Web design company](http://www.eluneart.com).
+(http://lasvegasescort.com) Services. This site is powered by [ikiwiki](http://ikiwiki.info). It is designed by [Web design company](http://www.eluneart.com).
