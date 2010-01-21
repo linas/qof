@@ -128,7 +128,7 @@ associated with a particular data store. Besides
 just reading from and writing to the backend, queries can be passed to the
 backend, so that if a particular object does not exist locally, it can be
 fetched from the backend.
-[make money online](http://webspacehosting.com)
+[make money online](http://www.youronlinetipsource.com)
 
 * **Key-Value Pair trees** (also known as &quot;frames and slots&quot;).
 KVP trees provide a generic, extensible way to hang additional data onto an
