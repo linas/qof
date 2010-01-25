@@ -301,6 +301,7 @@ Some projects currently using QOF are:
 * <a href="http://www.gnucash.org">GnuCash</a> - modified source.
 * <a href="http://www.globalofw.com">Ofw</a> - online source.
 * <a href="http://www.themarketingmentor.com">internet marketing consultant</a> - online community.
+* <a href="http://www.uzoom.com.au/about-us">Campervan Hire Australia</a> online travel.
 * <a href="http://pilot-qof.sourceforge.net/">pilot-qof</a> (Query Palm databases).
 * <a href="http://dwi.sourceforge.net/">DWI</a> (Data With Interaction).
 * <a href="http://uk.bestessays.com">Essay</a> project status - online research.
