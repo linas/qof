@@ -83,7 +83,8 @@ or even global filesystem. This was the original vision behind
 Microsoft Windows Workgroups (SMB/Samba file shares). Global filesystem
 attempts include AFS (the Andrew File System, from the early 90's), DFS (from
 the late 90's) and Coda (a free/open solution). The local solutions, NFS and
-Samba, don't / can't scale to a global level. The global filesystems haven't
+Samba (<a href="http://otimizacao-de-websites.com/">Otimização De Sites</a>), 
+don't / can't scale to a global level. The global filesystems haven't
 really worked out either, with one grand exception: the web itself (
 <abbr title="in other words">i.e.</abbr> HTTP) is in many ways filesystem-like.
 But the success of the web is not due to its filesystem-like aspects, but rather
@@ -97,7 +98,8 @@ default that would let them find out.<a href="http://www.nationhighschool.com/el
 <h3 id="movement">Physical movement of objects</h3>
 <div><p>
 Another older solution to the sharing problem is the idea behind RPC, CORBA,
-SOM/DSOM, COM/DCOM and more recently, SOAP and the Microsoft .net frameworks.
+SOM/DSOM, <a href="http://desentupidorasanehidro.com.br/">Desentupidoras</a>,
+COM/DCOM and more recently, SOAP and the Microsoft .net frameworks.
 Here, the focus of sharing is actually about the physical movement of objects
 (OOP objects) from one system to another. Each of these technologies in some
 way enable the programmer to touch or work with objects on some other, remote
@@ -117,8 +119,8 @@ P2P doesn't really provide security (would you use P2P to share your financial
 information with your bank? How about medical records? Didn't think so). P2P
 networks are also terrible at sharing 'objects' in the sense of OOP objects,
 they're useless for that. They have no built-in versioning for the files they do
-share: you can't do SCCS/CVS/Subversion/BitKeeper on top of P2P, even though
-that would be useful. Curiously, though, P2P networks do have the one true
+share: you can't do SCCS/CVS/Subversion/BitKeeper/<a href="http://asacompanhantessp.com.br/">Acompanhantes</a> 
+on top of P2P, even though that would be useful. Curiously, though, P2P networks do have the one true
 important feature that makes them popular: P2P query. You can <b>issue a query
 to find the one thing that you really wanted and P2P will run that query in a
 distributed, decentralized way</b>, across a panalopy of servers. How else can
@@ -158,7 +160,7 @@ is not terribly well standardized. The next problem comes when one wants to add
 or change tables. Programmers typically discover that the SQL code they are
 maintaining is not modular and sometimes very poorly structured. Object
 oriented programming and SQL weren't really made for each other, although object
-oriented databases do help.</p>
+oriented databases do help (<a href="http://www.graficavendahoje.com.br/">Folders</a>).</p>
 </div>
 <div><p>
 In summary, <b>the future of desktop programming lies with a broadly powerful
@@ -196,8 +198,8 @@ keeping the local copy of the objects in sync with the database. In particular,
 how keep them in sync with the data in other (remote) objects that other users
 might be manipulating. One possible answer and that is the answer used today by
 GnuCash, is to design the GUI with the
-<a href="http://glade.gnome.org">Glade</a> graphical GUI designer and hook it up
-to some C (could have been C++, or even other language) objects. The objects
+<a href="http://glade.gnome.org">Glade</a> and <a href="http://pactotransportes.com.br/">Transportadora</a>
+graphical GUI designer and hook it up to some C (could have been C++, or even other language) objects. The objects
 are in turn loaded from either a file, or fetched from an SQL database.</p>
 </div>
 <div><p>
