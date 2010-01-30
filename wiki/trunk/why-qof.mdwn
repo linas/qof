@@ -15,8 +15,6 @@
 <li><a href="#architecture">Application architecture</a></li>
 <li><a href="#control">Object/View/Controller</a></li>
 <li><a href="#core">Core Assumptions</a></li>
-<li><a href="http://custom-essay-writing-service.org/index.php">
-Custom Essay</a></li>
 </ul>
 </div>
 <h2 id="summary">Summary:</h2>
@@ -95,7 +93,7 @@ systems, though better than nothing, have one major pitfall: they still don't
 make writing multi-user apps easy. Two users updating the same file at the same
 time is a recipe for disaster. The two apps that are updating the same file at
 the same time don't know about each other and there is no native or built-in
-default that would let them find out.<a href="http://www.nationhighschool.com/eligibility/index.asp">Earn Diploma</a></p>
+default that would let them find out.<a href="http://www.nationhighschool.com/eligibility/index.asp">Earn Diploma</a> - <a href="http://www.top-term-paper-sites.com">Term Paper</a></p>
 </div>
 <h3 id="movement">Physical movement of objects</h3>
 <div><p>
