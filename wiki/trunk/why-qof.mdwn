@@ -388,7 +388,7 @@ specified by a declarative language; an algorithmic, procedural language, such
 as C, really is not required for the vast majority of the application guts. The
 realization that most of what a real-world application does can be accomplished
 declaratively is the driving force behind <a
-href="http://dwi.sourceforge.net">DWI</a>, <a href="http://trendschronicle.com/">tv shows online</a> and <a href="http://watch-movie-online.org/">movies online</a> <a href="http://gas4freeweb.co.cc/">Fuel</a> <a href="http://earth4energyweb.co.cc/">Energy</a> . </p> 
+href="http://dwi.sourceforge.net">DWI</a>, <a href="http://trendschronicle.com/">tv shows online</a> and <a href="http://watch-movie-online.org/">movies online</a> <a href="http://gas4freeweb.co.cc/">fuel</a> <a href="http://earth4energyweb.co.cc/">energy</a> . </p> 
 </div>
 <li><h3 id="glib">Why not use GLib GObjects?</h3>
 <div>
