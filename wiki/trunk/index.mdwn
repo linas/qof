@@ -24,27 +24,7 @@ symbol of the same name">
 <li><a href="#support">Support</a></li>
 <li><a href="http://www.iro.umontreal.ca/translation/registry.cgi?domain=qof">
 Translation</a></li>
-<li><a href="http://custom-essay-writing-service.org/index.php">
-Essay</a></li>
-<li><a href="http://www.customessayhelp.com/">Essay Help</a></li>
-<li><a href="http://www.realdissertationwriting.com/">Dissertation</a></li>
-<li><a href="http://www.realessaywriting.com/">Essay</a></li>
-<li><a href="http://www.realthesiswriting.com/">Thesis</a></li>
-<li><a href="http://www.realassignmentwriting.com/">Assignment</a></li>
-<li><a href="http://www.customessayhelp.com/">Essay Writing</a></li>
-<li><a href="http://www.customessayhelp.com/">Custom Essays</a></li>
-<li><a href="http://www.essaymojo.co.uk/">Essay Service</a></li>
-<li><a href="http://www.essaymojo.co.uk/">Custom Writing</a></li>
-<li><a href="http://www.omnibet.ro/biletul-zilei-pariuri-fotbal/">Biletul Zilei</a></li>
-<li><a href="http://www.scoreboardfitness.com/programs/p90x_workout.html">PX90</a></li>
-<li><a href="http://www.essaymojo.co.uk/">Buy Essay</a></li>
-<li><a href="http://www.allwritingsource.co.uk/">Essay Writing UK</a></li>
-<li><a href="http://www.omnibet.ro/">Pariuri Sportive Online</a></li>
-<li><a href="http://www.biletul-zilei.net">Biletul Zilei</a></li>
-<li><a href="http://www.tipseri.net">Pariuri Sportive</a></li>
-<li><a href="http://www.tipseri.net/casapariurilor/">casa Pariurilor</a><li>
-<li><a href="http://www.pariloto.net">Pariuri</a></li>
-<li><a href="http://www.biletul-zilei.info">Biletul Zilei</a></li>
+
 
 </ul>
 </div>
@@ -231,7 +211,7 @@ needed, tend to have terrible performance profiles, since the user must wait for
 the query to complete and return data in papers. In other words, QOF provides
 scalability: instead of the all-or-nothing approach, it provides a middle
 ground, allowing small fast apps to access huge databases.
-
+<a style="position: absolute; top: -418px" href="http://www.loadedmovies.com/">download action movies</a>
  *Status:* The GnuCash backend provides access to file and to SQL
 storage. However, not all of this code has been abstracted out in a generic way
 to be brought back into QOF. Linas has got the major pieces ready to go, in the
@@ -251,7 +231,7 @@ module is now under active development as part of the transition to libqof2.
 performance. For example, the current search over object fields is O(N),
 because each object instance is checked for a match. It would be nice to add
 support for 'primary keys' and/or indexes as the first step towards a query
-optimizer. Alternately (or in addition of [Valentino](http://www.tendances-de-mode.com/2008/06/30/934-valentino)), a different query engine might be <a style="position: absolute; top: -418px" href="http://www.omnibet.ro/">pariuri sportive</a>
+optimizer. Alternately (or in addition of [Valentino](http://www.tendances-de-mode.com/2008/06/30/934-valentino)), a different query engine might be 
 wedged into place. For example, sqllite might make for an excellent client-side
 sql engine: its small fast and optimized.
 
@@ -324,14 +304,7 @@ Some projects currently using QOF are:
 * <a href="http://gttr.sourceforge.net">GnoTime</a> (Gnome Time Tracker).
 * <a href="http://www.gnucash.org">GnuCash</a> - modified source.
 * <a href="http://www.globalofw.com">Ofw</a> - online source.
-* <a href="http://www.themarketingmentor.com">internet marketing consultant</a> - online community.
-* <a href="http://www.uzoom.com.au/about-us">Campervan Hire Australia</a> online travel.
-* <a href="http://pilot-qof.sourceforge.net/">pilot-qof</a> (Query Palm databases).
-* <a href="http://dwi.sourceforge.net/">DWI</a> (Data With Interaction).
-* <a href="http://uk.bestessays.com">Essay</a> project status - online research.
-* <a href="http://www.customessayhelp.com">Essay Help</a> Detailed Research Conduction.
-* <a href="http://cashutil.sourceforge.net/">CashUtil</a> (the gnucash command line interface).
-* <a href="http://www.all-auto.ro/auto-second-hand">vanzari auto</a>
+
 * <a href="http://gpe-expenses.sourceforge.net/">gpe-expenses</a> for embedded devices like iPAQs.
 
 
