@@ -46,7 +46,7 @@ different report.
 
 The idea behind QOF is to provide a generic framework so that
 any query can be executed, including queries designed by the end-user.
-Normally, this is possible only if you use a database that supports SQL, and
+Normally, this is possible only if you use a database that supports SQL and <a href="http://www.lpnclasstrainingonline.com/lpn-training-online-benefits-and-pitfalls/5/">LPN training</a>,
 then only if you deeply embed the database into your application. QOF provides
 simpler, more natural way to work with objects.
 
