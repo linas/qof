@@ -246,7 +246,7 @@ written out to XML and read back in to *any* QOF application.
 cache haven't been used in a while, and the application memory usage is getting
 too large, the unused objects should be &quot;reaped&quot; or garbage-collected.
 Of course, this can be done only if the object is fully in sync with the persistent
-storage backend.
+storage backend for <a href="http://www.ipadapplications.ws">ipad apps</a> and others.
  *Status:* just an idea, not started.
 
 ----
