@@ -23,9 +23,7 @@ symbol of the same name">
 <li><a href="http://www.designerevaluation.com/logo-design/">Logo Design</a></li>
 <li><a href="#support">Support</a></li>
 <li><a href="http://www.iro.umontreal.ca/translation/registry.cgi?domain=qof">
-<li><a href="http://www.lpnclasstrainingonline.com/lpn-training-online-benefits-and-pitfalls/5/">LPN training</a>
-<li><a href="http://www.cnaonlineclasstraining.com/cnacertification/30/">cna certification</a>
-Translation</a></li>
+<li>Translation</a></li>
 
 
 </ul>
@@ -56,6 +54,7 @@ simpler, more natural way to work with objects.
 
 ## Subversion access
 
+
 svn co svn+ssh://username@svn.debian.org/svn/qof/ qof
 
 svn co svn://svn.debian.org/svn/qof/ qof
@@ -64,7 +63,7 @@ To just check out the debian source:
 
 svn co svn://svn.debian.org/svn/qof/trunk/debian qof
 
-
+<a href="http://www.lpnclasstrainingonline.com/lpn-training-online-benefits-and-pitfalls/5/">LPN training</a>
 ----
 
 ## <span id="example">Examples</span>
@@ -298,7 +297,7 @@ is provided in QOF CVS via
 
 ## <span id="status">Project Status</span>
 
-This code is in active, daily use in several projects
+This code is in active, daily use in several projects <a href="http://www.cnaonlineclasstraining.com/cnacertification/30/">cna certification</a>
 and is 'stable' code. See the
 <a href="hacking.html#roadmap">roadmap</a> for
 the current development direction.
