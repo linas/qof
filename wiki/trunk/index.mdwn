@@ -62,8 +62,6 @@ svn co svn://svn.debian.org/svn/qof/ qof
 To just check out the debian source:
 
 svn co svn://svn.debian.org/svn/qof/trunk/debian qof
-
-<a href="http://www.lpnclasstrainingonline.com/lpn-training-online-benefits-and-pitfalls/5/">LPN training</a>
 ----
 
 ## <span id="example">Examples</span>
