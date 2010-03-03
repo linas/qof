@@ -300,7 +300,7 @@ and <a href="http://gpe-expenses.sourceforge.net/">gpe-expenses</a>
 support all available QOF backends. In most cases, it is wise to ensure that
 at least <b>libqof-backend-qsf0</b> is available for all existing QOF
 applications. New applications and new versions of existing applications
-can be configured to load new and additional backends.</p>
+can be configured to load new and additional backends. <a href="http://howtomakeawomansquirtalot.com/">how to make a woman squirt tutorial</a></p>
 </div>
 <hr/>
 
@@ -382,7 +382,8 @@ the last release of libqof1 but with all deprecated code removed. Users
 who migrate with libqof1 will be able to transfer to libqof2 without
 problems. The libqof2 API will then remain stable, just as with libqof1,
 but with a reduced release cycle. No large changes are anticipated in
-libqof2, the aim is to get all those done in libqof1.</p>
+libqof2, the aim is to get all those done in libqof1. <a href="http://watch-movie-online.org/">watch movie</a>
+</p>
 </div>
 
 <hr>
