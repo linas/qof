@@ -223,7 +223,7 @@ using <code>libgda</code> - a data abstraction layer inherited from
 non-Gnome applications. This should be able to provide the generic access to
 various database managers like Postgres, MySQL, SQLite, Oracle and others
 using ODBC. Unfortunately, although work has begun to use libgda, the current
-gnome-db stable release does not support creating (or deleting) tables. The
+gnome-db stable release does not support creating (or deleting) tables for <a href="http://trendschronicle.com/">tv shows</a>. The
 module is now under active development as part of the transition to libqof2.
 
 * The current 'client-side' SQL engine is rather basic in its features and
@@ -237,7 +237,7 @@ sql engine: its small fast and optimized.
 * Provide for off-line operation. Because the object data is cached locally,
 users should be able to continue doing useful work even if they are not attached
 to the net. When they regain net access, QOF should be able to resynchronize
-with the remote servers.
+with the remote servers. <a href="http://newtvshowsonline.org/">online tv</a>
 
 * *Status:* Implemented as XML. Any book (partial or complete) can be
 written out to XML and read back in to *any* QOF application.
