@@ -18,6 +18,7 @@ symbol of the same name">
 <li><a href="#goals">Goals</a></li>
 <li><a href="#status">Status</a></li>
 <li><a href="/why-qof">Why QOF?</a></li>
+<li><a href="http://computer-lautsprecher.net/">Computer Boxen</a></li>
 <li><a href="http://www.data-freedom.org/">Data Freedom</a></li>
 <li><a href="http://www.designerevaluation.com/web-design/">Web Design</a></li>
 <li><a href="http://www.designerevaluation.com/logo-design/">Logo Design</a></li>
