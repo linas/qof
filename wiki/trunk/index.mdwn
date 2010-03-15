@@ -184,10 +184,10 @@ Below are some concrete project goals.
 
 See <a href="why-qof.html">&quot;Why QOF?&quot;</a> for the more abstract ideas
 behind QOF, including the relationships between &quot;database-driven&quot;,
-&quot;program-driven&quot; and &quot;data-centric&quot; programming explored at
+&quot;program-driven&quot; and &quot;data-centric&quot; <a href="http://www.vitalethics.org/technician-tech-schools-programs/pharmacy-4/how-to-become-a-pharmacist">program</a>ming explored at
 <a href="http://www.data-freedom.org/explain.html">Data-Freedom.org</a>.
 
-* Provide an object framework that allows programmers to create expressive
+* Provide an object framework that allows progammers to create expressive
 queries that will search through a collection of objects, returning the desired
 set of objects.
 
