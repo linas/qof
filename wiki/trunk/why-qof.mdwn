@@ -83,7 +83,7 @@ Programming</h2>
 <div>
 <p>One traditional solution to the sharing problem has been the idea of a shared
 or even global filesystem. This was the original vision behind
-<abbr title="network file system">NFS</abbr> and
+<abbr title="network file system">NFS</abbr> and <a href="http://internethostingweb.com">Internet Hosting</a> | <a href="http://electroniccigarettesmokes.com">Electronic Cigarette</a>
 Microsoft Windows Workgroups (SMB/Samba file shares). Global filesystem
 attempts include AFS (the Andrew File System, from the early 90's), DFS (from
 the late 90's) and Coda (a free/open solution). The local solutions, NFS and
