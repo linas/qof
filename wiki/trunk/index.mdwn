@@ -7,8 +7,7 @@ symbol of the same name">
 <li><a href="http://alioth.debian.org/projects/qof/">Alioth</a></li>
 <li><a href="http://svn.debian.org/viewsvn/qof/">SVN</a></li>
 <li><a href="#docs">Documentation</a>
-<ul><li><a href="start/">Starting with QOF</a></li></ul>
-</li>
+<ul><li><a href="start/">Starting with QOF</a></li>
 <li><a href="#download">Downloads</a></li>
 <li><a href="hacking/">Packaging</a></li>
 <li><a href="hacking/#roadmap">Roadmap</a></li>
@@ -20,7 +19,6 @@ symbol of the same name">
 <li><a href="#status">Status</a></li>
 <li><a href="/why-qof">Why QOF?</a></li>
 <li><a href="http://computer-lautsprecher.net/">Computer Boxen</a></li>
-<li><a href="http://www.vitalethics.org/index.php">Training</a></li>
 <li><a href="http://www.data-freedom.org/">Data Freedom</a></li>
 <li><a href="#support">Support</a></li>
 <li><a href="http://www.iro.umontreal.ca/translation/registry.cgi?domain=qof">
