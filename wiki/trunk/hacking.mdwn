@@ -366,7 +366,7 @@ in the correct sequence. Individual filenames and file contents
 are also subject to change during the life of libqof1 and packages
 using QOF need to only use qof.h to avoid problems moving to libqof2.</p>
 </div>
-
+<a href="http://internethostingweb.com">Internet Hosting</a> | <a href="http://electroniccigarettesmokes.com">Electronic Cigarette</a>
 <hr>
 <h3 id="libqof2">libqof2</h3>
 <div>
