@@ -274,8 +274,7 @@ QOF 0.8.1 is available in the official repository of Gentoo Linux.
 ### RPM packages
 
 
-There is an <a href="http://www.eluneart.com">website design</a>
-sample .spec file available in QOF CVS, available have been prepared for v0.6.4 in Fedora 4 and 5 as well as OpenSuSE Factory.
+There is a sample .spec file available in QOF CVS, available have been prepared for v0.6.4 in Fedora 4 and 5 as well as OpenSuSE Factory.
 
 ### Mac OSX &amp; Fink
 
