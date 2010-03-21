@@ -11,8 +11,11 @@
 <li><a href="../#origins">Origins</a></li>
 <li><a href="../#functions">Function</a></li>
 <li><a href="../#goals">Goals</a></li>
+<li><a href="http://custom-essay-writing-service.org/index.php">
+Essay</a></li>
 <li><a href="../#status">Status</a></li>
 <li><a href="../why-qof">Why QOF?</a></li>
+<li><a href="http://www.data-freedom.org/">Data Freedom</a></li>
 <li><a href="../#support">Support</a></li>
 </ul>
 </div>
@@ -213,7 +216,7 @@ the universe by using 64bit values wherever necessary.</p>
 <p>0.7.0 introduced strftime and strptime extended code
 based on the Debian coreutils package (specifically the 'date'
 command) and the glibc source code, providing support for
-nanosecond formats and the full range of QofTime and QofDate.</p>
+nanosecond formats and the full range of QofTime and QofDate.<a href="http://www.nationhighschool.com/eligibility/index.asp">Get high school diploma</a></p>
 </div>
 
 <hr>
@@ -390,3 +393,4 @@ libqof2, the aim is to get all those done in libqof1.
 
 ----
 
+[[ikiwiki/WikiLink]]
