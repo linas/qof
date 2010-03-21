@@ -127,7 +127,6 @@ associated with a particular data store. Besides
 just reading from and writing to the backend, queries can be passed to the
 backend, so that if a particular object does not exist locally, it can be
 fetched from the backend.
-[biletul zilei](http://www.omnibet.ro/biletul-zilei-pariuri-fotbal/)
 
 * **Key-Value Pair trees** (also known as &quot;frames and slots&quot;).
 KVP trees provide a generic, extensible way to hang additional data onto an
@@ -223,7 +222,7 @@ gnome-db stable release does not support creating (or deleting) tables for. The
 module is now under active development as part of the transition to libqof2.
 
 * The current 'client-side' SQL engine is rather basic in its features and
-performance. <a href="http://www.gossimer.com/hosting.php">web hosting</a>
+performance.
  For example, the current search over object fields is O(N),
 because each object instance is checked for a match. It would be nice to add
 support for 'primary keys' and/or indexes as the first step towards a query
