@@ -117,7 +117,7 @@ P2P doesn't really provide security (would you use P2P to share your financial
 information with your bank? How about medical records? Didn't think so). P2P
 networks are also terrible at sharing 'objects' in the sense of OOP objects,
 they're useless for that. They have no built-in versioning for the files they do
-share: you can't do SCCS/CVS/Subversion/BitKeeper/<a href="http://asacompanhantessp.com.br/">Acompanhantes</a> 
+share: you can't do SCCS/CVS/Subversion/BitKeeper/
 on top of P2P, even though that would be useful. Curiously, though, P2P networks do have the one true
 important feature that makes them popular: P2P query. You can <b>issue a query
 to find the one thing that you really wanted and P2P will run that query in a
