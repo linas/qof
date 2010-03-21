@@ -11,11 +11,8 @@
 <li><a href="../#origins">Origins</a></li>
 <li><a href="../#functions">Function</a></li>
 <li><a href="../#goals">Goals</a></li>
-<li><a href="http://custom-essay-writing-service.org/index.php">
-Essay</a></li>
 <li><a href="../#status">Status</a></li>
 <li><a href="../why-qof">Why QOF?</a></li>
-<li><a href="http://www.data-freedom.org/">Data Freedom</a></li>
 <li><a href="../#support">Support</a></li>
 </ul>
 </div>
@@ -32,7 +29,7 @@ symbol of the same name"></div>
 <li><a href="#libqof1">libqof1 API/ABI compatibility</a>.</li>
 <li><a href="#required">MAX_REQUIRED specifiers</a></li>
 <li><a href="#dwi">DWI now unsupported.</a></li>
-<li><a href="#datetime">Date and time changes</a> <a href="http://www.nationhighschool.com/">Online Diploma</a></li>
+<li><a href="#datetime">Date and time changes</a></li>
 <li><a href="#gda">libgda versions.</a></li>
 </ul>
 </li>
@@ -41,7 +38,7 @@ symbol of the same name"></div>
 <li><a href="#libxml">libxml2 &gt;= 2.5.10</a></li>
 <li><a href="#nogtk">There is no QOF dependency on Gtk!</a></li>
 <li><a href="#noperl">There is no need for perl or intltool</a></li>
-<li><a href="#backend">Which backend to use?</a><a href="http://www.nationhighschool.com/ged.asp">Online GED</a></li>
+<li><a href="#backend">Which backend to use?</a></li>
 <li><a href="#embedded">QOF for embedded devices</a></li>
 </ul>
 </li>
@@ -159,7 +156,7 @@ have two choices:</p>
 <p>Either way, the deprecated functions will then be removed from
 QOF in a single operation that takes us smoothly from libqof1 to
 libqof2. This is expected to happen with QOF v0.8.0, once the GDA
-backend is functional.<a href="http://www.nationhighschool.com/home-schooling.asp">Homeschool online</a></p>
+backend is functional.</p>
 </div>
 <hr>
 <h3 id="required">MAX_REQUIRED specifiers</h3>
@@ -199,7 +196,7 @@ an extended version of struct tm. Applications using QOF
 should now use QofTime to replace time_t and QofDate to
 replace struct tm. Functions like localtime, gmtime, mktime
 and time can be used externally - subject to the more limited
-range of values supported in each case.<a href="http://www.nationhighschool.com/accreditation/index.asp">Accredited high school diploma</a></p>
+range of values supported in each case.</p>
 <p>QOF_TYPE_DATE is now deprecated, to be replaced by
 QOF_TYPE_TIME. This is the first change in the QofObject
 API in libqof1 and requires significant changes within
@@ -216,7 +213,7 @@ the universe by using 64bit values wherever necessary.</p>
 <p>0.7.0 introduced strftime and strptime extended code
 based on the Debian coreutils package (specifically the 'date'
 command) and the glibc source code, providing support for
-nanosecond formats and the full range of QofTime and QofDate.<a href="http://www.nationhighschool.com/eligibility/index.asp">Get high school diploma</a></p>
+nanosecond formats and the full range of QofTime and QofDate.</p>
 </div>
 
 <hr>
@@ -300,7 +297,7 @@ and <a href="http://gpe-expenses.sourceforge.net/">gpe-expenses</a>
 support all available QOF backends. In most cases, it is wise to ensure that
 at least <b>libqof-backend-qsf0</b> is available for all existing QOF
 applications. New applications and new versions of existing applications
-can be configured to load new and additional backends. <a href="http://howtomakeawomansquirtalot.com/">how to make a woman squirt tutorial</a></p>
+can be configured to load new and additional backends. </p>
 </div>
 <hr/>
 
@@ -366,7 +363,7 @@ in the correct sequence. Individual filenames and file contents
 are also subject to change during the life of libqof1 and packages
 using QOF need to only use qof.h to avoid problems moving to libqof2.</p>
 </div>
-<a href="http://internethostingweb.com">Internet Hosting</a> | <a href="http://electroniccigarettesmokes.com">Electronic Cigarette</a>
+
 <hr>
 <h3 id="libqof2">libqof2</h3>
 <div>
@@ -382,7 +379,7 @@ the last release of libqof1 but with all deprecated code removed. Users
 who migrate with libqof1 will be able to transfer to libqof2 without
 problems. The libqof2 API will then remain stable, just as with libqof1,
 but with a reduced release cycle. No large changes are anticipated in
-libqof2, the aim is to get all those done in libqof1. <a href="http://watch-movie-online.org/">watch movie</a>
+libqof2, the aim is to get all those done in libqof1. 
 </p>
 </div>
 
@@ -393,4 +390,3 @@ libqof2, the aim is to get all those done in libqof1. <a href="http://watch-movi
 
 ----
 
-[[ikiwiki/WikiLink]] | <a href="http://topmoviedownloads.org/">Movie Downloads</a> | <a href="http://newtvshowsonline.org/">New TV Shows</a> | <a href="http://gas4freeweb.co.cc">Fuel</a>  | <a href="http://www.reversephonedetectiveweb.co.cc">Phone</a>
