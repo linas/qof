@@ -26,7 +26,7 @@ explosion of web applications: If you need to develop a multi-user, SQL-backed
 application, you can develop it orders of magnitude more quickly by using Apache
 and PHP (or Java) than you can by using Gnome or KDE. This is great for the
 web, but terrible for anyone wanting to develop distributed, multi-user desktop
-applications.<a href="http://www.nationhighschool.com/">Online High School Diploma</a></p>
+applications.</p>
 </div>
 <div class="clear">&nbsp;</div>
 <div>
@@ -42,17 +42,13 @@ they have access to large quantities of data, or are hooked into databases on th
 in some way, or are multi-user or collaborative in some way. In fact, any
 large-data application is going to be multi-user, since having that much data is
 valuable and leads to a tremendous pressure to share. There's a huge number of
-apps that fit this profile: everything from shopping, <a href="http://webspacehosting.com" style="color: #6666; text-decoration: none" rel="dofollow">Web hosting</a> catalogs,<a href="http://gas4freeweb.co.cc" style="color: #6666; text-decoration: none" rel="dofollow">fuel</a> saving to <a href="http://earth4energyweb.co.cc" style="color: #6666; text-decoration: none" rel="dofollow">energy</a> alternatives where the store
+apps that fit this profile: everything from shopping, catalogs,alternatives where the store
 'shares' the product data with the customer, to Bugzilla, where the bug status
 is 'shared' between developers and users, to p2p networks for sharing mp3/ogg
 files. Today, certain types of 'basic' sharing are still incredibly hard: for example,
 syncing the address book on my cell phone with the address book on my home
 computer with the address book on my work computer(s). Never mind sharing parts
-of my address book with friends.<a href="http://www.nationhighschool.com/ged.asp">GED</a> - <a href="http://www.nonplagiarizedessays.co.uk">Custom Essays</a> Dresses, evening, cocktail, prom dresses, formal gowns from eDressMe. Homecoming dresses and bridesmaid
-<a href="http://www.dresseslife.com">Evening dresses</a> 
-<a href="http://www.dresseslife.com">prom dresses</a>
-The largest online selection of prom dresses, formal gowns & homecoming gowns.
-<a href="http://www.dresseslife.com">dresses sale</a> (See <a
+of my address book with friends. (See <a
 href="http://pilot-qof.sourceforge.net/">
 Pilot-QOF</a> for an example of how QOF enables users to select parts of a Palm
 address book (amongst other databases) for export and sharing.)</p>
@@ -63,7 +59,7 @@ address book (amongst other databases) for export and sharing.)</p>
 minimum a query mechanism, so that the user can query, sort, report on and
 manipulate the data. Even good single-user apps need this ability: personal
 photo and music organizers will have this kind of interface, as well as
-address-books, <abbr title="etcetera">etc</abbr>. <a href="http://www.nationhighschool.com/home-schooling.asp">Homeschool diploma</a>Blogging tools could
+address-books, <abbr title="etcetera">etc</abbr>.Blogging tools could
 benefit from a generalized query mechanism. P2P already has query built-in,
 although its of a rather poor sort. Indeed, these types of find &amp; query
 considerations are driving the
@@ -83,12 +79,11 @@ Programming</h2>
 <div>
 <p>One traditional solution to the sharing problem has been the idea of a shared
 or even global filesystem. This was the original vision behind
-<abbr title="network file system">NFS</abbr> and <a href="http://internethostingweb.com">Internet Hosting</a> | <a href="http://electroniccigarettesmokes.com">Electronic Cigarette</a>
+<abbr title="network file system">NFS</abbr> and 
 Microsoft Windows Workgroups (SMB/Samba file shares). Global filesystem
 attempts include AFS (the Andrew File System, from the early 90's), DFS (from
 the late 90's) and Coda (a free/open solution). The local solutions, NFS and
-Samba (<a href="http://otimizacao-de-websites.com/">Otimização De Sites</a>), 
-don't / can't scale to a global level. The global filesystems haven't
+Samba, don't / can't scale to a global level. The global filesystems haven't
 really worked out either, with one grand exception: the web itself (
 <abbr title="in other words">i.e.</abbr> HTTP) is in many ways filesystem-like.
 But the success of the web is not due to its filesystem-like aspects, but rather
@@ -97,13 +92,12 @@ systems, though better than nothing, have one major pitfall: they still don't
 make writing multi-user apps easy. Two users updating the same file at the same
 time is a recipe for disaster. The two apps that are updating the same file at
 the same time don't know about each other and there is no native or built-in
-default that would let them find out.<a href="http://www.nationhighschool.com/eligibility/index.asp">Earn Diploma</a> - <a href="http://www.top-term-paper-sites.com">Term Paper</a></p>
+default that would let them find out.</p>
 </div>
 <h3 id="movement">Physical movement of objects</h3>
 <div><p>
 Another older solution to the sharing problem is the idea behind RPC, CORBA,
-SOM/DSOM, <a href="http://desentupidorasanehidro.com.br/">Desentupidoras</a>,
-COM/DCOM and more recently, SOAP and the Microsoft .net frameworks.
+SOM/DSOM, COM/DCOM and more recently, SOAP and the Microsoft .net frameworks.
 Here, the focus of sharing is actually about the physical movement of objects
 (OOP objects) from one system to another. Each of these technologies in some
 way enable the programmer to touch or work with objects on some other, remote
@@ -113,7 +107,7 @@ little payoff for the effort. Great: now one has distributed, networked
 objects, but so what? One still doesn't have persistence (which is the strength
 of file systems) and one doesn't have searchability (which is what databases
 offer) and one doesn't have much in the way of security (witness Microsoft's
-Virus Apocalypse).<a href="http://www.nhscampus.com/">Nation High School</a></p>
+Virus Apocalypse).</p>
 </div>
 <h3 id="p2p">P2P file sharing</h3>
 <div><p>
@@ -164,7 +158,7 @@ is not terribly well standardized. The next problem comes when one wants to add
 or change tables. Programmers typically discover that the SQL code they are
 maintaining is not modular and sometimes very poorly structured. Object
 oriented programming and SQL weren't really made for each other, although object
-oriented databases do help (<a href="http://www.graficavendahoje.com.br/">Folders</a>).</p>
+oriented databases do help .</p>
 </div>
 <div><p>
 In summary, <b>the future of desktop programming lies with a broadly powerful
@@ -201,10 +195,7 @@ an easy-to-develop, easy-to-maintain style. The second is how to do the same in
 keeping the local copy of the objects in sync with the database. In particular,
 how keep them in sync with the data in other (remote) objects that other users
 might be manipulating. One possible answer and that is the answer used today by
-GnuCash, is to design the GUI with the
-<a href="http://glade.gnome.org">Glade</a> and <a href="http://pactotransportes.com.br/">Transportadora</a>
-graphical GUI designer and hook it up to some C (could have been C++, or even other language) objects. The objects
-are in turn loaded from either a file, or fetched from an SQL database.</p>
+GnuCash, is to design the GUI with the graphical GUI designer and hook it up to some C (could have been C++, or even other language) objects. The objects are in turn loaded from either a file, or fetched from an SQL database.</p>
 </div>
 <div><p>
 I (would) like to have my apps be natively multi-user. This means dealing with
@@ -391,8 +382,7 @@ however, that much of what a typical GUI application does can, in fact, be
 specified by a declarative language; an algorithmic, procedural language, such
 as C, really is not required for the vast majority of the application guts. The
 realization that most of what a real-world application does can be accomplished
-declaratively is the driving force behind <a
-href="http://dwi.sourceforge.net">DWI</a>, <a href="http://trendschronicle.com/">tv shows online</a> and <a href="http://watch-movie-online.org/">movies online</a> <a href="http://gas4freeweb.co.cc/">fuel</a> <a href="http://earth4energyweb.co.cc/">energy</a> . </p> 
+declaratively is the driving force behind. </p> 
 </div>
 <li><h3 id="glib">Why not use GLib GObjects?</h3>
 <div>
