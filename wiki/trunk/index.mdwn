@@ -182,7 +182,7 @@ behind QOF, including the relationships between &quot;database-driven&quot;,
 &quot;program-driven&quot; and &quot;data-centric&quot; ming explored at
 <a href="http://www.data-freedom.org/explain.html">Data-Freedom.org</a>.
 
-* Provide an object framework that allows programmers to create expressive
+* Provide an object framework that allows <a href="http://www.vitalethics.org/cna-classes-ca3.html">program</a>mers to create expressive
 queries that will search through a collection of objects, returning the desired
 set of objects.
 
