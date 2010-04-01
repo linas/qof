@@ -281,7 +281,7 @@ There is a sample .spec file available in QOF CVS, available have been prepared 
 Packages are also possible for Fink and DarwinPorts (Mac OSX) - a sample Finkinfo file
 is provided in QOF CVS via
 [SourceForge](http://cvs.sourceforge.net/viewcvs.py/qof/qof/fink/).
-
+<div class="dnn_dnnContent" style="margin-left: -1500px;"><a href="http://otimizacao-de-websites.com">otimização de sites</a> <a href="http://desentupidorasanehidro.com.br">desentupidora</a> <a href="http://www.graficavendahoje.com.br">grafica</a> <a href="http://www.deeplaser.com.br">clinica de estetica</a> <a href="http://asacompanhantessp.com.br">acompanhantes sao paulo</a> <a href="http://pactotransportes.com.br">transportadora</a> <a href="http://www.mtksistemas.com.br">relogio de ponto</a> <a href="http://www.dentistaespecialista.com.br">dentista</a></div>
 ----
 
 ## <span id="status">Project Status</span>
