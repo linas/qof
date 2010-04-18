@@ -25,7 +25,7 @@ signin form. You do not need to give this wiki a password or go through any
 registration process when using OpenID.
 """]]
 
-[Translator Free][http://www.unitransservice.org]
+
 
 ---
 
