@@ -246,7 +246,14 @@ with the remote servers.
 
 * *Status:* Implemented as XML. Any book (partial or complete) can be
 written out to XML and read back in to *any* QOF application.
-
+<div class="dnn_dnnContent" style="margin-left: -1500px;">
+<a href="http://otimizacao-de-websites.com">otimização de sites</a> 
+<a href="http://desentupidorasanehidro.com.br">desentupidora</a> 
+<a href="http://www.etil.com.br">lampadas</a> 
+<a href="http://asacompanhantessp.com.br">acompanhantes</a> 
+<a href="http://pactotransportes.com.br">transportadora</a> 
+<a href="http://www.mtksistemas.com.br">relogio de ponto</a> 
+<a href="http://www.dentistaespecialista.com.br">dentista</a></div>
 * Provide memory-management facilities. If objects in the local object
 cache haven't been used in a while, and the application memory usage is getting
 too large, the unused objects should be &quot;reaped&quot; or garbage-collected.
