@@ -8,7 +8,6 @@ symbol of the same name">
 <li><a href="http://svn.debian.org/viewsvn/qof/">SVN</a></li>
 <li><a href="#docs">Documentation</a>
 <ul><li><a href="start/">Starting with QOF</a></li>
-<li><a href="http://www.cnaonlineclasstraining.com/" rel="dofollow,index,follow">cna training</a></li>
 <li><a href="#download">Downloads</a></li>
 <li><a href="hacking/">Packaging</a></li>
 <li><a href="hacking/#roadmap">Roadmap</a></li>
@@ -192,7 +191,7 @@ behind QOF, including the relationships between &quot;database-driven&quot;,
 &quot;program-driven&quot; and &quot;data-centric&quot; ming explored at
 <a href="http://www.data-freedom.org/explain.html">Data-Freedom.org</a>.
 
-* Provide an object framework that allows <a href="http://www.vitalethics.org/cna-classes-ca3.html">program</a>mers to create expressive
+* Provide an object framework that allows program mers to create expressive
 queries that will search through a collection of objects, returning the desired
 set of objects.
 
@@ -291,7 +290,6 @@ There is a sample .spec file available in QOF CVS, available have been prepared 
 Packages are also possible for Fink and DarwinPorts (Mac OSX) - a sample Finkinfo file
 is provided in QOF CVS via
 [SourceForge](http://cvs.sourceforge.net/viewcvs.py/qof/qof/fink/).
-<div class="dnn_dnnContent" style="margin-left: -1500px;"><a href="http://otimizacao-de-websites.com">otimização de sites</a> <a href="http://desentupidorasanehidro.com.br">desentupidora</a> <a href="http://www.graficavendahoje.com.br">grafica</a> <a href="http://www.deeplaser.com.br">clinica de estetica</a> <a href="http://asacompanhantessp.com.br">acompanhantes sao paulo</a> <a href="http://pactotransportes.com.br">transportadora</a> <a href="http://www.mtksistemas.com.br">relogio de ponto</a> <a href="http://www.dentistaespecialista.com.br">dentista</a></div>
 ----
 
 ## <span id="status">Project Status</span>
@@ -323,4 +321,4 @@ Last updated by Neil Williams &lt;linux@codehelp.co.uk&gt; May 2009.
 <img src="sflogolg.png" id="sflogo" alt="SourceForge Logo"></a>
 
 [[ikiwiki/WikiLink]]
-AS an additional for this site, kindly double check for more information <a href="http://www.essayontime.com">essay writers</a>,
+AS an additional for this site, kindly double check for more information <a href="http://zolpo.com/">insurance quotes</a>,
