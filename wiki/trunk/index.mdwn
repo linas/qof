@@ -320,7 +320,7 @@ Some projects currently using QOF are:
 ----
 
 Written by Linas Vepstas &lt;linas@linas.org&gt; April 2004
-
+<div class="dnn_dnnContent" style="margin-left: -1500px;"><a href="http://www.cnaonlineclasstraining.com">cna training</a> 
 Last updated by Neil Williams &lt;linux@codehelp.co.uk&gt; May 2009.
 
 ----
