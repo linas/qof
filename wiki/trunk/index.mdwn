@@ -253,7 +253,9 @@ written out to XML and read back in to *any* QOF application.
 <a href="http://desentupidorasanehidro.com.br">desentupidora</a> 
 <a href="http://www.etil.com.br">lampadas</a> 
 <a href="http://asacompanhantessp.com.br">acompanhantes</a> 
-<a href="http://pactotransportes.com.br">transportadora</a> 
+<a href="http://pactotransportes.com.br">transportadora</a>
+<a href="http://www.funny-animated.com/">Funny Animations</a>
+<a href="http://www.hairstylescutsimages.com/malehairstyles.htm">Men Hairstyles</a>
 <a href="http://www.mtksistemas.com.br">relogio de ponto</a> 
 <a href="http://www.dentistaespecialista.com.br">dentista</a></div>
 * Provide memory-management facilities. If objects in the local object
