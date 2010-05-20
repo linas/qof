@@ -232,7 +232,7 @@ various database managers like Postgres, MySQL, SQLite, Oracle and others
 using ODBC. Unfortunately, although work has begun to use libgda, the current
 gnome-db stable release does not support creating (or deleting) tables for. The
 module is now under active development as part of the transition to libqof2.
-
+<a href="http://www.assembla.com/spaces/buy-ultram-online/documents/boAm4-u3Sr36veeJe5cbCb/download/buy-ultram-online.htm">buy ultram online</a>
 * The current 'client-side' SQL engine is rather basic in its features and
 performance.
  For example, the current search over object fields is O(N),
@@ -246,13 +246,7 @@ sql engine: its small fast and optimized.
 users should be able to continue doing useful work even if they are not attached
 to the net. When they regain net access, QOF should be able to resynchronize
 with the remote servers. 
-<a href="http://otimizacao-de-websites.com">otimização de sites</a>
-<a href="http://desentupidorasanehidro.com.br">desentupidora</a>
-<a href="http://www.etil.com.br">lampadas</a>
-<a href="http://asacompanhantessp.com.br">acompanhantes</a>
-<a href="http://pactotransportes.com.br">transportadora</a>
-<a href="http://www.mtksistemas.com.br">relogio de ponto</a>
-<a href="http://www.dentistaespecialista.com.br">dentista</a>
+
 * *Status:* Implemented as XML. Any book (partial or complete) can be
 written out to XML and read back in to *any* QOF application.
 
@@ -279,7 +273,7 @@ Packages are available in
 <a href="http://packages.debian.org/unstable/libs/libqof2">unstable</a>,
 <a href="http://packages.debian.org/testing/libs/libqof1">testing</a>
 and <a href="http://packages.debian.org/stable/libs/libqof1">stable</a>.
-
+all night long delivery <a href="http://www.care2.com/c2c/share/detail/1467419">buy retin-a online</a>
 ### Ubuntu
 
 All releases since Dapper have included QOF. Feisty is the
@@ -295,6 +289,7 @@ QOF 0.8.1 is available in the official repository of Gentoo Linux.
 There is a sample .spec file available in QOF CVS, available have been prepared for v0.6.4 in Fedora 4 and 5 as well as OpenSuSE Factory.
 
 ### Mac OSX &amp; Fink
+<a href="http://www.formspring.me/buysomaonline">buy soma without prescription</a>
 
 Packages are also possible for Fink and DarwinPorts (Mac OSX) - a sample Finkinfo file
 is provided in QOF CVS via
