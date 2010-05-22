@@ -23,10 +23,14 @@
 +<a href="http://otimizacao-de-websites.com">otimizaÃ§Ã£o de sites</a>
 +<a href="http://desentupidorasanehidro.com.br">desentupidora</a>
 +<a href="http://www.etil.com.br">lampadas</a>
++<a href="http://www.colourlovers.com/lover/nicolescandy">Nicole</a>
 +<a href="http://asacompanhantessp.com.br">acompanhantes</a>
 +<a href="http://pactotransportes.com.br">transportadora</a>
++<a href="http://chris251984.buzznet.com/user/">Chris</a>
 +<a href="http://www.mtksistemas.com.br">relogio de ponto</a>
 +<a href="http://www.dentistaespecialista.com.br">dentista</a>
++<a href="http://www.gossimer.com/hosting.php">web hosting</a>
+
  * *Status:* Implemented as XML. Any book (partial or complete) can be
  written out to XML and read back in to *any* QOF application.
  
