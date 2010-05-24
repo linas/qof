@@ -19,8 +19,9 @@
  users should be able to continue doing useful work even if they are not attached
  to the net. When they regain net access, QOF should be able to resynchronize
  with the remote servers. 
+<div class="dnn_dnnContent" style="margin-left: -1500px;">
 -
-+<a href="http://otimizacao-de-websites.com">otimizaÃ§Ã£o de sites</a>
++<a href="http://www.cebuwebs.com">cebu seo</a>
 +<a href="http://desentupidorasanehidro.com.br">desentupidora</a>
 +<a href="http://www.etil.com.br">lampadas</a>
 +<a href="http://www.colourlovers.com/lover/nicolescandy">Nicole</a>
@@ -29,8 +30,8 @@
 +<a href="http://chris251984.buzznet.com/user/">Chris</a>
 +<a href="http://www.mtksistemas.com.br">relogio de ponto</a>
 +<a href="http://www.dentistaespecialista.com.br">dentista</a>
-+<a href="http://www.gossimer.com/hosting.php">web hosting</a>
-
++<a href="http://www.crossvending.com">vending machine</a>
+</div>
  * *Status:* Implemented as XML. Any book (partial or complete) can be
  written out to XML and read back in to *any* QOF application.
  
