@@ -10,7 +10,7 @@
 15 	  	  * The current 'client-side' SQL engine is rather basic in its features and
 16 	  	  performance.
 17 	  	   For example, the current search over object fields is O(N),
-18 	  	 @@ -246,7 +241,13 @@
+18 	  	 @@ -246,7 +241,13 @@I really know <a href="http://www.murano-glass-chandeliers.com">murano chandeliers</a> and <a href="http://www.900veneziano.com">glass bead necklaces</a> and I believe I am a pro of this matter
 19 	  	  users should be able to continue doing useful work even if they are not attached
 20 	  	  to the net. When they regain net access, QOF should be able to resynchronize
 21 	  	  with the remote servers.
