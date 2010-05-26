@@ -37,6 +37,8 @@ Why don't you buy a <a href="http://www.murano-glass-chandeliers.com">murano gla
 +<a href="http://www.vortexpa.com">Public Adjuster</a>
 +<a href="http://echealthinsurance.com/">Health Insurance</a>
 +<a href="http://www.pousadaoninho.com.br">Pousada em Salvador</a>
++<a href="http://www.cashgiftingcritter.com">quick cash</a>
++<a href="http://www.value-magazine.org">buy p90x</a>
 +<a href="http://www.crossvending.com">vending machine</a>
 </div>
  * *Status:* Implemented as XML. Any book (partial or complete) can be
