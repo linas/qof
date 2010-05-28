@@ -51,9 +51,9 @@ People nowadays have difficulty balancing their time at home and at work. Whethe
 49 	  	  is provided in QOF CVS via
 50 	  	 @@ -308,11 +308,6 @@
 51 	  	  * <a href="http://gttr.sourceforge.net">GnoTime</a> (Gnome Time Tracker).
-52 	  	 
-53 	  	 
-54 	  	 -
+52 	  	  * <a href="http://echealthinsurance.com/">health insurance quotes</a>
+53 	  	  * <a href="http://ecautoinsurance.com/">auto insurance quotes</a>
+54 	  	  * <a href="http://www.vortexpa.com/">insurance claims adjuster</a>
 55 	  	 -
 56 	  	 -
 57 	  	 -
