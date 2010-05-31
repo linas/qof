@@ -2,7 +2,7 @@ We are an organized group of writers who specialize in producing custom academic
 
 
 
- <a href="http://www.anypapers.com"> Essay Writing </a>
+<a href="http://www.bestessays.com.au"> Bestessays</a>
 
 
 
@@ -278,6 +278,7 @@ one has multiple base classes (multiple inheritance), or if ints, floats are
 your base type. The object-orientation of Java and C++ does not go down that
 deep.</p>
 <p>So the other way to work around a missing lambda and write generic
+
 algorithms, is to introduce the idea of "type templates". Templates are now a
 part of C++. By using templates in C++, one can write generic, type-independent
 algorithms. Unfortunately, templates are hard to use, template code is hard to
