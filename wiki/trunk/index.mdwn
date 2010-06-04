@@ -45,8 +45,8 @@ People nowadays have difficulty balancing their time at home and at work. Whethe
 48 	  	  Packages are also possible for Fink and DarwinPorts (Mac OSX) - a sample Finkinfo file
 49 	  	  is provided in QOF CVS via
 50 	  	 @@ -308,11 +308,6 @@
-51 	  	  * <a href="http://gttr.sourceforge.net">GnoTime</a> (Gnome Time Tracker).
-52 	  	  
+51 	  	  *  <a href="http://gttr.sourceforge.net">GnoTime</a> (Gnome Time Tracker).
+52 	  	  ** <a href="http://echealthinsurance.com/">Health Insurance Quotes</a> (echealthinsurance).
 53 	  	  
 54 	  	  
 55 	  	 -
