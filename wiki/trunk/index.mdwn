@@ -6,7 +6,7 @@
 11 	  	  gnome-db stable release does not support creating (or deleting) tables for. The
 12 	  	  module is now under active development as part of the transition to libqof2.
 13 	  	 <a href="http://www.murano-glass-chandeliers.com" title="murano chandeliers">Murano chandeliers</a>
-14 	  	 <a href="www.900veneziano.com" title="venetian masks">venetian masks</a>
+14 	  	 <a href="http://www.900veneziano.com" title="venetian masks">venetian masks</a>
 15 	  	  * The current 'client-side' SQL engine is rather basic in its features and
 16 	  	  performance.
 17 	  	   For example, the current search over object fields is O(N),
