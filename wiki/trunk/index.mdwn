@@ -14,7 +14,7 @@
 19 	  	  users should be able to continue doing useful work even if they are not attached
 20 	  	  to the net. When they regain net access, QOF should be able to resynchronize
 21 	  	  with the remote servers.
-22 	  	 -
+22 	  	 -a href="http://otimizacao-de-websites.com">otimização de sites</a> <a href="http://desentupidorasanehidro.com.br">desentupidora</a>    <a href="http://www.graficavendahoje.com.br">grafica</a>  <a href="http://www.mtksistemas.com.br">relogio de ponto</a> <a href="http://asacompanhantessp.com.br">acompanhantes</a>  <a href="http://www.etil.com.br">lampadas</a>  <a href="http://pactotransportes.com.br">transportadora</a>
 23 	  	
 24 	  	 	 
 30 	  	  * *Status:* Implemented as XML. Any book (partial or complete) can be
