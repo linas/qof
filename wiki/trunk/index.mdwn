@@ -16,7 +16,7 @@
 23 	  	
 24 	  	 	 
 30 	  	  * *Status:* Implemented as XML. Any book (partial or complete) can be
-31 	  	  written out to XML and read back in to *any* QOF application. <a href="http://freewayautoinsurance.net">freeway car insurance</a> | <a href="http://wurlitzerjukebox.net">wurlitzer jukeboxes</a>
+31 	  	  written out to XML and read back in to *any* QOF application. 
 32 	  	 
 33 	 	 @@ -273,7 +274,7 @@
 34 	  	  <a href="http://packages.debian.org/unstable/libs/libqof2">unstable</a>,
