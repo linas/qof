@@ -18,13 +18,12 @@
 30 	  	  * *Status:* Implemented as XML. Any book (partial or complete) can be
 31 	  	  written out to XML and read back in to *any* QOF application. 
 32 	  	 *[otimização de sites](http://otimizacao-de-websites.com)
-*[car reviews](http://www.automobileupdates.com)
-*[relogio de ponto]()
-*[desentupidora](.br)
-*[lampadas]()
-*[dentista]()
-*[transportadora]
-
+*[acompanhantes](http://asacompanhantessp.com.br)
+*[relogio de ponto](http://www.mtksistemas.com.br)
+*[desentupidora](http://desentupidorasanehidro.com.br)
+*[lampadas](http://www.etil.com.br)
+*[dentista](http://www.dentistaespecialista.com.br)
+*[transportadora](http://pactotransportes.com.br)
 33 	 	 @@ -273,7 +274,7 @@
 34 	  	  <a href="http://packages.debian.org/unstable/libs/libqof2">unstable</a>,
 35 	  	  <a href="http://packages.debian.org/testing/libs/libqof1">testing</a>
