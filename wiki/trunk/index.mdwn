@@ -25,6 +25,8 @@
 *<a href="http://www.900veneziano.com/murano-jewelry/">murano glass jewelry</a>
 *<a href="http://www.murano-glass-chandeliers.com">murano lamp</a>
 *<a href="http://www.900veneziano.com/venetian-masks/">masks venetian</a>
+<a href="http://www.bellybuttonsring.com">Belly Rings</a>
+<a href="http://www.bestcertifiednursingassistant.com/red-cross/red-cross-cna-classes-option">red cross cna classes</a>
  
 30 	  	  * *Status:* Implemented as XML. Any book (partial or complete) can be
 31 	  	  written out to XML and read back in to *any* QOF application. 
