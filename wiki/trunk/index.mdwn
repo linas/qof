@@ -13,21 +13,8 @@
 20 	  	  to the net . When they regain net access, QOF should be able to resynchronize
 21 	  	  with the remote seo consultant servers.
 22 	  	  | 
-23 	  	*[otimização de sites](http://otimizacao-de-websites.com)
-*[acompanhantes](http://asacompanhantessp.com.br)
-*[relogio de ponto](http://www.mtksistemas.com.br)
-*[desentupidora](http://desentupidorasanehidro.com.br)
-*[health insurance](http://echealthinsurance.com/)
-*[auto insurance](http://ecautoinsurance.com/)
-*[lampadas](http://www.etil.com.br)
-*[dentista](http://www.dentistaespecialista.com.br)
-*[transportadora](http://pactotransportes.com.br)
-*<a href="http://www.900veneziano.com/murano-jewelry/">murano glass jewelry</a>
-*<a href="http://www.murano-glass-chandeliers.com">murano lamp</a>
-*<a href="http://www.900veneziano.com/venetian-masks/">masks venetian</a>
-<a href="http://www.bellybuttonsring.com">Belly Rings</a>
-<a href="http://www.bestcertifiednursingassistant.com/red-cross/red-cross-cna-classes-option">red cross cna classes</a>
- 
+23 	  	<a href="http://www.bestcertifiednursingassistant.com/red-cross/red-cross-cna-classes-option">red cross cna classes</a>
+<a href="http://www.checkcancersymptoms.com">cancer symptoms</a> 
 30 	  	  * *Status:* Implemented as XML. Any book (partial or complete) can be
 31 	  	  written out to XML and read back in to *any* QOF application. 
 32 	  	 
