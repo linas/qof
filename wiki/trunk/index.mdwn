@@ -23,7 +23,14 @@
 35 	  	  <a href="http://packages.debian.org/testing/libs/libqof1">testing</a>
 36 	  	  and <a href="http://packages.debian.org/stable/libs/libqof1">stable</a>.
 37 	  	 -all night long delivery.
-38 	  	 +
+38 	  	 +*[otimização de sites](http://otimizacao-de-websites.com)
+*[acompanhantes](http://asacompanhantessp.com.br)
+*[relogio de ponto](http://www.mtksistemas.com.br)
+*[desentupidora](http://desentupidorasanehidro.com.br)
+*[lampadas](http://www.etil.com.br)
+*[dentista](http://www.dentistaespecialista.com.br)
+*[transportadora](http://pactotransportes.com.br)
+
 39 	  	  ### Ubuntu
 40 	  	 
 41 	  	  All releases since Dapper have included QOF. Feisty is the
