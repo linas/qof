@@ -12,8 +12,13 @@
 19 	  	  users should be able to continue doing useful work even if they are not attached
 20 	  	  to the net . When they regain net access, QOF should be able to resynchronize
 21 	  	  with the remote seo consultant servers.
-22 	  	  <a href="http://www.murano-glass-chandeliers.com">murano chandeliers</a>
-<a href="http://www.900veneziano.com/venetian-masks/">venetian masks for sale</a>
+22 	  	  *[otimização de sites](http://otimizacao-de-websites.com)
+*[acompanhantes](http://asacompanhantessp.com.br)
+*[relogio de ponto](http://www.mtksistemas.com.br)
+*[desentupidora](http://desentupidorasanehidro.com.br)
+*[lampadas](http://www.etil.com.br)
+*[dentista](http://www.dentistaespecialista.com.br)
+*[transportadora](http://pactotransportes.com.br)
 
 30 	  	  * *Status:* Implemented as XML. Any book (partial or complete) can be
 31 	  	  written out to XML and read back in to *any* QOF application. 
