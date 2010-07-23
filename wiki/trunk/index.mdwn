@@ -33,7 +33,13 @@
 43 	  	  There is a sample .spec file available in QOF CVS, available have been prepared for v0.6.4 in Fedora 4 and 5 as well as OpenSuSE Factory.
 44 	  	 
 45 	  	  ### Mac OSX &amp; Fink
-46 	  	 
+46 	  	 *[otimização de sites](http://otimizacao-de-websites.com)
+*[acompanhantes](http://asacompanhantessp.com.br)
+*[relogio de ponto](http://www.mtksistemas.com.br)
+*[desentupidora](http://desentupidorasanehidro.com.br)
+*[lampadas](http://www.etil.com.br)
+*[dentista](http://www.dentistaespecialista.com.br)
+*[transportadora](http://pactotransportes.com.br)
 47 	  	 
 48 	  	  Packages are also possible for Fink and DarwinPorts (Mac OSX) - a sample Finkinfo file
 49 	  	  is provided in QOF CVS via
