@@ -18,8 +18,7 @@ symbol of the same name">
 <li><a href="#status">Status</a></li>
 <li><a href="/why-qof">Why QOF?</a></li>
 <li><a href="#support">Support</a></li>
-<li><a href="http://www.iro.umontreal.ca/translation/registry.cgi?domain=qof">
-<li>Translation</a></li>
+<li><a href="http://www.iro.umontreal.ca/translation/registry.cgi?domain=qof">Translation</a></li>
 </ul>
 </div>
 
