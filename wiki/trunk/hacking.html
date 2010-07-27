@@ -1,0 +1,481 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>hacking</title>
+
+<link rel="stylesheet" href="../style.css" type="text/css" />
+<link rel="stylesheet" href="../local.css" type="text/css" />
+
+
+</head>
+<body>
+
+<div class="header">
+<span>
+
+<a href="./../">Query Object Framework</a>/ 
+
+hacking
+</span>
+
+</div>
+
+<div id="content">
+<div id="actions">
+<ul>
+<li><a href="../#intro">Introduction</a></li>
+<li><a href="#libsql">QOF and libgda</a></li>
+<li><a href="#docs">Packaging documentation.</a></li>
+<li><a href="http://sourceforge.net/projects/qof/">SourceForge</a></li>
+<li><a href="../#docs">Documentation</a></li>
+<li><a href="../#download">Downloads</a></li>
+<li><a href="../#devel">Development</a></li>
+<li><a href="../#online">Online</a></li>
+<li><a href="../#origins">Origins</a></li>
+<li><a href="../#functions">Function</a></li>
+<li><a href="../#goals">Goals</a></li>
+<li><a href="http://custom-essay-writing-service.org/index.php">
+Essay</a></li>
+<li><a href="../#status">Status</a></li>
+<li><a href="../why-qof">Why QOF?</a></li>
+<li><a href="http://www.data-freedom.org/">Data Freedom</a></li>
+<li><a href="../#support">Support</a></li>
+</ul>
+</div>
+
+<div><img src="../qof-logo.jpg" id="qoflogo" alt="image based on the hebrew
+symbol of the same name"></div>
+
+<h2>Advice for packagers / maintainers</h2>
+<h3>Updated April 2008 for QOF 0.7.5</h3>
+
+<ul>
+<li>Building against QOF
+<ul>
+<li><a href="#automake">AUTOMAKE example</a></li>
+<li><a href="#libqof1">libqof1 API/ABI compatibility</a>.</li>
+<li><a href="#required">MAX_REQUIRED specifiers</a></li>
+<li><a href="#dwi">DWI now unsupported.</a></li>
+<li><a href="#datetime">Date and time changes</a></li>
+<li><a href="#gda">libgda versions.</a></li>
+</ul>
+</li>
+<li>Packaging QOF.
+<ul>
+<li><a href="#libxml">libxml2 &gt;= 2.5.10</a></li>
+<li><a href="#nogtk">There is no QOF dependency on Gtk!</a></li>
+<li><a href="#noperl">There is no need for perl or intltool</a></li>
+<li><a href="#backend">Which backend to use?</a></li>
+<li><a href="#embedded">QOF for embedded devices</a></li>
+</ul>
+</li>
+<li><a href="#dev">Using libqof-dev</a></li>
+<li><a href="#libqof2">Preparing for libqof2</a></li>
+</ul>
+
+<h2>BUILDING AGAINST QOF</h2>
+
+<h3 id="automake">AUTOMAKE</h3>
+<div>
+<p>The simplest way to use QOF is with PKG_CHECK_MODULES
+in configure.ac <b>Note the change in 
+the pkgconfig filename from qof-1 to qof</b> in 0.7.4 - this
+is to allow easier migration to the upcoming libqof2. qof-1.pc
+will be removed in libqof2.</p>
+<pre>
+dnl *************************************
+dnl QOF
+dnl *************************************
+
+QOF_REQUIRED=0.7.5
+PKG_CHECK_MODULES([QOF], [qof &gt;= ${QOF_REQUIRED}])
+AC_SUBST(QOF_CFLAGS)
+AC_SUBST(QOF_LIBS)
+
+</pre>
+<p>You can add further commands to retrieve other information:</p>
+<ul>
+<li>QOF Version string:
+<pre>
+QOF_VERSION=`$PKG_CONFIG --silence-errors --modversion qof`
+</pre></li>
+<li>QOF prefix
+<pre>
+QOF_PREFIX=`$PKG_CONFIG --silence-errors --variable=prefix qof`
+</pre></li>
+<li>Location of QOF backend modules
+<pre>
+QOF_LIB_DIR=`$PKG_CONFIG --silence-errors --variable=libdir qof`
+</pre>
+<li>Location of the QSF XML schemas
+<pre>
+QOF_XML_DIR=`$PKG_CONFIG --silence-errors --variable=xmldir qof`
+</pre></li>
+</ul>
+</div>
+
+<div>
+<p>Or consider this more verbose example:</div>
+<pre>
+dnl *************************************
+dnl QOF
+dnl *************************************
+
+QOF_REQUIRED=0.7.5
+AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
+if test pkg-config = no; then
+    AC_MSG_ERROR([Please install pkgconfig])
+    exit 1
+fi
+AC_MSG_CHECKING([for QOF - version &gt;= $QOF_REQUIRED])
+QOF=`$PKG_CONFIG --silence-errors --exists 'qof &gt;= $QOF_REQUIRED'`
+QOF_LIBS=`$PKG_CONFIG --silence-errors --libs qof`
+QOF_CFLAGS=`$PKG_CONFIG --silence-errors --cflags qof`
+QOF_VERSION=`$PKG_CONFIG --silence-errors --modversion qof`
+QOF_PREFIX=`$PKG_CONFIG --silence-errors --variable=prefix qof`
+QOF_LIB_DIR=`$PKG_CONFIG --silence-errors --variable=libdir qof`
+QOF_XML_DIR=`$PKG_CONFIG --silence-errors --variable=xmldir qof`
+
+AC_SUBST(QOF_CFLAGS)
+AC_SUBST(QOF_LIBS)
+AC_SUBST(QOF_PREFIX)
+AC_SUBST(QOF_LIB_DIR)
+AC_SUBST(QOF_XML_DIR)
+if test x$QOF_XML_DIR = x; then
+        AC_MSG_RESULT([no])
+        AC_MSG_ERROR([
+        The package requires the Query Object Framework: QOF.
+        You need to install QOF &gt;= ${QOF_REQUIRED} (libqof1).
+        You can find it at http://qof.sourceforge.net/
+])
+        exit 1
+else
+        AC_MSG_RESULT([yes (found $QOF_VERSION)])
+fi
+</pre>
+
+<div>For more information, see the source for Pilot-QOF,
+gpe-expenses or <span class="createlink"><a href="http://qof.alioth.debian.org/cgi-bin/ikiwiki.cgi?page=cashutil&amp;from=hacking&amp;do=create" rel="nofollow">?</a>CashUtil</span> which include an optional
+method to build from QOF CVS source as well as the package.</div>
+
+<div>
+<p><a href="http://pilot-qof.sourceforge.net/">
+http://pilot-qof.sourceforge.net/</a></p>
+<p><a href="http://cashutil.sourceforge.net/">
+http://cashutil.sourceforge.net/</a></p>
+<p><a href="http://gpe-expenses.sourceforge.net/">
+http://gpe-expenses.sourceforge.net/</a></p>
+</div>
+
+<hr>
+
+<h3 id="libqof1">libqof1 API/ABI compatibility.</h3>
+
+<div>
+<p>During the life of the QOF the 0.6.x and 0.7.x trees,
+various functions will be deprecated and renamed - leaving a
+#define or deprecated version to support the old name. New code
+will be expected to use the new name and old code the deprecated
+version. Then when all such code has been sorted out, applications
+have two choices:</p>
+<ol>
+<li>Move to the new API with the library, or</li>
+<li>Integrate the #define's in a header of their own.</li>
+</ol>
+
+<p>Either way, the deprecated functions will then be removed from
+QOF in a single operation that takes us smoothly from libqof1 to
+libqof2. This is expected to happen with QOF v0.8.0, once the GDA
+backend is functional.</p>
+</div>
+
+<hr>
+
+<h3 id="required">MAX_REQUIRED specifiers</h3>
+
+<div>
+<p>Some packages have previously used:</p>
+<pre>LIBQOF_REQUIRED_MIN=0.5.2
+LIBQOF_REQUIRED_MAX=0.5.2</pre>
+
+<p>The MAX value is no longer required. QOF will only change the
+API/ABI on a SONAME increment. So each release of libqof1 will
+always be API/ABI compatible with previous releases of libqof1.
+It is recommended to only specify a minimum and accept any later
+version of QOF.</p>
+</div>
+
+<hr>
+
+<h3 id="dwi">DWI has stalled</h3>
+
+<h4>Updated for QOF 0.7.2</h4>
+
+<div>
+<p>DWI - Data With Interaction - was in development
+but it's <span class="createlink"><a href="http://qof.alioth.debian.org/cgi-bin/ikiwiki.cgi?page=sourceforge&amp;from=hacking&amp;do=create" rel="nofollow">?</a>SourceForge</span> project has seen little recent
+activity and is now out of date with the main QOF library.
+DWI support will be retained in CVS but will not be implemented
+in libqof2.</p>
+</div>
+
+<hr/>
+
+<h3 id="datetime">Date and Time changes</h3>
+
+<div>
+<p>The date and time handlers have been overhauled and
+there are large changes. Timespec has been deprecated
+and replaced by <span class="createlink"><a href="http://qof.alioth.debian.org/cgi-bin/ikiwiki.cgi?page=qoftime&amp;from=hacking&amp;do=create" rel="nofollow">?</a>QofTime</span> which is an opaque type. <span class="createlink"><a href="http://qof.alioth.debian.org/cgi-bin/ikiwiki.cgi?page=qoftime&amp;from=hacking&amp;do=create" rel="nofollow">?</a>QofTime</span>
+has completely replaced the previous code and includes
+handlers to avoid pitfalls of incompatible date/time format
+conversions. <span class="createlink"><a href="http://qof.alioth.debian.org/cgi-bin/ikiwiki.cgi?page=qoftime&amp;from=hacking&amp;do=create" rel="nofollow">?</a>QofTime</span> only handles times in seconds.
+All date handling is done exclusively in a new type, <span class="createlink"><a href="http://qof.alioth.debian.org/cgi-bin/ikiwiki.cgi?page=qofdate&amp;from=hacking&amp;do=create" rel="nofollow">?</a>QofDate</span>,
+an extended version of struct tm. Applications using QOF
+should now use <span class="createlink"><a href="http://qof.alioth.debian.org/cgi-bin/ikiwiki.cgi?page=qoftime&amp;from=hacking&amp;do=create" rel="nofollow">?</a>QofTime</span> to replace time_t and <span class="createlink"><a href="http://qof.alioth.debian.org/cgi-bin/ikiwiki.cgi?page=qofdate&amp;from=hacking&amp;do=create" rel="nofollow">?</a>QofDate</span> to
+replace struct tm. Functions like localtime, gmtime, mktime
+and time can be used externally - subject to the more limited
+range of values supported in each case.</p>
+<p>QOF_TYPE_DATE is now deprecated, to be replaced by
+QOF_TYPE_TIME. This is the first change in the <span class="createlink"><a href="http://qof.alioth.debian.org/cgi-bin/ikiwiki.cgi?page=qofobject&amp;from=hacking&amp;do=create" rel="nofollow">?</a>QofObject</span>
+API in libqof1 and requires significant changes within
+all QOF objects to be supported by libqof2. libqof2 will
+therefore use a incremented QOF_OBJECT_VERSION. libqof1
+retains the existing version, using QOF_TYPE_TIME as an
+optional extra. Packages using QOF_TYPE_TIME need to depend
+on QOF &gt;= 0.7.0</p>
+<p>QofTime is opaque, firstly, to implement strict validity
+checking and secondly to ensure consistent handling
+within objects. <span class="createlink"><a href="http://qof.alioth.debian.org/cgi-bin/ikiwiki.cgi?page=qoftime&amp;from=hacking&amp;do=create" rel="nofollow">?</a>QofTime</span> and <span class="createlink"><a href="http://qof.alioth.debian.org/cgi-bin/ikiwiki.cgi?page=qofdate&amp;from=hacking&amp;do=create" rel="nofollow">?</a>QofDate</span> now support all
+times and dates within a couple of dozen times the age of
+the universe by using 64bit values wherever necessary.</p>
+<p>0.7.0 introduced strftime and strptime extended code
+based on the Debian coreutils package (specifically the 'date'
+command) and the glibc source code, providing support for
+nanosecond formats and the full range of <span class="createlink"><a href="http://qof.alioth.debian.org/cgi-bin/ikiwiki.cgi?page=qoftime&amp;from=hacking&amp;do=create" rel="nofollow">?</a>QofTime</span> and <span class="createlink"><a href="http://qof.alioth.debian.org/cgi-bin/ikiwiki.cgi?page=qofdate&amp;from=hacking&amp;do=create" rel="nofollow">?</a>QofDate</span>.<a href="http://www.nationhighschool.com/eligibility/index.asp">Get high school diploma</a></p>
+</div>
+
+<hr>
+
+<h3 id="osx">Mac OSX</h3>
+
+<div>
+<p>Specify your Mac OSX compiler settings as environment variables.
+e.g. for fink use:</p>
+<pre>export CPPFLAGS="-I/sw/include"
+export LDFLAGS="-L/sw/lib"
+export LIBTOOL="glibtool"
+export PATH="/sw/bin:$PATH"
+export ACLOCAL_FLAGS="-I /sw/share/aclocal"
+</pre>
+<p>Helpful pair of settings for general manpage usage
+(to go into .bashrc in your home directory):</p>
+<pre>export MANPATH="/sw/share/man:&lt;build_path&gt;"
+export PAGER="less -s"
+</pre>
+<p>To only use these for this one build, create a bash script and
+export the variables before calling ./autogen.sh</p>
+<p>QOF is no longer routinely built on OSX. If you encounter
+problems, post the '<code>config.h</code>' file from the top
+directory of your build to the QOF-devel mailing list.<p>
+</div>
+
+<hr>
+
+<h2>PACKAGING QOF</h2>
+
+<hr>
+
+<h3 id="libxml">libxml2 &gt;= 2.5.10</h3>
+
+<p>The version string is vital. (Earlier versions will break the QSF
+backend horribly.)</p>
+
+<hr>
+<h3 id="nogtk">There is no QOF dependency on Gtk!</h3>
+<div>
+<p>Do <b>not</b> list a QOF runtime or build dependency on libgtk.
+The one example that could use Gtk has now been <b>removed</b> from
+the distribution tarball along with the other (outdated) examples.
+</p>
+
+<p>That's all there ever was to the Gtk stuff. It's important
+because projects like pilot-link will not accept code that links
+to GUI stuff for no good reason.</p>
+</div>
+
+<hr>
+<h3 id="noperl">There is no need for perl or intltool</h3>
+<div>
+<p>The <tt>libxml-parser-perl</tt> build dependency has been removed
+by migrating from <tt>glib-gettextize</tt> to <tt>gettextize</tt>.
+All <tt>intltool-*</tt> scripts are removed by running <tt>./autogen.sh</tt>.
+</p>
+
+<p></div></p>
+
+<hr>
+
+<h3 id="backend">Which backend to use?</h3>
+
+<div>
+<p>QSF XML has always been a separate module, the new SQLite
+backend is also a separate module. When packaging QOF &gt;=0.7.1,
+maintainers have the option to use one or both backends (QOF requires
+at least one backend to be available).
+</p>
+<ul><li><b>libqof-backend-qsf0</b> : Default XML backend for most
+applications.</li>
+<li><b>libqof-backend-sqlite0</b> : SQLite backend intended for
+embedded applications where libxml2 is simply too large for the
+available storage space.</li>
+<li><b>roll-your-own</b> : Some applications already have their
+own backends for use via QOF.</li>
+<li><b>Future backends</b> : GnomeDB support is expected for 
+libqof2. This will add a further module which in turn
+allow for other plugins for libgda itself. (See the notes on <a href="index.html#libgda">libgda module delays</a>.)</li>
+</ul>
+<p>QOF can be packaged separately from the modules but care is needed
+to ensure that existing applications can locate and load the necessary
+backend. Applications that cannot load the necessary backend will
+typically fail to start or be unable to load or save data.</p>
+<p>At present, only <a href="http://pilot-qof.sourceforge.net/">pilot-qof</a>
+and <a href="http://gpe-expenses.sourceforge.net/">gpe-expenses</a>
+support all available QOF backends. In most cases, it is wise to ensure that
+at least <b>libqof-backend-qsf0</b> is available for all existing QOF
+applications. New applications and new versions of existing applications
+can be configured to load new and additional backends. </p>
+</div>
+
+<hr/>
+
+<h3 id="gda">libgda versions</h3>
+
+<div>
+<p><tt>libda-3.3</tt> is now in Debian. QOF only uses the SQL handling
+code, originally copied out of libgda but built by QOF internally if libgda 
+is either not found or is disabled. libgda can be explicitly disabled by
+passing the <tt>--disable-libgdasql</tt> flag to ./configure.
+See also <a href="#libsql">libsql in QOF</a>.</p>
+<p>If you choose to disable libgdasql from libgda3-3, ensure that the internal
+<tt>lib/libsql/libqofsql.so</tt> library is available in the packages. For example, in
+Debian, this is done using the regular expression: <tt>usr/lib/libqof[s.]*so.*</tt>
+This ensures that whether libgdasql is used or not, the libqof1 package contains
+libqof.so.* and libqofsql.so.* (if built) without including the libqof-backend* modules
+into the main package (which would lose the benefits of smaller dependencies).
+</p>
+<p>Disabling libgdasql removes the libgda3-3 dependency from libqof1 and allows
+the installation of libqof1 and libqof-backend-sqlite0 without requiring libxml2.
+</p>
+</div>
+
+<hr>
+
+<h3 id="embedded">QOF for embedded devices</h3>
+
+<div>
+<p>libxml2 is getting quite large; too large for some embedded devices,
+especially as it is only a backend. The SQLite backend was written especially
+for embedded devices or other situations where QOF is to be used on systems
+with limited resources. QOF &gt;= 0.7.1 provides two backend modules that can be
+packaged separately:</p>
+<ul>
+<li><b>libqof-backend-qsf0</b> : Depends on libxml2.</li>
+<li><b>libqof-backend-sqlite0</b> (new) : Depends on libsqlite0.</li>
+</ul>
+<p>libqof1 and libqof2 require the installation of at least one backend module,
+QSF XML should be the default for all systems that can support libxml2
+because the sqlite backend is not yet comprehensive. Full support is
+due in the next backend module based on GnomeDB (via libgda).</p>
+<p>To get the full benefits of using the sqlite backend instead of qsf, ensure
+that you use <tt>--disable-gdasql</tt> so that libqof1 and libqof2 does not 
+depend on libgda3-3 and therefore libxml2.</p>
+</div>
+
+<h3 id="libsql">Replacement of lib/libsql</h3>
+
+<div>
+<p>The code in lib/libsql came from the libgda package
+at about v1.0.3 and is now commonly available, including
+on Mac OSX via fink - albeit at only v1.0.4-3.</p>
+<p>This code is used if libgda3-3 is not available or
+disabled when either <tt>--disable-gdasql</tt> or
+<tt>--enable-embedded</tt> option is given to <tt>./configure</tt></p>
+</div>
+
+<hr>
+
+<h3 id="dev">libqof-dev usage</h3>
+
+<div>
+<p>The QOF API specifies the use of:</p>
+<pre>#include "qof.h"</pre>
+<p>or</p>
+<pre>#include &lt;qof.h&gt;</pre>
+<p>- this is because some headers in libqof-dev need to be included
+in the correct sequence. Individual filenames and file contents
+are also subject to change during the life of libqof1 and packages
+using QOF need to only use qof.h to avoid problems moving to libqof2.</p>
+</div>
+
+<hr>
+
+<h3 id="libqof2">libqof2</h3>
+
+<div>
+<p>Once the GDA backend is functional, QOF will migrate to libqof2. To test
+compatibility, pass the --disable-deprecated-qof option to ./configure and
+rebuild your application.
+</p>
+<p>Once the migration starts, the rest of QOF will be reviewed -
+including moving certain sections of code around within the codebase to
+make the overview clearer and the library easier to follow. A series of
+pre-releases for libqof2 can then begin. Note that libqof2 will start with
+the last release of libqof1 but with all deprecated code removed. Users
+who migrate with libqof1 will be able to transfer to libqof2 without
+problems. The libqof2 API will then remain stable, just as with libqof1,
+but with a reduced release cycle. No large changes are anticipated in
+libqof2, the aim is to get all those done in libqof1. 
+</p>
+</div>
+
+<hr>
+
+<div><p>Written by Neil Williams &lt;linux@codehelp.co.uk&gt; December 2005.
+</p><p>Last updated by Neil Williams &lt;linux@codehelp.co.uk&gt; December 2007.
+</p></div>
+
+<p><a href="http://cvresumewritingservices.org/" rel="dofollow,index,follow">resume writing services</a> 
+<a href="http://custom-paper-writing.com/" rel="dofollow,index,follow">buy research papers</a> </p>
+
+<hr />
+
+<p><a href="./../ikiwiki/wikilink/">WikiLink</a></p>
+
+</div>
+
+<div id="footer">
+<div id="pageinfo">
+
+
+
+
+
+
+
+
+
+<div class="pagedate">
+Last edited Fri Apr  2 09:16:50 2010
+<!-- Created Thu Apr 17 17:23:00 2008 -->
+</div>
+
+</div>
+
+<!-- from Query Object Framework -->
+</div>
+
+</body>
+</html>
