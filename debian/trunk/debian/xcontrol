@@ -5,7 +5,8 @@ Section: libs
 Priority: optional
 Build-Depends-Indep: doxygen
 Build-Depends-Tools: cdbs, debhelper (>= 5), xsltproc
-Build-Depends: libglib2.0-dev (>= 2.9.0), libxml2-dev (>= 2.5.10), libsqlite0-dev
+Build-Depends: libglib2.0-dev (>= 2.9.0), libxml2-dev (>= 2.5.10), libsqlite0-dev,
+ libc-dev-bin
 Homepage: http://alioth.debian.org/projects/qof/
 Cross-Compiling: yes
 Standards-Version: 3.8.2
