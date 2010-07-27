@@ -18,12 +18,8 @@ symbol of the same name">
 <li><a href="#status">Status</a></li>
 <li><a href="/why-qof">Why QOF?</a></li>
 <li><a href="#support">Support</a></li>
-<li><a href="http://essaywritingservices.org/index.php" rel="dofollow,index,follow">essay writing services</a></li>
-<li><a href="http://cvresumewriters.com/" rel="dofollow,index,follow">CV resume</a></li>
 <li><a href="http://www.iro.umontreal.ca/translation/registry.cgi?domain=qof">
 <li>Translation</a></li>
-<style type="text/css"> <!-- .dnn_dnnContent{position:absolute;top:-923px;} --> </style>
-
 </ul>
 </div>
 
@@ -184,7 +180,7 @@ behind QOF, including the relationships between &quot;database-driven&quot;,
 &quot;program-driven&quot; and &quot;data-centric&quot; ming explored at
 <a href="http://www.data-freedom.org/explain.html">Data-Freedom.org</a>.
 
-* Provide an object framework that allows <a href="http://www.vitalethics.org/cna-classes-ca3.html">program</a>mers to create expressive
+* Provide an object framework that allows programmers to create expressive
 queries that will search through a collection of objects, returning the desired
 set of objects.
 
@@ -253,8 +249,8 @@ storage backend for and others.
 
 ### SourceForge
 
-The source code release for v0.8.1 is available from <a title="qof-0.8.1.tar.gz"
-href="https://alioth.debian.org/frs/download.php/3059/qof-0.8.1.tar.gz">
+The source code release for v0.8.2 is available from <a title="qof-0.8.2.tar.gz"
+href="https://alioth.debian.org/frs/download.php/3059/qof-0.8.2.tar.gz">
 Alioth</a>. Future releases will be made from Alioth.
 
 ### Debian
@@ -283,7 +279,7 @@ There is a sample .spec file available in QOF CVS, available have been prepared 
 Packages are also possible for Fink and DarwinPorts (Mac OSX) - a sample Finkinfo file
 is provided in QOF CVS via
 [SourceForge](http://cvs.sourceforge.net/viewcvs.py/qof/qof/fink/).
-<div class="dnn_dnnContent" style="margin-left: -1500px;"><a href="http://otimizacao-de-websites.com">otimização de sites</a> <a href="http://desentupidorasanehidro.com.br">desentupidora</a> <a href="http://www.graficavendahoje.com.br">grafica</a> <a href="http://www.deeplaser.com.br">clinica de estetica</a> <a href="http://asacompanhantessp.com.br">acompanhantes sao paulo</a> <a href="http://pactotransportes.com.br">transportadora</a> <a href="http://www.mtksistemas.com.br">relogio de ponto</a> <a href="http://www.dentistaespecialista.com.br">dentista</a></div>
+
 ----
 
 ## <span id="status">Project Status</span>
@@ -297,12 +293,6 @@ Some projects currently using QOF are:
 
 * <a href="http://gttr.sourceforge.net">GnoTime</a> (Gnome Time Tracker).
 
-
-
-
-
-
-
 ----
 
 Written by Linas Vepstas &lt;linas@linas.org&gt; April 2004
@@ -314,5 +304,3 @@ Last updated by Neil Williams &lt;linux@codehelp.co.uk&gt; May 2009.
 <a href="http://sourceforge.net/projects/qof/">
 <img src="sflogolg.png" id="sflogo" alt="SourceForge Logo"></a>
 
-[[ikiwiki/WikiLink]]
-AS an additional for this site, kindly double check for more information <a href="http://www.essayontime.com">essay writers</a>
