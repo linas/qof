@@ -29,7 +29,7 @@ start
 <li><a href="#introduction">Introduction.</a></li>
 <li><a href="#datacentric">Data-Centric programming.</a></li>
 <li><a href="#code">Starting with the C code.</a></li>
-<li><a href="#object">Your first <span class="createlink"><a href="http://qof.alioth.debian.org/cgi-bin/ikiwiki.cgi?page=qofobject&amp;from=start&amp;do=create">?</a>QofObject</span>.</a></li>
+<li><a href="#object">Your first QofObject.</a></li>
 <li><a href="#parameters">Getting and setting data.</a></li>
 </ul>
 </div>
@@ -50,7 +50,7 @@ user arbitrary queries and exchange data between applications.</p>
 per record. Entities are grouped in Collections and Collections are grouped in Books. A single book
 (QofBook) can contain any number of unique collections (QofCollection). A collection always contains
 only entities of the one type. All entities in a book must be in the matching collection. (These rules
-are implemented within <span class="createlink"><a href="http://qof.alioth.debian.org/cgi-bin/ikiwiki.cgi?page=qofobject&amp;from=start&amp;do=create">?</a>QofObject</span>, <span class="createlink"><a href="http://qof.alioth.debian.org/cgi-bin/ikiwiki.cgi?page=qofclass&amp;from=start&amp;do=create">?</a>QofClass</span> and <span class="createlink"><a href="http://qof.alioth.debian.org/cgi-bin/ikiwiki.cgi?page=qofbook&amp;from=start&amp;do=create">?</a>QofBook</span> - objects do not have to implement them directly.)
+are implemented within QofObject, QofClass and QofBook - objects do not have to implement them directly.)
 </p>
 </div>
 
@@ -85,7 +85,7 @@ iterate, compare and handle dirty/clean flags. In most cases, only the <code>cre
 and <code>my_printable_func</code> functions needs any object-specific code (and the printable
 pointer can be set to NULL anyway).</p>
 <pre>
-static <span class="createlink"><a href="http://qof.alioth.debian.org/cgi-bin/ikiwiki.cgi?page=qofobject&amp;from=start&amp;do=create">?</a>QofObject</span> bus_obj = {
+static QofObject bus_obj = {
     .interface_version = QOF_OBJECT_VERSION,
     .e_type = YOUR_MODULE_NAME,
     .type_label = YOUR_MODULE_DESC,
@@ -117,11 +117,11 @@ QOF does not use it directly.)</p>
 </ol>
 <h3>Get functions (QofAccessFunc)</h3>
 <div><p>All parameters need a "Get" function that simply retrieves the data and returns it in
-a <span class="createlink"><a href="http://qof.alioth.debian.org/cgi-bin/ikiwiki.cgi?page=qofparam&amp;from=start&amp;do=create">?</a>QofParam</span>. Parameters that do not need to be set (e.g. calculated values like account balances
-or summaries) can be complete with just a "Get". In QOF, "get" functions use the <span class="createlink"><a href="http://qof.alioth.debian.org/cgi-bin/ikiwiki.cgi?page=qofaccessfunc&amp;from=start&amp;do=create">?</a>QofAccessFunc</span>
+a QofParam. Parameters that do not need to be set (e.g. calculated values like account balances
+or summaries) can be complete with just a "Get". In QOF, "get" functions use the QofAccessFunc
 prototype:</p>
 <pre>
-typedef gpointer(* <span class="createlink"><a href="http://qof.alioth.debian.org/cgi-bin/ikiwiki.cgi?page=qofaccessfunc&amp;from=start&amp;do=create">?</a>QofAccessFunc</span>)(gpointer object, const <span class="createlink"><a href="http://qof.alioth.debian.org/cgi-bin/ikiwiki.cgi?page=qofparam&amp;from=start&amp;do=create">?</a>QofParam</span> *param)
+typedef gpointer(* QofAccessFunc)(gpointer object, const QofParam *param)
 </pre>
 </div>
 
@@ -129,19 +129,19 @@ typedef gpointer(* <span class="createlink"><a href="http://qof.alioth.debian.or
 
 <div><p>Parameters that actually need to be stored in a backend (QofBackend) (and restored from
 that backend when loading a data source) <b>must</b> use a "set" function that QOF can use - a
-<span class="createlink"><a href="http://qof.alioth.debian.org/cgi-bin/ikiwiki.cgi?page=qofsetterfunc&amp;from=start&amp;do=create">?</a>QofSetterFunc</span>, with the prototype:
+QofSetterFunc, with the prototype:
 </p>
 <pre>
-typedef void(* <span class="createlink"><a href="http://qof.alioth.debian.org/cgi-bin/ikiwiki.cgi?page=qofsetterfunc&amp;from=start&amp;do=create">?</a>QofSetterFunc</span>)(gpointer, gpointer);
+typedef void(* QofSetterFunc)(gpointer, gpointer);
 </pre>
 and implemented as:
 <pre>
 void setter_func (object_type *self, param_type *param);
 </pre>
 <h3>Defining Parameters</h3>
-<p>Parameters are defined in a static <span class="createlink"><a href="http://qof.alioth.debian.org/cgi-bin/ikiwiki.cgi?page=qofparam&amp;from=start&amp;do=create">?</a>QofParam</span> struct:</p>
+<p>Parameters are defined in a static QofParam struct:</p>
 <pre>
-static <span class="createlink"><a href="http://qof.alioth.debian.org/cgi-bin/ikiwiki.cgi?page=qofparam&amp;from=start&amp;do=create">?</a>QofParam</span> params[] = {
+static QofParam params[] = {
     {OBJ_AMOUNT, QOF_TYPE_NUMERIC, (QofAccessFunc) dyn_getAmount, (QofSetterFunc) dyn_setAmount, NULL},
     {OBJ_KVP, QOF_TYPE_KVP, (QofAccessFunc) qof_instance_get_slots, NULL, NULL},
     {QOF_PARAM_BOOK, QOF_ID_BOOK, (QofAccessFunc) qof_instance_get_book, NULL, NULL},
@@ -170,7 +170,7 @@ SQL operations. Parameter descriptions can contain any valid gchar and do not ev
 need to be unique.</p>
 </div>
 
-<h3 id="object">Your first <span class="createlink"><a href="http://qof.alioth.debian.org/cgi-bin/ikiwiki.cgi?page=qofobject&amp;from=start&amp;do=create">?</a>QofObject</span></h3>
+<h3 id="object">Your first QofObject</h3>
 
 <div><p>This is a sample object from the QOF test suite (<tt>test-book-merge.c</tt>), without
 the get and set functions.</p>
@@ -190,12 +190,12 @@ the get and set functions.</p>
 /* simple object structure */
 typedef struct obj_s
 {
-    <span class="createlink"><a href="http://qof.alioth.debian.org/cgi-bin/ikiwiki.cgi?page=qofinstance&amp;from=start&amp;do=create">?</a>QofInstance</span> inst;
+    QofInstance inst;
     gchar *Name;
     gchar flag;
-    <span class="createlink"><a href="http://qof.alioth.debian.org/cgi-bin/ikiwiki.cgi?page=qofnumeric&amp;from=start&amp;do=create">?</a>QofNumeric</span> Amount;
+    QofNumeric Amount;
     const GUID *obj_guid;
-    <span class="createlink"><a href="http://qof.alioth.debian.org/cgi-bin/ikiwiki.cgi?page=qoftime&amp;from=start&amp;do=create">?</a>QofTime</span> *date;
+    QofTime *date;
     gdouble discount;           /* cheap pun, I know. */
     gboolean active;
     gint32 version;
@@ -219,7 +219,7 @@ obj_create (QofBook * book)
     return g;
 }
 
-static <span class="createlink"><a href="http://qof.alioth.debian.org/cgi-bin/ikiwiki.cgi?page=qofobject&amp;from=start&amp;do=create">?</a>QofObject</span> obj_object_def = {
+static QofObject obj_object_def = {
   .interface_version = QOF_OBJECT_VERSION,
   .e_type = TEST_MODULE_NAME,
   .type_label = TEST_MODULE_DESC,
@@ -236,7 +236,7 @@ static <span class="createlink"><a href="http://qof.alioth.debian.org/cgi-bin/ik
 gboolean
 myobjRegister (void)
 {
-    static <span class="createlink"><a href="http://qof.alioth.debian.org/cgi-bin/ikiwiki.cgi?page=qofparam&amp;from=start&amp;do=create">?</a>QofParam</span> params[] = {
+    static QofParam params[] = {
         {OBJ_NAME, QOF_TYPE_STRING, (QofAccessFunc) obj_getName, (QofSetterFunc) obj_setName, NULL},
         {OBJ_AMOUNT, QOF_TYPE_NUMERIC, (QofAccessFunc) obj_getAmount, (QofSetterFunc) obj_setAmount, NULL},
         {OBJ_GUID, QOF_TYPE_GUID, (QofAccessFunc) obj_getGUID, (QofSetterFunc) obj_setGUID, NULL},
@@ -284,14 +284,14 @@ obj_getActive (myobj * g)
 }
 
 static void
-obj_setAmount (myobj * g, <span class="createlink"><a href="http://qof.alioth.debian.org/cgi-bin/ikiwiki.cgi?page=qofnumeric&amp;from=start&amp;do=create">?</a>QofNumeric</span> h)
+obj_setAmount (myobj * g, QofNumeric h)
 {
     if (!g)
         return;
     g-&gt;Amount = h;
 }
 
-static <span class="createlink"><a href="http://qof.alioth.debian.org/cgi-bin/ikiwiki.cgi?page=qofnumeric&amp;from=start&amp;do=create">?</a>QofNumeric</span>
+static QofNumeric
 obj_getAmount (myobj * g)
 {
     if (!g)
