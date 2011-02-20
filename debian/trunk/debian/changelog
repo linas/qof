@@ -4,7 +4,7 @@ qof (0.8.2-1) unstable; urgency=low
   * [INTL:DE] Adds German translation (Closes: #539249)
   * Improve QofDate for gcc-4.5 (Closes: #565090)
 
- -- Neil Williams <codehelp@debian.org>  Tue, 27 Jul 2010 20:16:30 +0100
+ -- Neil Williams <codehelp@debian.org>  Sun, 20 Feb 2011 17:00:58 +0000
 
 qof (0.8.1-1) unstable; urgency=low
 
