@@ -8,5 +8,5 @@ clean-local:
 	${RM} *.css
 	${RM} installdox
 	${RM} *.php
-	${RM} *.idx
+	${RM} *.idx jquery.js
 
