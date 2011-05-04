@@ -2,8 +2,9 @@ qof (0.8.3-1) unstable; urgency=low
 
   * Ignore nuisance check with gcc-4.6 -Werror by removing some but marking
     most as unused despite actually being used. (Closes: #625422)
+  * Drop .la file from libqof-dev.
 
- -- Neil Williams <codehelp@debian.org>  Wed, 04 May 2011 21:16:38 +0100
+ -- Neil Williams <codehelp@debian.org>  Wed, 04 May 2011 22:15:05 +0100
 
 qof (0.8.2-1) unstable; urgency=low
 
