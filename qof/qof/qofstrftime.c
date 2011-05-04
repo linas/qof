@@ -788,13 +788,11 @@ digits = d;									\
 		basically QofTimeSecs as a string.
 		*/
 			{
-				glong nanosecs;
 				QofTime *time;
 				QofTimeSecs t;
 
 				time = qof_date_to_qtime ((QofDate*)qd);
 				t = qof_time_get_secs (time);
-				nanosecs = qof_time_get_nanosecs (time);
 
 				/* Generate string value for T using time_t arithmetic;
 				   this works even if sizeof (long) < sizeof (time_t).  */

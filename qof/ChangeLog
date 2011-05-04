@@ -1,4 +1,10 @@
-2009-08-05  Neil Williams,,,  <linux@codehelp.co.uk>
+2011-05-04  Neil Williams  <linux@codehelp.co.uk>
+
+	Fix nuisance issues with gcc-4.6 relating to
+	variables set but then "unused", despite usage
+	actually happening later in conditional sections.
+
+2009-08-05  Neil Williams <linux@codehelp.co.uk>
 
 	patch by: Chris Leick <c.leick@vollbio.de>
 

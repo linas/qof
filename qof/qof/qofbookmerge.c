@@ -99,7 +99,7 @@ qof_book_merge_compare (QofBookMergeData * mergeData)
 	QofIdType mergeParamName;
 	QofType mergeType;
 	GSList *paramList;
-	gboolean absolute, mergeError, knowntype, mergeMatch, booleanImport,
+	gboolean G_GNUC_UNUSED absolute, G_GNUC_UNUSED mergeError, knowntype, mergeMatch, booleanImport,
 		booleanTarget, (*boolean_getter) (QofEntity *, QofParam *);
 	QofNumeric numericImport, numericTarget,
 		(*numeric_getter) (QofEntity *, QofParam *);
@@ -429,7 +429,7 @@ qof_book_merge_match_orphans (QofBookMergeData * mergeData)
 {
 	GSList *orphans, *targets;
 	QofBookMergeRule *rule, *currentRule;
-	QofEntity *best_matchEnt;
+	QofEntity * G_GNUC_UNUSED best_matchEnt;
 	double difference;
 
 	g_return_if_fail (mergeData != NULL);

@@ -1227,7 +1227,7 @@ qof_session_save (QofSession * session,
 	GSList *p;
 	QofBook *book, *abook;
 	gint num;
-	gchar *msg, *book_id;
+	gchar * G_GNUC_UNUSED msg, *book_id;
 
 	if (!session)
 		return;

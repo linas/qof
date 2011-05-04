@@ -41,9 +41,9 @@ int memsql_display (void);
 
 #endif
 
-char *memsql_strappend_raw (char *funcname, int linenum, char *file,
+char *memsql_strappend_raw (const char *funcname, int linenum, char *file,
 			    char *string1, char *string2);
-char *memsql_strappend_free_raw (char *funcname, int linenum, char *file,
+char *memsql_strappend_free_raw (const char *funcname, int linenum, char *file,
 				 char *string1, char *string2);
 
 #endif /* MEM_H */

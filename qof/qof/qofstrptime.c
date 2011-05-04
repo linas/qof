@@ -132,11 +132,11 @@ gchar *
 strptime_internal (const gchar * rp, const gchar * fmt, 
 	QofDate * qd, QofDateError * error)
 {
-	const gchar *rp_backup;
+	const gchar * G_GNUC_UNUSED rp_backup;
 	gint64 val, century, want_century;
 	gint want_era, have_wday, want_xday, have_yday;
 	gint have_mon, have_mday, have_uweek, have_wweek;
-	gint week_no, have_I, is_pm, cnt, decided, era_cnt;
+	gint week_no, have_I, is_pm, cnt, G_GNUC_UNUSED decided, era_cnt;
 	struct era_entry *era;
 
 	have_I = is_pm = 0;
@@ -177,7 +177,7 @@ strptime_internal (const gchar * rp, const gchar * fmt,
 	  start_over:
 
 		/* Make back up of current processing pointer.  */
-		rp_backup = rp;
+		//rp_backup = rp;
 
 		switch (*fmt++)
 		{

@@ -234,7 +234,7 @@ memsql_display (void)
 #endif
 
 char *
-memsql_strappend_raw (char *funcname, int linenum, char *file, char *string1,
+memsql_strappend_raw (const char *funcname, int linenum, char *file, char *string1,
 		      char *string2)
 {
 	int len = 0;
@@ -249,11 +249,7 @@ memsql_strappend_raw (char *funcname, int linenum, char *file, char *string1,
 		len += strlen (string1);
 	if (string2)
 		len += strlen (string2);
-#ifdef MEM_TEST
-	retval = memsql_alloc_raw (funcname, linenum, file, len + 1);
-#else
 	retval = g_malloc (len + 1);
-#endif
 	retval[0] = '\0';
 
 	if (string1)
@@ -267,7 +263,7 @@ memsql_strappend_raw (char *funcname, int linenum, char *file, char *string1,
 }
 
 char *
-memsql_strappend_free_raw (char *funcname, int linenum, char *file,
+memsql_strappend_free_raw (const char *funcname, int linenum, char *file,
 			   char *str1, char *str2)
 {
 	char *retval;

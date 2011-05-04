@@ -159,6 +159,8 @@ sql_destroy_condition (sql_condition * cond)
 		sql_destroy_field (cond->d.between.lower);
 		sql_destroy_field (cond->d.between.upper);
 		break;
+	default:
+		break;
 	}
 
 	memsql_free (cond);
@@ -593,14 +595,14 @@ sql_table_stringify (sql_table * table)
 	/* table */
 	switch (table->type) {
 	case SQL_simple:
-		retval = memsql_strappend_free (retval, memsql_strdup (table->d.simple));
+		retval = memsql_strappend_free (NULL, memsql_strdup (table->d.simple));
 		break;
 
 	case SQL_nestedselect:
-		retval = memsql_strappend_free (retval, memsql_strdup ("("));
-		retval = memsql_strappend_free (retval,
+		retval = memsql_strappend_free (NULL, memsql_strdup ("("));
+		retval = memsql_strappend_free (NULL,
 						sql_select_stringify (table->d.select));
-		retval = memsql_strappend_free (retval, memsql_strdup (")"));
+		retval = memsql_strappend_free (NULL, memsql_strdup (")"));
 		break;
 
 	default:
@@ -610,7 +612,7 @@ sql_table_stringify (sql_table * table)
 
 	/* join condition */
 	if (table->join_cond) {
-		retval = memsql_strappend_free (retval, memsql_strdup (" on "));
+		retval = memsql_strappend_free (NULL, memsql_strdup (" on "));
 		retval = memsql_strappend_free (retval,
 						sql_condition_stringify (table->join_cond));
 	}

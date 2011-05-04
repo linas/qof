@@ -287,10 +287,8 @@ qof_book_undo (QofBook * book)
 	QofUndoEntity *undo_entity;
 	QofUndo *book_undo;
 	GList *ent_list;
-	gint length;
 
 	book_undo = book->undo_data;
-	length = g_list_length (book_undo->undo_list);
 	if (book_undo->index_position > 1)
 		book_undo->index_position--;
 	else

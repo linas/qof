@@ -280,7 +280,6 @@ test_merge (void)
 	QofBook *target, *import;
 	gdouble init_value, discount;
 	myobj *import_obj, *target_obj, *new_obj;
-	gint result;
 	QofTime *base_time, *temp_time;
 	gboolean active;
 	gint32 version;
@@ -293,7 +292,6 @@ test_merge (void)
 	target = qof_book_new ();
 	import = qof_book_new ();
 	init_value = 1.00;
-	result = 0;
 	flag = get_random_character ();
 	discount = 0.175;
 	active = TRUE;

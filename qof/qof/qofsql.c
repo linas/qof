@@ -616,7 +616,7 @@ qof_sql_insertCB (const QofParam * param, const gchar * insert_string,
 {
 	QofIdTypeConst type;
 	sql_insert_statement *sis;
-	gboolean registered_type;
+	gboolean G_GNUC_UNUSED registered_type;
 	QofEntity *ent;
 	/* cm_ prefix used for variables that hold the data to commit */
 	QofNumeric cm_numeric;
@@ -1442,7 +1442,7 @@ collect_kvp (QofEntity * ent, gpointer user_data)
 	KvpFrame * slots;
 	KvpValue * collguid;
 	gchar * gstr, * name, * key;
-	const QofParam * param;
+	const QofParam * G_GNUC_UNUSED param;
 
 	name = (gchar *) user_data;
 	param = qof_class_get_parameter (ent->e_type, name);

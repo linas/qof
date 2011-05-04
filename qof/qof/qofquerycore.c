@@ -1343,7 +1343,7 @@ collect_match_predicate (gpointer object, QofParam * getter,
 	QofQueryPredData * pd)
 {
 	query_coll_t pdata;
-	QofCollection *coll;
+	QofCollection * G_GNUC_UNUSED coll;
 	GList *node, *node2, *o_list;
 	const GUID *guid;
 

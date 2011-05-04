@@ -197,9 +197,7 @@ kvpvalue_to_sql (const gchar * key, KvpValue * val, gpointer builder)
 	QSQLiteBackend *qsql_be;
 	struct QsqlBuilder *qb;
 	KvpValueType n;
-	gchar *full_path;
 
-	full_path = NULL;
 	ENTER (" ");
 	qb = (struct QsqlBuilder *) builder;
 	qsql_be = qb->qsql_be;
@@ -511,7 +509,7 @@ create_dirty_list (gpointer builder, gint col_num, gchar ** strings,
 	struct QsqlBuilder *qb;
 	QofInstance *inst;
 	const QofParam *param;
-	gchar *value, *columnName, *tmp;
+	gchar * G_GNUC_UNUSED value, *columnName, * G_GNUC_UNUSED tmp;
 
 	param = NULL;
 	qb = (struct QsqlBuilder *) builder;
@@ -818,7 +816,7 @@ qsql_backend_createdb (QofBackend * be, QofSession * session)
 {
 	FILE *f;
 	QSQLiteBackend *qsql_be;
-	struct QsqlBuilder qb;
+	struct QsqlBuilder G_GNUC_UNUSED qb;
 
 	g_return_if_fail (be || session);
 	ENTER (" ");
@@ -880,7 +878,7 @@ qsqlite_session_begin (QofBackend * be, QofSession * session,
 	QSQLiteBackend *qsql_be;
 	gchar **pp;
 	struct stat statinfo;
-	gint stat_val;
+	gint G_GNUC_UNUSED stat_val;
 
 	g_return_if_fail (be);
 	ENTER (" book_path=%s", book_path);

@@ -1115,7 +1115,7 @@ qof_numeric_dbg_to_string (QofNumeric n)
 gboolean
 qof_numeric_from_string (const gchar * str, QofNumeric * n)
 {
-	size_t num_read;
+	size_t G_GNUC_UNUSED num_read;
 	gint64 tmpnum;
 	gint64 tmpdenom;
 

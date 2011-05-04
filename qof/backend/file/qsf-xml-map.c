@@ -77,12 +77,11 @@ qsf_map_validation_handler (xmlNodePtr child, xmlNsPtr ns,
 	QsfValidator * valid)
 {
 	xmlChar *qof_version, *obj_type;
-	gboolean match, is_registered;
+	gboolean is_registered;
 	gchar *buff;
 	xmlNodePtr child_node;
 	QsfStatus type, incoming_type;
 
-	match = FALSE;
 	buff = NULL;
 	is_registered = FALSE;
 	type = QSF_NO_OBJECT;
@@ -409,7 +408,7 @@ is_qsf_map (const gchar * path)
 static void
 qsf_map_default_handler (xmlNodePtr child, xmlNsPtr ns, QsfParam * params)
 {
-	xmlChar *qsf_enum;
+	xmlChar * G_GNUC_UNUSED qsf_enum;
 	gchar *iterate;
 	QofErrorId bad_map;
 
@@ -861,7 +860,7 @@ qsf_map_object_handler (xmlNodePtr child, xmlNsPtr ns, QsfParam * params)
 {
 	xmlNodePtr param_node;
 	xmlNsPtr map_ns, qsf_ns;
-	gint result;
+	gint G_GNUC_UNUSED result;
 
 	map_ns = ns;
 	qsf_ns = params->qsf_ns;

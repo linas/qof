@@ -178,8 +178,8 @@ qsf_param_init (QsfParam * params)
 {
 	gchar *qsf_time_string;
 	gchar *qsf_enquiry_date;
-	gchar *qsf_time_now;
-	gchar *qsf_time_precision;
+	gchar * G_GNUC_UNUSED qsf_time_now;
+	gchar * G_GNUC_UNUSED qsf_time_precision;
 
 	g_return_if_fail (params != NULL);
 	params->count = 0;
@@ -1252,11 +1252,11 @@ void
 qsf_object_commitCB (gpointer key, gpointer value, gpointer data)
 {
 	QsfParam *params;
-	QsfObject *object_set;
+	QsfObject * G_GNUC_UNUSED object_set;
 	xmlNodePtr node;
 	QofEntityReference *reference;
 	QofEntity *qsf_ent;
-	QofBook *targetBook;
+	QofBook * G_GNUC_UNUSED targetBook;
 	const gchar *qof_type, *parameter_name;
 	QofIdType obj_type, reference_type;
 	gchar *tail;
@@ -1464,7 +1464,7 @@ qsf_object_commitCB (gpointer key, gpointer value, gpointer data)
 	if (safe_strcmp (qof_type, QOF_TYPE_COLLECT) == 0)
 	{
 		QofCollection *qsf_coll;
-		QofIdType type;
+		QofIdType G_GNUC_UNUSED type;
 		QofEntityReference *reference;
 		QofParam *copy_param;
 		/* retrieve the *type* of the collection, ignore any contents. */

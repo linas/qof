@@ -170,7 +170,7 @@ qof_event_generate_internal (QofEntity * entity, QofEventId event_id,
 {
 	GList *node;
 	GList *next_node = NULL;
-	gboolean use_old_handlers = FALSE;
+	gboolean G_GNUC_UNUSED use_old_handlers = FALSE;
 
 	g_return_if_fail (entity);
 

@@ -559,13 +559,14 @@ qof_date_parse (const gchar * str, QofDateFormat df)
 	const gchar *format;
 	QofDateError error;
 	QofDate *date;
-	gchar *check;
+	gchar * G_GNUC_UNUSED check;
 
 	check = NULL;
 	error = ERR_NO_ERROR;
 	date = qof_date_new ();
 	format = qof_date_format_get_format (df);
 	check = strptime_internal (str, format, date, &error);
+	check = NULL;
 	if (error != ERR_NO_ERROR)
 	{
 		qof_date_free (date);

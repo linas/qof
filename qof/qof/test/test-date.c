@@ -74,7 +74,6 @@ check_date_cycles (gpointer data,
 		do_test ((0 == safe_strcasecmp (str, cmp)), d->id);
 		/* now test qofstrptime */
 		{
-			gint result;
 			QofDate *h, *j;
 			const gchar * t;
 			struct tm base;
@@ -82,7 +81,6 @@ check_date_cycles (gpointer data,
 			base.tm_year = base.tm_mday = base.tm_mon = 0;
 			base.tm_min  = base.tm_hour = base.tm_gmtoff = 0;
 			base.tm_sec  = base.tm_isdst = 0;
-			result = 0;
 			/** \todo allow parsing of BC date strings */
 			if ((d->date->qd_year > 0) &&
 				(d->date->qd_year < 9999))
@@ -99,7 +97,7 @@ check_date_cycles (gpointer data,
 				if (h)
 				{
 					j->qd_nanosecs = h->qd_nanosecs;
-					result = qof_date_compare (h, j);
+					qof_date_compare (h, j);
 					do_test ((0 == qof_date_compare (h, j)),
 						"compare with strptime");
 				}
@@ -1529,7 +1527,7 @@ run_qoftime_test (void)
 	{
 		GDate *date, *cmp;
 		gint64 time_secs, diff;
-		glong time_nano;
+		//glong time_nano;
 
 		date = g_date_new_dmy (15, 5, 2006);
 		time = qof_time_from_gdate (date);
@@ -1538,7 +1536,7 @@ run_qoftime_test (void)
 				 "convert to and from gdate failed");
 		g_date_free (cmp);
 		time_secs = qof_time_get_secs (time);
-		time_nano = qof_time_get_nanosecs (time);
+		//time_nano = qof_time_get_nanosecs (time);
 		qof_time_add_secs (time, 7252);
 		qof_time_set_nanosecs (time, 123456);
 		do_test ((qof_time_set_day_start (time)), "set_day_start failed");

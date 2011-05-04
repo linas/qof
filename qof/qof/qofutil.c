@@ -703,7 +703,7 @@ qof_util_param_set_string (QofEntity * ent, const QofParam * param,
 	if (safe_strcmp (param->param_type, QOF_TYPE_BOOLEAN) == 0)
 	{
 		gint val;
-		gboolean b;
+		gboolean G_GNUC_UNUSED b;
 
 		boolean_setter =
 			(void (*)(QofEntity *, gboolean)) param->param_setfcn;
