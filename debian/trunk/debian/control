@@ -6,7 +6,7 @@ Uploaders: Goedson Teixeira Paixao <goedson@debian.org>
 Build-Depends: cdbs, debhelper (>= 5), xsltproc,
  libglib2.0-dev (>= 2.9.0), libxml2-dev (>= 2.5.10), libsqlite0-dev
 Build-Depends-Indep: doxygen
-Standards-Version: 3.9.1
+Standards-Version: 3.9.2
 Homepage: http://alioth.debian.org/projects/qof/
 Vcs-Browser: http://svn.debian.org/viewsvn/qof/trunk/qof/
 Vcs-Svn: svn://svn.debian.org/svn/qof/trunk/debian/

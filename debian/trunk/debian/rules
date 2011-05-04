@@ -38,6 +38,7 @@ DEB_SHLIBDEPS_INCLUDE_libqof2 = ./debian/tmp/usr/lib/
 build/libqof2::
 	cp qof.symbols debian/libqof2.symbols
 	cat qofsql.symbols >> debian/libqof2.symbols
+	$(RM) doc/html/jquery.js
 
 clean/libqof2::
 	$(RM) debian/libqof2.symbols
@@ -53,6 +54,7 @@ endif
 build/libqof2::
 	cp qof.symbols debian/libqof2.symbols
 	cat qofsql.symbols >> debian/libqof2.symbols
+	$(RM) doc/html/jquery.js
 
 clean/libqof2::
 	$(RM) debian/libqof2.symbols
