@@ -1,3 +1,9 @@
+qof (0.8.4-1) unstable; urgency=low
+
+  * Referencing internal -lqofsql when building tests. (Closes: #614592)
+
+ -- Neil Williams <codehelp@debian.org>  Sat, 07 May 2011 20:54:53 +0100
+
 qof (0.8.3-1) unstable; urgency=low
 
   * Ignore nuisance check with gcc-4.6 -Werror by removing some but marking
