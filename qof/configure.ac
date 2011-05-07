@@ -7,9 +7,9 @@ dnl # ******************************
 
 AC_DEFUN([MAJOR], [0])
 AC_DEFUN([MINOR], [8])
-AC_DEFUN([MICRO], [3])
+AC_DEFUN([MICRO], [4])
 AC_DEFUN([MY_VERSION], [MAJOR.MINOR.MICRO])
-AC_INIT([qof], [0.8.3], [http://lists.sourceforge.net/lists/listinfo/qof-devel])
+AC_INIT([qof], [0.8.4], [http://lists.sourceforge.net/lists/listinfo/qof-devel])
 AC_PREREQ(2.61)
 AC_GNU_SOURCE
 AC_DEFUN([QOFCURRENT], [2])

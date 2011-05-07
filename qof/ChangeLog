@@ -1,3 +1,8 @@
+2011-05-07  Neil Williams  <linux@codehelp.co.uk>
+
+ * Fix the internal link to qofsql - breaks chroot
+ builds and cross builds.
+
 2011-05-04  Neil Williams  <linux@codehelp.co.uk>
 
 	Fix nuisance issues with gcc-4.6 relating to

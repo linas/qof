@@ -15,6 +15,7 @@ LDADD = \
    ${GDA_PKG_LIBS}
 else
 LDADD = \
+ -L${top_builddir}/lib/libsql ${SQL_PKG_LIB} \
    ${top_builddir}/qof/libqof.la \
    ${GLIB_LIBS} \
    ${GMODULE_LIBS} \
