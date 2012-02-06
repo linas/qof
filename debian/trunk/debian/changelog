@@ -1,3 +1,10 @@
+qof (0.8.4-2) unstable; urgency=low
+
+  * Migrate to MultiArch paths - backend paths have changed
+    but path has never been exported, so no changes needed.
+
+ -- Neil Williams <codehelp@debian.org>  Mon, 06 Feb 2012 22:38:55 +0000
+
 qof (0.8.4-1) unstable; urgency=low
 
   * Referencing internal -lqofsql when building tests. (Closes: #614592)

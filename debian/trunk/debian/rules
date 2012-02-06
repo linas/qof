@@ -26,9 +26,12 @@ DEB_DH_MAKESHLIBS_ARGS_libqof2-backend-qsf=-n
 DEB_DH_MAKESHLIBS_ARGS_libqof2-backend-sqlite=-n
 DEB_DH_MAKESHLIBS_ARGS_libqof2-backend-gda=-n
 
+# multiarch
+DEB_CONFIGURE_EXTRA_FLAGS += --libdir=\$${prefix}/lib/$(DEB_HOST_MULTIARCH)
+
 ifneq ($(DEB_BUILD_GNU_TYPE),$(DEB_HOST_GNU_TYPE))
-# internal libraries need to be redirected to cross version
-DEB_MAKE_INVOKE+="QOF_LIBS=-L/usr/$(DEB_HOST_GNU_TYPE)/lib -lqof"
+# internal libraries need to be redirected to foreign version
+DEB_MAKE_INVOKE+="QOF_LIBS=-L/usr/lib/$(DEB_HOST_MULTIARCH) -lqof"
 # prevent CDBS overwriting CC
 DEB_CONFIGURE_SCRIPT_ENV =
 # Emdebian-specific customisation
