@@ -1,3 +1,10 @@
+qof (0.8.5-1) unstable; urgency=low
+
+  * New upstream release. Implements QStrCache to
+    replace deprecated GCache.(Closes: #665673)
+
+ -- Neil Williams <codehelp@debian.org>  Sun, 25 Mar 2012 16:50:13 +0100
+
 qof (0.8.4-2) unstable; urgency=low
 
   * Migrate to MultiArch paths - backend paths have changed
