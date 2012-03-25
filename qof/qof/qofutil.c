@@ -226,7 +226,7 @@ qof_util_string_isnum (const guchar * s)
 }
 
 /* =================================================================== */
-/* Return NULL if the field is whitespace (blank, tab, formfeed etc.)  
+/* Return NULL if the field is whitespace (blank, tab, formfeed etc.)
  * Else return pointer to first non-whitespace character. */
 /* =================================================================== */
 
@@ -244,7 +244,7 @@ qof_util_whitespace_filter (const gchar * val)
 }
 
 /* =================================================================== */
-/* Return integer 1 if the string starts with 't' or 'T' or contains the 
+/* Return integer 1 if the string starts with 't' or 'T' or contains the
  * word 'true' or 'TRUE'; if string is a number, return that number. */
 /* =================================================================== */
 
@@ -356,47 +356,107 @@ qof_util_make_utf8 (gchar * string)
 }
 
 /* =================================================================== */
-/* The QOF string cache */
+/* The QOF string cache - reimplements a limited GCache for strings    */
 /* =================================================================== */
 
-static GCache *qof_string_cache = NULL;
+typedef struct {
+	GHashTable *key_table;
+	GHashTable *value_table;
+}QStrCache;
 
-static GCache *
-qof_util_get_string_cache (void)
-{
-	if (!qof_string_cache)
-	{
-		qof_string_cache = g_cache_new ((GCacheNewFunc) g_strdup,	/* value_new_func     */
-			g_free,				/* value_destroy_func */
-			(GCacheDupFunc) g_strdup,	/* key_dup_func       */
-			g_free,				/* key_destroy_func   */
-			g_str_hash,			/* hash_key_func      */
-			g_str_hash,			/* hash_value_func    */
-			g_str_equal);		/* key_equal_func     */
+static QStrCache *qof_string_cache = NULL;
+
+typedef struct {
+	gpointer value;
+	gint ref_count;
+} QStrCacheNode;
+
+static inline QStrCacheNode* g_cache_node_new (gpointer value) {
+	QStrCacheNode *node = g_slice_new (QStrCacheNode);
+	node->value = value;
+	node->ref_count = 1;
+	return node;
+}
+
+static inline void g_cache_node_destroy (QStrCacheNode *node) {
+	g_slice_free (QStrCacheNode, node);
+}
+
+static QStrCache* qof_cache_new (void) {
+	QStrCache *cache;
+	cache = g_slice_new (QStrCache);
+	cache->key_table = g_hash_table_new (g_str_hash, g_str_equal);
+	cache->value_table = g_hash_table_new (g_str_hash, NULL);
+	return cache;
+}
+
+static void qof_cache_destroy (QStrCache *cache) {
+	g_return_if_fail (cache != NULL);
+	g_hash_table_destroy (cache->key_table);
+	g_hash_table_destroy (cache->value_table);
+	g_slice_free (QStrCache, cache);
+}
+
+static gpointer qof_cache_insert (QStrCache *cache, gpointer key) {
+	QStrCacheNode *node;
+	gpointer value;
+
+	g_return_val_if_fail (cache != NULL, NULL);
+	node = g_hash_table_lookup (cache->key_table, key);
+	if (node) {
+		node->ref_count += 1;
+		return node->value;
+	}
+	key = g_strdup (key);
+	value = g_strdup (key);
+	node = g_cache_node_new (value);
+	g_hash_table_insert (cache->key_table, key, node);
+	g_hash_table_insert (cache->value_table, value, key);
+	return node->value;
+}
+
+static void qof_cache_remove (QStrCache *cache, gconstpointer value) {
+	QStrCacheNode *node;
+	gpointer key;
+
+	g_return_if_fail (cache != NULL);
+	key = g_hash_table_lookup (cache->value_table, value);
+	node = g_hash_table_lookup (cache->key_table, key);
+	g_return_if_fail (node != NULL);
+	node->ref_count -= 1;
+	if (node->ref_count == 0) {
+		g_hash_table_remove (cache->value_table, value);
+		g_hash_table_remove (cache->key_table, key);
+		g_free (key);
+		g_free (node->value);
+		g_cache_node_destroy (node);
+	}
+}
+
+static QStrCache * qof_util_get_string_cache (void) {
+	if (!qof_string_cache) {
+		qof_string_cache = qof_cache_new ();
 	}
 	return qof_string_cache;
 }
 
-void
-qof_util_string_cache_destroy (void)
-{
-	if (qof_string_cache)
-		g_cache_destroy (qof_string_cache);
+void qof_util_string_cache_destroy (void) {
+	if (qof_string_cache) {
+		qof_cache_destroy (qof_string_cache);
+	}
 	qof_string_cache = NULL;
 }
 
-void
-qof_util_string_cache_remove (gconstpointer key)
-{
-	if (key)
-		g_cache_remove (qof_util_get_string_cache (), key);
+void qof_util_string_cache_remove (gconstpointer key) {
+	if (key) {
+		qof_cache_remove (qof_util_get_string_cache (), key);
+	}
 }
 
-gpointer
-qof_util_string_cache_insert (gconstpointer key)
-{
-	if (key)
-		return g_cache_insert(qof_util_get_string_cache(), (gpointer)key);
+gpointer qof_util_string_cache_insert (gconstpointer key) {
+	if (key) {
+		return qof_cache_insert(qof_util_get_string_cache(), (gpointer)key);
+	}
 	return NULL;
 }
 
@@ -622,7 +682,7 @@ qof_util_param_set_string (QofEntity * ent, const QofParam * param,
 		if (!qd)
 			return FALSE;
 		qt = qof_date_to_qtime (qd);
-		time_setter = 
+		time_setter =
 			(void (*)(QofEntity *, QofTime *))
 			param->param_setfcn;
 		if ((time_setter != NULL) && (qof_time_is_valid (qt)))

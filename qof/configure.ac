@@ -7,10 +7,10 @@ dnl # ******************************
 
 AC_DEFUN([MAJOR], [0])
 AC_DEFUN([MINOR], [8])
-AC_DEFUN([MICRO], [4])
+AC_DEFUN([MICRO], [5])
 AC_DEFUN([MY_VERSION], [MAJOR.MINOR.MICRO])
-AC_INIT([qof], [0.8.4], [http://lists.sourceforge.net/lists/listinfo/qof-devel])
-AC_PREREQ(2.61)
+AC_INIT([qof], [0.8.5], [http://lists.sourceforge.net/lists/listinfo/qof-devel])
+AC_PREREQ(2.68)
 AC_GNU_SOURCE
 AC_DEFUN([QOFCURRENT], [2])
 AC_DEFUN([QOFREVISION], [2])
@@ -40,6 +40,7 @@ AC_PROG_LIBTOOL
 AC_CONFIG_HEADERS([config.h])
 
 AC_ISC_POSIX
+AC_PROG_AWK
 AC_PROG_CXX
 AC_PROG_CC
 AC_PROG_CPP
@@ -124,20 +125,30 @@ dnl # **************************************************************
 
 AC_C_CONST
 AC_C_INLINE
-AC_TYPE_OFF_T
+AC_TYPE_INT16_T
+AC_TYPE_INT32_T
+AC_TYPE_INT8_T
 AC_TYPE_PID_T
 AC_TYPE_SIZE_T
 AC_HEADER_TIME
+AC_STRUCT_TIMEZONE
 AC_STRUCT_TM
 AC_TYPE_UID_T
+AC_TYPE_UINT16_T
+AC_TYPE_UINT32_T
+AC_TYPE_UINT8_T
 
 dnl # *****************************
 dnl # Checks for library functions.
 dnl # *****************************
+AC_FUNC_MALLOC
+AC_FUNC_MKTIME
+AC_FUNC_REALLOC
+AC_FUNC_STRTOD
 AC_FUNC_STRFTIME
 AC_CHECK_HEADERS(sys/times.h time.h langinfo.h wchar.h )
 AC_CHECK_FUNCS(getcwd gettimeofday getline getwd stpcpy strdup strtoul \
-	strcasestr gmtime_r mblen tzname tzset)
+	strcasestr strcasecmp gmtime_r mblen pow tzname tzset)
 AC_CHECK_MEMBERS([struct stat.st_rdev])
 
 dnl # *******************************
