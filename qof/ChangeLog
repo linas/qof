@@ -3,6 +3,7 @@
 	* Reimplement the deprecated GCache which is due for
 	removal from glib as QStrCache, limited to just our
 	string cache requirements. Debian bug #665673.
+	* Fix typo in qof_util_param_to_string.
 
 2011-05-07  Neil Williams  <linux@codehelp.co.uk>
 
