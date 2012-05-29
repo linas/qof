@@ -1,3 +1,12 @@
+qof (0.8.6-1) unstable; urgency=low
+
+  * New upstream release. 
+  * Implement patch by Ulrich Drepper to use anonymous union instead
+    of dereferencing a type-punned pointer to comply with 
+    strict-aliasing rules. (Closes: #672085)
+
+ -- Neil Williams <codehelp@debian.org>  Tue, 29 May 2012 09:30:00 +0100
+
 qof (0.8.5-1) unstable; urgency=low
 
   * New upstream release. Implements QStrCache to

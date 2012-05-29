@@ -1,0 +1,2 @@
+# flags are applied but no suitable functions exist
+libqof2-backend-qsf binary: hardening-no-fortify-functions

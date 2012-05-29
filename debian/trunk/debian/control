@@ -16,7 +16,6 @@ Architecture: any
 Pre-Depends: ${misc:Pre-Depends} 
 Depends: ${shlibs:Depends}, ${misc:Depends}, qof-data
 Recommends: libqof2-backend-qsf | libqof2-backend-sqlite
-Conflicts: pilot-qof (<< 0.1.1-2)
 Multi-Arch: same
 Description: Query Object Framework
  QOF is a framework to allow the execution of SQL-type queries
