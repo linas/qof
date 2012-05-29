@@ -1,3 +1,9 @@
+2012-05-29  Neil Williams  <linux@codehelp.co.uk>
+
+	* Apply patch by Ulrich Drepper <drepper@gmail.com>
+	to use anonymous union instead of type punning in
+	md5.c|h to avoid compiler error with strict aliasing.
+
 2012-03-25  Neil Williams  <linux@codehelp.co.uk>
 
 	* Reimplement the deprecated GCache which is due for

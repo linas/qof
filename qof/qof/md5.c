@@ -1,6 +1,6 @@
 /* md5.c - Functions to compute MD5 message digest of files or memory blocks
    according to the definition of MD5 in RFC 1321 from April 1992.
-   Copyright (C) 1995, 1996 Free Software Foundation, Inc.
+   Copyright (C) 1995, 1996, 2011 Free Software Foundation, Inc.
    NOTE: The canonical source of this file is maintained with the GNU C
    Library.  Bugs can be reported to bug-glibc@prep.ai.mit.edu.
 
@@ -116,9 +116,9 @@ md5_finish_ctx (ctx, resbuf)
 	memcpy (&ctx->buffer[bytes], fillbuf, pad);
 
 	/* Put the 64-bit file length in *bits* at the end of the buffer.  */
-	*(md5_uint32 *) & ctx->buffer[bytes + pad] = SWAP (ctx->total[0] << 3);
-	*(md5_uint32 *) & ctx->buffer[bytes + pad + 4] =
-		SWAP ((ctx->total[1] << 3) | (ctx->total[0] >> 29));
+	ctx->buffer32[(bytes + pad) / 4] = SWAP (ctx->total[0] << 3);
+	ctx->buffer32[(bytes + pad + 4) / 4] = SWAP ((ctx->total[1] << 3) |
+						(ctx->total[0] >> 29));
 
 	/* Process last bytes.  */
 	md5_process_block (ctx->buffer, bytes + pad + 8, ctx);
