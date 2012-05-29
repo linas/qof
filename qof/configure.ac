@@ -7,13 +7,13 @@ dnl # ******************************
 
 AC_DEFUN([MAJOR], [0])
 AC_DEFUN([MINOR], [8])
-AC_DEFUN([MICRO], [5])
+AC_DEFUN([MICRO], [6])
 AC_DEFUN([MY_VERSION], [MAJOR.MINOR.MICRO])
-AC_INIT([qof], [0.8.5], [http://lists.sourceforge.net/lists/listinfo/qof-devel])
+AC_INIT([qof], [0.8.6], [http://lists.sourceforge.net/lists/listinfo/qof-devel])
 AC_PREREQ(2.68)
 AC_GNU_SOURCE
 AC_DEFUN([QOFCURRENT], [2])
-AC_DEFUN([QOFREVISION], [2])
+AC_DEFUN([QOFREVISION], [3])
 AC_DEFUN([QOFAGE], [0])
 AC_DEFUN([LIBQOFVERS], [QOFCURRENT:QOFREVISION:QOFAGE])
 LIBQOF_LIBRARY_VERSION=LIBQOFVERS
