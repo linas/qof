@@ -160,7 +160,7 @@ qof_gobject_getter (gpointer data, QofParam * getter)
 		return GINT_TO_POINTER (ival);
 	}
 
-	PWARN ("unhandled parameter type %s for paramter %s",
+	PWARN ("unhandled parameter type %s for parameter %s",
 		G_PARAM_SPEC_TYPE_NAME (gps), getter->param_name);
 	return NULL;
 }
@@ -195,7 +195,7 @@ qof_gobject_double_getter (gpointer data, QofParam * getter)
 		return fval;
 	}
 
-	PWARN ("unhandled parameter type %s for paramter %s",
+	PWARN ("unhandled parameter type %s for parameter %s",
 		G_PARAM_SPEC_TYPE_NAME (gps), getter->param_name);
 	return 0.0;
 }

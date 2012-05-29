@@ -57,7 +57,7 @@
 @{ */
 
 /** @file qofclass.h
-    @brief API for registering paramters on objects 
+    @brief API for registering parameters on objects 
     @author Copyright (C) 2002 Derek Atkins <warlord@MIT.EDU>
     @author Copyright (C) 2003 Linas Vepstas <linas@linas.org>
     @author Copyright (c) 2005,2006 Neil Williams <linux@codehelp.co.uk>

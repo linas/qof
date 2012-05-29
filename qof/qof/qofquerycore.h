@@ -192,7 +192,7 @@ qof_query_choice_predicate (QofGuidMatch options,
 
 /** The qof_query_kvp_predicate() matches the object that has
  *  the value 'value' located at the path 'path'.  In a certain
- *  sense, the 'path' is handled as if it were a paramter.
+ *  sense, the 'path' is handled as if it were a parameter.
  */
 QofQueryPredData *
 qof_query_kvp_predicate (QofQueryCompare how,
