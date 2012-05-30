@@ -5,7 +5,7 @@ qof (0.8.6-1) unstable; urgency=low
     of dereferencing a type-punned pointer to comply with 
     strict-aliasing rules. (Closes: #672085)
 
- -- Neil Williams <codehelp@debian.org>  Tue, 29 May 2012 09:30:00 +0100
+ -- Neil Williams <codehelp@debian.org>  Wed, 30 May 2012 22:10:18 +0100
 
 qof (0.8.5-1) unstable; urgency=low
 
