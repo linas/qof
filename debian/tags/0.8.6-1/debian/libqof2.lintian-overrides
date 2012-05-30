@@ -1,0 +1,2 @@
+# flags are applied but no suitable functions exist in sql lib
+libqof2 binary: hardening-no-stackprotector
