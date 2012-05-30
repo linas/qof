@@ -7,6 +7,6 @@ clean-local:
 	${RM} *.png
 	${RM} *.css
 	${RM} installdox
-	${RM} *.php
+	${RM} *.php dynsections.js
 	${RM} *.idx jquery.js
 
