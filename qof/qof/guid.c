@@ -568,14 +568,25 @@ const char *
 guid_to_string (const GUID * guid)
 {
 #ifdef G_THREADS_ENABLED
+#ifdef GLIB_DEPRECATED_IN_2_32
+	static GPrivate guid_buffer_key = G_PRIVATE_INIT (g_free);
+#else
 	static GStaticPrivate guid_buffer_key = G_STATIC_PRIVATE_INIT;
+#endif
 	gchar *string;
-
+#ifdef GLIB_DEPRECATED_IN_2_32
+	string = g_private_get (&guid_buffer_key);
+#else
 	string = g_static_private_get (&guid_buffer_key);
+#endif
 	if (string == NULL)
 	{
 		string = malloc (GUID_ENCODING_LENGTH + 1);
+#ifdef GLIB_DEPRECATED_IN_2_32
+		g_private_set (&guid_buffer_key, string);
+#else
 		g_static_private_set (&guid_buffer_key, string, g_free);
+#endif
 	}
 #else
 	static char string[64];

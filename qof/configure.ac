@@ -7,13 +7,13 @@ dnl # ******************************
 
 AC_DEFUN([MAJOR], [0])
 AC_DEFUN([MINOR], [8])
-AC_DEFUN([MICRO], [6])
+AC_DEFUN([MICRO], [7])
 AC_DEFUN([MY_VERSION], [MAJOR.MINOR.MICRO])
-AC_INIT([qof], [0.8.6], [http://lists.sourceforge.net/lists/listinfo/qof-devel])
+AC_INIT([qof], [0.8.7], [http://lists.sourceforge.net/lists/listinfo/qof-devel])
 AC_PREREQ(2.68)
 AC_GNU_SOURCE
 AC_DEFUN([QOFCURRENT], [2])
-AC_DEFUN([QOFREVISION], [3])
+AC_DEFUN([QOFREVISION], [4])
 AC_DEFUN([QOFAGE], [0])
 AC_DEFUN([LIBQOFVERS], [QOFCURRENT:QOFREVISION:QOFAGE])
 LIBQOF_LIBRARY_VERSION=LIBQOFVERS
@@ -402,7 +402,7 @@ if test ${GCC}x = yesx; then
         no)  ;;
         *) AC_MSG_ERROR(bad value ${enableval} for --enable-error-on-warning) ;;
         esac],
-        [  warnFLAGS="${warnFLAGS} -Werror" ])
+        [  warnFLAGS="${warnFLAGS}" ])
   GCC_VERSION=`${CC} -dumpversion`
   if test `echo ${GCC_VERSION} | cut -d. -f1` -ge 3; then
      # This is gcc >= 3.x.x
