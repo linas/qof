@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: qof 0.7.2\n"
 "Report-Msgid-Bugs-To: qof-devel@lists.alioth.debian.org\n"
-"POT-Creation-Date: 2013-05-14 00:20+0100\n"
+"POT-Creation-Date: 2013-05-14 00:23+0100\n"
 "PO-Revision-Date: 2008-05-29 14:03+0800\n"
 "Last-Translator: Ji ZhengYu <zhengyuji@gmail.com>\n"
 "Language-Team: Chinese (simplified) <translation-team-zh-cn@lists."
@@ -18,22 +18,22 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../backend/file/qsf-xml-map.c:251 ../backend/file/qsf-xml-map.c:332
-#: ../backend/file/qsf-xml.c:254 ../backend/file/qsf-xml.c:310
+#: backend/file/qsf-xml-map.c:251 backend/file/qsf-xml-map.c:332
+#: backend/file/qsf-xml.c:254 backend/file/qsf-xml.c:310
 #, c-format
 msgid "The QSF XML file '%s' could not be found."
 msgstr "QSF XML 文件‘%s’无法找到。"
 
-#: ../backend/file/qsf-xml-map.c:258 ../backend/file/qsf-xml-map.c:280
-#: ../backend/file/qsf-xml-map.c:339 ../backend/file/qsf-xml.c:265
-#: ../backend/file/qsf-xml.c:324 ../backend/file/qsf-backend.c:526
-#: ../backend/file/qsf-backend.c:569
+#: backend/file/qsf-xml-map.c:258 backend/file/qsf-xml-map.c:280
+#: backend/file/qsf-xml-map.c:339 backend/file/qsf-xml.c:265
+#: backend/file/qsf-xml.c:324 backend/file/qsf-backend.c:526
+#: backend/file/qsf-backend.c:569
 #, c-format
 msgid "There was an error parsing the file '%s'."
 msgstr "解析文件‘%s’发生错误。"
 
-#: ../backend/file/qsf-xml-map.c:264 ../backend/file/qsf-xml.c:271
-#: ../backend/file/qsf-xml.c:330
+#: backend/file/qsf-xml-map.c:264 backend/file/qsf-xml.c:271
+#: backend/file/qsf-xml.c:330
 #, c-format
 msgid ""
 "Invalid QSF Object file! The QSF object file '%s'  failed to validate  "
@@ -43,12 +43,12 @@ msgstr ""
 "无效的 QSF 对象文件！QSF 对象文件‘%s’无法根据 QSF 对象模板进行验证。此文件的 "
 "XML 结构要么未很好地组织，要么就是此文件包含非法数据。"
 
-#: ../backend/file/qsf-xml-map.c:273
+#: backend/file/qsf-xml-map.c:273
 #, c-format
 msgid "The QSF map file '%s' could not be found."
 msgstr "QSF map 文件‘%s’无法找到。"
 
-#: ../backend/file/qsf-xml-map.c:346
+#: backend/file/qsf-xml-map.c:346
 msgid ""
 "Invalid QSF Map file! The QSF map file failed to validate against the QSF "
 "map schema. The XML structure of the file is either not well-formed or the "
@@ -57,7 +57,7 @@ msgstr ""
 "无效的 QSF map 文件！QSF map 文件‘%s’无法根据 QSF map 文件模板进行验证。此文"
 "件的 XML 结构要么未很好地组织，要么就是此文件包含非法数据。"
 
-#: ../backend/file/qsf-xml-map.c:418
+#: backend/file/qsf-xml-map.c:418
 #, c-format
 msgid ""
 "The selected QSF map '%s' contains unusable or missing data. This is usually "
@@ -67,7 +67,7 @@ msgstr ""
 "选中的 QSF map 文件‘%s’包含未用的或缺失的数据。这通常是由于并非所有已定义对象"
 "的所需参数都如 map 文件所描述的那么计算。"
 
-#: ../backend/file/qsf-xml-map.c:512
+#: backend/file/qsf-xml-map.c:512
 #, c-format
 msgid ""
 "The QSF Map file '%s' was written for a different version of QOF. It may "
@@ -76,41 +76,41 @@ msgstr ""
 "QSF map 文件‘%s’ 是为另一版本的 QOF 而写的。您可能需要修改它以适合您目前安装"
 "的 QOF。"
 
-#: ../backend/file/qsf-backend.c:118
+#: backend/file/qsf-backend.c:118
 msgid "Level of compression to use: 0 for none, 9 for highest."
 msgstr "所用的压缩级别: 0 不压缩，9 完全压缩。"
 
-#: ../backend/file/qsf-backend.c:120
+#: backend/file/qsf-backend.c:120
 msgid ""
 "QOF can compress QSF XML files using gzip. Note that compression is not used "
 "when outputting to STDOUT."
 msgstr "QOF 可用 gzip 压缩 QSF XML 文件。注意: 当输出至标准输出时不使用压缩。"
 
-#: ../backend/file/qsf-backend.c:130
+#: backend/file/qsf-backend.c:130
 msgid "List of QSF map files to use for this session."
 msgstr "此会话所用的 QSF map 文件列表。"
 
-#: ../backend/file/qsf-backend.c:132
+#: backend/file/qsf-backend.c:132
 msgid ""
 "QOF can convert objects within QSF XML files using a map of the changes "
 "required."
 msgstr "QOF 可利用写好的更改请求来转换 QSF XML 文件中的对象。"
 
-#: ../backend/file/qsf-backend.c:141
+#: backend/file/qsf-backend.c:141
 msgid "Encoding string to use when writing the XML file."
 msgstr "写入 XML 文件时所用的编码字符串。"
 
-#: ../backend/file/qsf-backend.c:143
+#: backend/file/qsf-backend.c:143
 msgid ""
 "QSF defaults to UTF-8. Other encodings are supported by passing the encoding "
 "string in this option."
 msgstr "QSF 默认使用 UTF-8。支持在此选项中指定编码，从而使用其它编码。"
 
-#: ../backend/file/qsf-backend.c:152
+#: backend/file/qsf-backend.c:152
 msgid "Convert deprecated date values to time values."
 msgstr "把不赞成使用的日期值转换成时间值。"
 
-#: ../backend/file/qsf-backend.c:154
+#: backend/file/qsf-backend.c:154
 msgid ""
 "Applications that support the new QOF time format need to enable this option "
 "to convert older date values into time. Applications that still use date "
@@ -119,13 +119,13 @@ msgstr ""
 "支持新的 QOF 时间格式的程序需要开启此选项，以将旧的日期值转换成时间值。仍然使"
 "用日期值的程序不能设置此选项，直到它支持时间值。"
 
-#: ../backend/file/qsf-backend.c:246
+#: backend/file/qsf-backend.c:246
 #, c-format
 msgid ""
 "The selected QSF Object file '%s' requires a map but it was not provided."
 msgstr "选中的 QSF 对象文件‘%s’需要一个 map 文件，但未提供。"
 
-#: ../backend/file/qsf-backend.c:249
+#: backend/file/qsf-backend.c:249
 #, c-format
 msgid ""
 "When converting XML strings into numbers, an overflow has been detected. The "
@@ -135,7 +135,7 @@ msgstr ""
 "将 XML 字符串转换至数字时，探测到溢出。QSF 对象文件‘%s’保存数字的域中包含无效"
 "数据。"
 
-#: ../backend/file/qsf-backend.c:333
+#: backend/file/qsf-backend.c:333
 #, c-format
 msgid ""
 "could not write to '%s'. That database may be on a read-only file system, or "
@@ -144,30 +144,30 @@ msgstr ""
 "无法写入‘%s’。那个数据库可能在只读文件系统中，或者您可能没有那个目录的写权"
 "限。\n"
 
-#: ../backend/file/qsf-backend.c:491
+#: backend/file/qsf-backend.c:491
 #, c-format
 msgid "There was an error parsing the file '%s'.\n"
 msgstr "解析文件‘%s’时发生错误。\n"
 
-#: ../backend/file/qsf-backend.c:577
+#: backend/file/qsf-backend.c:577
 #, c-format
 msgid "There was an error reading the file '%s'."
 msgstr "读取文件‘%s’时发生错误。"
 
-#: ../backend/file/qsf-backend.c:610
+#: backend/file/qsf-backend.c:610
 #, c-format
 msgid ""
 "The selected file '%s' is a QSF map and cannot be opened as a QSF object."
 msgstr "选中的文件‘%s’是个 QSF map 文件且无法作为 QSF 对象打开。"
 
-#: ../backend/file/qsf-backend.c:1120
+#: backend/file/qsf-backend.c:1120
 #, c-format
 msgid ""
 "Could not write to '%s'. Check that you have permission to write to this "
 "file and that there is sufficient space to create it."
 msgstr "无法写入‘%s’。请检查您是否有写入此文件的权限且有足够的空间创建它。"
 
-#: ../backend/file/qsf-backend.c:1356
+#: backend/file/qsf-backend.c:1356
 #, c-format
 msgid ""
 "The selected QSF object file '%s' contains one or more invalid GUIDs. The "
@@ -176,7 +176,7 @@ msgstr ""
 "选中的 QSF 对象文件‘%s’包含一个或更多的无效 GUIDs。无法处理此文件 - 请检查文"
 "件源然后再试一次。"
 
-#: ../backend/file/qsf-backend.c:1478
+#: backend/file/qsf-backend.c:1478
 #, c-format
 msgid ""
 "The selected QSF object file '%s' contains one or more invalid 'collect' "
@@ -186,43 +186,43 @@ msgstr ""
 "选中的 QSF 对象文件‘%s’包含一个或更多无效的‘collect’值。无法处理此文件 - 请检"
 "查文件源然后再试一次。"
 
-#: ../backend/sqlite/qof-sqlite.c:834
+#: backend/sqlite/qof-sqlite.c:834
 #, c-format
 msgid ""
 "Unable to open the output file '%s' - do you have permission to create this "
 "file?"
 msgstr "无法打开输出文件‘%s’ - 您确定有创建此文件的权限？"
 
-#: ../backend/sqlite/qof-sqlite.c:866
+#: backend/sqlite/qof-sqlite.c:866
 #, c-format
 msgid "Unable to open the sqlite database '%s'."
 msgstr "无法打开 sqlite 数据库‘%s’。"
 
-#: ../backend/sqlite/qof-sqlite.c:890
+#: backend/sqlite/qof-sqlite.c:890
 msgid "Please provide a filename for sqlite."
 msgstr "请为 sqlite 提供一个文件名。"
 
-#: ../backend/sqlite/qof-sqlite.c:1026
+#: backend/sqlite/qof-sqlite.c:1026
 msgid "Unable to delete record."
 msgstr "无法删除记录。"
 
-#: ../backend/sqlite/qof-sqlite.c:1028
+#: backend/sqlite/qof-sqlite.c:1028
 msgid "Unable to create record."
 msgstr "无法创建记录。"
 
-#: ../backend/sqlite/qof-sqlite.c:1030
+#: backend/sqlite/qof-sqlite.c:1030
 msgid "Unable to insert a new record."
 msgstr "无法插入一条新的记录。"
 
-#: ../backend/sqlite/qof-sqlite.c:1032
+#: backend/sqlite/qof-sqlite.c:1032
 msgid "Unable to update existing record."
 msgstr "无法更新存在的记录。"
 
-#: ../qof/qofsession.c:1050
+#: qof/qofsession.c:1050
 msgid "This book appears to be open already."
 msgstr "此工作薄好像以打开了。"
 
-#: ../qof/qofsession.c:1091
+#: qof/qofsession.c:1091
 #, c-format
 msgid ""
 "Unable to locate a suitable backend for '%s' - please check you have "
@@ -231,11 +231,11 @@ msgstr ""
 "无法为‘%s’找到一个合适的后端程序 - 请检查您确实已指定一种访问方式，如 file: "
 "或是 sqlite:"
 
-#: ../qof/qofsession.c:1328 ../qof/qofsession.c:1365
+#: qof/qofsession.c:1328 qof/qofsession.c:1365
 msgid "Failed to load backend, no suitable handler."
 msgstr "无法载入后端程序，没有合适的处理程序。"
 
-#: ../qof/qofsql.c:724 ../qof/qofsql.c:751
+#: qof/qofsql.c:724 qof/qofsql.c:751
 #, c-format
 msgid ""
 "When converting SQLite strings into numbers, an overflow has been detected. "
