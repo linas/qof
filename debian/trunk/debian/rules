@@ -44,7 +44,7 @@ build/libqof2::
 	$(RM) doc/html/jquery.js
 
 clean/libqof2::
-	$(RM) debian/libqof2.symbols
+	$(RM) debian/libqof2.symbols po/*.gmo
 
 else
 

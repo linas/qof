@@ -1,3 +1,13 @@
+qof (0.8.7-1) unstable; urgency=low
+
+  * New upstream release
+  * Avoid broken deprecation of g_static_private_get and
+    allow for replacement with g_private_get in glib2.0 2.32.
+    (Closes: #707415)
+  * Drop default of Werror.
+
+ -- Neil Williams <codehelp@debian.org>  Mon, 13 May 2013 23:49:35 +0100
+
 qof (0.8.6-1) unstable; urgency=low
 
   * New upstream release. 
