@@ -3,13 +3,14 @@ Section: libs
 Priority: optional
 Maintainer: Neil Williams <codehelp@debian.org>
 Uploaders: Goedson Teixeira Paixao <goedson@debian.org>
-Build-Depends: cdbs (>= 0.4.93~), debhelper (>= 9), xsltproc,
- libglib2.0-dev (>= 2.9.0), libxml2-dev (>= 2.5.10), libsqlite0-dev
+Build-Depends: cdbs (>= 0.4.93~), debhelper (>= 9), dh-autoreconf,
+ xsltproc, libglib2.0-dev (>= 2.9.0), libxml2-dev (>= 2.5.10),
+ libsqlite0-dev
 Build-Depends-Indep: doxygen
-Standards-Version: 3.9.3
+Standards-Version: 3.9.5
 Homepage: http://alioth.debian.org/projects/qof/
-Vcs-Browser: http://svn.debian.org/viewsvn/qof/trunk/qof/
-Vcs-Svn: svn://svn.debian.org/svn/qof/trunk/debian/
+Vcs-Browser: https://alioth.debian.org/plugins/scmgit/cgi-bin/gitweb.cgi?p=qof/qof.git;a=summary
+Vcs-Git: https://alioth.debian.org/anonscm/git/qof/qof.git
 
 Package: libqof2
 Architecture: any
