@@ -19,6 +19,7 @@
 
 include /usr/share/cdbs/1/rules/debhelper.mk
 include /usr/share/cdbs/1/class/autotools.mk
+include /usr/share/cdbs/1/rules/autoreconf.mk
 
 # backends do not need ldconfig (anymore)
 DEB_DH_MAKESHLIBS_ARGS=-Xlibqof2-backend
