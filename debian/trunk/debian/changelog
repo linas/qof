@@ -1,8 +1,9 @@
 qof (0.8.7-2) unstable; urgency=medium
 
   * Add autoreconf support for porting.
+    (Closes: #756394)
 
- -- Neil Williams <codehelp@debian.org>  Fri, 29 Aug 2014 10:59:30 -0700
+ -- Neil Williams <codehelp@debian.org>  Fri, 29 Aug 2014 11:06:27 -0700
 
 qof (0.8.7-1) unstable; urgency=low
 
