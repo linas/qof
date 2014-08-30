@@ -24,3 +24,20 @@ Building QOF from VCS.
  + The indent style used by QOF is:
  $ indent -gnu -i4 -ut -ts4 -nsc -bli0 -nlp -l75 -lc75
 
+ + Check the localisation support with:
+ $ find . -name '*.po' -print |xargs -n1 msgfmt -c --statistics
+
+ + If any of the internationalisation strings have changed or
+   any of the source code files containing strings have changed,
+   freshen the localisation files and report details:
+ $ cd po ; intltool-update -r
+
+ + List generated files:
+ $ git clean -ndfx
+
+ + Return your clone to the initial state:
+ $ git clean -dfx
+
+ + Always make sure that make distcheck completes without errors.
+ $ make distcheck
+
