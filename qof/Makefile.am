@@ -96,11 +96,11 @@ AM_CFLAGS = -g \
   ${GLIB_CFLAGS}
 
 if USE_LIBGDA
-INCLUDES = \
+AM_CPPFLAGS = \
   -DPREFIX=\""$(prefix)"\"  \
   -DDATADIR=\""$(datadir)"\"
 else
-INCLUDES = \
+AM_CPPFLAGS = \
   -I${top_srcdir}/lib/libsql  \
   -DPREFIX=\""$(prefix)"\" \
   -DDATADIR=\""$(datadir)"\"
