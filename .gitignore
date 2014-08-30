@@ -20,6 +20,7 @@ ltmain.sh
 missing
 tarballs
 *.tar.gz
+qof-*.tar.gz.cdbs-config_list
 doc/html/*
 doc/xml
 doc/doxygen.cfg
