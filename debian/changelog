@@ -1,3 +1,11 @@
+qof (0.8.8-1) unstable; urgency=medium
+
+  * New upstream release
+  * Add autopkgtest support
+  * Change VCS locations after migrating svn to git
+
+ -- Neil Williams <codehelp@debian.org>  Sat, 30 Aug 2014 11:53:01 -0700
+
 qof (0.8.7-2) unstable; urgency=medium
 
   * Add autoreconf support for porting.

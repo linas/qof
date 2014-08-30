@@ -8,6 +8,7 @@ Build-Depends: cdbs (>= 0.4.93~), debhelper (>= 9), dh-autoreconf,
  libsqlite0-dev
 Build-Depends-Indep: doxygen
 Standards-Version: 3.9.5
+XS-Testsuite: autopkgtest
 Homepage: http://alioth.debian.org/projects/qof/
 Vcs-Browser: https://alioth.debian.org/plugins/scmgit/cgi-bin/gitweb.cgi?p=qof/qof.git;a=summary
 Vcs-Git: https://alioth.debian.org/anonscm/git/qof/qof.git
