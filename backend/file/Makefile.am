@@ -19,7 +19,7 @@ libqof_backend_qsf_la_SOURCES = \
   qsf-xml.c
 
 libqof_backend_qsf_la_LDFLAGS = \
- -L${top_srcdir}/qof \
+ -L${top_builddir}/qof \
  -avoid-version -module
 
 libqof_backend_qsf_la_LIBADD = \

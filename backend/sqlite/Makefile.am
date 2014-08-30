@@ -15,8 +15,8 @@ libqof_backend_sqlite_la_SOURCES = \
  qof-sqlite.c
 
 libqof_backend_sqlite_la_LDFLAGS = \
- -L${top_srcdir}/qof \
- -L${top_srcdir}/lib/libsql \
+ -L${top_builddir}/qof \
+ -L${top_builddir}/lib/libsql \
  -avoid-version -module
 
 libqof_backend_sqlite_la_LIBADD = \
