@@ -1,6 +1,0 @@
-#format
-version=3
-# watch control file for uscan
-# Upstream will only release .tar.gz files 
-http://alioth.debian.org/frs/?group_id=100136 \
- https://alioth.debian.org/frs/download.php/.*/qof-(.*).tar.gz
