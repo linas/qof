@@ -57,4 +57,7 @@ lib/libsql/sql_parse_test
 po/Makevars.template
 stamp-h1
 test-driver
+qof/test/*.log
+qof/test/*.trs
+qof/test/*.trace
 
