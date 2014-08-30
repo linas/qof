@@ -457,12 +457,12 @@ QLD_PRINT=`eval echo $QOF_LIB_DIR | sed "s%^NONE%$prefix%"`
 AC_SUBST(QOF_LIBS)
 
 dnl # ******************************
-dnl # Check if this was SVN source
+dnl # Check if this was VCS source
 dnl # ******************************
-if test -f "${srcdir}/README.svn" ; then
+if test -f "${srcdir}/README.vcs" ; then
 	AC_DEFINE([TEST_DEBUG],1,
 		[Run test code in debug mode])
-	QOF_FROM_SVN=yes
+	QOF_FROM_VCS=yes
 fi
 
 AC_CONFIG_FILES([ po/Makefile.in
@@ -511,9 +511,9 @@ echo ""
 echo ""
 dnl # <= End of configuration summary =>
 
-if [[ x"$QOF_FROM_SVN" = xyes ]]; then
+if [[ x"$QOF_FROM_VCS" = xyes ]]; then
   echo " .----- NOTICE ------------------------------------------------."
-  echo " |         You are using QOF from SVN source.                  |"
+  echo " |         You are using QOF from VCS source.                  |"
   echo " |                                                             |"
   echo " | This is likely to be unstable, or contain some incomplete   |"
   echo " | features, or just plain not work at all. Use it at your own |"
