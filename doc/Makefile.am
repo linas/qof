@@ -52,3 +52,4 @@ clean-local:
 	$(RM) doxygen.log
 	$(RM) -r xml/
 	$(RM) qof.devhelp2
+	$(RM) doxygen_sqlite3.db
