@@ -41,3 +41,15 @@ Building QOF from VCS.
  + Always make sure that make distcheck completes without errors.
  $ make distcheck
 
+ + Building the Debian package:
+ $ git checkout master
+ $ ./autogen.sh
+ $ ./configure
+ $ ./make
+ $ ./make dist
+ $ git checkout po/*.po
+ $ mkdir ../tarballs/
+ $ cp qof_*.orig.tar.gz ../tarballs
+ $ git checkout debian
+ $ git-buildpackage --git-overlay --git-debian-branch=debian
+
