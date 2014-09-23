@@ -207,7 +207,7 @@ fi
 
 AM_CONDITIONAL(EMBEDDED, [test "$embedded" = "yes"])
 
-sqlite="yes"
+sqlite="no"
 AC_ARG_ENABLE(sqlite,
   [  --disable-sqlite        Disable the SQLite backend module.],
   [case "${enableval}" in

@@ -49,7 +49,7 @@ Building QOF from VCS.
  $ ./make dist
  $ git checkout po/*.po
  $ mkdir ../tarballs/
- $ cp qof_*.orig.tar.gz ../tarballs
+ $ cp qof*.tar.gz ../tarballs
  $ git checkout debian
  $ git-buildpackage --git-overlay --git-debian-branch=debian
 
