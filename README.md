@@ -1,8 +1,12 @@
-                QOF - Query Object Framework
-                ----------------------------
+QOF - Query Object Framework
+============================
 
 Please see the NEWS file and the ChangeLog for detailed
 information on changes since 0.6.0.
+
+Building
+--------
+See the [README.vcs](README.vcs) for instructions on how to build this.
 
 pkg-config support prior to libqof2
 -----------------------------------
@@ -17,5 +21,3 @@ The QOF documentation is entirely embedded in the source code. You
 can build an html version of the documentation by installing the
 'doxygen' package, and then 'cd doc; make doc'.  Skim the doc/README
 file for more info.
-
-------------------------- END OF DOCUMENT -------------------------
