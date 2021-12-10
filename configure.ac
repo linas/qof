@@ -34,7 +34,10 @@ VERSION=AC_PACKAGE_VERSION
 AC_SUBST(VERSION)
 PACKAGE=AC_PACKAGE_NAME
 AC_SUBST(PACKAGE)
-AM_INIT_AUTOMAKE()
+
+dnl "foreign" allows README.md instead of README
+dnl subdir-objects simplified out-of-tree builds.
+AM_INIT_AUTOMAKE([foreign subdir-objects])
 
 AC_PROG_LIBTOOL
 AC_CONFIG_HEADERS([config.h])

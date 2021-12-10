@@ -17,6 +17,7 @@ distclean-local:
 EXTRA_DIST = config.rpath \
   po/POTFILES.skip \
   qof.pc.in \
-  qofsql.symbols
+  qofsql.symbols \
+  README.md
 
 ACLOCAL_AMFLAGS = -I m4
